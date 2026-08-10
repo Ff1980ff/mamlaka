@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>استوديو الرسم</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#fdf2f8,#e0f2fe);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:10px}
+.frame{width:100%;max-width:500px;background:#fff;border:5px solid #ec4899;border-radius:22px;padding:12px}
+h2{text-align:center;color:#be185d;font-size:18px;margin-bottom:8px}
+#cv{width:100%;height:55vh;background:#fff;border:2px solid #fbcfe8;border-radius:14px;touch-action:none;cursor:crosshair}
+.bar{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.col{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #e5e7eb;cursor:pointer}
+.col.on{box-shadow:0 0 0 3px #1e293b}
+.btn{border:none;border-radius:12px;padding:9px 13px;font-size:12px;font-weight:bold;cursor:pointer;color:#fff;background:#ec4899}
+.btn.b{background:#38bdf8}.btn.gr{background:#64748b}.btn.g{background:#22c55e}
+.sz{width:34px;height:34px;border-radius:50%;border:2px solid #e5e7eb;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sz.on{border-color:#1e293b}
+.sz i{border-radius:50%;background:#1e293b;display:block}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>🎨 استوديو الرسم</h2>
+<canvas id="cv"></canvas>
+<div class="bar" id="cols"></div>
+<div class="bar">
+ <button class="sz on" onclick="setSz(4,this)"><i style="width:5px;height:5px"></i></button>
+ <button class="sz" onclick="setSz(10,this)"><i style="width:11px;height:11px"></i></button>
+ <button class="sz" onclick="setSz(22,this)"><i style="width:19px;height:19px"></i></button>
+ <button class="btn gr" onclick="eraser()">🧽 ممحاة</button>
+ <button class="btn b" onclick="undo()">↩️ تراجع</button>
+ <button class="btn gr" onclick="clearC()">🗑 مسح</button>
+ <button class="btn g" onclick="saveC()">📥 حفظ اللوحة</button>
+</div>
+</div>
+<script>
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+cv.width=1000;cv.height=1200;
+ctx.fillStyle="#fff";ctx.fillRect(0,0,cv.width,cv.height);
+ctx.lineCap="round";ctx.lineJoin="round";
+const COLS=["#1e293b","#ef4444","#f59e0b","#22c55e","#38bdf8","#8b5cf6","#ec4899","#92400e","#ffffff"];
+let color="#1e293b",size=4,hist=[];
+document.getElementById("cols").innerHTML=COLS.map((c,i)=>`<div class="col ${i===0?"on":""}" style="background:${c}" onclick="setCol('${c}',this)"></div>`).join("");
+function setCol(c,el){color=c;document.querySelectorAll(".col").forEach(x=>x.classList.remove("on"));el.classList.add("on")}
+function setSz(s,el){size=s;document.querySelectorAll(".sz").forEach(x=>x.classList.remove("on"));el.classList.add("on")}
+function eraser(){color="#fff";document.querySelectorAll(".col").forEach(x=>x.classList.remove("on"))}
+function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return[(t.clientX-r.left)*cv.width/r.width,(t.clientY-r.top)*cv.height/r.height]}
+let drawing=false;
+function start(e){e.preventDefault();push();drawing=true;const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(x,y)}
+function move(e){if(!drawing)return;e.preventDefault();const[x,y]=pos(e);ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineTo(x,y);ctx.stroke()}
+function end(){drawing=false}
+cv.addEventListener("mousedown",start);cv.addEventListener("mousemove",move);addEventListener("mouseup",end);
+cv.addEventListener("touchstart",start);cv.addEventListener("touchmove",move);addEventListener("touchend",end);
+function push(){hist.push(cv.toDataURL());if(hist.length>10)hist.shift()}
+function undo(){if(!hist.length)return;const img=new Image();img.onload=()=>{ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0)};img.src=hist.pop()}
+function clearC(){push();ctx.fillStyle="#fff";ctx.fillRect(0,0,cv.width,cv.height)}
+function saveC(){const a=document.createElement("a");a.download="لوحتي.png";a.href=cv.toDataURL("image/png");a.click()}
+</script>
+</body>
+</html>
