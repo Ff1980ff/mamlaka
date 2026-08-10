@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جسم الإنسان الذكي</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+body{background:#1e293b;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #ef4444;border-radius:24px;padding:16px;min-height:85vh}
+#stage{min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.cat{background:#334155;border:3px solid var(--c);border-radius:18px;color:#fff;padding:13px 6px;font-size:13px;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:center}
+.cat span{font-size:32px}
+.lvl{display:flex;gap:8px;justify-content:center}
+.lvl button{border:none;border-radius:99px;padding:8px 14px;font-size:13px;font-weight:bold;cursor:pointer;background:#334155;color:#fff}
+.lvl button.on{background:#ef4444}
+.bimg{font-size:84px;animation:pop .5s;cursor:pointer}
+@keyframes pop{from{transform:scale(.1)}}
+.wname{font-size:28px;font-weight:bold}
+.bmsg{min-height:18px;color:#e2e8f0;font-size:13px}
+.bbtn{border:none;border-radius:13px;padding:9px 15px;font-size:13px;font-weight:bold;cursor:pointer;background:#ef4444;color:#fff;margin:3px}
+.bbtn.blue{background:#38bdf8;color:#0f172a}.bbtn.gray{background:#334155}
+.pill{background:#1e293b;border:1px solid #475569;border-radius:99px;padding:4px 11px;font-size:11px}
+.btop{display:flex;justify-content:space-between;width:100%;margin-bottom:6px}
+.bdots{color:#94a3b8;font-size:11px}
+</style>
+</head>
+<body>
+<div class="frame"><div id="stage"></div></div>
+<script>
+const BODY=[
+ {name:"العقل",icon:"🧠",c:"#f472b6",items:[
+  ["المخ","🧠","الزعيم المفكر!","يقرر، يحفظ الذكريات، ويحل الألغاز.","نصفا كرة فيهما مليارات الخلايا العصبية تتواصل بإشارات كهربائية."],
+  ["المخيخ","🤸","سيد التوازن!","يخليك واقف على رجل واحدة وما تقع.","ينسق الحركات والتوازن، ويقع خلف الرأس أسفل المخ."],
+  ["جذع الدماغ","🌱","الحارس الصامت!","يضبط تنفسك ونبض قلبك حتى وأنت نايم.","يصل الدماغ بالنخاع الشوكي ويتحكم بالوظائف الحيوية تلقائيًا."]]},
+ {name:"القلب",icon:"❤️",c:"#ef4444",items:[
+  ["الأذينات","🚪","غرف الاستقبال!","تستقبل الدم الراجع من الجسم والرئتين.","حجرتان علويتان: الأيمن يستقبل دمًا فقيرًا بالأكسجين والأيسر غنيًا به."],
+  ["البطينات","💪","محركات الضخ!","تدفع الدم لكل الجسم بقوة.","حجرتان سفليتان، الأيسر أقوى لأنه يضخ الدم لكامل الجسم."],
+  ["الصمامات","🚦","أبواب باتجاه واحد!","تمنع الدم يرجع للخلف.","تفتح وتغلق مع كل نبضة وتصنع صوت (دوك دوك)."]]},
+ {name:"العظام",icon:"🦴",c:"#e2e8f0",items:[
+  ["الجمجمة","🪖","خوذة قوية!","تحمي عقلك مثل خوذة الدراجة.","8 عظام ملتحمات تشكل صندوقًا متينًا لحماية الدماغ."],
+  ["القفص الصدري","🛡️","درع واقٍ!","يحضن القلب والرئتين ويحميهم.","12 زوجًا من الأضلاع تتحرك كالمنفاخ مع تنفسك."],
+  ["عظمة الفخذ","🏗️","أطول عظمة!","تشيلك وتركض وتقفز.","أطول وأقوى عظمة بالجسم، تحمل وزنك كله."]]},
+ {name:"الأعصاب",icon:"⚡",c:"#facc15",items:[
+  ["العصب البصري","👁️","رسول العين!","يبعت الصور من عينك للدماغ بلمحة بصر.","أكثر من مليون ليف عصبي تنقل الصور لقشرة الرؤية."],
+  ["العصب السمعي","👂","ناقل الأصوات!","تسمع فيه أغنيتك المفضلة.","ينقل اهتزازات الأذن الداخلية كإشارات كهربائية للدماغ."],
+  ["النخاع الشوكي","🛤️","طريق سريع!","يوصل الدماغ بكل الجسم.","حزمة أعصاب بطول 45 سم تمر داخل العمود الفقري."]]},
+ {name:"الكليتان",icon:"🫘",c:"#a78bfa",items:[
+  ["الكلية","🫘","فلتر ذكي!","تنظف الدم مثل الفلتر.","تفلتر نحو 180 لتر دم يوميًا وتنتج البول."],
+  ["الحالب","🚰","أنبوب رفيع!","ينقل البول من الكلية للمثانة.","قناتان بطول 25 سم تدفعان البول بموجات عضلية."],
+  ["المثانة","🎈","بالون تخزين!","تحفظ البول لوقت الحمام.","عضلة مرنة تتمدد وتخزن نحو نصف لتر."]]},
+ {name:"البنكرياس",icon:"🧁",c:"#fb923c",items:[
+  ["الأنسولين","🔑","مفتاح السكر!","بيدخل السكر للخلايا ليعطيك طاقة.","هرمون ينظم مستوى السكر بالدم."],
+  ["العصارات الهاضمة","🧪","مساعد الهضم!","تساعد المعدة تهضم طعامك براحة.","إنزيمات تفكك البروتينات والدهون والنشويات."]]},
+ {name:"المرارة",icon:"💚",c:"#4ade80",items:[
+  ["المرارة","🎈","كيس صغير!","تخزن العصارة الصفراوية.","كيس بشكل إجاصة طوله 10 سم تحت الكبد."],
+  ["العصارة الصفراوية","💚","منظف الدهون!","تهضم الدهون مثل الصابون للصحون.","سائل يصنعه الكبد وتخزنه المرارة."]]},
+ {name:"العمود الفقري",icon:"🏗️",c:"#38bdf8",items:[
+  ["الفقرات","🧱","برج العظام!","33 عظمة تعطيك طولك.","7 عنقية + 12 صدرية + 5 قطنية + عجز وعصعص."],
+  ["الغضاريف","🛢️","وسائد طرية!","حتى ما تحتك الفقرات ببعض.","أنسجة مرنة تمتص الصدمات عند القفز."],
+  ["النخاع بالداخل","🧵","كابل ثمين!","أعصاب محمية داخل العمود.","ينقل أوامر الدماغ للأطراف بأجزاء الثانية."]]}
+];
+let ci=0,ii=0,L=0,AC=null;
+const stage=document.getElementById("stage");
+function beep(f,d,type,when){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;const t=AC.currentTime+(when||0);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function sWin(){[523,659,784,1047].forEach((f,i)=>beep(f,.18,"triangle",i*.14))}
+document.addEventListener("click",e=>{if(e.target.closest("button,.bimg"))beep(700,.06,"triangle")});
+function speak(t){try{const x=new SpeechSynthesisUtterance(t);x.lang="ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function lvlBtns(){return`<div class="lvl"><button class="${L===0?"on":""}" onclick="setL(0)">🐣 صغير</button><button class="${L===1?"on":""}" onclick="setL(1)">🧒 متوسط</button><button class="${L===2?"on":""}" onclick="setL(2)">🎓 كبير</button></div>`}
+function setL(n){L=n;home()}
+function home(){stage.innerHTML=`<h2>🫀 جسم الإنسان الذكي</h2><div class="bmsg">التطبيق بيكبر معك! اختر مستواك:</div>`+lvlBtns()+`<div class="cats">`+BODY.map((c,i)=>`<button class="cat" style="--c:${c.c}" onclick="openCat(${i})"><span>${c.icon}</span><b>${c.name}</b></button>`).join("")+`</div><div class="bdots">اضغط عضوًا لتكتشف أسرارو!</div>`}
+function topBar(){return`<div class="btop"><button class="bbtn gray" onclick="home()">🏠 الأعضاء</button><span class="pill">${BODY[ci].icon} ${BODY[ci].name}</span></div>`}
+function openCat(i){ci=i;showItem(0)}
+function showItem(i){
+ ii=i;const x=BODY[ci].items[ii],last=(i===BODY[ci].items.length-1);
+ stage.innerHTML=topBar()+
+ `<div class="bimg" onclick="speak('${x[0]}')">${x[1]}</div>
+ <div class="wname">${x[0]}</div>
+ <button class="bbtn" onclick="var d=this.nextElementSibling;if(d.style.display==='block'){d.style.display='none';this.textContent='📖 وظيفتو'}else{d.style.display='block';this.textContent='🔼 إغلاق'}">📖 وظيفتو</button>
+ <div style="display:none;background:#1e293b;border:1px solid #475569;border-radius:12px;padding:10px;font-size:14px;color:#e2e8f0;line-height:1.7;max-width:95%">${x[2+L]}</div>
+ <div><button class="bbtn blue" onclick="showItem(${(i+1)%BODY[ci].items.length})">التالي ⬅️</button></div>
+ <div class="bmsg">${last?"أحسنت! خلصنا "+BODY[ci].name+" 🎉":""}</div>
+ ${last?`<button class="bbtn" onclick="home()">الأعضاء ⭐</button>`:""}
+ <div class="bdots">${i+1} / ${BODY[ci].items.length} • مستوى ${["🐣","","🎓"][L]}</div>`;
+ if(last)sWin();
+ speak(x[0]);
+}
+home();
+</script>
+</body>
+</html>
