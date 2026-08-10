@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سبورة الجيب</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+body{background:#1e293b;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:440px;background:#0f172a;border:5px solid #38bdf8;border-radius:22px;padding:14px;min-height:85vh}
+#stage{min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+h2{font-size:19px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%}
+.cat{background:#334155;border:3px solid var(--c);border-radius:16px;color:#fff;padding:12px 4px;font-size:13px;cursor:pointer;display:flex;flex-direction:column;gap:5px;align-items:center}
+.cat span{font-size:28px}
+.bimg{font-size:80px;cursor:pointer;animation:pop .5s}
+@keyframes pop{from{transform:scale(.1)}}
+.wname{font-size:30px;font-weight:bold}
+.wtrans{font-size:22px;color:#38bdf8;font-weight:bold;min-height:30px}
+.bmsg{min-height:18px;color:#e2e8f0;font-size:13px}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.ibtn{background:#334155;border:2px solid #475569;border-radius:16px;color:#fff;padding:14px 4px;font-size:40px;cursor:pointer}
+.bbtn{border:none;border-radius:13px;padding:9px 15px;font-size:13px;font-weight:bold;cursor:pointer;background:#38bdf8;color:#0f172a;margin:3px}
+.bbtn.y{background:#f59e0b}.bbtn.gray{background:#334155;color:#fff}.bbtn.p{background:#e879f9}
+.pill{background:#1e293b;border:1px solid #475569;border-radius:99px;padding:4px 11px;font-size:11px}
+.btop{display:flex;justify-content:space-between;width:100%;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="frame"><div id="stage"></div></div>
+<script>
+const MINI=[
+ {name:"حرف ب",icon:"🅱️",c:"#f59e0b",items:[["🦆","بطة","Duck"],["🚪","باب","Door"]]},
+ {name:"حرف ش",icon:"🌞",c:"#fbbf24",items:[["☀️","شمس","Sun"],["🍵","شاي","Tea"]]},
+ {name:"حرف B",icon:"🅱",c:"#38bdf8",items:[["⚽","Ball","كرة"],["🐻","Bear","دب"]]},
+ {name:"حرف M",icon:"Ⓜ️",c:"#818cf8",items:[["🌙","Moon","قمر"],["🥛","Milk","حليب"]]},
+ {name:"أرقام",icon:"🔢",c:"#22d3ee",items:[["🍎🍎","اثنان","Two"],["⭐⭐⭐","ثلاثة","Three"]]},
+ {name:"ألوان",icon:"🎨",c:"#f472b6",items:[["🔴","أحمر","Red"],["🟢","أخضر","Green"]]},
+ {name:"فواكه",icon:"🍓",c:"#fb7185",items:[["🍌","موز","Banana"],["🍇","عنب","Grapes"]]},
+ {name:"خضروات",icon:"🥕",c:"#4ade80",items:[["🥕","جزر","Carrot"],["🍅","طماطم","Tomato"]]}
+];
+let ci=0,ii=0,flip=false,shown=false,AC=null;
+const stage=document.getElementById("stage");
+function beep(f,d,type,when){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;const t=AC.currentTime+(when||0);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function sWin(){[523,659,784,1047].forEach((f,i)=>beep(f,.18,"triangle",i*.14))}
+document.addEventListener("click",e=>{if(e.target.closest("button,.bimg"))beep(700,.06,"triangle")});
+function speak(t,lang){try{const x=new SpeechSynthesisUtterance(t);x.lang=lang||"ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function home(){stage.innerHTML=`<h2>🎒 سبورة الجيب</h2><div class="bmsg">نسخة مصغرة للتعلم الخاطف</div><div class="cats">`+MINI.map((c,i)=>`<button class="cat" style="--c:${c.c}" onclick="openCat(${i})"><span>${c.icon}</span><b>${c.name}</b></button>`).join("")+`</div>`}
+function openCat(i){ci=i;ii=0;showItem(0)}
+function topBar(){return`<div class="btop"><button class="bbtn gray" onclick="home()">🏠 الأقسام</button><span class="pill">${MINI[ci].icon} ${MINI[ci].name}</span></div>`}
+function showItem(i){
+ ii=i;shown=false;
+ const x=MINI[ci].items[ii],main=flip?x[2]:x[1];
+ stage.innerHTML=topBar()+
+ `<div class="bimg" onclick="speakMain()">${x[0]}</div>
+ <div class="wname">${main}</div>
+ <div class="wtrans" id="tr"></div>
+ <div><button class="bbtn y" onclick="showTrans()">⬇️ الترجمة</button>
+ <button class="bbtn p" onclick="flipIt()">🔁 بالعكس</button></div>
+ <div><button class="bbtn" onclick="showItem(${(ii+1)%MINI[ci].items.length})">التالي ⬅️</button>
+ <button class="bbtn gray" onclick="home()">الأقسام 🏠</button></div>
+ <div class="bmsg">اضغط الصورة لتسمع النطق!</div>`;
+ speakMain();
+}
+function speakMain(){const x=MINI[ci].items[ii];speak(flip?x[2]:x[1],flip?"en-US":"ar-SA")}
+function showTrans(){
+ const x=MINI[ci].items[ii],tr=flip?x[1]:x[2];
+ document.getElementById("tr").textContent="⬇️ "+tr;
+ speak(tr,flip?"ar-SA":"en-US");
+}
+function flipIt(){flip=!flip;showItem(ii)}
+home();
+</script>
+</body>
+</html>
