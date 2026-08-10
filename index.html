@@ -3,397 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>مملكة التطبيقات 🏰</title>
-<meta name="description" content="مملكة رقمية دافية، أسسها مهندس ومعلم — خبزها البساطة وحبها الناس">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<title>جسم الإنسان الذكي</title>
 <style>
-:root{
- --night:#0b1026; --card:#141a33; --line:#2a3157;
- --amber:#f5a524; --amber2:#e07b12; --cream:#f7ead9; --muted:#9aa3c0;
- --cyan:#22d3ee; --violet:#a78bfa;
-}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{background:var(--night);color:var(--cream);overflow-x:hidden}
-nav{position:fixed;top:0;right:0;left:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(11,16,38,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav .logo{font-weight:900;font-size:18px;color:var(--amber)}
-nav .links{display:flex;gap:14px;flex-wrap:wrap}
-nav a{color:var(--cream);text-decoration:none;font-size:13px;font-weight:700;opacity:.85;cursor:pointer}
-nav a:hover{color:var(--amber);opacity:1}
-.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px 60px;background:radial-gradient(60% 45% at 50% 100%,rgba(224,123,18,.28),transparent 70%),linear-gradient(160deg,#141a33,#0b1026)}
-.hero .castle{font-size:74px;filter:drop-shadow(0 0 25px rgba(245,165,36,.5));animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.hero h1{font-size:clamp(30px,7vw,54px);font-weight:900;margin:14px 0 8px;background:linear-gradient(90deg,var(--amber),var(--cream));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{max-width:560px;color:var(--muted);font-size:15px;line-height:2}
-.hero .btns{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;justify-content:center}
-.btn{border:none;border-radius:99px;padding:12px 22px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit}
-.btn.amber{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#241303;box-shadow:0 6px 22px rgba(245,165,36,.35)}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--cream)}
-.btn:hover{transform:translateY(-2px)}
-section{padding:70px 20px;max-width:1000px;margin:auto}
-.stitle{text-align:center;margin-bottom:40px}
-.stitle h2{font-size:clamp(22px,5vw,32px);font-weight:900}
-.stitle h2 span{color:var(--amber)}
-.stitle p{color:var(--muted);font-size:13px;margin-top:6px}
-.philo{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.pcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 20px;text-align:center;transition:.3s;cursor:pointer}
-.pcard:hover{transform:translateY(-6px);border-color:var(--amber)}
-.pcard .ic{font-size:44px}
-.pcard h3{margin:12px 0 8px;font-size:18px}
-.pcard p{color:var(--muted);font-size:13px;line-height:1.9}
-.pcard.b{border-top:3px solid var(--amber)} .pcard.j{border-top:3px solid var(--cyan)} .pcard.a{border-top:3px solid var(--violet)}
-.circle{margin-bottom:44px}
-.circle h3{font-size:17px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.circle h3::after{content:"";flex:1;height:1px;background:var(--line)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 10px;text-align:center;transition:.3s;cursor:pointer}
-.app:hover{transform:translateY(-5px);border-color:var(--amber);box-shadow:0 10px 25px rgba(0,0,0,.35)}
-.app .e{font-size:34px}
-.app b{display:block;font-size:13px;margin:8px 0 4px}
-.app small{color:var(--muted);font-size:11px;line-height:1.7;display:block}
-#tannour .box{background:linear-gradient(160deg,#3a1608,#1c0b04);border:2px solid var(--amber2);border-radius:26px;padding:36px 22px;text-align:center;box-shadow:0 0 60px rgba(224,123,18,.25) inset}
-#tannour .fire{font-size:60px;animation:float 3s ease-in-out infinite}
-#tannour h3{font-size:22px;font-weight:900;color:var(--amber);margin:10px 0}
-#tannour p{color:#e8c9a0;font-size:13px;line-height:2;max-width:520px;margin:auto}
-#khubza{margin-top:22px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;line-height:1.9;padding:0 10px;transition:opacity .5s}
-.timeline{border-right:2px solid var(--amber2);padding-right:26px;margin-right:8px}
-.titem{position:relative;margin-bottom:28px}
-.titem::before{content:"";position:absolute;right:-33px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber)}
-.titem b{color:var(--amber);font-size:15px}
-.titem p{color:var(--muted);font-size:13px;line-height:1.9;margin-top:4px}
-.rev{opacity:0;transform:translateY(24px);transition:.7s}
-.rev.on{opacity:1;transform:none}
-#workshop{display:none}
-.wbox{background:linear-gradient(160deg,#1a2440,#101528);border:2px dashed var(--amber);border-radius:26px;padding:30px 18px}
-.wbox h3{text-align:center;color:var(--amber);font-size:20px;margin-bottom:6px}
-.wbox>p{text-align:center;color:var(--muted);font-size:12px;margin-bottom:20px}
-.wform input,.wform textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;font-size:14px;background:var(--card);color:var(--cream);outline:none;margin-bottom:8px;font-family:inherit}
-.wform textarea{min-height:70px;resize:vertical}
-.wform .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.wbox h4{margin:24px 0 10px;font-size:14px;color:var(--cyan)}
-.witem{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap}
-.witem span{font-size:13px}
-.mut{color:var(--muted);font-size:12px;text-align:center;padding:10px}
-footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:2}
-footer b{color:var(--amber)}
-#arada,#farewell{position:fixed;inset:0;z-index:100;background:radial-gradient(70% 50% at 50% 100%,rgba(224,123,18,.35),transparent 70%),linear-gradient(160deg,#3a1608,#140a04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;transition:opacity .8s}
-.hide{opacity:0;pointer-events:none}
-#arada .t1,#farewell .t1{font-size:clamp(24px,6vw,40px);font-weight:900;color:var(--amber)}
-#arada .t2,#farewell .t2{color:#e8c9a0;font-size:14px;line-height:1.9}
-.proc{width:100%;overflow:hidden;height:80px;position:relative}
-.proc .line{position:absolute;top:10px;white-space:nowrap;font-size:48px;animation:walk 8s linear infinite}
-@keyframes walk{from{transform:translateX(110%)}to{transform:translateX(-110%)}}
-#hala{font-size:20px;font-weight:900;color:var(--cream);min-height:32px}
-#skip{position:absolute;top:14px;left:14px}
-#replay{position:fixed;bottom:16px;left:16px;z-index:60;border:none;border-radius:99px;background:var(--amber);font-size:20px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(245,165,36,.4)}
-#qahwa{position:fixed;bottom:16px;right:16px;z-index:60;border:none;border-radius:99px;background:#6b3b1c;font-size:20px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45)}
-#wada{font-size:17px;font-weight:900;min-height:50px;color:var(--cream);line-height:1.9;padding:0 10px}
-#modal{position:fixed;inset:0;z-index:90;background:rgba(5,8,20,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
-#modal.on{display:flex}
-.mcard{background:var(--card);border:2px solid var(--amber);border-radius:22px;max-width:420px;width:100%;padding:26px 20px;text-align:center;animation:pop .35s}
-@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-.mcard .e{font-size:56px;filter:drop-shadow(0 0 18px rgba(245,165,36,.6))}
-.mcard h3{margin:10px 0 6px;font-size:20px;color:var(--amber)}
-.mcard p{color:var(--muted);font-size:13px;line-height:1.9}
-.mcard .tag{display:inline-block;margin-top:12px;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:11px;color:var(--cyan)}
-.mcard .close{margin-top:16px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+body{background:#1e293b;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #ef4444;border-radius:24px;padding:16px;min-height:85vh}
+#stage{min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.cat{background:#334155;border:3px solid var(--c);border-radius:18px;color:#fff;padding:13px 6px;font-size:13px;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:center}
+.cat span{font-size:32px}
+.lvl{display:flex;gap:8px;justify-content:center}
+.lvl button{border:none;border-radius:99px;padding:8px 14px;font-size:13px;font-weight:bold;cursor:pointer;background:#334155;color:#fff}
+.lvl button.on{background:#ef4444}
+.bimg{font-size:84px;animation:pop .5s;cursor:pointer}
+@keyframes pop{from{transform:scale(.1)}}
+.wname{font-size:28px;font-weight:bold}
+.bmsg{min-height:18px;color:#e2e8f0;font-size:13px}
+.bbtn{border:none;border-radius:13px;padding:9px 15px;font-size:13px;font-weight:bold;cursor:pointer;background:#ef4444;color:#fff;margin:3px}
+.bbtn.blue{background:#38bdf8;color:#0f172a}.bbtn.gray{background:#334155}
+.pill{background:#1e293b;border:1px solid #475569;border-radius:99px;padding:4px 11px;font-size:11px}
+.btop{display:flex;justify-content:space-between;width:100%;margin-bottom:6px}
+.bdots{color:#94a3b8;font-size:11px}
 </style>
 </head>
 <body>
-
-<div id="arada">
- <button id="skip" class="btn ghost" onclick="endArada()">ادخل بهدوء 🤫</button>
- <div class="t1">🏰 مملكة التطبيقات</div>
- <div class="t2">الضيوف عندنا بينقبلوا متل ما بيقبلوا بدمشق:<br><b>عراضة شامية، طبل وسيوف، ويا هلا بتعلّي السما</b></div>
- <button class="btn amber" onclick="startArada()">🥁 دوس تنبدأ العراضة</button>
- <div class="proc"><div class="line">🥁 ️  🕺 ️ 🕺 ️ 🗡️</div></div>
- <video id="arVid" style="display:none;max-width:94%;max-height:42vh;border-radius:16px" controls playsinline></video>
- <div id="hala"></div>
-</div>
-
-<div id="farewell" class="hide">
- <div class="t1">🕊️ استودعك الله</div>
- <div class="t2">اللي بودّع المملكة بيطلع منها ومعو:<br><b>خبزة دافية، فنجان قهوة، ودعوة من القلب</b></div>
- <div id="wada"></div>
- <button class="btn amber" onclick="wadaKhubza()">🥖 خذ خبزتك وامشي</button>
- <button class="btn ghost" onclick="endFarewell()">🏰 ارجع لنا متى شئت</button>
-</div>
-
-<button id="replay" onclick="startArada()" title="عراضة!">🥁</button>
-<button id="qahwa" onclick="showCard('🫖☕🌴','صينية القهوة','الدلة عالنا والفنجان بإيدك، والتمر السكري بجانبك. اشرب وريّح قلبك — هاي ضيافة المملكة الكاملة.','ضيافة المملكة ☕')" title="اسكبلي قهوة">☕</button>
-
-<div id="modal" onclick="if(event.target===this)closeM()">
- <div class="mcard">
-  <div class="e" id="mE"></div>
-  <h3 id="mN"></h3>
-  <p id="mD"></p>
-  <div class="tag" id="mT"></div><br>
-  <button id="mL" class="btn ghost" style="display:none;margin-top:8px" onclick="openApp()">🚪 افتح التطبيق</button><br>
-  <button class="btn amber close" onclick="closeM()">✨ كمل التجوال</button>
- </div>
-</div>
-
-<nav>
- <div class="logo">🏰 مملكة التطبيقات</div>
- <div class="links">
-  <a href="#falsafa">الفلسفة</a>
-  <a href="#apps">التطبيقات</a>
-  <a href="#diwan">الديوان 🍽️</a>
-  <a href="#pub">الساحة 🌍</a>
-  <a href="#tannour">التنور</a>
-  <a onclick="startFarewell();return false">🕊️ التوديعة</a>
-  <a onclick="openWorkshop();return false">🔒 الخلوة</a>
- </div>
-</nav>
-
-<header class="hero">
- <div class="castle">🏰</div>
- <h1>مملكة التطبيقات</h1>
- <p>مملكة رقمية دافية، أسسها مهندس ومعلم على تنور الشام.<br>خبزها البساطة، وحُبّها الناس، وضيافتها كاملة: عراضة، مناسف، قهوة، وتوديعة بتعلّي السما.</p>
- <div class="btns">
-  <button class="btn amber" onclick="location.hash='#apps'">ادخل المملكة 🚪</button>
-  <button class="btn ghost" onclick="location.hash='#diwan'">مدّ إيدك ع المناسف 🍽️</button>
- </div>
-</header>
-
-<section id="falsafa">
- <div class="stitle rev"><h2>فلسفة المملكة: <span>بيت ← جيران ← عالم</span></h2>
- <p>كل تطبيق إلو دائرة، وكل دائرة بتخدم اللي بعدها</p></div>
- <div class="philo">
-  <div class="pcard b rev" onclick="showCard('🏠','دائرة البيت','الأساس اللي بيمسك البيت: الذاكرة، المعرفة، البوابة، والمكتبة. من هون بتبلش المملكة.','فلسفة المملكة ✨')"><div class="ic">🏠</div><h3>دائرة البيت</h3><p>الأساس اللي بيمسك البيت: الذاكرة، المعرفة، البوابة، والمكتبة. من هون بتبلش المملكة.</p></div>
-  <div class="pcard j rev" onclick="showCard('🤝','دائرة الجيران','تطبيقات بتخدم الحارة: ترجمة، رسم، قراءة، حسبات. كل تطبيق جار بيده لجارو.','فلسفة المملكة ✨')"><div class="ic">🤝</div><h3>دائرة الجيران</h3><p>تطبيقات بتخدم الحارة: ترجمة، رسم، قراءة، حسبات. كل تطبيق جار بيده لجارو.</p></div>
-  <div class="pcard a rev" onclick="showCard('🌍','دائرة العالم','وجه المملكة قدام الدنيا: الضيافة، السفارة، المِرسال والمكتشف. منستقبل العالم بأدب.','فلسفة المملكة ✨')"><div class="ic">🌍</div><h3>دائرة العالم</h3><p>وجه المملكة قدام الدنيا: الضيافة، السفارة، المِرسال والمكتشف. منستقبل العالم بأدب.</p></div>
- </div>
-</section>
-
-<section id="apps">
- <div class="stitle rev"><h2>سجل <span>المملكة</span></h2><p>خمس وعشرون بصمة، وكل وحدة إلها حكاية — دوس ع أي بطاقة</p></div>
- <div id="circles"></div>
-</section>
-
-<section id="diwan">
- <div class="stitle rev"><h2>ديوان <span>المناسف</span> 🍽️</h2>
- <p>الضيف عندنا ما بيمشي جوعان — مدّ إيدك، كل صحن إلو حكاية</p></div>
- <div class="grid" id="dishGrid"></div>
-</section>
-
-<section id="pub">
- <div class="stitle rev"><h2>ساحة النشر <span>العامة</span> 🌍</h2>
- <p>كل اللي خلصو المهندس وطلع للنور — دوس وشوف البطاقة</p></div>
- <div class="grid" id="pubGrid"></div>
-</section>
-
-<section id="workshop">
- <div class="wbox">
-  <h3>🔧 خلوة المهندس</h3>
-  <p>ما بيشوفها غيرك يا مهندس. اللي بيخلص، بتبعو للساحة بزرار واحد.</p>
-  <div class="wform">
-   <input id="wN" placeholder="اسم الشغل (مثلاً: تنور المملكة)">
-   <input id="wE" placeholder="رمز إيموجي (مثلاً: 🔥)">
-   <textarea id="wD" placeholder="وصف قصير للشغل..."></textarea>
-   <div class="row">
-    <button class="btn amber" onclick="addPriv()">➕ ضيف للورشة</button>
-    <button class="btn ghost" onclick="closeWorkshop()">🔒 اقفل الخلوة</button>
-   </div>
-  </div>
-  <h4>🛠️ قيد الإنجاز (ما بيشوفو غيرك):</h4>
-  <div id="privList"></div>
-  <h4>🌍 المنشور بالساحة:</h4>
-  <div id="pubList"></div>
- </div>
-</section>
-
-<section id="tannour">
- <div class="box rev">
-  <div class="fire">🔥</div>
-  <h3>تنور المملكة</h3>
-  <p>لما راحت البساطة من الدنيا، بنينا تنور رقمي يرجعها.<br>هون بنخبز الأفكار عجينة، وبنقدمها خبز دافي. دوس الزر وخذ خبزتك.</p>
-  <div id="khubza">🥖 التنور موقد... دوس الزر!</div>
-  <button class="btn amber" onclick="bake()">اخبزلي خبزة 🥖</button>
- </div>
-</section>
-
-<section id="story">
- <div class="stitle rev"><h2>حكايتنا <span>من أول قطعه نت</span></h2></div>
- <div class="timeline">
-  <div class="titem rev"><b>القطعه 📡</b><p>انقطع النت نص الفهرس، بس المملكة ما وقفت — كمّلنا من الذاكرة والحب.</p></div>
-  <div class="titem rev"><b>الأسماء العشرون 🏷️</b><p>قعدنا متل العيلة وسمّينا التطبيقات بأسماء من طفولتنا: الدفتر، الصخرة، البوابة، الضيافة...</p></div>
-  <div class="titem rev"><b>الرواق 🏛️</b><p>الناقل الذكي تروّض وصار صالة استقبال المملكة الرسمية.</p></div>
-  <div class="titem rev"><b>الصخرة تبهر الجيران 🪨</b><p>صنايعي من برا شاف الصخرة وقال: "هالتفكير ما صار قبل إلا عندكم".</p></div>
-  <div class="titem rev"><b>رفع العلم 🚩</b><p>اننشر القصر ع الإنترنت، وصار للمملكة عنوان قدام العالم.</p></div>
-  <div class="titem rev"><b>العراضة 🥁</b><p>وصرنا نستقبل الضيوف متل ما بدمشق: طبل، سيوف، ويا هلا بتعلّي السما.</p></div>
-  <div class="titem rev"><b>فنجان القهوة ☕</b><p>قال المهندس: الضيافة بلا قهوة متل العراضة بلا طبل — فانزرعت القهوة بزاوية الاستقبال.</p></div>
-  <div class="titem rev"><b>ديوان المناسف 🍽️</b><p>وانبنى الديوان: منسف ملكي ومقلوبة وكنافة — لأن الضيف عندنا ما بيمشي جوعان.</p></div>
-  <div class="titem rev"><b>التوديعة 🕊️</b><p>وصرنا نودّع الضيف متل ما منستقبلو: استودعك الله، وخبزة بالطريق، ودعوة من القلب.</p></div>
-  <div class="titem rev"><b>المدينة بتبلش 🏗️</b><p>انبنوا أول بيتين بالمدينة: الصخرة ومدينة الحروف — وكل بيت إلو باب ع المملكة.</p></div>
-  <div class="titem rev"><b>الأبواب الأربعة والعشرون 🚪</b><p>تحديث واحد أخير: كل تطبيق صار إلو باب رسمي ع المملكة — البيوت بتضيء لما تنبنى.</p></div>
- </div>
-</section>
-
-<footer>
- <b>مملكة التطبيقات 🏰</b><br>
- أسسها المهندس والمعلم — خبز بحب على تنور الشام ☕<br>
- سليمان للعلم والتعلم 🌿 • ٢٠٢٦<br>
- استودعك الله الذي لا تضيع ودائعه 🕊️
-</footer>
-
+<div class="frame"><div id="stage"></div></div>
 <script>
-const APPS=[
- {n:"صخرة المعرفة",e:"🪨",d:"نتعلم أول وبعدين نختبر — المدرسة اللي أبهرت الصنايعية.",c:"بيت",l:"sakhra.html"},
- {n:"مدينة الحروف",e:"🌿",d:"حروف وأرقام وألوان بتنطق — مدينة الصغار عند سفح الشلال.",c:"بيت",l:"huruf.html"},
- {n:"دفتر المملكة",e:"📒",d:"ذاكرة المملكة وسجلها — كل شي بينحفظ هون.",c:"بيت",l:"daftar.html"},
- {n:"بوابة المملكة",e:"🏠",d:"باب البيت اللي بيفتح للضيوف وبس.",c:"بيت",l:"bawaba.html"},
- {n:"مكتبتي الملكية",e:"📚",d:"كتبك وقراياتك، مرتبة متل مكتبة حقيقية.",c:"بيت",l:"maktaba.html"},
- {n:"السبورة",e:"🎓",d:"سبورة الشرح — يكتب عليها ويتعلم منها الكل.",c:"بيت",l:"saboura.html"},
- {n:"مهندسي المعماري",e:"🏗️",d:"عدّة المهندس لرسم البيوت والمخططات.",c:"بيت",l:"handasi.html"},
- {n:"مترجمي الناطق",e:"📖",d:"يترجم ويحكي — جسر بين اللغات.",c:"جيران",l:"mutarjim.html"},
- {n:"قلمي الناطق",e:"🖊️",d:"الكتابة اللي بتتحول لصوت.",c:"جيران",l:"qalam.html"},
- {n:"مصنع الإيميلات",e:"📧",d:"يصيغ رسائلك بأدب الشوام.",c:"جيران",l:"mail.html"},
- {n:"صراف العملات الذكي",e:"💱",d:"حسباتك وعملاتك، مظبوطة ع الفلّة.",c:"جيران",l:"sarraf.html"},
- {n:"كرتنا الزرقاء",e:"🌍",d:"خريطتك وكرتك الأرضية بلمسة وحدة.",c:"جيران",l:"kora.html"},
- {n:"مرسمي الصغير",e:"🎨",d:"ألوان الطفل اللي جواك.",c:"جيران",l:"marsam.html"},
- {n:"فلاشاتي الذكية",e:"🃏",d:"بطاقات حفظ ذكية — العب وتعلّم.",c:"جيران",l:"flash.html"},
- {n:"موسوعتي الإسلامية",e:"🕌",d:"نور وهداية، موسوعة بقلب دافي.",c:"جيران",l:"islam.html"},
- {n:"استوديو الفيديو الملكي",e:"🎬",d:"صوّر وقصّ وركّب — استوديو بجيبك.",c:"جيران",l:"video.html"},
- {n:"قارئي الذكي",e:"🔊",d:"بيقرأ لك أي نص بصوت حنون.",c:"جيران",l:"qari.html"},
- {n:"روضة الجيب",e:"📱",d:"أول خطوة للصغار — تعلّم ولعب بحب.",c:"جيران",l:"rawda.html"},
- {n:"أسرار جسمي",e:"🫀",d:"اعرف جسمك عضو عضو.",c:"جيران",l:"jismi.html"},
- {n:"ضيافة وترحيب",e:"🛋️",d:"أول وجه بيقابل الضيف — أهلًا وسهلًا.",c:"عالم",l:"diyafa.html"},
- {n:"سفارة الروابط",e:"📎",d:"سفير المملكة بين الروابط والعناوين.",c:"عالم",l:"safara.html"},
- {n:"المِرسال",e:"🕊️",d:"رسول المملكة — يجيب من العالم ويحوّل الصيغ.",c:"عالم",l:"mirsal.html"},
- {n:"المكتشف",e:"🔭",d:"عين المملكة اللي ما بتنام — تلتقط الترند قبل ما يلمع.",c:"عالم",l:"muktashif.html"},
- {n:"الرواق",e:"🏛️",d:"صالة الاستقبال — كل شي بيمرق من هون.",c:"عالم",l:"riwaq.html"},
+const BODY=[
+ {name:"العقل",icon:"🧠",c:"#f472b6",items:[
+  ["المخ","🧠","الزعيم المفكر!","يقرر، يحفظ الذكريات، ويحل الألغاز.","نصفا كرة فيهما مليارات الخلايا العصبية تتواصل بإشارات كهربائية."],
+  ["المخيخ","🤸","سيد التوازن!","يخليك واقف على رجل واحدة وما تقع.","ينسق الحركات والتوازن، ويقع خلف الرأس أسفل المخ."],
+  ["جذع الدماغ","🌱","الحارس الصامت!","يضبط تنفسك ونبض قلبك حتى وأنت نايم.","يصل الدماغ بالنخاع الشوكي ويتحكم بالوظائف الحيوية تلقائيًا."]]},
+ {name:"القلب",icon:"❤️",c:"#ef4444",items:[
+  ["الأذينات","🚪","غرف الاستقبال!","تستقبل الدم الراجع من الجسم والرئتين.","حجرتان علويتان: الأيمن يستقبل دمًا فقيرًا بالأكسجين والأيسر غنيًا به."],
+  ["البطينات","💪","محركات الضخ!","تدفع الدم لكل الجسم بقوة.","حجرتان سفليتان، الأيسر أقوى لأنه يضخ الدم لكامل الجسم."],
+  ["الصمامات","🚦","أبواب باتجاه واحد!","تمنع الدم يرجع للخلف.","تفتح وتغلق مع كل نبضة وتصنع صوت (دوك دوك)."]]},
+ {name:"العظام",icon:"🦴",c:"#e2e8f0",items:[
+  ["الجمجمة","🪖","خوذة قوية!","تحمي عقلك مثل خوذة الدراجة.","8 عظام ملتحمات تشكل صندوقًا متينًا لحماية الدماغ."],
+  ["القفص الصدري","🛡️","درع واقٍ!","يحضن القلب والرئتين ويحميهم.","12 زوجًا من الأضلاع تتحرك كالمنفاخ مع تنفسك."],
+  ["عظمة الفخذ","🏗️","أطول عظمة!","تشيلك وتركض وتقفز.","أطول وأقوى عظمة بالجسم، تحمل وزنك كله."]]},
+ {name:"الأعصاب",icon:"⚡",c:"#facc15",items:[
+  ["العصب البصري","👁️","رسول العين!","يبعت الصور من عينك للدماغ بلمحة بصر.","أكثر من مليون ليف عصبي تنقل الصور لقشرة الرؤية."],
+  ["العصب السمعي","👂","ناقل الأصوات!","تسمع فيه أغنيتك المفضلة.","ينقل اهتزازات الأذن الداخلية كإشارات كهربائية للدماغ."],
+  ["النخاع الشوكي","🛤️","طريق سريع!","يوصل الدماغ بكل الجسم.","حزمة أعصاب بطول 45 سم تمر داخل العمود الفقري."]]},
+ {name:"الكليتان",icon:"🫘",c:"#a78bfa",items:[
+  ["الكلية","🫘","فلتر ذكي!","تنظف الدم مثل الفلتر.","تفلتر نحو 180 لتر دم يوميًا وتنتج البول."],
+  ["الحالب","🚰","أنبوب رفيع!","ينقل البول من الكلية للمثانة.","قناتان بطول 25 سم تدفعان البول بموجات عضلية."],
+  ["المثانة","🎈","بالون تخزين!","تحفظ البول لوقت الحمام.","عضلة مرنة تتمدد وتخزن نحو نصف لتر."]]},
+ {name:"البنكرياس",icon:"🧁",c:"#fb923c",items:[
+  ["الأنسولين","🔑","مفتاح السكر!","بيدخل السكر للخلايا ليعطيك طاقة.","هرمون ينظم مستوى السكر بالدم."],
+  ["العصارات الهاضمة","🧪","مساعد الهضم!","تساعد المعدة تهضم طعامك براحة.","إنزيمات تفكك البروتينات والدهون والنشويات."]]},
+ {name:"المرارة",icon:"💚",c:"#4ade80",items:[
+  ["المرارة","🎈","كيس صغير!","تخزن العصارة الصفراوية.","كيس بشكل إجاصة طوله 10 سم تحت الكبد."],
+  ["العصارة الصفراوية","💚","منظف الدهون!","تهضم الدهون مثل الصابون للصحون.","سائل يصنعه الكبد وتخزنه المرارة."]]},
+ {name:"العمود الفقري",icon:"🏗️",c:"#38bdf8",items:[
+  ["الفقرات","🧱","برج العظام!","33 عظمة تعطيك طولك.","7 عنقية + 12 صدرية + 5 قطنية + عجز وعصعص."],
+  ["الغضاريف","🛢️","وسائد طرية!","حتى ما تحتك الفقرات ببعض.","أنسجة مرنة تمتص الصدمات عند القفز."],
+  ["النخاع بالداخل","🧵","كابل ثمين!","أعصاب محمية داخل العمود.","ينقل أوامر الدماغ للأطراف بأجزاء الثانية."]]}
 ];
-const CIRCLES=[["بيت","🏠 دائرة البيت — اللي بيمسك البيت"],["جيران","🤝 دائرة الجيران — اللي بيخدم الحارة"],["عالم","🌍 دائرة العالم — اللي بيطل ع الدنيا"]];
-document.getElementById("circles").innerHTML=CIRCLES.map(c=>`
- <div class="circle"><h3>${c[1]}</h3><div class="grid">
- ${APPS.filter(a=>a.c===c[0]).map(a=>{const lk=a.l?`'${a.l}'`:'null';return `<div class="app" onclick="showCard('${a.e}','${a.n}','${a.d}','دائرة ${a.c} — من سجل المملكة',${lk})"><div class="e">${a.e}</div><b>${a.n}</b><small>${a.d}</small></div>`}).join("")}
- </div></div>`).join("");
-
-const DISHES=[
- {n:"المنسف الملكي",e:"🍖",d:"سيد المائدة: لحم غنم بلبن الجميد، رز أصفر، وصنوبر محمّص. بيتقدم للضيف الكبير، وبيتأكل بالأصابع وبالعافية."},
- {n:"المقلوبة",e:"🍆",d:"بتتقلب قدام الضيف ليتصفّق لها — باذنجان ورز ولحم، وريحة بتفتح النفس من آخر الحارة."},
- {n:"كبة مقلية",e:"🥟",d:"برغل ولحم وصنوبر — مقرمشة برا، دافية جوّا، ومتل كل شي بالمملكة: محشية حب."},
- {n:"ورق عنب",e:"🍃",d:"ملفوف بإصبع ستّ الحارة، بزيت وزمن وحنان. اللي بيأكل وحدة، بيطلب صحن ثاني."},
- {n:"مقدوس",e:"🫙",d:"مقدوس بلبن وثوم وجوز — فطور الأبطال، ومؤونة الشتاء، وسرّ من أسرار الستّات."},
- {n:"كنافة",e:"🧀",d:"جبن مشطط بسكر وشيرة ومي زهر — ختام المائدة الملكي، وبس تبرد بتظل طيبة."}
-];
-document.getElementById("dishGrid").innerHTML=DISHES.map(d=>`<div class="app" onclick="showCard('${d.e}','${d.n}','${d.d}','من ديوان المملكة 🍽️ — صحتين وعافية!')"><div class="e">${d.e}</div><b>${d.n}</b><small>دوس ومدّ إيدك</small></div>`).join("");
-
-let mLk="";
-function openApp(){if(mLk)location.href=mLk}
-function showCard(e,n,d,t,l){
- document.getElementById("mE").textContent=e;
- document.getElementById("mN").textContent=n;
- document.getElementById("mD").textContent=d;
- document.getElementById("mT").textContent=t;
- mLk=l||"";
- document.getElementById("mL").style.display=l?"inline-block":"none";
- document.getElementById("modal").classList.add("on");
- chime();
+let ci=0,ii=0,L=0,AC=null;
+const stage=document.getElementById("stage");
+function beep(f,d,type,when){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;const t=AC.currentTime+(when||0);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function sWin(){[523,659,784,1047].forEach((f,i)=>beep(f,.18,"triangle",i*.14))}
+document.addEventListener("click",e=>{if(e.target.closest("button,.bimg"))beep(700,.06,"triangle")});
+function speak(t){try{const x=new SpeechSynthesisUtterance(t);x.lang="ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function lvlBtns(){return`<div class="lvl"><button class="${L===0?"on":""}" onclick="setL(0)">🐣 صغير</button><button class="${L===1?"on":""}" onclick="setL(1)">🧒 متوسط</button><button class="${L===2?"on":""}" onclick="setL(2)">🎓 كبير</button></div>`}
+function setL(n){L=n;home()}
+function home(){stage.innerHTML=`<h2>🫀 جسم الإنسان الذكي</h2><div class="bmsg">التطبيق بيكبر معك! اختر مستواك:</div>`+lvlBtns()+`<div class="cats">`+BODY.map((c,i)=>`<button class="cat" style="--c:${c.c}" onclick="openCat(${i})"><span>${c.icon}</span><b>${c.name}</b></button>`).join("")+`</div><div class="bdots">اضغط عضوًا لتكتشف أسرارو!</div>`}
+function topBar(){return`<div class="btop"><button class="bbtn gray" onclick="home()">🏠 الأعضاء</button><span class="pill">${BODY[ci].icon} ${BODY[ci].name}</span></div>`}
+function openCat(i){ci=i;showItem(0)}
+function showItem(i){
+ ii=i;const x=BODY[ci].items[ii],last=(i===BODY[ci].items.length-1);
+ stage.innerHTML=topBar()+
+ `<div class="bimg" onclick="speak('${x[0]}')">${x[1]}</div>
+ <div class="wname">${x[0]}</div>
+ <button class="bbtn" onclick="var d=this.nextElementSibling;if(d.style.display==='block'){d.style.display='none';this.textContent='📖 وظيفتو'}else{d.style.display='block';this.textContent='🔼 إغلاق'}">📖 وظيفتو</button>
+ <div style="display:none;background:#1e293b;border:1px solid #475569;border-radius:12px;padding:10px;font-size:14px;color:#e2e8f0;line-height:1.7;max-width:95%">${x[2+L]}</div>
+ <div><button class="bbtn blue" onclick="showItem(${(i+1)%BODY[ci].items.length})">التالي ⬅️</button></div>
+ <div class="bmsg">${last?"أحسنت! خلصنا "+BODY[ci].name+" 🎉":""}</div>
+ ${last?`<button class="bbtn" onclick="home()">الأعضاء ⭐</button>`:""}
+ <div class="bdots">${i+1} / ${BODY[ci].items.length} • مستوى ${["🐣","","🎓"][L]}</div>`;
+ if(last)sWin();
+ speak(x[0]);
 }
-function closeM(){document.getElementById("modal").classList.remove("on")}
-let AC2=null;
-function chime(){try{AC2=AC2||new (window.AudioContext||window.webkitAudioContext)();const t=AC2.currentTime,o=AC2.createOscillator(),g=AC2.createGain();o.type="sine";o.frequency.setValueAtTime(880,t);o.frequency.setValueAtTime(1320,t+.12);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.connect(g);g.connect(AC2.destination);o.start(t);o.stop(t+.45)}catch(e){}}
-function drum(type){
- try{
-  AC2=AC2||new (window.AudioContext||window.webkitAudioContext)();
-  const t=AC2.currentTime,o=AC2.createOscillator(),g=AC2.createGain();
-  if(type==="d"){o.type="sine";o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(45,t+.25);g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(AC2.destination);o.start(t);o.stop(t+.35)}
-  else{o.type="triangle";o.frequency.setValueAtTime(420,t);g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.09);o.connect(g);g.connect(AC2.destination);o.start(t);o.stop(t+.12)}
- }catch(e){}
-}
-const PAT=["d","t","d","d","t","d","t","t"];
-let drumTimer=null,halaTimer=null;
-const ARADA_VIDEO="";
-function startArada(){
- clearInterval(drumTimer);clearInterval(halaTimer);
- document.getElementById("arada").classList.remove("hide");
- if(ARADA_VIDEO){const v=document.getElementById("arVid");v.src=ARADA_VIDEO;v.style.display="block";try{v.play()}catch(e){}}
- let pi=0;
- drumTimer=setInterval(()=>{drum(PAT[pi++%PAT.length])},260);
- const H=["يا هلا بالضيوف! 🌹","يا هلا بالشرف! 🗡️","مرحبا بالأبطال! 🥁","هلا ومرحبا! 🏰"];
- let hi=0;const hh=document.getElementById("hala");hh.textContent=H[0];
- halaTimer=setInterval(()=>{hh.textContent=H[++hi%H.length]},1600);
- setTimeout(endArada,10000);
-}
-function endArada(){
- clearInterval(drumTimer);clearInterval(halaTimer);
- try{document.getElementById("arVid").pause()}catch(e){}
- document.getElementById("arada").classList.add("hide");
-}
-function startFarewell(){
- document.getElementById("farewell").classList.remove("hide");
- chime();
-}
-function endFarewell(){document.getElementById("farewell").classList.add("hide")}
-function wadaKhubza(){
- document.getElementById("wada").textContent=KHUBAZ[Math.floor(Math.random()*KHUBAZ.length)];
- chime();
-}
-
-let pub=JSON.parse(localStorage.getItem("kingPub")||"null")||[
- {n:"صخرة المعرفة",e:"🪨",d:"المدرسة الدافية — أول منشور رسمي للمملكة.",l:"sakhra.html"},
- {n:"مدينة الحروف",e:"🌿",d:"مدينة الصغار — حروف وأرقام وألوان بتنطق.",l:"huruf.html"},
- {n:"الرواق",e:"🏛️",d:"صالة استقبال المملكة — الناقل الذكي بعد الترويض."},
- {n:"موقع المملكة",e:"🌐",d:"هاد الموقع — خبزنا أول نسخة منه على التنور."}
-];
-let priv=JSON.parse(localStorage.getItem("kingPriv")||"[]");
-function saveK(){localStorage.setItem("kingPub",JSON.stringify(pub));localStorage.setItem("kingPriv",JSON.stringify(priv))}
-function renderPub(){document.getElementById("pubGrid").innerHTML=pub.map(p=>{const lk=p.l?`'${p.l}'`:'null';return `<div class="app" onclick="showCard('${p.e}','${p.n}','${p.d}','منشور بالساحة العامة 🌍',${lk})"><div class="e">${p.e}</div><b>${p.n}</b><small>${p.d}</small></div>`}).join("")}
-function renderPriv(){
- document.getElementById("privList").innerHTML=priv.length?priv.map((p,i)=>`<div class="witem"><span>${p.e} <b>${p.n}</b></span><div><button class="btn amber" onclick="publish(${i})">🌍 طلعا للساحة</button> <button class="btn ghost" onclick="delPriv(${i})">🗑</button></div></div>`).join(""):'<p class="mut">الورشة فاضية — ضيف أول شغل.</p>';
- document.getElementById("pubList").innerHTML=pub.map((p,i)=>`<div class="witem"><span>${p.e} <b>${p.n}</b></span><button class="btn ghost" onclick="unpublish(${i})">🔧 رجعا للورشة</button></div>`).join("");
-}
-function addPriv(){
- const n=document.getElementById("wN").value.trim(),e=document.getElementById("wE").value.trim()||"🛠️",d=document.getElementById("wD").value.trim();
- if(!n){alert("كتب اسم الشغل أول");return}
- priv.push({n,e,d});saveK();
- document.getElementById("wN").value=document.getElementById("wE").value=document.getElementById("wD").value="";
- renderPriv();
-}
-function publish(i){pub.push(priv.splice(i,1)[0]);saveK();renderPriv();renderPub();alert("طلعت للساحة! 🌍")}
-function unpublish(i){priv.push(pub.splice(i,1)[0]);saveK();renderPriv();renderPub()}
-function delPriv(i){if(confirm("متأكد بدك تحذف هالشغل؟")){priv.splice(i,1);saveK();renderPriv()}}
-function openWorkshop(){
- let pin=localStorage.getItem("kingPin");
- if(!pin){
-  const p=prompt("أول مرة هون يا مهندس: حط كلمتك السرية (٤ خانات على الأقل):");
-  if(!p||p.length<4){alert("لازم كلمة ٤ خانات على الأقل");return}
-  localStorage.setItem("kingPin",p);
- }else{
-  const p=prompt("دخل كلمتك السرية 🔑:");
-  if(p!==pin){alert("كلمة غلط — الخلوة للمهندس بس 🔒");return}
- }
- document.getElementById("workshop").style.display="block";
- renderPriv();renderPub();
- location.hash="#workshop";
-}
-function closeWorkshop(){document.getElementById("workshop").style.display="none"}
-
-const KHUBAZ=[
- "اللي بيزرع بقلبو، بيحصد بعين غيرو. 🌱",
- "البيت بلا حب، تنور بلا نار. ❤️",
- "العلم بالصغر، متل النقش على الحجر. 🪨",
- "كلمة حلوة بتفتح أبواب الحديد. 🗝️",
- "الجار القريب ولا الأخ البعيد. 🤝",
- "الدنيا رغيف، والناس شركاء. 🥖",
- "من جدّ وجد، ومن زرع حصد. 🌾",
- "الصبر تنور، والفرج خبزو. ⏳",
- "خذ من التنور خبزك، ومن الدنيا عبرك. 🌅",
- "الرغيف الحامي بيحتاج قلب دافي. 🔥",
- "الضيافة بلا قهوة، متل العراضة بلا طبل. ☕",
- "الضيف أولو فداء، والتوديعة دعاء. 🕊️"
-];
-function bake(){
- const k=document.getElementById("khubza");
- k.style.opacity=0;
- setTimeout(()=>{k.textContent=KHUBAZ[Math.floor(Math.random()*KHUBAZ.length)];k.style.opacity=1},400);
-}
-
-const ob=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)x.target.classList.add("on")}),{threshold:.15});
-document.querySelectorAll(".rev").forEach(el=>ob.observe(el));
-renderPub();
+home();
 </script>
 </body>
 </html>
