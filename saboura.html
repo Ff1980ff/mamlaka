@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>السبورة الذكية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+body{background:#1e293b;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #f59e0b;border-radius:24px;padding:16px;min-height:85vh}
+#stage{min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.cat{background:#334155;border:3px solid var(--c);border-radius:18px;color:#fff;padding:14px 6px;font-size:14px;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:center}
+.cat span{font-size:34px}
+.big{font-size:90px;line-height:1.2;cursor:pointer;animation:drop .7s}
+@keyframes drop{from{transform:translateY(-100px);opacity:0}}
+.bimg{font-size:90px;animation:pop .5s}
+.multi{font-size:38px;letter-spacing:4px;animation:pop .5s}
+@keyframes pop{from{transform:scale(.1)}}
+.ball{width:130px;height:130px;border-radius:50%;animation:pop .5s}
+.wname{font-size:32px;font-weight:bold}
+.bmsg{min-height:20px;color:#e2e8f0;font-size:14px}
+.words{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.wbtn{background:#334155;border:2px solid #475569;border-radius:14px;color:#fff;padding:12px 4px;font-size:16px;font-weight:bold;cursor:pointer}
+.letters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%}
+.lbtn{background:#334155;border:2px solid #475569;border-radius:12px;color:#fff;padding:10px 0;font-size:20px;font-weight:bold;cursor:pointer}
+.bbtn{border:none;border-radius:14px;padding:10px 16px;font-size:14px;font-weight:bold;cursor:pointer;background:#f59e0b;color:#0f172a;margin:4px}
+.bbtn.blue{background:#38bdf8}.bbtn.gray{background:#334155;color:#fff}
+.pill{background:#1e293b;border:1px solid #475569;border-radius:99px;padding:5px 12px;font-size:12px}
+.btop{display:flex;justify-content:space-between;width:100%;margin-bottom:6px}
+.bdots{color:#94a3b8;font-size:12px}
+</style>
+</head>
+<body>
+<div class="frame"><div id="stage"></div></div>
+<script>
+const AR=[
+ {l:"ا",w:[["أرنب","🐰"],["أسد","🦁"],["أناناس","🍍"],["أخطبوط","🐙"]]},
+ {l:"ب",w:[["بطة","🦆"],["باب","🚪"],["برتقالة","🍊"],["بقرة","🐄"]]},
+ {l:"ت",w:[["تفاحة","🍎"],["تمساح","🐊"],["تاج","👑"],["توت","🫐"]]},
+ {l:"ث",w:[["ثعلب","🦊"],["ثعبان","🐍"],["ثوم","🧄"],["ثلج","❄️"]]},
+ {l:"ج",w:[["جمل","🐪"],["جبنة","🧀"],["جرس","🔔"],["جزر","🥕"]]},
+ {l:"ح",w:[["حصان","🐴"],["حقيبة","🎒"],["حوت","🐳"],["حلزون","🐌"]]},
+ {l:"خ",w:[["خروف","🐑"],["خبز","🍞"],["خيار","🥒"],["خاتم","💍"]]},
+ {l:"د",w:[["دب","🐻"],["دجاجة","🐔"],["دولاب","🎡"],["دبوس","📌"]]},
+ {l:"ذ",w:[["ذرة","🌽"],["ذئب","🐺"],["ذبابة","🪰"],["ذهب","🪙"]]},
+ {l:"ر",w:[["روبوت","🤖"],["ريشة","🪶"],["رعد","⚡"],["رجل","🦵"]]},
+ {l:"ز",w:[["زرافة","🦒"],["زهرة","🌸"],["زيتون","🫒"],["زورق","⛵"]]},
+ {l:"س",w:[["سمكة","🐟"],["سيارة","🚗"],["ساعة","⏰"],["سيف","⚔️"]]},
+ {l:"ش",w:[["شمس","☀️"],["شجرة","🌳"],["شاي","🍵"],["شرطي","👮"]]},
+ {l:"ص",w:[["صقر","🦅"],["صندوق","📦"],["صاروخ","🚀"],["صدف","🐚"]]},
+ {l:"ض",w:[["ضفدع","🐸"],["ضرس","🦷"],["ضوء","💡"],["ضباب","🌫️"]]},
+ {l:"ط",w:[["طائرة","✈️"],["طاووس","🦚"],["طبل","🥁"],["طماطم","🍅"]]},
+ {l:"ظ",w:[["ظرف","✉️"],["ظربان","🦨"],["ظلام","🌑"],["ظبي","🦌"]]},
+ {l:"ع",w:[["عنب","🍇"],["عصفور","🐦"],["عين","👁️"],["عقرب","🦂"]]},
+ {l:"غ",w:[["غزال","🦌"],["غيمة","☁️"],["غوريلا","🦍"],["غيتار","🎸"]]},
+ {l:"ف",w:[["فيل","🐘"],["فراشة","🦋"],["فراولة","🍓"],["فنجان","☕"]]},
+ {l:"ق",w:[["قمر","🌙"],["قرد","🐵"],["قطة","🐱"],["قلب","❤️"]]},
+ {l:"ك",w:[["كتاب","📖"],["كرة","⚽"],["كلب","🐶"],["كأس","🏆"]]},
+ {l:"ل",w:[["ليمون","🍋"],["لبن","🥛"],["لعبة","🧸"],["لحم","🍖"]]},
+ {l:"م",w:[["موز","🍌"],["ماء","💧"],["منزل","🏠"],["مفتاح","🔑"]]},
+ {l:"ن",w:[["نجمة","⭐"],["نار","🔥"],["نحل","🐝"],["نظارة","👓"]]},
+ {l:"ه",w:[["هدية","🎁"],["هاتف","📱"],["هر","🐈"],["هلال","🌙"]]},
+ {l:"و",w:[["وردة","🌹"],["وجه","😀"],["وزة","🦢"],["وعاء","🏺"]]},
+ {l:"ي",w:[["يد","✋"],["يقطين","🎃"],["يمامة","🕊️"],["يخت","🛥️"]]}
+];
+const EN=[
+ {l:"A",w:[["Apple","🍎"],["Ant","🐜"],["Airplane","✈️"]]},
+ {l:"B",w:[["Ball","⚽"],["Bear","🐻"],["Banana","🍌"]]},
+ {l:"C",w:[["Cat","🐱"],["Car","🚗"],["Cake","🎂"]]},
+ {l:"D",w:[["Dog","🐶"],["Duck","🦆"],["Door","🚪"]]},
+ {l:"E",w:[["Egg","🥚"],["Elephant","🐘"],["Eye","👁️"]]},
+ {l:"F",w:[["Fish","🐟"],["Flower","🌸"],["Fire","🔥"]]},
+ {l:"G",w:[["Goat","🐐"],["Grapes","🍇"],["Gift","🎁"]]},
+ {l:"H",w:[["Hat","🎩"],["Horse","🐴"],["House","🏠"]]},
+ {l:"I",w:[["Ice","🧊"],["Ice cream","🍦"],["Insect","🐛"]]},
+ {l:"J",w:[["Juice","🧃"],["Jeans","👖"],["Jet","🛩️"]]},
+ {l:"K",w:[["Kite","🪁"],["Key","🔑"],["Kiwi","🥝"]]},
+ {l:"L",w:[["Lion","🦁"],["Lemon","🍋"],["Lamp","💡"]]},
+ {l:"M",w:[["Moon","🌙"],["Milk","🥛"],["Mouse","🐭"]]},
+ {l:"N",w:[["Nose","👃"],["Night","🌃"],["Nut","🥜"]]},
+ {l:"O",w:[["Orange","🍊"],["Owl","🦉"],["Octopus","🐙"]]},
+ {l:"P",w:[["Pizza","🍕"],["Pen","🖊️"],["Pig","🐷"]]},
+ {l:"Q",w:[["Queen","👸"],["Question","❓"],["Quack","🦆"]]},
+ {l:"R",w:[["Rabbit","🐰"],["Rose","🌹"],["Robot","🤖"]]},
+ {l:"S",w:[["Sun","☀️"],["Star","⭐"],["Snake","🐍"]]},
+ {l:"T",w:[["Tiger","🐯"],["Tomato","🍅"],["Tree","🌳"]]},
+ {l:"U",w:[["Umbrella","☂️"],["Unicorn","🦄"],["Up","⬆️"]]},
+ {l:"V",w:[["Violin","🎻"],["Van","🚐"],["Volcano","🌋"]]},
+ {l:"W",w:[["Water","💧"],["Watch","⌚"],["Wolf","🐺"]]},
+ {l:"X",w:[["Xylophone","🎵"],["X","❌"],["Fox","🦊"]]},
+ {l:"Y",w:[["Yo-yo","🪀"],["Yellow","🟡"],["Yacht","🛥️"]]},
+ {l:"Z",w:[["Zebra","🦓"],["Zero","0️⃣"],["Zip","🤐"]]}
+];
+const SHAPES=[["دائرة","🔴"],["مربع","🟦"],["مثلث","🔺"],["نجمة","⭐"],["قلب","❤️"],["هلال","🌙"],["معين","🔶"],["حلقة","⭕"]];
+const COLORS=[["أحمر","#ef4444"],["أزرق","#3b82f6"],["أصفر","#facc15"],["أخضر","#22c55e"],["برتقالي","#f97316"],["بنفسجي","#a855f7"],["وردي","#ec4899"],["بني","#92400e"]];
+const VEG=[["طماطم","🍅"],["جزر","🥕"],["بطاطا","🥔"],["خيار","🥒"],["ذرة","🌽"],["باذنجان","🍆"],["بروكلي","🥦"],["فطر","🍄"]];
+const FRUIT=[["موز","🍌"],["تفاح","🍎"],["عنب","🍇"],["برتقال","🍊"],["فراولة","🍓"],["بطيخ","🍉"],["أناناس","🍍"],["كرز","🍒"]];
+const MATH=[
+ ["واحد ١",""],["اثنان ٢","🍎"],["ثلاثة ٣","🐱🐱"],["أربعة ٤",""],
+ ["خمسة ","⭐⭐⭐⭐⭐"],["ستة ٦",""],["سبعة ٧","🍓🍓"],
+ ["ثمانية ٨","🐟🐟"],["تسعة ٩","🌸🌸"],["عشرة ١٠","⚽⚽⚽⚽⚽"]
+];
+const ISLAM=[
+ ["الشهادتان","🕋","أشهد أن لا إله إلا الله وأن محمدًا رسول الله."],
+ ["الصلاة","🕌","عمود الدين، نصليها خمس مرات باليوم."],
+ ["الزكاة","🤲","إعطاء الفقراء حقهم من المال، تطهّر القلب والمال."],
+ ["الصيام","🌙","نصوم شهر رمضان من الفجر إلى المغرب."],
+ ["الحج","🐪","زيارة بيت الله الحرام لمن استطاع إليه سبيلاً."],
+ ["بسم الله","✨","نبدأ فيها كل شيء جميل."],
+ ["الحمد لله","📿","نقولها شكرًا لله على نعمه."],
+ ["السلام عليكم","🕊️","أجمل تحية بين المسلمين."]
+];
+const SPORT=[
+ ["كرة القدم","⚽","يلعبها 11 لاعبًا بكل فريق، والفائز من يسجل أهدافًا أكثر."],
+ ["كرة السلة","🏀","الرمية داخل الطوق بنقطتين، ومن خارج القوس بثلاث نقاط."],
+ ["السباحة","🏊","تقوي كل عضلات الجسم، وتعلّمها يحميك من الغرق."],
+ ["الجري","🏃","أبسط رياضة: 10 دقائق يوميًا تقوي قلبك وتحسّن مزاجك."],
+ ["التنس","🎾","تُلعب بالمضرب والكرة، فوق ملعب يتوسطه شبكة."],
+ ["ركوب الخيل","🏇","رياضة عربية أصيلة، تعلّم التوازن والشجاعة."],
+ ["الملاكمة","🥊","رياضة دفاع عن النفس، تحتاج قوة وتركيزًا عاليًا."],
+ ["الدراجات","🚴","متعة ونشاط، تقوي الأرجل وصديقة للبيئة."]
+];
+const CATS=[
+ {id:"ar",name:"حروف عربية",icon:"🔤",c:"#f59e0b",type:"letters",lang:"ar-SA",data:AR},
+ {id:"en",name:"حروف إنجليزية",icon:"🅰️",c:"#38bdf8",type:"letters",lang:"en-US",data:EN},
+ {id:"shapes",name:"أشكال",icon:"🔺",c:"#a78bfa",type:"items",data:SHAPES},
+ {id:"colors",name:"ألوان",icon:"🎨",c:"#f472b6",type:"colors",data:COLORS},
+ {id:"veg",name:"خضروات",icon:"🥕",c:"#4ade80",type:"items",data:VEG},
+ {id:"fruit",name:"فواكه",icon:"🍓",c:"#fb7185",type:"items",data:FRUIT},
+ {id:"math",name:"رياضيات",icon:"🔢",c:"#22d3ee",type:"items",data:MATH},
+ {id:"islam",name:"تربية إسلامية",icon:"🕌",c:"#34d399",type:"items",data:ISLAM},
+ {id:"sport",name:"رياضة",icon:"⚽",c:"#a3e635",type:"items",data:SPORT}
+];
+let AC=null;
+function beep(f,d,type,when){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+ const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;
+ const t=AC.currentTime+(when||0);g.gain.setValueAtTime(.25,t);
+ g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);
+ o.start(t);o.stop(t+d+.05)}catch(e){}}
+function sGood(){beep(523,.1);beep(784,.15,"sine",.1)}
+function sWin(){[523,659,784,1047,1319].forEach((f,i)=>beep(f,.18,"triangle",i*.14))}
+const PAL=["#f87171","#fbbf24","#4ade80","#38bdf8","#e879f9","#fb923c"];
+const NOJOIN=["ا","أ","إ","آ","د","ذ","ر","ز","و","ؤ","ء","ة","ى"," "];
+function colorWord(w){
+ let h="";
+ for(let i=0;i<w.length;i++){
+  const ch=w[i],c=PAL[i%PAL.length];
+  const pre=(i>0&&!NOJOIN.includes(w[i-1]))?"\u200D":"";
+  const post=(i<w.length-1&&!NOJOIN.includes(ch))?"\u200D":"";
+  h+=`<span style="color:${c}">${pre}${ch}${post}</span>`;
+ }
+ return h;
+}
+function speak(t,lang){try{const u=new SpeechSynthesisUtterance(t);
+ u.lang=lang||"ar-SA";speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+let bcat=null,bli=0;
+const stage=document.getElementById("stage");
+function home(){
+ bcat=null;
+ stage.innerHTML=`<h2 style="margin-bottom:8px">🎓 السبورة الذكية</h2>
+ <div class="cats">`+CATS.map(c=>
+ `<button class="cat" style="--c:${c.c}" onclick="openCat('${c.id}')">
+  <span>${c.icon}</span><b>${c.name}</b></button>`).join("")+
+ `</div><div class="bdots">اضغط قسمًا لتبدأ التعلم!</div>`;
+}
+function topBar(){
+ return `<div class="btop"><button class="bbtn gray" onclick="home()">🏠 الأقسام</button>
+ <span class="pill">${bcat.icon} ${bcat.name}</span></div>`;
+}
+function openCat(id){
+ bcat=CATS.find(c=>c.id===id);bli=0;
+ if(bcat.type==="letters")showLetters();else showItem(0);
+}
+function showLetters(){
+ stage.innerHTML=topBar()+
+  `<div class="bmsg">اختر حرفًا! 👇</div>
+   <div class="letters">`+bcat.data.map((d,i)=>
+   `<button class="lbtn" onclick="showLetter(${i})">${d.l}</button>`).join("")+`</div>`;
+}
+function showLetter(i){
+ bli=i;const d=bcat.data[bli];
+ stage.innerHTML=topBar()+
+  `<div class="big" onclick="showWords()">${d.l}</div>
+   <div class="bmsg">اضغط على الحرف! 👆</div>
+   <button class="bbtn gray" onclick="showLetters()">🔙 كل الحروف</button>
+   <div class="bdots">حرف ${bli+1} من ${bcat.data.length}</div>`;
+ speak(bcat.lang==="en-US"?d.l:("حرف "+d.l),bcat.lang);
+}
+function showWords(){
+ const d=bcat.data[bli];
+ stage.innerHTML=topBar()+
+  `<div class="bmsg">كلمات فيها حرف ${d.l} 👇</div>
+   <div class="words">`+d.w.map((x,i)=>
+   `<button class="wbtn" onclick="showImg(${i})">${colorWord(x[0])}</button>`).join("")+
+   `</div><button class="bbtn gray" onclick="showLetter(${bli})">🔙 رجوع</button>`;
+ speak(bcat.lang==="en-US"?"Letter "+d.l:("كلمات فيها حرف "+d.l),bcat.lang);
+}
+function showImg(i){
+ const d=bcat.data[bli],x=d.w[i],last=(i===d.w.length-1);
+ stage.innerHTML=topBar()+
+  `<div class="bimg">${x[1]}</div><div class="wname">${colorWord(x[0])}</div>
+   <div><button class="bbtn blue" onclick="showImg(${(i+1)%d.w.length})">التالي ⬅️</button>
+   <button class="bbtn gray" onclick="showWords()">الكلمات 🔤</button></div>
+   <div class="bmsg">${last?"أحسنت! خلصت كلمات الحرف 🎉":""}</div>
+   ${last?`<button class="bbtn" onclick="showLetters()">كل الحروف ⭐</button>`:""}
+   <div class="bdots">كلمة ${i+1} من ${d.w.length}</div>`;
+ if(last)sWin();
+ speak(x[0],bcat.lang);
+}
+function showItem(i){
+ const x=bcat.data[i],last=(i===bcat.data.length-1);
+ const visual=bcat.type==="colors"
+  ?`<div class="ball" style="background:${x[1]}"></div>`
+  :`<div class="${x[1].length>4?"multi":"bimg"}">${x[1]}</div>`;
+ const detail=x[2]?`<button class="bbtn" onclick="var d=this.nextElementSibling;if(d.style.display==='block'){d.style.display='none';this.textContent='📖 اعرف أكثر'}else{d.style.display='block';this.textContent='🔼 إغلاق'}">📖 اعرف أكثر</button>
+ <div style="display:none;background:#1e293b;border:1px solid #475569;border-radius:12px;padding:10px;font-size:14px;color:#e2e8f0;line-height:1.7">${x[2]}</div>`:"";
+ stage.innerHTML=topBar()+visual+
+  `<div class="wname">${colorWord(x[0])}</div>`+detail+
+  `<div><button class="bbtn blue" onclick="showItem(${(i+1)%bcat.data.length})">التالي ⬅️</button></div>
+  <div class="bmsg">${last?"أحسنت! خلصنا قسم "+bcat.name+" 🎉":""}</div>
+  ${last?`<button class="bbtn" onclick="home()">الأقسام ⭐</button>`:""}
+  <div class="bdots">${i+1} / ${bcat.data.length}</div>`;
+ if(last)sWin();
+ speak(x[0],bcat.lang);
+}
+home();
+</script>
+</body>
+</html>
