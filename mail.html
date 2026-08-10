@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مصنع الإيميلات</title><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}body{background:linear-gradient(160deg,#7f1d1d,#450a0a);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #f87171;border-radius:24px;padding:16px;min-height:85vh}h2{text-align:center;color:#fca5a5;font-size:20px}.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 12px}select,input,textarea{width:100%;border:0;border-radius:12px;padding:11px;font-size:14px;background:#1e293b;color:#fff;outline:0;border:1px solid #334155;margin-bottom:8px}textarea{min-height:180px;line-height:1.9;font-size:14px}.btn{border:0;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;background:#f87171;color:#450a0a;width:100%;margin-bottom:6px}.btn.g{background:#22c55e;color:#fff}
+</style></head><body><div class="frame">
+<h2>📧 مصنع الإيميلات</h2><div class="sub">عبّي الخانات — والمصنع بيطلعلك إيميل رسمي جاهز!</div>
+<select id="tp"><option value="job">💼 طلب عمل</option><option value="comp">⚖️ شكوى رسمية</option><option value="thx">💐 شكر وتقدير</option><option value="ask">❓ استفسار</option><option value="sry">🙏 اعتذار</option></select>
+<input id="nm" placeholder="اسمك الكامل">
+<input id="rc" placeholder="المرسل إليه (مثلا: مدير الشركة المحترم)">
+<input id="sb" placeholder="الموضوع (مثلا: وظيفة معلم)">
+<button class="btn" onclick="make()">⚙️ اصنع الإيميل</button>
+<textarea id="out" placeholder="هون بيطلع الإيميل الجاهز..."></textarea>
+<button class="btn g" onclick="copy()">📋 نسخ الإيميل</button>
+</div><script>
+const T={
+job:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، أتقدم إليكم بطلب الانضمام لفريقكم بخصوص: ${s}.\nأرفق لكم نبذة عن خبرتي ومهاراتي، وآمل بفرصة للقاء والتعارف.\nمع فائق الاحترام والتقدير،\n${n}`,
+comp:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، أرفع لكم شكواي بخصوص: ${s}.\nراجيًا من سيادتكم النظر بالموضوع ومعالجته بأسرع وقت، وثقتي بكم كبيرة بإنصافي.\nوتفضلوا بقبول فائق الاحترام،\n${n}`,
+thx:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، ويسعدني أن أتقدم لكم بأصدق عبارات الشكر والتقدير على: ${s}.\nجهودكم الطيبة لا تقدر بثمن، ووجودكم نعمة حقيقية.\nدمتم بخير وعافية،\n${n}`,
+ask:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، وأود الاستفسار بخصوص: ${s}.\nسأكون شاكرًا لكم تزويدي بالتفاصيل اللازمة، ولكم مني جزيل الشكر.\nمع الاحترام،\n${n}`,
+sry:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، وأتقدم إليكم باعتذاري الصادق بخصوص: ${s}.\nلم يكن ذلك بقصد مني، وأعدكم بتدارك الأمر بأفضل صورة.\nتقبلوا اعتذاري مع خالص تقديري،\n${n}`
+};
+function make(){
+ const n=document.getElementById("nm").value.trim()||"(اسمك)";
+ const r=document.getElementById("rc").value.trim()||"(الجهة المحترمة)";
+ const s=document.getElementById("sb").value.trim()||"(الموضوع)";
+ document.getElementById("out").value=T[document.getElementById("tp").value](n,r,s);
+}
+function copy(){
+ const t=document.getElementById("out").value;
+ if(!t){alert("اصنع الإيميل أولًا");return}
+ const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+ alert("اننسخ الإيميل! 📋 الصقو بأي بريد");
+}
+</script></body></html>
