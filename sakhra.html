@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>صخرة المعرفة</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#312e81,#0c1030);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:480px;background:#0f172a;border:6px solid #a855f7;border-radius:24px;padding:16px;min-height:85vh}
+h2{text-align:center;font-size:20px;color:#d8b4fe}
+.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 12px}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.tabs button{border:1px solid #a855f7;border-radius:99px;padding:9px 10px;font-size:11px;font-weight:bold;cursor:pointer;background:transparent;color:#d8b4fe}
+.tabs button.on{background:#a855f7;color:#fff}
+.qcard{background:#1e293b;border:2px solid #a855f7;border-radius:18px;padding:18px;text-align:center}
+.qq{font-size:19px;font-weight:bold;line-height:1.8;min-height:60px}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.opts button{border:none;border-radius:14px;padding:13px;font-size:15px;font-weight:bold;cursor:pointer;background:#334155;color:#fff}
+.opts button.ok{background:#22c55e}.opts button.no{background:#ef4444}
+.bar{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.btn{border:none;border-radius:12px;padding:11px 16px;font-size:13px;font-weight:bold;cursor:pointer;background:#a855f7;color:#fff}
+.btn.g{background:#22c55e}.btn.gr{background:#334155}
+.score{text-align:center;font-size:13px;color:#d8b4fe;margin-top:8px}
+input,select{width:100%;border:none;border-radius:12px;padding:11px;font-size:14px;background:#1e293b;color:#fff;outline:none;border:1px solid #334155;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.app{background:#1e293b;border:2px solid #334155;border-radius:16px;padding:12px 4px;text-align:center;cursor:pointer}
+.app span{font-size:30px}.app b{font-size:10px;display:block}
+.les{background:#1e293b;border:1px solid #a855f7;border-radius:14px;padding:12px;margin-bottom:8px;cursor:pointer;text-align:center;font-weight:bold;font-size:15px}
+.lesT{background:#1e293b;border:2px solid #22c55e;border-radius:16px;padding:16px;font-size:16px;line-height:2;text-align:center}
+#runner{display:none;position:fixed;inset:0;background:#000;z-index:60}
+#runner iframe{width:100%;height:100%;border:none}
+#runClose{position:fixed;top:10px;left:10px;z-index:61;border:none;border-radius:99px;background:#ef4444;color:#fff;padding:9px 16px;font-weight:bold;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>🪨 صخرة المعرفة</h2>
+<div class="sub">نتعلم أول 📖 وبعدين نختبر 🎯</div>
+<div class="tabs" id="tabs"></div>
+<div id="view"></div>
+</div>
+<div id="runner"><button id="runClose" onclick="closeRun()">✖ إغلاق</button><iframe id="runFrame"></iframe></div>
+<script>
+const LES=[
+["🪐 المجموعة الشمسية","ثمانية كواكب تدور حول الشمس: عطارد، الزهرة، الأرض، المريخ، المشتري، زحل، أورانوس، نبتون. الأرض بيتنا، والشمس نجم يمنحنا الضوء والحرارة، والقمر تابع الأرض يدور حولها."],
+["💧 حالات المادة","المادة بثلاث حالات: صلبة (كالثلث والحجر)، سائلة (كالماء والزيت)، غازية (كبخار الماء والهواء). الماء إذا تجمد صار ثلجًا، وإذا غلى صار بخارًا."],
+["🫀 جسم الإنسان","القلب يضخ الدم، الرئتان تتنفسان، الدماغ يقود الجسم، والجلد يغطيه. في جسم الإنسان البالغ ٢٠٦ عظمة، وأكبر عضو هو الجلد."],
+["🌱 النباتات","تصنع طعامها بنفسها من ضوء الشمس، وتمتص الماء بجذورها، وتمنحنا الأكسجين الذي نتنفسه. بدون النباتات ما في حياة!"],
+["🐾 عالم الحيوان","منها ثدييات (القطة)، وطيور (النسر)، وأسماك (التونة)، وزواحف (السحلية). الفهد أسرع حيوان بري، والحوت الأزرق أضخم كائن عاش بالتاريخ."],
+["🌧️ دورة الماء","الشمس تسخّن البحار ← يصعد البخار ← يتجمع غيومًا ← يهطل مطرًا ← يعود للبحار. حلقة ما بتوقف أبدًا!"],
+["👁️ الحواس الخمس","البصر بالعين، السمع بالأذن، الشم بالأنف، التذوق باللسان، اللمس بالجلد. فيهن منعرف العالم كله."],
+["🌍 كوكب الأرض","سبع قارات وخمس محيطات. أكبر قارة آسيا، وأكبر محيط الهادئ، وأطول نهر النيل، وأكبر صحراء الصحراء الكبرى."],
+["⚡ الطاقة","الشمس المصدر الرئيسي للطاقة على الأرض. الكهرباء تسير بالأسلاك، والضوء أسرع شي بالكون — يقطع ٣٠٠ ألف كيلومتر بالثانية!"],
+["🧲 المغناطيس","إلو قطبان: شمالي وجنوبي. الأقطاب المتشابهة تتنافر، والمختلفة تتجاذب. بيستعملوه بالبوصلة لتدل على الشمال."]
+];
+const SCI=[["أكبر كوكب بالمجموعة الشمسية؟","المشتري","الأرض","المريخ","زحل",0],["الغاز اللي بتمتصه النباتات؟","ثاني أكسيد الكربون","الأكسجين","الهيدروجين","النيتروجين",0],["درجة غليان الماء؟","100","50","80","120",0],["العضو اللي بيضخ الدم؟","القلب","الكبد","الرئة","الكلية",0],["كم عظمة بجسم الإنسان البالغ؟","206","106","306","150",0],["أقرب نجم للأرض؟","الشمس","القمر","المريخ","الشعرى",0],["أسرع حيوان بري؟","الفهد","الأسد","الحصان","الغزال",0],["بكم رجل العنكبوت؟","8","6","10","4",0],["شو بيصنع النحل؟","العسل","الحليب","الحرير","الشمع فقط",0],["الكوكب الأحمر؟","المريخ","زحل","عطارد","نبتون",0],["أقسى مادة طبيعية؟","الألماس","الحديد","الذهب","الصخر",0],["شو بنستنشق للتنفس؟","الأكسجين","ثاني أكسيد الكربون","الهيليوم","النيتروجين",0],["أكبر عضو بجسم الإنسان؟","الجلد","القلب","الكبد","الدماغ",0],["طير ما بيطير وبيركض سريع؟","النعامة","النسر","الحمام","الببغاء",0],["صغير الضفدع شو اسمو؟","شرغوف","ديدم","جحش","خروف",0],["حالة الماء المتجمد؟","صلبة","سائلة","غازية","بلازما",0],["كم قارة بالأرض؟","7","5","6","8",0],["المصدر الرئيسي لطاقة الأرض؟","الشمس","القمر","الرياح","الفحم",0],["عضو السمع؟","الأذن","العين","اللسان","الأنف",0],["كم قلب للأخطبوط؟","3","1","2","4",0],["أضخم كائن بالتاريخ؟","الحوت الأزرق","الفيل","الديناصور","الحصان",0],["كم محيط بالأرض؟","5","4","6","3",0],["أسرع شي بالكون؟","الضوء","الصوت","الطيارة","الصاروخ",0],["أقطاب المغناطيس؟","شمالي وجنوبي","شرقي وغربي","فوق وتحت","يمين ويسار",0]];
+const SOC=[["عاصمة سوريا؟","دمشق","حلب","حمص","اللاذقية",0],["أطول نهر بالعالم؟","النيل","الفرات","الأمازون","دجلة",0],["أكبر صحراء؟","الصحراء الكبرى","صحراء العرب","غوبي","سيناء",0],["بلد الحرمين الشريفين؟","السعودية","مصر","العراق","اليمن",0],["عاصمة مصر؟","القاهرة","الإسكندرية","أسوان","الجيزة",0],["بلاد الرافدين؟","العراق","الشام","فارس","الروم",0],["أعمق محيط؟","الهادئ","الأطلسي","الهندي","المتجمد",0],["بلاد الفراعنة؟","مصر","الهند","الصين","اليونان",0],["عاصمة الأردن؟","عمّان","إربد","الزرقاء","العقبة",0],["البتراء الوردية بأي بلد؟","الأردن","مصر","سوريا","لبنان",0],["عاصمة تركيا؟","أنقرة","إسطنبول","إزمير","بورصة",0],["سوريا بأي قارة؟","آسيا","أفريقيا","أوروبا","أمريكا",0],["نهر يمر بسوريا؟","الفرات","النيل","الأردن","العاصي فقط",0],["أكبر بلد مساحة؟","روسيا","الصين","أمريكا","كندا",0],["بلاد الشمس المشرقة؟","اليابان","الصين","الهند","كوريا",0],["عاصمة فرنسا؟","باريس","لندن","برلين","روما",0],["السور العظيم بأي بلد؟","الصين","اليابان","الهند","مصر",0],["أقدم مدينة مأهولة بالتاريخ؟","دمشق","بغداد","أثينا","روما",0]];
+let extra=JSON.parse(localStorage.getItem("rockQ")||"[]");
+let SC={sci:0,soc:0,mat:0},qo=null,locked=false;
+try{SC=JSON.parse(localStorage.getItem("rockScore"))||SC}catch(e){}
+const TABS=[["les","📖 دروس"],["sci","🔬 علوم"],["soc","🌍 اجتماع"],["mat","➗ رياضيات"],["add","➕ أسئلتي"],["wasl","🔗 وصل"]];
+let tab="les";
+function renderTabs(){document.getElementById("tabs").innerHTML=TABS.map(t=>`<button class="${t[0]===tab?"on":""}" onclick="setTab('${t[0]}')">${t[1]}</button>`).join("")}
+function setTab(t){tab=t;renderTabs();view()}
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+function mkBank(q){const opts=[q[1],q[2],q[3],q[4]].map((o,i)=>({o,c:i===q[5]}));return{q:q[0],opts:shuffle(opts)}}
+function mkMath(){
+ const lv=Math.floor(Math.random()*3);let a,b,op,ans;
+ if(lv===0){a=1+Math.floor(Math.random()*20);b=1+Math.floor(Math.random()*20);op="+";ans=a+b}
+ else if(lv===1){a=10+Math.floor(Math.random()*40);b=1+Math.floor(Math.random()*9);op="-";ans=a-b}
+ else{a=2+Math.floor(Math.random()*11);b=2+Math.floor(Math.random()*9);op="×";ans=a*b}
+ const opts=[{o:String(ans),c:true}];
+ while(opts.length<4){const w=String(ans+Math.floor(Math.random()*11)-5);if(!opts.find(x=>x.o===w)&&+w>=0)opts.push({o:w,c:false})}
+ return{q:"🧮 "+a+" "+op+" "+b+" = ؟",opts:shuffle(opts)};
+}
+let bankQ=[],bi=0;
+function view(){
+ const v=document.getElementById("view");
+ if(tab==="wasl"){waslView();return}
+ if(tab==="les"){v.innerHTML=LES.map((l,i)=>`<div class="les" onclick="openLes(${i})">${l[0]}</div>`).join("");return}
+ if(tab==="add"){v.innerHTML=`<select id="aS"><option value="sci">🔬 علوم</option><option value="soc">🌍 اجتماعيات</option></select><input id="aQ" placeholder="نص السؤال"><input id="a1" placeholder="الجواب الصحيح ✔"><input id="a2" placeholder="خاطئ 1"><input id="a3" placeholder="خاطئ 2"><input id="a4" placeholder="خاطئ 3"><button class="btn g" onclick="addQ()">💾 حفظ السؤال</button><div class="score">عندك ${extra.length} سؤال خاص</div>`;return}
+ bankQ=[];bi=0;
+ v.innerHTML=`<div class="qcard"><div class="qq" id="qq"></div><div class="opts" id="opts"></div></div>
+ <div class="bar"><button class="btn" onclick="nextQ()">السؤال التالي ⬅️</button><button class="btn gr" onclick="view()">🔄 إعادة</button></div>
+ <div class="score" id="sc"></div>`;
+ nextQ();
+}
+function openLes(i){
+ document.getElementById("view").innerHTML=`<div class="lesT"><h3 style="color:#22c55e;margin-bottom:10px">${LES[i][0]}</h3>${LES[i][1]}</div>
+ <div class="bar"><button class="btn g" onclick="setTab('sci')">🎯 تعلّمت — اختبرني!</button><button class="btn gr" onclick="setTab('les')">🔙 الدروس</button></div>`;
+}
+function nextQ(){
+ locked=false;
+ if(tab==="mat")qo=mkMath();
+ else{
+  if(!bankQ.length){bankQ=shuffle([...(tab==="sci"?SCI:SOC),...extra.filter(x=>x.s===tab)]);bi=0}
+  if(bi>=bankQ.length)bi=0;
+  qo=mkBank(bankQ[bi++]);
+ }
+ document.getElementById("qq").textContent=qo.q;
+ document.getElementById("opts").innerHTML=qo.opts.map((o,i)=>`<button onclick="ans(${i},this)">${o.o}</button>`).join("");
+ updScore();
+}
+function ans(i,el){
+ if(locked)return;locked=true;
+ const ok=qo.opts[i].c;
+ el.classList.add(ok?"ok":"no");
+ if(!ok)qo.opts.forEach((o,j)=>{if(o.c)document.querySelectorAll("#opts button")[j].classList.add("ok")});
+ if(ok){SC[tab==="sci"?"sci":tab==="soc"?"soc":"mat"]++;localStorage.setItem("rockScore",JSON.stringify(SC));beep(880,.15,"triangle")}else beep(220,.2,"sawtooth");
+ updScore();
+}
+function updScore(){document.getElementById("sc").textContent="🔬 "+SC.sci+" • 🌍 "+SC.soc+" • ➗ "+SC.mat+" — مجموعك: "+(SC.sci+SC.soc+SC.mat)}
+function addQ(){
+ const s=document.getElementById("aS").value,q=document.getElementById("aQ").value.trim();
+ const a=[document.getElementById("a1").value.trim(),document.getElementById("a2").value.trim(),document.getElementById("a3").value.trim(),document.getElementById("a4").value.trim()];
+ if(!q||a.some(x=>!x)){alert("عبّي كل الخانات");return}
+ extra.push({s,q:[q,a[0],a[1],a[2],a[3],0]});
+ localStorage.setItem("rockQ",JSON.stringify(extra));
+ alert("انحفظ سؤالك! صار جزء من الصخرة 🪨");
+ view();
+}
+let AC=null;
+function beep(f,d,t){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t||"sine";o.frequency.value=f;const n=AC.currentTime;g.gain.setValueAtTime(.25,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+d+.05)}catch(e){}}
+let db={codes:[]};try{db=JSON.parse(localStorage.getItem("smartBook")||'{"codes":[]}')}catch(e){}
+function inj(c){
+ let cf={king:"مملكتي الذكية"};
+ try{cf=JSON.parse(localStorage.getItem("welCF"))||cf}catch(e){}
+ const sp=`<div style="position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#7c2d12,#f59e0b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;text-align:center;cursor:pointer" onclick="this.remove()"><div style="font-size:60px">🌅</div><div style="font-size:26px;font-weight:bold">أهلًا وسهلًا</div><div>في ${cf.king}</div><div style="font-size:13px">👆 اضغط للدخول</div></div>`;
+ return c.replace(/<body[^>]*>/,m=>m+sp);
+}
+function waslView(){
+ const v=document.getElementById("view");
+ const m=[["قلم","🖊️"],["مترجم","📖"],["سبورة","🎓"],["جسم","🫀"],["ارض","🌍"],["كرة","🌍"],["عمل","💱"],["ايميل","📧"],["مكتب","📚"],["فيديو","🎬"],["قارئ","🔊"],["فلاش","🃏"],["اسلام","🕌"],["رسم","🎨"],["دفتر","📒"],["مهندس","🏗️"],["بواب","🏠"]];
+ const ic=n=>{for(const x of m)if(n.includes(x[0]))return x[1];return "📱"};
+ v.innerHTML=`<div class="score">🔗 صفحة الوصل — الصخرة مربوطة بكل المملكة:</div><div class="grid">`+db.codes.map((c,i)=>`<div class="app" onclick="runApp(${i})"><span>${ic(c.name)}</span><b>${c.name}</b></div>`).join("")+`</div>`;
+ window._codes=db.codes;
+}
+function runApp(i){
+ document.getElementById("runFrame").srcdoc=inj(window._codes[i].body);
+ document.getElementById("runner").style.display="block";
+}
+function closeRun(){document.getElementById("runner").style.display="none";document.getElementById("runFrame").srcdoc=""}
+renderTabs();view();
+</script>
+</body>
+</html>
