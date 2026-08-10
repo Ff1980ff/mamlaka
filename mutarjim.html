@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>المترجم الناطق</title><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}body{background:linear-gradient(160deg,#065f46,#022c22);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #34d399;border-radius:24px;padding:16px;min-height:85vh}h2{text-align:center;color:#6ee7b7;font-size:20px}.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 12px}input{width:100%;border:0;border-radius:12px;padding:11px;font-size:14px;background:#1e293b;color:#fff;outline:0;border:1px solid #334155;margin-bottom:10px}.w{background:#1e293b;border:1px solid #34d399;border-radius:14px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:16px;font-weight:bold}.w small{color:#6ee7b7;font-size:13px}.bar{display:flex;gap:6px}.bar input{margin:0}.btn{border:0;border-radius:12px;padding:11px;font-weight:bold;cursor:pointer;background:#34d399;color:#022c22}
+</style></head><body><div class="frame">
+<h2>📖 المترجم الناطق</h2><div class="sub">اضغط الكلمة — واسمعها عربي وإنكليزي!</div>
+<input id="q" placeholder="🔍 ابحث عربي أو إنكليزي..." oninput="render()">
+<div id="list"></div>
+<div class="bar"><input id="a1" placeholder="عربي"><input id="a2" placeholder="إنكليزي"><button class="btn" onclick="addW()">➕</button></div>
+</div><script>
+const D=[["شمس","sun"],["قمر","moon"],["ماء","water"],["خبز","bread"],["بيت","house"],["كتاب","book"],["قلم","pen"],["مدرسة","school"],["معلم","teacher"],["ولد","boy"],["بنت","girl"],["أم","mother"],["أب","father"],["أخ","brother"],["أخت","sister"],["يوم","day"],["ليلة","night"],["صباح","morning"],["سلام","peace"],["حب","love"],["وردة","flower"],["شجرة","tree"],["بحر","sea"],["جبل","mountain"],["صحراء","desert"],["سماء","sky"],["نجمة","star"],["مطر","rain"],["ثلج","snow"],["رياح","wind"],["نار","fire"],["نور","light"],["ذهب","gold"],["فضة","silver"],["قلب","heart"],["عقل","mind"],["يد","hand"],["عين","eye"],["أذن","ear"]];
+let ex=JSON.parse(localStorage.getItem("trW")||"[]");
+function all(){return [...D,...ex]}
+function render(){
+ const q=document.getElementById("q").value.trim().toLowerCase();
+ const L=all().filter(x=>!q||x[0].includes(q)||x[1].toLowerCase().includes(q));
+ document.getElementById("list").innerHTML=L.map((x,i)=>`<div class="w" onclick="say('${x[0]}','${x[1]}')"><span>${x[0]}</span><small>${x[1]} 🔊</small></div>`).join("")||"<div style='text-align:center;color:#64748b'>ما في نتائج</div>";
+}
+function say(ar,en){
+ try{speechSynthesis.cancel();
+ const s1=new SpeechSynthesisUtterance(ar);s1.lang="ar-SA";speechSynthesis.speak(s1);
+ const s2=new SpeechSynthesisUtterance(en);s2.lang="en-US";speechSynthesis.speak(s2);}catch(e){}
+}
+function addW(){
+ const a=document.getElementById("a1").value.trim(),b=document.getElementById("a2").value.trim();
+ if(!a||!b){alert("عبّي الاثنين");return}
+ ex.push([a,b]);localStorage.setItem("trW",JSON.stringify(ex));
+ document.getElementById("a1").value="";document.getElementById("a2").value="";render();
+}
+render();
+</script></body></html>
