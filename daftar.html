@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>دفتري الذكي</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:#eef1f6;color:#1c2340;padding-bottom:40px}
+.wrap{max-width:560px;margin:auto;padding:0 12px}
+.hero{background:#fff;border-radius:16px;margin:12px 0;padding:20px;text-align:center}
+.hero h1{font-size:20px}
+.hero p{color:#6b7280;font-size:13px;margin:6px 0 14px}
+.nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.nav button{border:none;border-radius:12px;padding:12px 16px;color:#fff;font-weight:bold;font-size:13px;cursor:pointer}
+.n1{background:#6d28d9}.n2{background:#10b981}.n3{background:#f59e0b}.n4{background:#0ea5e9}
+.bar{background:#2563eb;color:#fff;text-align:center;padding:12px;font-weight:bold;font-size:16px;border-radius:12px;margin:12px 0}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+input,textarea{width:100%;border:1px solid #e5e7eb;border-radius:10px;padding:11px;font-size:14px;margin-bottom:9px;outline:none}
+textarea{min-height:90px}
+.btn{border:none;border-radius:10px;padding:11px 16px;font-weight:bold;font-size:13px;cursor:pointer;color:#fff}
+.g{background:#16a34a}.b{background:#2563eb}.r{background:#dc2626}.o{background:#f59e0b}.gr{background:#6b7280}.p{background:#6d28d9}
+.item{border-right:4px solid #2563eb;background:#fff;border-radius:12px;padding:12px;margin-bottom:10px}
+.item h3{color:#2563eb;margin-bottom:6px}
+.item .row{margin:4px 0;font-size:13px}
+.item small{color:#9ca3af}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.acts button{border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:bold;cursor:pointer;color:#fff}
+pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px;font-size:12px;overflow:auto;max-height:50vh;direction:ltr;text-align:left;white-space:pre-wrap}
+#viewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;padding:16px;overflow:auto}
+#viewer .card{max-width:560px;margin:20px auto}
+#runner{display:none;position:fixed;inset:0;background:#000;z-index:60}
+#runner iframe{width:100%;height:100%;border:none}
+#runClose{position:fixed;top:10px;left:10px;z-index:61;border:none;border-radius:99px;background:#ef4444;color:#fff;padding:9px 16px;font-weight:bold;font-size:13px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="hero"><h1>📒 دفتري الذكي</h1><p>مركز حفظ الحلول والأكواد والمشاريع والوسائط</p>
+ <div class="nav"><button class="n1" onclick="show('sol')">🛠️ حلول المشاكل</button><button class="n2" onclick="show('codes')">💻 خزانة الأكواد</button><button class="n3" onclick="show('projs')">📚 المشاريع</button><button class="n4" onclick="show('tools')">🧰 الأدوات</button></div></div>
+ <div class="card"><input id="q" placeholder="🔍 ابحث عن مشكلة أو حل أو كود..." oninput="renderAll(this.value)"></div>
+ <div id="sec-sol">
+  <div class="bar">🛠️ دفتري لحلول المشاكل التقنية</div>
+  <div class="card">
+   <input id="sApp" placeholder="📱 اسم التطبيق">
+   <input id="sDev" placeholder="📲 نوع الجهاز">
+   <textarea id="sProb" placeholder="❌ اكتب المشكلة"></textarea>
+   <textarea id="sFix" placeholder="✅ اكتب الحل"></textarea>
+   <button class="btn g" onclick="saveSol()">💾 حفظ الحل</button>
+  </div>
+  <div id="solList"></div>
+ </div>
+ <div id="sec-codes" class="hide">
+  <div class="bar" style="background:#10b981">💻 خزانة الأكواد</div>
+  <div class="card">
+   <input id="cName" placeholder="اسم الكود">
+   <textarea id="cBody" placeholder="الصق الكود هنا" style="min-height:140px"></textarea>
+   <button class="btn g" onclick="saveCode()">💾 حفظ الكود</button>
+  </div>
+  <div id="codeList"></div>
+ </div>
+ <div id="sec-projs" class="hide">
+  <div class="bar" style="background:#f59e0b">📚 المشاريع</div>
+  <div class="card">
+   <input id="pName" placeholder="اسم المشروع">
+   <textarea id="pDesc" placeholder="وصف المشروع"></textarea>
+   <textarea id="pCode" placeholder="كود المشروع (اختياري)" style="min-height:120px"></textarea>
+   <button class="btn g" onclick="saveProj()">💾 حفظ المشروع</button>
+  </div>
+  <div id="projList"></div>
+ </div>
+ <div id="sec-tools" class="hide">
+  <div class="bar" style="background:#0ea5e9">🧰 الأدوات والخزانة</div>
+  <div class="card">
+   <h3 style="margin-bottom:8px">📧 الحفظ بالإيميل والاسترجاع</h3>
+   <button class="btn b" onclick="mailBackup()">📤 إرسال نسخة بالإيميل</button>
+   <textarea id="impBox" placeholder="📥 الصق هون النص اللي وصلك بالإيميل لاسترجاع كل شي..." style="margin-top:8px"></textarea>
+   <button class="btn g" onclick="importBackup()">📥 استرجاع من الإيميل</button>
+  </div>
+  <div class="card">
+   <h3 style="margin-bottom:8px">📼 خزانة الوسائط (أصوات، فيديوهات، صور، أي ملف)</h3>
+   <input type="file" id="fileIn" onchange="addFile(this)">
+   <div id="fileList" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+   <h3 style="margin-bottom:8px">🔀 محول الصيغ والإيميلات</h3>
+   <textarea id="cvIn" placeholder="الصق النص هنا..."></textarea>
+   <div class="acts">
+    <button class="b" onclick="cv('b64e')">→ Base64</button>
+    <button class="b" onclick="cv('b64d')">← Base64</button>
+    <button class="g" onclick="cv('json')">تنسيق JSON</button>
+    <button class="o" onclick="cv('mail')">📧 استخراج إيميلات</button>
+   </div>
+   <textarea id="cvOut" placeholder="النتيجة..." readonly style="margin-top:8px"></textarea>
+   <button class="btn g" onclick="copyTxt(val('cvOut'))">📋 نسخ النتيجة</button>
+  </div>
+ </div>
+</div>
+<div id="runner"><button id="runClose" onclick="closeRun()">✖ إغلاق التطبيق</button><iframe id="runFrame"></iframe></div>
+<div id="viewer"><div class="card"><h3 id="vTitle" style="margin-bottom:8px"></h3><pre id="vBody"></pre>
+<div class="acts"><button class="b" onclick="copyV()">📋 نسخ</button><button class="o" onclick="dlV()">📥 تنزيل</button><button class="gr" onclick="hideV()">🔙 إغلاق</button></div></div></div>
+<script>
+let db=JSON.parse(localStorage.getItem("smartBook")||'{"sol":[],"codes":[],"projs":[]}');
+let eSol=null,eCode=null,eProj=null,vText="",vName="",idb=null;
+function save(){localStorage.setItem("smartBook",JSON.stringify(db))}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function now(){return new Date().toLocaleDateString("ar-SY")}
+function val(id){return document.getElementById(id).value}
+function show(n){["sol","codes","projs","tools"].forEach(x=>document.getElementById("sec-"+x).classList.toggle("hide",x!==n))}
+function saveSol(){
+ const o={id:eSol||String(Date.now()),app:val("sApp"),dev:val("sDev"),prob:val("sProb"),fix:val("sFix"),date:now()};
+ if(!o.prob&&!o.fix){alert("اكتب المشكلة والحل أولًا");return}
+ if(eSol){db.sol[db.sol.findIndex(x=>x.id===eSol)]=o;eSol=null}else db.sol.unshift(o);
+ ["sApp","sDev","sProb","sFix"].forEach(i=>document.getElementById(i).value="");
+ save();renderAll();
+}
+function saveCode(){
+ const o={id:eCode||String(Date.now()),name:val("cName"),body:val("cBody"),date:now()};
+ if(!o.body){alert("الصق الكود أولًا");return}
+ if(eCode){db.codes[db.codes.findIndex(x=>x.id===eCode)]=o;eCode=null}else db.codes.unshift(o);
+ ["cName","cBody"].forEach(i=>document.getElementById(i).value="");
+ save();renderAll();
+}
+function saveProj(){
+ const o={id:eProj||String(Date.now()),name:val("pName"),desc:val("pDesc"),code:val("pCode"),date:now()};
+ if(!o.name){alert("اكتب اسم المشروع");return}
+ if(eProj){db.projs[db.projs.findIndex(x=>x.id===eProj)]=o;eProj=null}else db.projs.unshift(o);
+ ["pName","pDesc","pCode"].forEach(i=>document.getElementById(i).value="");
+ save();renderAll();
+}
+function editSol(id){const x=db.sol.find(v=>v.id===id);eSol=id;show("sol");document.getElementById("sApp").value=x.app;document.getElementById("sDev").value=x.dev;document.getElementById("sProb").value=x.prob;document.getElementById("sFix").value=x.fix;window.scrollTo(0,0)}
+function editCode(id){const x=db.codes.find(v=>v.id===id);eCode=id;show("codes");document.getElementById("cName").value=x.name;document.getElementById("cBody").value=x.body;window.scrollTo(0,0)}
+function editProj(id){const x=db.projs.find(v=>v.id===id);eProj=id;show("projs");document.getElementById("pName").value=x.name;document.getElementById("pDesc").value=x.desc;document.getElementById("pCode").value=x.code;window.scrollTo(0,0)}
+function del(kind,id){if(!confirm("حذف؟"))return;db[kind]=db[kind].filter(x=>x.id!==id);save();renderAll()}
+function view(t,b){vText=b;vName=t;document.getElementById("vTitle").textContent="👁️ "+t;document.getElementById("vBody").textContent=b;document.getElementById("viewer").style.display="block"}
+function hideV(){document.getElementById("viewer").style.display="none"}
+function openRun(c){document.getElementById("runFrame").srcdoc=c;document.getElementById("runner").style.display="block"}
+function closeRun(){document.getElementById("runner").style.display="none";document.getElementById("runFrame").srcdoc=""}
+function runCode(id){const x=db.codes.find(v=>v.id===id);openRun(x.body)}
+function runProj(id){const x=db.projs.find(v=>v.id===id);if(x.code)openRun(x.code)}
+function copyTxt(t){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");alert("تم النسخ ✔️")}catch(e){}ta.remove()}
+function copyV(){copyTxt(vText)}
+function dl(n,b){const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=n;a.click()}
+function dlV(){const n=prompt("اسم الملف:",(vName||"file")+".html");if(n)dl(n,new Blob([vText],{type:"text/plain;charset=utf-8"}))}
+function mailBackup(){
+ const j=JSON.stringify(db);
+ copyTxt(j);
+ location.href="mailto:?subject="+encodeURIComponent("📒 نسخة دفتري الذكي الاحتياطية")+"&body="+encodeURIComponent("النسخة الاحتياطية اننسخت تلقائيًا — اضغط مطولًا بالصندوق والصق:");
+}
+function importBackup(){
+ const t=val("impBox").trim();
+ try{const o=JSON.parse(t);if(o.sol&&o.codes&&o.projs){db=o;save();renderAll();document.getElementById("impBox").value="";alert("تم الاسترجاع ✔️ كل شي رجع محلو")}else{throw 0}}
+ catch(e){alert("النص مو نسخة احتياطية صالحة ❌")}
+}
+function cv(k){const t=val("cvIn");let o="";try{
+ if(k==="b64e")o=btoa(unescape(encodeURIComponent(t)));
+ if(k==="b64d")o=decodeURIComponent(escape(atob(t.trim())));
+ if(k==="json")o=JSON.stringify(JSON.parse(t),null,2);
+ if(k==="mail")o=(t.match(/[\w.+-]+@[\w-]+\.[\w.]+/g)||[]).join("\n")||"لا إيميلات بالنص";
+}catch(e){o="❌ خطأ بالنص المدخل"}
+ document.getElementById("cvOut").value=o}
+function openDB(){return new Promise(res=>{const r=indexedDB.open("vault",1);r.onupgradeneeded=e=>e.target.result.createObjectStore("files",{keyPath:"id"});r.onsuccess=e=>{idb=e.target.result;res()}})}
+function putFile(o){return new Promise(res=>{const t=idb.transaction("files","readwrite");t.objectStore("files").put(o);t.oncomplete=res})}
+function getAll(){return new Promise(res=>{const q=idb.transaction("files").objectStore("files").getAll();q.onsuccess=()=>res(q.result||[])})}
+function addFile(inp){const f=inp.files[0];if(!f)return;putFile({id:String(Date.now()),name:f.name,type:f.type||"ملف",blob:f,date:now()}).then(()=>{inp.value="";renderFiles();alert("انحفظ بالخزانة ✔️")})}
+function playF(id){getAll().then(a=>{const x=a.find(v=>v.id===id);window.open(URL.createObjectURL(x.blob))})}
+function dlF(id){getAll().then(a=>{const x=a.find(v=>v.id===id);dl(x.name,x.blob)})}
+function delF(id){if(!confirm("حذف الملف؟"))return;const t=idb.transaction("files","readwrite");t.objectStore("files").delete(id);t.oncomplete=renderFiles}
+function renderFiles(){getAll().then(a=>{document.getElementById("fileList").innerHTML=a.length?a.map(x=>`<div class="item" style="border-color:#0ea5e9"><h3 style="color:#0ea5e9">${x.type.startsWith("audio")?"🎙️":x.type.startsWith("video")?"🎬":x.type.startsWith("image")?"🖼️":""} ${esc(x.name)}</h3><small>${x.date} • ${(x.blob.size/1024).toFixed(0)} KB</small><div class="acts"><button class="b" onclick="playF('${x.id}')">▶ تشغيل</button><button class="o" onclick="dlF('${x.id}')">📥 تنزيل</button><button class="r" onclick="delF('${x.id}')">🗑 حذف</button></div></div>`).join(""):`<div style="text-align:center;color:#9ca3af;font-size:13px">الخزانة فاضية — ضيف ملف صوت أو فيديو أو صورة</div>`})}
+function renderAll(q){
+ q=(q||"").trim();
+ const f=x=>!q||JSON.stringify(x).includes(q);
+ document.getElementById("solList").innerHTML=db.sol.filter(f).map(x=>`<div class="item"><h3>📱 ${esc(x.app)||"بدون اسم"}</h3><div class="row">📲 الجهاز: ${esc(x.dev)||"—"}</div><div class="row">❌ المشكلة: ${esc(x.prob)}</div><div class="row">✅ الحل: ${esc(x.fix)}</div><small>${x.date}</small><div class="acts"><button class="o" onclick="editSol('${x.id}')">✏️ تعديل</button><button class="r" onclick="del('sol','${x.id}')">🗑 حذف</button></div></div>`).join("")||`<div class="card" style="text-align:center;color:#9ca3af">لا حلول محفوظة</div>`;
+ document.getElementById("codeList").innerHTML=db.codes.filter(f).map(x=>`<div class="item" style="border-color:#10b981"><h3 style="color:#10b981">💻 ${esc(x.name)||"بدون اسم"}</h3><small>${x.date} • ${x.body.length} حرف</small><div class="acts"><button class="p" onclick="runCode('${x.id}')">▶ تشغيل</button><button class="b" onclick="view('${esc(x.name)}',db.codes.find(v=>v.id==='${x.id}').body)">👁 عرض</button><button class="g" onclick="copyTxt(db.codes.find(v=>v.id==='${x.id}').body)">📋 نسخ</button><button class="o" onclick="dl('${esc(x.name)}.html',new Blob([db.codes.find(v=>v.id==='${x.id}').body]))">📥 تنزيل</button><button class="o" onclick="editCode('${x.id}')">✏️ تعديل</button><button class="r" onclick="del('codes','${x.id}')">🗑 حذف</button></div></div>`).join("")||`<div class="card" style="text-align:center;color:#9ca3af">لا أكواد محفوظة</div>`;
+ document.getElementById("projList").innerHTML=db.projs.filter(f).map(x=>`<div class="item" style="border-color:#f59e0b"><h3 style="color:#f59e0b">📚 ${esc(x.name)}</h3><div class="row">${esc(x.desc)}</div><small>${x.date}</small><div class="acts">${x.code?`<button class="p" onclick="runProj('${x.id}')">▶ تشغيل</button><button class="b" onclick="view('${esc(x.name)}',db.projs.find(v=>v.id==='${x.id}').code)">👁 عرض</button><button class="o" onclick="dl('${esc(x.name)}.html',new Blob([db.projs.find(v=>v.id==='${x.id}').code]))">📥 تنزيل</button>`:""}<button class="o" onclick="editProj('${x.id}')">✏️ تعديل</button><button class="r" onclick="del('projs','${x.id}')">🗑 حذف</button></div></div>`).join("")||`<div class="card" style="text-align:center;color:#9ca3af">لا مشاريع محفوظة</div>`;
+}
+openDB().then(renderFiles);
+renderAll();
+</script>
+</body>
+</html>
