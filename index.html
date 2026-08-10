@@ -3,183 +3,396 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>مدينة الحروف 🌿</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Baloo+Bhaijaan+2:wght@600;800&display=swap" rel="stylesheet">
+<title>مملكة التطبيقات 🏰</title>
+<meta name="description" content="مملكة رقمية دافية، أسسها مهندس ومعلم — خبزها البساطة وحبها الناس">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
- --leaf:#2f6d4f; --leaf2:#1d4a35; --moss:#e8f3e6;
- --water:#0e6b8f; --water2:#0a4a63; --foam:#eaf9ff;
- --sun:#ffcf5c; --sun2:#ff9d4d; --stone:#5a4636; --ink:#123024;
+ --night:#0b1026; --card:#141a33; --line:#2a3157;
+ --amber:#f5a524; --amber2:#e07b12; --cream:#f7ead9; --muted:#9aa3c0;
+ --cyan:#22d3ee; --violet:#a78bfa;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
-html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--moss);overflow-x:hidden}
-#backKing{position:fixed;top:10px;right:10px;z-index:55;border:none;border-radius:99px;background:#ffcf5c;color:#3a2405;padding:9px 14px;font-weight:bold;cursor:pointer;text-decoration:none;font-size:12px;box-shadow:0 6px 18px rgba(255,157,77,.4)}
-
-.falls-wrap{position:fixed;inset:0;z-index:-2;overflow:hidden}
-.sky{position:absolute;inset:0;background:linear-gradient(180deg,#0d3b2c 0%,#0a5a45 30%,#0e6b8f 65%,#0a4a63 100%)}
-.mist{position:absolute;bottom:0;left:0;right:0;height:40%;background:radial-gradient(60% 100% at 50% 100%,rgba(234,249,255,.35),transparent 70%);filter:blur(6px)}
-.falls{position:absolute;top:0;bottom:0;width:5%;background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(180,230,255,.5));filter:blur(1px);opacity:.85;animation:drop 1.1s linear infinite}
-.falls.f1{left:22%;animation-duration:1s}
-.falls.f2{left:32%;width:7%;animation-duration:.85s}
-.falls.f3{left:47%;width:4%;animation-duration:1.15s}
-.falls.f4{left:58%;width:6%;animation-duration:.95s}
-.falls.f5{left:70%;width:5%;animation-duration:1.05s}
-@keyframes drop{0%{background-position-y:-40px}100%{background-position-y:0}}
-.leaf{position:absolute;font-size:20px;opacity:.8;animation:fall linear infinite}
-@keyframes fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:.9}100%{transform:translateY(110vh) rotate(360deg);opacity:.4}}
-
-nav{position:fixed;top:0;right:0;left:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:rgba(10,40,30,.55);backdrop-filter:blur(10px);border-bottom:1px solid rgba(234,249,255,.15)}
-nav .logo{font-weight:900;font-size:18px;color:var(--sun)}
-nav .links{display:flex;gap:16px;flex-wrap:wrap}
-nav a{color:var(--foam);text-decoration:none;font-size:13px;font-weight:700;opacity:.9}
-nav a:hover{color:var(--sun)}
-
-.hero{min-height:96vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px}
-.badge{font-size:70px;filter:drop-shadow(0 0 28px rgba(255,207,92,.5));animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-.hero h1{font-size:clamp(32px,8vw,58px);font-weight:900;margin:16px 0 8px;background:linear-gradient(90deg,var(--sun),var(--foam));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero h2{font-size:clamp(14px,3vw,18px);color:var(--foam);opacity:.85;font-weight:700;letter-spacing:1px}
-.hero p{max-width:560px;margin-top:14px;color:var(--foam);opacity:.85;font-size:15px;line-height:2}
-.hero .btns{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap;justify-content:center}
-.btn{border:none;border-radius:99px;padding:14px 26px;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;transition:.25s}
-.btn.sun{background:linear-gradient(135deg,var(--sun),var(--sun2));color:#3a2405;box-shadow:0 8px 26px rgba(255,157,77,.35)}
-.btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:var(--foam)}
-.btn:hover{transform:translateY(-3px)}
-
-section{padding:70px 20px;max-width:1080px;margin:auto;position:relative}
-.stitle{text-align:center;margin-bottom:36px}
-.stitle h2{font-size:clamp(24px,5vw,34px);font-weight:900;color:var(--foam)}
-.stitle h2 span{color:var(--sun)}
-.stitle p{color:var(--foam);opacity:.75;font-size:13px;margin-top:8px}
-.panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:28px;padding:34px 22px;backdrop-filter:blur(8px)}
-
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
-.letter{aspect-ratio:1;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.2);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.25s;font-weight:900;color:var(--foam)}
-.letter:hover{transform:translateY(-6px) scale(1.05);border-color:var(--sun);box-shadow:0 12px 26px rgba(0,0,0,.3)}
-.letter .ch{font-size:32px}
-.letter small{font-size:9px;opacity:.7;margin-top:4px}
-
-.nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:12px}
-.num{aspect-ratio:1;background:linear-gradient(160deg,rgba(255,207,92,.18),rgba(255,157,77,.06));border:1px solid rgba(255,207,92,.35);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--sun);cursor:pointer;transition:.25s}
-.num:hover{transform:translateY(-5px);background:rgba(255,207,92,.3)}
-
-.colors{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:14px}
-.color{border-radius:18px;height:90px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;cursor:pointer;font-weight:900;font-size:12px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.4);transition:.25s;border:1px solid rgba(255,255,255,.25)}
-.color:hover{transform:scale(1.06)}
-
-#modal{position:fixed;inset:0;z-index:90;background:rgba(5,15,12,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--night);color:var(--cream);overflow-x:hidden}
+nav{position:fixed;top:0;right:0;left:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(11,16,38,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .logo{font-weight:900;font-size:18px;color:var(--amber)}
+nav .links{display:flex;gap:14px;flex-wrap:wrap}
+nav a{color:var(--cream);text-decoration:none;font-size:13px;font-weight:700;opacity:.85;cursor:pointer}
+nav a:hover{color:var(--amber);opacity:1}
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px 60px;background:radial-gradient(60% 45% at 50% 100%,rgba(224,123,18,.28),transparent 70%),linear-gradient(160deg,#141a33,#0b1026)}
+.hero .castle{font-size:74px;filter:drop-shadow(0 0 25px rgba(245,165,36,.5));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero h1{font-size:clamp(30px,7vw,54px);font-weight:900;margin:14px 0 8px;background:linear-gradient(90deg,var(--amber),var(--cream));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:560px;color:var(--muted);font-size:15px;line-height:2}
+.hero .btns{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+.btn{border:none;border-radius:99px;padding:12px 22px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit}
+.btn.amber{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#241303;box-shadow:0 6px 22px rgba(245,165,36,.35)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--cream)}
+.btn:hover{transform:translateY(-2px)}
+section{padding:70px 20px;max-width:1000px;margin:auto}
+.stitle{text-align:center;margin-bottom:40px}
+.stitle h2{font-size:clamp(22px,5vw,32px);font-weight:900}
+.stitle h2 span{color:var(--amber)}
+.stitle p{color:var(--muted);font-size:13px;margin-top:6px}
+.philo{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 20px;text-align:center;transition:.3s;cursor:pointer}
+.pcard:hover{transform:translateY(-6px);border-color:var(--amber)}
+.pcard .ic{font-size:44px}
+.pcard h3{margin:12px 0 8px;font-size:18px}
+.pcard p{color:var(--muted);font-size:13px;line-height:1.9}
+.pcard.b{border-top:3px solid var(--amber)} .pcard.j{border-top:3px solid var(--cyan)} .pcard.a{border-top:3px solid var(--violet)}
+.circle{margin-bottom:44px}
+.circle h3{font-size:17px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.circle h3::after{content:"";flex:1;height:1px;background:var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 10px;text-align:center;transition:.3s;cursor:pointer}
+.app:hover{transform:translateY(-5px);border-color:var(--amber);box-shadow:0 10px 25px rgba(0,0,0,.35)}
+.app .e{font-size:34px}
+.app b{display:block;font-size:13px;margin:8px 0 4px}
+.app small{color:var(--muted);font-size:11px;line-height:1.7;display:block}
+#tannour .box{background:linear-gradient(160deg,#3a1608,#1c0b04);border:2px solid var(--amber2);border-radius:26px;padding:36px 22px;text-align:center;box-shadow:0 0 60px rgba(224,123,18,.25) inset}
+#tannour .fire{font-size:60px;animation:float 3s ease-in-out infinite}
+#tannour h3{font-size:22px;font-weight:900;color:var(--amber);margin:10px 0}
+#tannour p{color:#e8c9a0;font-size:13px;line-height:2;max-width:520px;margin:auto}
+#khubza{margin-top:22px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;line-height:1.9;padding:0 10px;transition:opacity .5s}
+.timeline{border-right:2px solid var(--amber2);padding-right:26px;margin-right:8px}
+.titem{position:relative;margin-bottom:28px}
+.titem::before{content:"";position:absolute;right:-33px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber)}
+.titem b{color:var(--amber);font-size:15px}
+.titem p{color:var(--muted);font-size:13px;line-height:1.9;margin-top:4px}
+.rev{opacity:0;transform:translateY(24px);transition:.7s}
+.rev.on{opacity:1;transform:none}
+#workshop{display:none}
+.wbox{background:linear-gradient(160deg,#1a2440,#101528);border:2px dashed var(--amber);border-radius:26px;padding:30px 18px}
+.wbox h3{text-align:center;color:var(--amber);font-size:20px;margin-bottom:6px}
+.wbox>p{text-align:center;color:var(--muted);font-size:12px;margin-bottom:20px}
+.wform input,.wform textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;font-size:14px;background:var(--card);color:var(--cream);outline:none;margin-bottom:8px;font-family:inherit}
+.wform textarea{min-height:70px;resize:vertical}
+.wform .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.wbox h4{margin:24px 0 10px;font-size:14px;color:var(--cyan)}
+.witem{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap}
+.witem span{font-size:13px}
+.mut{color:var(--muted);font-size:12px;text-align:center;padding:10px}
+footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:2}
+footer b{color:var(--amber)}
+#arada,#farewell{position:fixed;inset:0;z-index:100;background:radial-gradient(70% 50% at 50% 100%,rgba(224,123,18,.35),transparent 70%),linear-gradient(160deg,#3a1608,#140a04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;transition:opacity .8s}
+.hide{opacity:0;pointer-events:none}
+#arada .t1,#farewell .t1{font-size:clamp(24px,6vw,40px);font-weight:900;color:var(--amber)}
+#arada .t2,#farewell .t2{color:#e8c9a0;font-size:14px;line-height:1.9}
+.proc{width:100%;overflow:hidden;height:80px;position:relative}
+.proc .line{position:absolute;top:10px;white-space:nowrap;font-size:48px;animation:walk 8s linear infinite}
+@keyframes walk{from{transform:translateX(110%)}to{transform:translateX(-110%)}}
+#hala{font-size:20px;font-weight:900;color:var(--cream);min-height:32px}
+#skip{position:absolute;top:14px;left:14px}
+#replay{position:fixed;bottom:16px;left:16px;z-index:60;border:none;border-radius:99px;background:var(--amber);font-size:20px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(245,165,36,.4)}
+#qahwa{position:fixed;bottom:16px;right:16px;z-index:60;border:none;border-radius:99px;background:#6b3b1c;font-size:20px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45)}
+#wada{font-size:17px;font-weight:900;min-height:50px;color:var(--cream);line-height:1.9;padding:0 10px}
+#modal{position:fixed;inset:0;z-index:90;background:rgba(5,8,20,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
 #modal.on{display:flex}
-.mcard{background:linear-gradient(160deg,#123024,#0a4a63);border:2px solid var(--sun);border-radius:26px;max-width:340px;width:100%;padding:34px 22px;text-align:center;animation:pop .35s}
+.mcard{background:var(--card);border:2px solid var(--amber);border-radius:22px;max-width:420px;width:100%;padding:26px 20px;text-align:center;animation:pop .35s}
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-.mcard .big{font-size:80px}
-.mcard h3{margin:14px 0 6px;font-size:22px;color:var(--sun)}
-.mcard p{color:var(--foam);opacity:.85;font-size:13px}
-.mcard .close{margin-top:18px}
-
-footer{text-align:center;padding:44px 20px;border-top:1px solid rgba(255,255,255,.15);color:var(--foam);opacity:.75;font-size:12px;line-height:2}
-footer b{color:var(--sun)}
+.mcard .e{font-size:56px;filter:drop-shadow(0 0 18px rgba(245,165,36,.6))}
+.mcard h3{margin:10px 0 6px;font-size:20px;color:var(--amber)}
+.mcard p{color:var(--muted);font-size:13px;line-height:1.9}
+.mcard .tag{display:inline-block;margin-top:12px;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:11px;color:var(--cyan)}
+.mcard .close{margin-top:16px}
 </style>
 </head>
 <body>
-<a id="backKing" href="index.html">🏰 المملكة</a>
 
-<div class="falls-wrap">
- <div class="sky"></div>
- <div class="falls f1"></div>
- <div class="falls f2"></div>
- <div class="falls f3"></div>
- <div class="falls f4"></div>
- <div class="falls f5"></div>
- <div class="mist"></div>
- <div id="leaves"></div>
+<div id="arada">
+ <button id="skip" class="btn ghost" onclick="endArada()">ادخل بهدوء 🤫</button>
+ <div class="t1">🏰 مملكة التطبيقات</div>
+ <div class="t2">الضيوف عندنا بينقبلوا متل ما بيقبلوا بدمشق:<br><b>عراضة شامية، طبل وسيوف، ويا هلا بتعلّي السما</b></div>
+ <button class="btn amber" onclick="startArada()">🥁 دوس تنبدأ العراضة</button>
+ <div class="proc"><div class="line">🥁 ️  🕺 ️ 🕺 ️ 🗡️</div></div>
+ <video id="arVid" style="display:none;max-width:94%;max-height:42vh;border-radius:16px" controls playsinline></video>
+ <div id="hala"></div>
 </div>
+
+<div id="farewell" class="hide">
+ <div class="t1">🕊️ استودعك الله</div>
+ <div class="t2">اللي بودّع المملكة بيطلع منها ومعو:<br><b>خبزة دافية، فنجان قهوة، ودعوة من القلب</b></div>
+ <div id="wada"></div>
+ <button class="btn amber" onclick="wadaKhubza()">🥖 خذ خبزتك وامشي</button>
+ <button class="btn ghost" onclick="endFarewell()">🏰 ارجع لنا متى شئت</button>
+</div>
+
+<button id="replay" onclick="startArada()" title="عراضة!">🥁</button>
+<button id="qahwa" onclick="showCard('☕','قهوة الضيافة','الدلة عالنا، والفنجان بإيدك، والسكر على كيفك. اشرب وريّح قلبك — وبجانبك تمر سكري، متل ما لازم.','ضيافة المملكة 🛋️')" title="اسكبلي قهوة">☕</button>
 
 <div id="modal" onclick="if(event.target===this)closeM()">
  <div class="mcard">
-  <div class="big" id="mBig"></div>
-  <h3 id="mName"></h3>
-  <p id="mSub"></p>
-  <button class="btn sun close" onclick="closeM()">✨ رجوع</button>
+  <div class="e" id="mE"></div>
+  <h3 id="mN"></h3>
+  <p id="mD"></p>
+  <div class="tag" id="mT"></div><br>
+  <button id="mL" class="btn ghost" style="display:none;margin-top:8px" onclick="openApp()">🚪 افتح التطبيق</button><br>
+  <button class="btn amber close" onclick="closeM()">✨ كمل التجوال</button>
  </div>
 </div>
 
 <nav>
- <div class="logo">🌿 مدينة الحروف</div>
+ <div class="logo">🏰 مملكة التطبيقات</div>
  <div class="links">
-  <a href="#letters">الحروف</a>
-  <a href="#numbers">الأرقام</a>
-  <a href="#colors">الألوان</a>
+  <a href="#falsafa">الفلسفة</a>
+  <a href="#apps">التطبيقات</a>
+  <a href="#diwan">الديوان 🍽️</a>
+  <a href="#pub">الساحة 🌍</a>
+  <a href="#tannour">التنور</a>
+  <a onclick="startFarewell();return false">🕊️ التوديعة</a>
+  <a onclick="openWorkshop();return false">🔒 الخلوة</a>
  </div>
 </nav>
 
 <header class="hero">
- <div class="badge">🏞️</div>
- <h1>مدينة الحروف</h1>
- <h2>City of Letters</h2>
- <p>مدينة خضراء عند سفح شلال دافئ، فيها كل حرف بيت، وكل رقم درب، وكل لون قصة. تعال نكتشفها سوا 🌊</p>
+ <div class="castle">🏰</div>
+ <h1>مملكة التطبيقات</h1>
+ <p>مملكة رقمية دافية، أسسها مهندس ومعلم على تنور الشام.<br>خبزها البساطة، وحُبّها الناس، وضيافتها كاملة: عراضة، مناسف، قهوة، وتوديعة بتعلّي السما.</p>
  <div class="btns">
-  <button class="btn sun" onclick="location.hash='#letters'">ابدأ الرحلة 🚪</button>
-  <button class="btn ghost" onclick="location.hash='#colors'">شوف الألوان 🎨</button>
+  <button class="btn amber" onclick="location.hash='#apps'">ادخل المملكة 🚪</button>
+  <button class="btn ghost" onclick="location.hash='#diwan'">مدّ إيدك ع المناسف 🍽️</button>
  </div>
 </header>
 
-<section id="letters">
- <div class="stitle"><h2>حديقة <span>الحروف</span></h2><p>دوس على أي حرف تسمعه</p></div>
- <div class="panel"><div class="grid" id="lettersGrid"></div></div>
+<section id="falsafa">
+ <div class="stitle rev"><h2>فلسفة المملكة: <span>بيت ← جيران ← عالم</span></h2>
+ <p>كل تطبيق إلو دائرة، وكل دائرة بتخدم اللي بعدها</p></div>
+ <div class="philo">
+  <div class="pcard b rev" onclick="showCard('🏠','دائرة البيت','الأساس اللي بيمسك البيت: الذاكرة، المعرفة، البوابة، والمكتبة. من هون بتبلش المملكة.','فلسفة المملكة ✨')"><div class="ic">🏠</div><h3>دائرة البيت</h3><p>الأساس اللي بيمسك البيت: الذاكرة، المعرفة، البوابة، والمكتبة. من هون بتبلش المملكة.</p></div>
+  <div class="pcard j rev" onclick="showCard('🤝','دائرة الجيران','تطبيقات بتخدم الحارة: ترجمة، رسم، قراءة، حسبات. كل تطبيق جار بيده لجارو.','فلسفة المملكة ✨')"><div class="ic">🤝</div><h3>دائرة الجيران</h3><p>تطبيقات بتخدم الحارة: ترجمة، رسم، قراءة، حسبات. كل تطبيق جار بيده لجارو.</p></div>
+  <div class="pcard a rev" onclick="showCard('🌍','دائرة العالم','وجه المملكة قدام الدنيا: الضيافة، السفارة، المِرسال والمكتشف. منستقبل العالم بأدب.','فلسفة المملكة ✨')"><div class="ic">🌍</div><h3>دائرة العالم</h3><p>وجه المملكة قدام الدنيا: الضيافة، السفارة، المِرسال والمكتشف. منستقبل العالم بأدب.</p></div>
+ </div>
 </section>
 
-<section id="numbers">
- <div class="stitle"><h2>درب <span>الأرقام</span></h2><p>من ٠ لحد ٩ — دوس وتعلم</p></div>
- <div class="panel"><div class="nums" id="numsGrid"></div></div>
+<section id="apps">
+ <div class="stitle rev"><h2>سجل <span>المملكة</span></h2><p>خمس وعشرون بصمة، وكل وحدة إلها حكاية — دوس ع أي بطاقة</p></div>
+ <div id="circles"></div>
 </section>
 
-<section id="colors">
- <div class="stitle"><h2>قوس <span>الألوان</span></h2><p>كل لون من ألوان الطبيعة حوالينا</p></div>
- <div class="panel"><div class="colors" id="colorsGrid"></div></div>
+<section id="diwan">
+ <div class="stitle rev"><h2>ديوان <span>المناسف</span> 🍽️</h2>
+ <p>الضيف عندنا ما بيمشي جوعان — مدّ إيدك، كل صحن إلو حكاية</p></div>
+ <div class="grid" id="dishGrid"></div>
+</section>
+
+<section id="pub">
+ <div class="stitle rev"><h2>ساحة النشر <span>العامة</span> 🌍</h2>
+ <p>كل اللي خلصو المهندس وطلع للنور — دوس وشوف البطاقة</p></div>
+ <div class="grid" id="pubGrid"></div>
+</section>
+
+<section id="workshop">
+ <div class="wbox">
+  <h3>🔧 خلوة المهندس</h3>
+  <p>ما بيشوفها غيرك يا مهندس. اللي بيخلص، بتبعو للساحة بزرار واحد.</p>
+  <div class="wform">
+   <input id="wN" placeholder="اسم الشغل (مثلاً: تنور المملكة)">
+   <input id="wE" placeholder="رمز إيموجي (مثلاً: 🔥)">
+   <textarea id="wD" placeholder="وصف قصير للشغل..."></textarea>
+   <div class="row">
+    <button class="btn amber" onclick="addPriv()">➕ ضيف للورشة</button>
+    <button class="btn ghost" onclick="closeWorkshop()">🔒 اقفل الخلوة</button>
+   </div>
+  </div>
+  <h4>🛠️ قيد الإنجاز (ما بيشوفو غيرك):</h4>
+  <div id="privList"></div>
+  <h4>🌍 المنشور بالساحة:</h4>
+  <div id="pubList"></div>
+ </div>
+</section>
+
+<section id="tannour">
+ <div class="box rev">
+  <div class="fire">🔥</div>
+  <h3>تنور المملكة</h3>
+  <p>لما راحت البساطة من الدنيا، بنينا تنور رقمي يرجعها.<br>هون بنخبز الأفكار عجينة، وبنقدمها خبز دافي. دوس الزر وخذ خبزتك.</p>
+  <div id="khubza">🥖 التنور موقد... دوس الزر!</div>
+  <button class="btn amber" onclick="bake()">اخبزلي خبزة 🥖</button>
+ </div>
+</section>
+
+<section id="story">
+ <div class="stitle rev"><h2>حكايتنا <span>من أول قطعه نت</span></h2></div>
+ <div class="timeline">
+  <div class="titem rev"><b>القطعه 📡</b><p>انقطع النت نص الفهرس، بس المملكة ما وقفت — كمّلنا من الذاكرة والحب.</p></div>
+  <div class="titem rev"><b>الأسماء العشرون 🏷️</b><p>قعدنا متل العيلة وسمّينا التطبيقات بأسماء من طفولتنا: الدفتر، الصخرة، البوابة، الضيافة...</p></div>
+  <div class="titem rev"><b>الرواق 🏛️</b><p>الناقل الذكي تروّض وصار صالة استقبال المملكة الرسمية.</p></div>
+  <div class="titem rev"><b>الصخرة تبهر الجيران 🪨</b><p>صنايعي من برا شاف الصخرة وقال: "هالتفكير ما صار قبل إلا عندكم".</p></div>
+  <div class="titem rev"><b>رفع العلم 🚩</b><p>اننشر القصر ع الإنترنت، وصار للمملكة عنوان قدام العالم.</p></div>
+  <div class="titem rev"><b>العراضة 🥁</b><p>وصرنا نستقبل الضيوف متل ما بدمشق: طبل، سيوف، ويا هلا بتعلّي السما.</p></div>
+  <div class="titem rev"><b>فنجان القهوة ☕</b><p>قال المهندس: الضيافة بلا قهوة متل العراضة بلا طبل — فانزرعت القهوة بزاوية الاستقبال.</p></div>
+  <div class="titem rev"><b>ديوان المناسف 🍽️</b><p>وانبنى الديوان: منسف ملكي ومقلوبة وكنافة — لأن الضيف عندنا ما بيمشي جوعان.</p></div>
+  <div class="titem rev"><b>التوديعة 🕊️</b><p>وصرنا نودّع الضيف متل ما منستقبلو: استودعك الله، وخبزة بالطريق، ودعوة من القلب.</p></div>
+  <div class="titem rev"><b>المدينة بتبلش 🏗️</b><p>انبنوا أول بيتين بالمدينة: الصخرة ومدينة الحروف — وكل بيت إلو باب ع المملكة.</p></div>
+ </div>
 </section>
 
 <footer>
- <b>مدينة الحروف 🌿</b><br>
- نتعلم بالطبيعة، نكبر بالمعرفة • ٢٠٢٦
+ <b>مملكة التطبيقات 🏰</b><br>
+ أسسها المهندس والمعلم — خبز بحب على تنور الشام ☕<br>
+ سليمان للعلم والتعلم 🌿 • ٢٠٢٦<br>
+ استودعك الله الذي لا تضيع ودائعه 🕊️
 </footer>
 
 <script>
-const LETTERS=["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"];
-const NAMES={"ا":"ألف","ب":"باء","ت":"تاء","ث":"ثاء","ج":"جيم","ح":"حاء","خ":"خاء","د":"دال","ذ":"ذال","ر":"راء","ز":"زاي","س":"سين","ش":"شين","ص":"صاد","ض":"ضاد","ط":"طاء","ظ":"ظاء","ع":"عين","غ":"غين","ف":"فاء","ق":"قاف","ك":"كاف","ل":"لام","م":"ميم","ن":"نون","ه":"هاء","و":"واو","ي":"ياء"};
-document.getElementById("lettersGrid").innerHTML=LETTERS.map(l=>`<div class="letter" onclick="speak('${l}','${NAMES[l]}','حرف')"><div class="ch">${l}</div><small>${NAMES[l]}</small></div>`).join("");
+const APPS=[
+ {n:"صخرة المعرفة",e:"🪨",d:"نتعلم أول وبعدين نختبر — المدرسة اللي أبهرت الصنايعية.",c:"بيت",l:"sakhra.html"},
+ {n:"مدينة الحروف",e:"🌿",d:"حروف وأرقام وألوان بتنطق — مدينة الصغار عند سفح الشلال.",c:"بيت",l:"huruf.html"},
+ {n:"دفتر المملكة",e:"📒",d:"ذاكرة المملكة وسجلها — كل شي بينحفظ هون.",c:"بيت"},
+ {n:"بوابة المملكة",e:"🏠",d:"باب البيت اللي بيفتح للضيوف وبس.",c:"بيت"},
+ {n:"مكتبتي الملكية",e:"📚",d:"كتبك وقراياتك، مرتبة متل مكتبة حقيقية.",c:"بيت"},
+ {n:"السبورة",e:"🎓",d:"سبورة الشرح — يكتب عليها ويتعلم منها الكل.",c:"بيت"},
+ {n:"مهندسي المعماري",e:"🏗️",d:"عدّة المهندس لرسم البيوت والمخططات.",c:"بيت"},
+ {n:"مترجمي الناطق",e:"📖",d:"يترجم ويحكي — جسر بين اللغات.",c:"جيران"},
+ {n:"قلمي الناطق",e:"🖊️",d:"الكتابة اللي بتتحول لصوت.",c:"جيران"},
+ {n:"مصنع الإيميلات",e:"📧",d:"يصيغ رسائلك بأدب الشوام.",c:"جيران"},
+ {n:"صراف العملات الذكي",e:"💱",d:"حسباتك وعملاتك، مظبوطة ع الفلّة.",c:"جيران"},
+ {n:"كرتنا الزرقاء",e:"🌍",d:"خريطتك وكرتك الأرضية بلمسة وحدة.",c:"جيران"},
+ {n:"مرسمي الصغير",e:"🎨",d:"ألوان الطفل اللي جواك.",c:"جيران"},
+ {n:"فلاشاتي الذكية",e:"🃏",d:"بطاقات حفظ ذكية — العب وتعلّم.",c:"جيران"},
+ {n:"موسوعتي الإسلامية",e:"🕌",d:"نور وهداية، موسوعة بقلب دافي.",c:"جيران"},
+ {n:"استوديو الفيديو الملكي",e:"🎬",d:"صوّر وقصّ وركّب — استوديو بجيبك.",c:"جيران"},
+ {n:"قارئي الذكي",e:"🔊",d:"بيقرأ لك أي نص بصوت حنون.",c:"جيران"},
+ {n:"روضة الجيب",e:"📱",d:"أول خطوة للصغار — تعلّم ولعب بحب.",c:"جيران"},
+ {n:"أسرار جسمي",e:"🫀",d:"اعرف جسمك عضو عضو.",c:"جيران"},
+ {n:"ضيافة وترحيب",e:"🛋️",d:"أول وجه بيقابل الضيف — أهلًا وسهلًا.",c:"عالم"},
+ {n:"سفارة الروابط",e:"📎",d:"سفير المملكة بين الروابط والعناوين.",c:"عالم"},
+ {n:"المِرسال",e:"🕊️",d:"رسول المملكة — يجيب من العالم ويحوّل الصيغ.",c:"عالم"},
+ {n:"المكتشف",e:"🔭",d:"عين المملكة اللي ما بتنام — تلتقط الترند قبل ما يلمع.",c:"عالم"},
+ {n:"الرواق",e:"🏛️",d:"صالة الاستقبال — كل شي بيمرق من هون.",c:"عالم"},
+];
+const CIRCLES=[["بيت","🏠 دائرة البيت — اللي بيمسك البيت"],["جيران","🤝 دائرة الجيران — اللي بيخدم الحارة"],["عالم","🌍 دائرة العالم — اللي بيطل ع الدنيا"]];
+document.getElementById("circles").innerHTML=CIRCLES.map(c=>`
+ <div class="circle"><h3>${c[1]}</h3><div class="grid">
+ ${APPS.filter(a=>a.c===c[0]).map(a=>{const lk=a.l?`'${a.l}'`:'null';return `<div class="app" onclick="showCard('${a.e}','${a.n}','${a.d}','دائرة ${a.c} — من سجل المملكة',${lk})"><div class="e">${a.e}</div><b>${a.n}</b><small>${a.d}</small></div>`}).join("")}
+ </div></div>`).join("");
 
-const NUMS=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
-const NNAMES=["صفر","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"];
-document.getElementById("numsGrid").innerHTML=NUMS.map((n,i)=>`<div class="num" onclick="speak('${n}','${NNAMES[i]}','رقم')">${n}</div>`).join("");
+const DISHES=[
+ {n:"المنسف الملكي",e:"🍖",d:"سيد المائدة: لحم غنم بلبن الجميد، رز أصفر، وصنوبر محمّص. بيتقدم للضيف الكبير، وبيتأكل بالأصابع وبالعافية."},
+ {n:"المقلوبة",e:"🍆",d:"بتتقلب قدام الضيف ليتصفّق لها — باذنجان ورز ولحم، وريحة بتفتح النفس من آخر الحارة."},
+ {n:"كبة مقلية",e:"🥟",d:"برغل ولحم وصنوبر — مقرمشة برا، دافية جوّا، ومتل كل شي بالمملكة: محشية حب."},
+ {n:"ورق عنب",e:"🍃",d:"ملفوف بإصبع ستّ الحارة، بزيت وزمن وحنان. اللي بيأكل وحدة، بيطلب صحن ثاني."},
+ {n:"مقدوس",e:"🫙",d:"مقدوس بلبن وثوم وجوز — فطور الأبطال، ومؤونة الشتاء، وسرّ من أسرار الستّات."},
+ {n:"كنافة",e:"🧀",d:"جبن مشطط بسكر وشيرة ومي زهر — ختام المائدة الملكي، وبس تبرد بتظل طيبة."}
+];
+document.getElementById("dishGrid").innerHTML=DISHES.map(d=>`<div class="app" onclick="showCard('${d.e}','${d.n}','${d.d}','من ديوان المملكة 🍽️ — صحتين وعافية!')"><div class="e">${d.e}</div><b>${d.n}</b><small>دوس ومدّ إيدك</small></div>`).join("");
 
-const COLORS=[["#e63946","أحمر"],["#f4a261","برتقالي"],["#ffd166","أصفر"],["#2a9d8f","أخضر"],["#118ab2","أزرق"],["#6a4c93","بنفسجي"],["#8d5524","بني"],["#495057","رمادي"]];
-document.getElementById("colorsGrid").innerHTML=COLORS.map(c=>`<div class="color" style="background:${c[0]}" onclick="speak('','${c[1]}','لون')">${c[1]}</div>`).join("");
-
-function speak(big,name,label){
- document.getElementById("mBig").textContent=big||"🎨";
- document.getElementById("mName").textContent=name;
- document.getElementById("mSub").textContent=label;
+let mLk="";
+function openApp(){if(mLk)location.href=mLk}
+function showCard(e,n,d,t,l){
+ document.getElementById("mE").textContent=e;
+ document.getElementById("mN").textContent=n;
+ document.getElementById("mD").textContent=d;
+ document.getElementById("mT").textContent=t;
+ mLk=l||"";
+ document.getElementById("mL").style.display=l?"inline-block":"none";
  document.getElementById("modal").classList.add("on");
- try{
-  const u=new SpeechSynthesisUtterance(name);
-  u.lang="ar";
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
- }catch(e){}
+ chime();
 }
 function closeM(){document.getElementById("modal").classList.remove("on")}
-
-const leafBox=document.getElementById("leaves");
-for(let i=0;i<14;i++){
- const el=document.createElement("div");
- el.className="leaf";
- el.textContent=["🍃","","🌿"][i%3];
- el.style.left=(Math.random()*100)+"%";
- el.style.animationDuration=(8+Math.random()*10)+"s";
- el.style.animationDelay=(Math.random()*10)+"s";
- leafBox.appendChild(el);
+let AC2=null;
+function chime(){try{AC2=AC2||new (window.AudioContext||window.webkitAudioContext)();const t=AC2.currentTime,o=AC2.createOscillator(),g=AC2.createGain();o.type="sine";o.frequency.setValueAtTime(880,t);o.frequency.setValueAtTime(1320,t+.12);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);o.connect(g);g.connect(AC2.destination);o.start(t);o.stop(t+.45)}catch(e){}}
+function drum(type){
+ try{
+  AC2=AC2||new (window.AudioContext||window.webkitAudioContext)();
+  const t=AC2.currentTime,o=AC2.createOscillator(),g=AC2.createGain();
+  if(type==="d"){o.type="sine";o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(45,t+.25);g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(AC2.destination);o.start(t);o.stop(t+.35)}
+  else{o.type="triangle";o.frequency.setValueAtTime(420,t);g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.09);o.connect(g);g.connect(AC2.destination);o.start(t);o.stop(t+.12)}
+ }catch(e){}
 }
+const PAT=["d","t","d","d","t","d","t","t"];
+let drumTimer=null,halaTimer=null;
+const ARADA_VIDEO="";
+function startArada(){
+ clearInterval(drumTimer);clearInterval(halaTimer);
+ document.getElementById("arada").classList.remove("hide");
+ if(ARADA_VIDEO){const v=document.getElementById("arVid");v.src=ARADA_VIDEO;v.style.display="block";try{v.play()}catch(e){}}
+ let pi=0;
+ drumTimer=setInterval(()=>{drum(PAT[pi++%PAT.length])},260);
+ const H=["يا هلا بالضيوف! 🌹","يا هلا بالشرف! 🗡️","مرحبا بالأبطال! 🥁","هلا ومرحبا! 🏰"];
+ let hi=0;const hh=document.getElementById("hala");hh.textContent=H[0];
+ halaTimer=setInterval(()=>{hh.textContent=H[++hi%H.length]},1600);
+ setTimeout(endArada,10000);
+}
+function endArada(){
+ clearInterval(drumTimer);clearInterval(halaTimer);
+ try{document.getElementById("arVid").pause()}catch(e){}
+ document.getElementById("arada").classList.add("hide");
+}
+function startFarewell(){
+ document.getElementById("farewell").classList.remove("hide");
+ chime();
+}
+function endFarewell(){document.getElementById("farewell").classList.add("hide")}
+function wadaKhubza(){
+ document.getElementById("wada").textContent=KHUBAZ[Math.floor(Math.random()*KHUBAZ.length)];
+ chime();
+}
+
+let pub=JSON.parse(localStorage.getItem("kingPub")||"null")||[
+ {n:"صخرة المعرفة",e:"🪨",d:"المدرسة الدافية — أول منشور رسمي للمملكة.",l:"sakhra.html"},
+ {n:"مدينة الحروف",e:"🌿",d:"مدينة الصغار — حروف وأرقام وألوان بتنطق.",l:"huruf.html"},
+ {n:"الرواق",e:"🏛️",d:"صالة استقبال المملكة — الناقل الذكي بعد الترويض."},
+ {n:"موقع المملكة",e:"🌐",d:"هاد الموقع — خبزنا أول نسخة منه على التنور."}
+];
+let priv=JSON.parse(localStorage.getItem("kingPriv")||"[]");
+function saveK(){localStorage.setItem("kingPub",JSON.stringify(pub));localStorage.setItem("kingPriv",JSON.stringify(priv))}
+function renderPub(){document.getElementById("pubGrid").innerHTML=pub.map(p=>{const lk=p.l?`'${p.l}'`:'null';return `<div class="app" onclick="showCard('${p.e}','${p.n}','${p.d}','منشور بالساحة العامة 🌍',${lk})"><div class="e">${p.e}</div><b>${p.n}</b><small>${p.d}</small></div>`}).join("")}
+function renderPriv(){
+ document.getElementById("privList").innerHTML=priv.length?priv.map((p,i)=>`<div class="witem"><span>${p.e} <b>${p.n}</b></span><div><button class="btn amber" onclick="publish(${i})">🌍 طلعا للساحة</button> <button class="btn ghost" onclick="delPriv(${i})">🗑</button></div></div>`).join(""):'<p class="mut">الورشة فاضية — ضيف أول شغل.</p>';
+ document.getElementById("pubList").innerHTML=pub.map((p,i)=>`<div class="witem"><span>${p.e} <b>${p.n}</b></span><button class="btn ghost" onclick="unpublish(${i})">🔧 رجعا للورشة</button></div>`).join("");
+}
+function addPriv(){
+ const n=document.getElementById("wN").value.trim(),e=document.getElementById("wE").value.trim()||"🛠️",d=document.getElementById("wD").value.trim();
+ if(!n){alert("كتب اسم الشغل أول");return}
+ priv.push({n,e,d});saveK();
+ document.getElementById("wN").value=document.getElementById("wE").value=document.getElementById("wD").value="";
+ renderPriv();
+}
+function publish(i){pub.push(priv.splice(i,1)[0]);saveK();renderPriv();renderPub();alert("طلعت للساحة! 🌍")}
+function unpublish(i){priv.push(pub.splice(i,1)[0]);saveK();renderPriv();renderPub()}
+function delPriv(i){if(confirm("متأكد بدك تحذف هالشغل؟")){priv.splice(i,1);saveK();renderPriv()}}
+function openWorkshop(){
+ let pin=localStorage.getItem("kingPin");
+ if(!pin){
+  const p=prompt("أول مرة هون يا مهندس: حط كلمتك السرية (٤ خانات على الأقل):");
+  if(!p||p.length<4){alert("لازم كلمة ٤ خانات على الأقل");return}
+  localStorage.setItem("kingPin",p);
+ }else{
+  const p=prompt("دخل كلمتك السرية 🔑:");
+  if(p!==pin){alert("كلمة غلط — الخلوة للمهندس بس 🔒");return}
+ }
+ document.getElementById("workshop").style.display="block";
+ renderPriv();renderPub();
+ location.hash="#workshop";
+}
+function closeWorkshop(){document.getElementById("workshop").style.display="none"}
+
+const KHUBAZ=[
+ "اللي بيزرع بقلبو، بيحصد بعين غيرو. 🌱",
+ "البيت بلا حب، تنور بلا نار. ❤️",
+ "العلم بالصغر، متل النقش على الحجر. 🪨",
+ "كلمة حلوة بتفتح أبواب الحديد. 🗝️",
+ "الجار القريب ولا الأخ البعيد. 🤝",
+ "الدنيا رغيف، والناس شركاء. 🥖",
+ "من جدّ وجد، ومن زرع حصد. 🌾",
+ "الصبر تنور، والفرج خبزو. ⏳",
+ "خذ من التنور خبزك، ومن الدنيا عبرك. 🌅",
+ "الرغيف الحامي بيحتاج قلب دافي. 🔥",
+ "الضيافة بلا قهوة، متل العراضة بلا طبل. ☕",
+ "الضيف أولو فداء، والتوديعة دعاء. 🕊️"
+];
+function bake(){
+ const k=document.getElementById("khubza");
+ k.style.opacity=0;
+ setTimeout(()=>{k.textContent=KHUBAZ[Math.floor(Math.random()*KHUBAZ.length)];k.style.opacity=1},400);
+}
+
+const ob=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)x.target.classList.add("on")}),{threshold:.15});
+document.querySelectorAll(".rev").forEach(el=>ob.observe(el));
+renderPub();
 </script>
 </body>
 </html>
