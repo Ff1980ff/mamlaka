@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>صانع الفيديوهات الدعائية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#4c1d95,#831843);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:470px;background:#1e1b4b;border:6px solid #e879f9;border-radius:24px;padding:16px;min-height:85vh}
+h2{text-align:center;font-size:19px;color:#f0abfc}
+.sub{text-align:center;font-size:11px;color:#c4b5fd;margin:4px 0 12px}
+input,textarea{width:100%;border:none;border-radius:12px;padding:11px;font-size:14px;background:#312e81;color:#fff;outline:none;border:1px solid #6d28d9;margin-bottom:8px}
+textarea{min-height:70px}
+.btn{border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;color:#1e1b4b;background:#e879f9;width:100%;margin-bottom:8px}
+.btn.g{background:#38bdf8}.btn.gr{background:#334155;color:#fff}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:8px}
+#sList{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.sl{display:flex;gap:8px;align-items:center;background:#312e81;border-radius:12px;padding:6px}
+.sl img{width:50px;height:80px;object-fit:cover;border-radius:8px}
+.sl input{flex:1;margin:0}
+.sl button{border:none;border-radius:8px;background:#ef4444;color:#fff;padding:6px 10px;cursor:pointer}
+.st{text-align:center;font-size:12px;color:#c4b5fd;min-height:18px;margin:6px 0}
+video{width:100%;border-radius:14px;display:none;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>🎬 صانع الفيديوهات الدعائية</h2>
+<div class="sub">صور + موسيقى + حركات = فيديو سينمائي!</div>
+<input id="vTitle" placeholder="عنوان الفيديو (مثلا: تطبيقاتي الذكية)">
+<input id="vSub" placeholder="جملة دعائية (مثلا: علّم والعب وتعلم)">
+<textarea id="vSoc" placeholder="روابط التواصل (سطر لكل رابط)&#10;واتساب: ...&#10;يوتيوب: ..."></textarea>
+<label class="chk"><input type="checkbox" id="mus" checked style="width:auto;margin:0"> 🎵 موسيقى خلفية</label>
+<input type="file" id="imgs" accept="image/*" multiple onchange="addFiles(this)">
+<div id="sList"></div>
+<button class="btn" onclick="exportV()">🎬 تصدير الفيديو</button>
+<div class="st" id="st"></div>
+<video id="vid" controls></video>
+<button class="btn g" id="dlB" style="display:none" onclick="dlV()">📥 تنزيل الفيديو</button>
+<button class="btn gr" id="shB" style="display:none" onclick="shareV()">📤 مشاركة بالتواصل</button>
+</div>
+<script>
+let slides=[],vUrl=null,chunks=[];
+function addFiles(inp){
+ [...inp.files].forEach(f=>{
+  const im=new Image();
+  im.onload=()=>{slides.push({im,cap:""});renderList()};
+  im.src=URL.createObjectURL(f);
+ });
+ inp.value="";
+}
+function renderList(){
+ document.getElementById("sList").innerHTML=slides.map((s,i)=>`<div class="sl"><img src="${s.im.src}"><input placeholder="تعليق على هاي الصورة..." oninput="slides[${i}].cap=this.value" value="${s.cap}"><button onclick="slides.splice(${i},1);renderList()">✖</button></div>`).join("");
+}
+function txt(ctx,t,x,y,size,col,align){
+ ctx.fillStyle=col||"#fff";ctx.font="bold "+size+"px Tahoma";ctx.textAlign=align||"center";ctx.direction="rtl";
+ ctx.fillText(t,x,y);
+}
+function startMusic(AC,dest,dur){
+ const step=0.28,scale=[523,587,659,784,880,784,659,587];
+ for(let t=0;t<dur;t+=step){
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type="sine";o.frequency.value=scale[Math.floor(t/step)%8];
+  const at=AC.currentTime+t;
+  g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.15,at+0.05);g.gain.exponentialRampToValueAtTime(0.0001,at+step*0.9);
+  o.connect(g);g.connect(dest);g.connect(AC.destination);
+  o.start(at);o.stop(at+step);
+ }
+}
+function exportV(){
+ if(!slides.length){alert("ضيف صور أولًا (لقطات شاشات تطبيقاتك)");return}
+ const W=720,H=1280,cv=document.createElement("canvas");cv.width=W;cv.height=H;
+ const ctx=cv.getContext("2d");
+ const title=document.getElementById("vTitle").value||"تطبيقاتي الذكية";
+ const sub=document.getElementById("vSub").value||"";
+ const soc=document.getElementById("vSoc").value.split("\n").filter(x=>x.trim());
+ const scenes=[{t:"intro"},...slides.map(s=>({t:"s",s})),{t:"outro"}];
+ const DUR=3000,total=scenes.length*DUR;
+ const vs=cv.captureStream(30);
+ let stream=vs;
+ if(document.getElementById("mus").checked){
+  try{
+   const AC=new (window.AudioContext||window.webkitAudioContext)();
+   const dest=AC.createMediaStreamDestination();
+   startMusic(AC,dest,total/1000);
+   stream=new MediaStream([...vs.getVideoTracks(),...dest.stream.getAudioTracks()]);
+  }catch(e){stream=vs}
+ }
+ const rec=new MediaRecorder(stream,{mimeType:"video/webm"});
+ chunks=[];rec.ondataavailable=e=>chunks.push(e.data);
+ rec.onstop=()=>{
+  const b=new Blob(chunks,{type:"video/webm"});
+  vUrl=URL.createObjectURL(b);
+  const v=document.getElementById("vid");v.src=vUrl;v.style.display="block";
+  document.getElementById("dlB").style.display="block";
+  document.getElementById("shB").style.display="block";
+  document.getElementById("st").textContent="✔️ الفيديو جاهز! شوفو وشاركوا";
+ };
+ rec.start();
+ setTimeout(()=>{if(rec.state!=="inactive")rec.stop()},total+600);
+ const t0=performance.now();
+ document.getElementById("st").textContent="⏳ عم نسجل الفيديو السينمائي...";
+ function frame(){
+  const el=performance.now()-t0;
+  if(el>=total){if(rec.state!=="inactive")rec.stop();return}
+  const idx=Math.floor(el/DUR),p=(el%DUR)/DUR,sc=scenes[idx];
+  const g=ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,"#1e1b4b");g.addColorStop(1,"#831843");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(let i=0;i<14;i++){
+   ctx.globalAlpha=0.25;
+   ctx.fillStyle=["#e879f9","#38bdf8","#facc15"][i%3];
+   ctx.beginPath();
+   ctx.arc((i*97+el*0.03*(i%3+1))%W,(i*131+el*0.05)%H,4+(i%3)*3,0,7);
+   ctx.fill();
+  }
+  ctx.globalAlpha=Math.min(1,p*5,(1-p)*5+0.25);
+  if(sc.t==="intro"){
+   const b=Math.sin(el/280)*12;
+   txt(ctx,"🎬",W/2,H/2-160+b,110+Math.sin(el/200)*10);
+   txt(ctx,title,W/2,H/2+b,62,"#f0abfc");
+   if(sub)txt(ctx,sub,W/2,H/2+90,36,"#c4b5fd");
+  }else if(sc.t==="outro"){
+   txt(ctx,"📲",W/2,H/2-280+Math.sin(el/280)*10,95);
+   txt(ctx,"حمّلوا تطبيقاتنا هلأ!",W/2,H/2-140,50,"#f0abfc");
+   soc.forEach((s,i)=>{
+    ctx.globalAlpha=Math.max(0,Math.min(1,(p-0.08*i)*4));
+    txt(ctx,s,W/2,H/2-30+i*70,32,"#fff");
+   });
+   ctx.globalAlpha=1;
+   txt(ctx,"شاركوا الفيديو مع أصحابكم 💜",W/2,H-110,28,"#c4b5fd");
+  }else{
+   const z=1.05+p*0.12,ox=Math.sin(p*Math.PI)*24;
+   const img=sc.s.im,s=Math.max(W/img.width,(H-280)/img.height)*z;
+   const dw=img.width*s,dh=img.height*s;
+   ctx.drawImage(img,(W-dw)/2+ox,((H-280)-dh)/2,dw,dh);
+   ctx.fillStyle="rgba(30,27,75,.92)";ctx.fillRect(0,H-280,W,280);
+   txt(ctx,title,W/2,H-210,32,"#f0abfc");
+   const yOff=(1-Math.min(1,p*3))*120;
+   if(sc.s.cap)txt(ctx,sc.s.cap,W/2,H-120+yOff,40,"#fff");
+  }
+  ctx.globalAlpha=1;
+  ctx.fillStyle="#e879f9";ctx.fillRect(0,0,W*(el/total),10);
+  requestAnimationFrame(frame);
+ }
+ frame();
+}
+function dlV(){const a=document.createElement("a");a.href=vUrl;a.download=(document.getElementById("vTitle").value||"promo")+".webm";a.click()}
+function shareV(){
+ fetch(vUrl).then(r=>r.blob()).then(b=>{
+  const f=new File([b],"promo.webm",{type:"video/webm"});
+  if(navigator.share&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:"تطبيقاتي"});
+  else alert("المشاركة غير متاحة — نزّل الفيديو وابعثو يدوي");
+ });
+}
+</script>
+</body>
+</html>
