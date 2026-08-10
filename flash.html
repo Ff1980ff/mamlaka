@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الفلاشات الذكية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#065f46,#0c4a6e);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:450px;background:#0f172a;border:6px solid #22d3ee;border-radius:24px;padding:16px;min-height:85vh;display:flex;flex-direction:column;gap:10px}
+h2{text-align:center;font-size:19px;color:#67e8f9}
+.welc{text-align:center;font-size:12px;color:#a5f3fc;min-height:16px}
+.decks{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.decks button{border:none;border-radius:99px;padding:9px 14px;font-size:12px;font-weight:bold;cursor:pointer;background:#1e293b;color:#94a3b8}
+.decks button.on{background:#22d3ee;color:#0f172a}
+.scene{perspective:1000px;flex:1;min-height:300px;cursor:pointer}
+.card{position:relative;width:100%;height:100%;min-height:300px;transform-style:preserve-3d;transition:transform .6s}
+.card.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center}
+.front{background:linear-gradient(160deg,#164e63,#1e293b);border:3px solid #22d3ee}
+.back{background:linear-gradient(160deg,#713f12,#1e293b);border:3px solid #facc15;transform:rotateY(180deg)}
+.face .big{font-size:64px}
+.face .t{font-size:30px;font-weight:bold}
+.hint{font-size:11px;color:#94a3b8}
+.bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.btn{border:none;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:bold;cursor:pointer;background:#22d3ee;color:#0f172a}
+.btn.y{background:#facc15}.btn.gr{background:#334155;color:#fff}
+.prog{text-align:center;font-size:12px;color:#a5f3fc}
+#addP{background:#1e293b;border-radius:14px;padding:10px;display:none;flex-direction:column;gap:7px}
+#addP input{border:none;border-radius:10px;padding:10px;font-size:14px;background:#0f172a;color:#fff;outline:none;border:1px solid #334155}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>🃏 الفلاشات الذكية</h2>
+<div class="welc" id="welc"></div>
+<div class="decks" id="decks"></div>
+<div class="scene" onclick="flipC()"><div class="card" id="card">
+ <div class="face front"><div class="big" id="fBig"></div><div class="t" id="fT"></div><div class="hint">اضغط البطاقة لتقلبها 👆</div></div>
+ <div class="face back"><div class="big" id="bBig"></div><div class="t" id="bT"></div><div class="hint">اضغط للرجوع 👆</div></div>
+</div></div>
+<div class="prog" id="prog"></div>
+<div class="bar">
+ <button class="btn" onclick="go(-1)">➡️ السابق</button>
+ <button class="btn gr" onclick="shuffleD()">🔀 خلط</button>
+ <button class="btn" onclick="go(1)">التالي ⬅️</button>
+</div>
+<div class="bar"><button class="btn y" onclick="toggleAdd()">➕ بطاقتك الخاصة</button></div>
+<div id="addP">
+ <input id="aF" placeholder="وجه البطاقة (مثلا: سيارة)">
+ <input id="aB" placeholder="ظهر البطاقة (مثلا: Car 🚗)">
+ <button class="btn y" onclick="addCard()">💾 حفظ البطاقة</button>
+</div>
+</div>
+<script>
+const DECKS={
+ trans:{n:"🌍 ترجمة",items:[["بطة","Duck 🦆"],["شمس","Sun ☀️"],["كتاب","Book 📖"],["قمر","Moon 🌙"],["ماء","Water 💧"],["خبز","Bread 🍞"],["صديق","Friend 🤝"],["مدرسة","School 🏫"]]},
+ letters:{n:"🔤 حروف",items:[["ب","B"],["ش","Sh"],["م","M"],["ك","K"],["ت","T"],["ن","N"]]},
+ nums:{n:"🔢 أرقام",items:[["٣","Three 3"],["٧","Seven 7"],["١","Ten 10"],["٥","Five 5"]]},
+ mine:{n:"⭐ بطاقاتك",items:[]}
+};
+let cur="trans",idx=0,flipped=false;
+try{DECKS.mine.items=JSON.parse(localStorage.getItem("flashMine")||"[]")}catch(e){}
+let POS=JSON.parse(localStorage.getItem("flashPos")||"{}");
+function speak(t,l){try{const x=new SpeechSynthesisUtterance(t);x.lang=l||"ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function renderDecks(){
+ document.getElementById("decks").innerHTML=Object.keys(DECKS).map(k=>`<button class="${k===cur?"on":""}" onclick="setDeck('${k}')">${DECKS[k].n}</button>`).join("");
+}
+function setDeck(k){cur=k;idx=POS[k]||0;renderDecks();show()}
+function show(){
+ const it=DECKS[cur].items;
+ if(!it.length){document.getElementById("fBig").textContent="🃏";document.getElementById("fT").textContent="لا بطاقات — ضيف وحدة!";document.getElementById("bBig").textContent="";document.getElementById("bT").textContent="";document.getElementById("prog").textContent="";return}
+ idx=(idx+it.length)%it.length;
+ POS[cur]=idx;localStorage.setItem("flashPos",JSON.stringify(POS));
+ const x=it[idx];flipped=false;
+ document.getElementById("card").classList.remove("flip");
+ document.getElementById("fBig").textContent=/[\u{1F300}-\u{1FAFF}]/u.test(x[0])?"":x[0].split(" ")[0];
+ document.getElementById("fT").textContent=x[0];
+ document.getElementById("bBig").textContent="";
+ document.getElementById("bT").textContent=x[1];
+ document.getElementById("prog").textContent="البطاقة "+(idx+1)+" من "+it.length+" • "+DECKS[cur].n;
+ speak(x[0],"ar-SA");
+}
+function flipC(){
+ const it=DECKS[cur].items;if(!it.length)return;
+ flipped=!flipped;
+ document.getElementById("card").classList.toggle("flip",flipped);
+ if(flipped)speak(it[idx][1].replace(/[^\p{L}\p{N}\s]/gu,""),/^[a-zA-Z]/.test(it[idx][1])?"en-US":"ar-SA");
+}
+function go(d){idx+=d;show()}
+function shuffleD(){DECKS[cur].items.sort(()=>Math.random()-.5);idx=0;show()}
+function toggleAdd(){const p=document.getElementById("addP");p.style.display=p.style.display==="flex"?"none":"flex"}
+function addCard(){
+ const f=document.getElementById("aF").value.trim(),b=document.getElementById("aB").value.trim();
+ if(!f||!b){alert("عبّي الوجه والظهر");return}
+ DECKS.mine.items.push([f,b]);
+ localStorage.setItem("flashMine",JSON.stringify(DECKS.mine.items));
+ document.getElementById("aF").value="";document.getElementById("aB").value="";
+ setDeck("mine");alert("انحفظت بطاقتك ⭐");
+}
+renderDecks();
+const last=POS[cur]||0;
+if(last>0)document.getElementById("welc").textContent="👋 رجعت! وقفنا عند البطاقة "+(last+1)+" — كمّل من هون";
+idx=last;show();
+</script>
+</body>
+</html>
