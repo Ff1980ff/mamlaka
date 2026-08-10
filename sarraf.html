@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>محول العملات الذكي</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#064e3b,#0f172a);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:440px;background:#0f172a;border:6px solid #facc15;border-radius:24px;padding:18px}
+h2{text-align:center;font-size:20px;margin-bottom:4px}
+.sub{text-align:center;color:#94a3b8;font-size:11px;margin-bottom:14px}
+label{font-size:12px;color:#94a3b8;display:block;margin:8px 0 4px}
+input,select{width:100%;border:none;border-radius:12px;padding:12px;font-size:16px;background:#1e293b;color:#fff;outline:none;border:1px solid #334155}
+.res{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a;border-radius:16px;padding:16px;text-align:center;margin:14px 0;font-size:26px;font-weight:bold;min-height:60px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.btn{border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:bold;cursor:pointer;color:#0f172a;background:#facc15;margin-top:8px;width:100%}
+.btn.b{background:#38bdf8}.btn.g{background:#334155;color:#fff}
+#edit{display:none;background:#1e293b;border-radius:14px;padding:12px;margin-top:10px}
+#edit .r{display:flex;gap:8px;align-items:center;margin:5px 0;font-size:13px}
+#edit .r input{padding:7px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>💱 محول العملات الذكي</h2>
+<div class="sub">شغال بدون نت • معدلاتك بتتحديث يدويًا</div>
+<label>💵 المبلغ</label>
+<input id="amt" type="number" value="1" oninput="calc()">
+<div class="row">
+ <div><label>من</label><select id="from" onchange="calc()"></select></div>
+ <div><label>إلى</label><select id="to" onchange="calc()"></select></div>
+</div>
+<button class="btn b" onclick="swap()">🔁 عكس الاتجاه</button>
+<div class="res" id="res">0</div>
+<div class="row">
+ <button class="btn" onclick="copyR()">📋 نسخ</button>
+ <button class="btn b" onclick="speakR()">🔊 انطق</button>
+ <button class="btn g" onclick="toggleEdit()">⚙️ المعدلات</button>
+</div>
+<div id="edit"></div>
+</div>
+<script>
+const NAMES={USD:"دولار 🇺🇸",EUR:"يورو 🇪🇺",GBP:"باوند 🇬🇧",TRY:"ليرة تركية 🇹",SAR:"ريال سعودي 🇸",AED:"درهم 🇦🇪",JOD:"دينار أردني 🇯🇴",EGP:"جنيه مصري 🇪🇬",SYP:"ليرة سورية 🇸🇾",KWD:"دينار كويتي 🇰🇼"};
+const DEF={USD:1,EUR:0.92,GBP:0.79,TRY:33,SAR:3.75,AED:3.67,JOD:0.71,EGP:48,SYP:13000,KWD:0.31};
+let rates=JSON.parse(localStorage.getItem("curRates")||JSON.stringify(DEF));
+function saveR(){localStorage.setItem("curRates",JSON.stringify(rates))}
+const f=document.getElementById("from"),t=document.getElementById("to");
+Object.keys(NAMES).forEach(k=>{f.add(new Option(NAMES[k],k));t.add(new Option(NAMES[k],k))});
+t.value="SYP";
+function calc(){
+ const v=parseFloat(document.getElementById("amt").value)||0;
+ const r=v/rates[f.value]*rates[t.value];
+ document.getElementById("res").textContent=r.toLocaleString("ar-SY",{maximumFractionDigits:2})+" "+NAMES[t.value].split(" ")[0];
+}
+function swap(){const x=f.value;f.value=t.value;t.value=x;calc()}
+function copyR(){const ta=document.createElement("textarea");ta.value=document.getElementById("res").textContent;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");alert("تم النسخ ✔️")}catch(e){}ta.remove()}
+function speakR(){try{const x=new SpeechSynthesisUtterance(document.getElementById("res").textContent);x.lang="ar-SA";speechSynthesis.speak(x)}catch(e){}}
+function toggleEdit(){
+ const e=document.getElementById("edit");
+ if(e.style.display==="block"){e.style.display="none";return}
+ e.style.display="block";
+ e.innerHTML=`<b style="font-size:13px">كم وحدة مقابل الدولار الواحد؟</b>`+Object.keys(NAMES).map(k=>`<div class="r"><span style="flex:1">${NAMES[k]}</span><input type="number" step="any" id="r_${k}" value="${rates[k]}"></div>`).join("")+`<button class="btn" onclick="saveEdit()">💾 حفظ المعدلات</button>`;
+}
+function saveEdit(){
+ Object.keys(NAMES).forEach(k=>{const v=parseFloat(document.getElementById("r_"+k).value);if(v>0)rates[k]=v});
+ saveR();calc();document.getElementById("edit").style.display="none";alert("انحفظت المعدلات ✔️");
+}
+calc();
+</script>
+</body>
+</html>
