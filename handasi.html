@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المهندس المعماري الذكي</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#082f49,#0c1a2e);color:#e0f2fe;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:520px;background:#0c1a2e;border:6px solid #38bdf8;border-radius:24px;padding:16px}
+h2{text-align:center;font-size:19px;color:#7dd3fc}
+.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 10px}
+.row{display:flex;gap:6px;margin-bottom:6px}
+.row label{flex:1;font-size:10px;color:#94a3b8;display:flex;flex-direction:column;gap:3px}
+input{border:none;border-radius:10px;padding:8px;font-size:14px;background:#1e293b;color:#fff;outline:none;border:1px solid #334155;width:100%}
+.chk{display:flex;gap:10px;justify-content:center;font-size:12px;margin-bottom:8px}
+.chk label{display:flex;gap:5px;align-items:center}
+.chk input{width:auto}
+.btn{border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:bold;cursor:pointer;background:#38bdf8;color:#0c1a2e;margin:3px}
+.btn.g{background:#22c55e;color:#fff}.btn.y{background:#facc15}.btn.gr{background:#334155;color:#fff}
+.bar{text-align:center}
+canvas{width:100%;border-radius:14px;background:#0b2540;border:2px solid #1d4ed8;margin-top:8px}
+.st{text-align:center;font-size:12px;color:#7dd3fc;margin-top:6px;min-height:16px}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>🏗️ المهندس المعماري الذكي</h2>
+<div class="sub">أرض مايلة + درج + منور + برندة = بيت حقيقي!</div>
+<div class="row">
+ <label>العرض (م)<input id="wIn" type="number" value="10"></label>
+ <label>ضلع ١ (م)<input id="d1" type="number" value="18" step="0.1"></label>
+ <label>ضلع ٢ (م)<input id="d2" type="number" value="14.2" step="0.1"></label>
+ <label>غرف النوم<input id="bIn" type="number" value="3" min="1" max="5"></label>
+ <label>طوابق<input id="fl" type="number" value="2" min="1" max="3"></label>
+</div>
+<div class="chk">
+ <label><input type="checkbox" id="nour" checked> 🌤️ منور</label>
+ <label><input type="checkbox" id="ver" checked> 🌿 برندة</label>
+</div>
+<div class="bar"><button class="btn y" onclick="gen()">🏗️ ارسم المخططات</button></div>
+<canvas id="cv" width="900" height="700"></canvas>
+<div class="bar">
+ <button class="btn" onclick="nav(-1)">➡️ مخطط</button>
+ <button class="btn" onclick="nav(1)">مخطط ⬅️</button>
+ <button class="btn g" onclick="pick()">✔️ اخترت هاد</button>
+ <button class="btn gr" onclick="saveImg()">📥 حفظ صورة</button>
+</div>
+<div class="st" id="st"></div>
+</div>
+<script>
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+const COL={"الصالون":"#f59e0b","المطبخ":"#22c55e","الممر":"#64748b","الحمام":"#a855f7","نوم":"#38bdf8","الدرج":"#f97316","منور":"#fde047","برندة":"#4ade80"};
+let plans=[],pi=0,W=10,D1=18,D2=14.2,FL=2,NOUR=true,VER=true;
+function col(n){for(const k in COL)if(n.startsWith(k))return COL[k];return "#38bdf8"}
+function Dx(x){return D1+(D2-D1)*(x/W)}
+function segRow(list,t1,t2,mir,rooms){
+ const totW=list.reduce((a,b)=>a+b.w,0);let x=0;
+ list.forEach(s=>{
+  const w=s.w*W/totW,xx=mir?W-x-w:x;
+  rooms.push({n:s.n,x1:xx,x2:xx+w,t1,t2});
+  x+=w;
+ });
+}
+function buildPlan(v){
+ const rooms=[],Dav=(D1+D2)/2;
+ const hallF=1.2/Dav,verF=v.ver?1.5/Dav:0;
+ const usable=1-hallF-verF,fF=verF+usable*v.split;
+ if(v.ver)segRow([{n:"برندة",w:1}],0,verF,v.mir,rooms);
+ segRow([{n:"الصالون",w:.62},{n:"المطبخ",w:.38}],verF,fF,v.mir,rooms);
+ const hs=[];if(v.floors>1)hs.push({n:"الدرج",w:2.5});hs.push({n:"الممر",w:5});
+ segRow(hs,fF,fF+hallF,v.mir,rooms);
+ const bs=[];if(v.nour)bs.push({n:"منور",w:1.5});bs.push({n:"الحمام",w:2.2});
+ for(let i=0;i<v.beds;i++)bs.push({n:"نوم "+(i+1),w:3});
+ segRow(bs,fF+hallF,1,v.mir,rooms);
+ return rooms;
+}
+function area(r){return (r.x2-r.x1)*(r.t2-r.t1)*(Dx(r.x1)+Dx(r.x2))/2}
+function gen(){
+ W=parseFloat(document.getElementById("wIn").value)||10;
+ D1=parseFloat(document.getElementById("d1").value)||18;
+ D2=parseFloat(document.getElementById("d2").value)||14.2;
+ const beds=Math.max(1,Math.min(5,parseInt(document.getElementById("bIn").value)||2));
+ FL=Math.max(1,Math.min(3,parseInt(document.getElementById("fl").value)||1));
+ NOUR=document.getElementById("nour").checked;
+ VER=document.getElementById("ver").checked;
+ plans=[
+  buildPlan({split:.55,mir:false,hall:"mid",beds,floors:FL,nour:NOUR,ver:VER}),
+  buildPlan({split:.5,mir:true,hall:"mid",beds,floors:FL,nour:NOUR,ver:VER}),
+  buildPlan({split:.62,mir:false,beds,floors:FL,nour:NOUR,ver:VER}),
+  buildPlan({split:.55,mir:true,beds,floors:FL,nour:NOUR,ver:VER}),
+  buildPlan({split:.48,mir:false,beds,floors:FL,nour:NOUR,ver:VER}),
+  buildPlan({split:.68,mir:true,beds,floors:FL,nour:NOUR,ver:VER})
+ ];
+ pi=0;draw();
+}
+function draw(){
+ if(!plans.length)return;
+ const rooms=plans[pi];
+ ctx.fillStyle="#0b2540";ctx.fillRect(0,0,900,700);
+ ctx.strokeStyle="rgba(56,189,248,.12)";ctx.lineWidth=1;
+ for(let x=0;x<900;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,700);ctx.stroke()}
+ for(let y=0;y<700;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(900,y);ctx.stroke()}
+ const mD=Math.max(D1,D2);
+ const sc=Math.min(820/W,560/mD),ox=(900-W*sc)/2,oy=(700-mD*sc)/2+10;
+ const X=x=>ox+x*sc,Y=(x,t)=>oy+t*Dx(x)*sc;
+ rooms.forEach(r=>{
+  ctx.beginPath();
+  ctx.moveTo(X(r.x1),Y(r.x1,r.t1));ctx.lineTo(X(r.x2),Y(r.x2,r.t1));
+  ctx.lineTo(X(r.x2),Y(r.x2,r.t2));ctx.lineTo(X(r.x1),Y(r.x1,r.t2));
+  ctx.closePath();
+  ctx.fillStyle=col(r.n)+"44";ctx.fill();
+  ctx.strokeStyle=col(r.n);ctx.lineWidth=3;ctx.stroke();
+  const xc=(r.x1+r.x2)/2,tc=(r.t1+r.t2)/2;
+  ctx.fillStyle="#e0f2fe";ctx.textAlign="center";ctx.font="bold 20px Tahoma";
+  ctx.fillText(r.n,X(xc),Y(xc,tc));
+  ctx.font="14px Tahoma";ctx.fillStyle="#94a3b8";
+  ctx.fillText(Math.round(area(r))+" م²",X(xc),Y(xc,tc)+22);
+ });
+ ctx.beginPath();
+ ctx.moveTo(X(0),Y(0,0));ctx.lineTo(X(W),Y(W,0));ctx.lineTo(X(W),Y(W,1));ctx.lineTo(X(0),Y(0,1));
+ ctx.closePath();ctx.strokeStyle="#fff";ctx.lineWidth=6;ctx.stroke();
+ const tot=Math.round((D1+D2)/2*W);
+ ctx.fillStyle="#7dd3fc";ctx.font="bold 22px Tahoma";ctx.textAlign="center";
+ ctx.fillText("مخطط "+(pi+1)+"/"+plans.length+" • "+FL+" طابق • ≈"+tot+" م²",450,36);
+ document.getElementById("st").textContent="📐 درج للطوابق"+(FL>1?" ✔":" ✖")+" • منور "+(NOUR?"✔":"✖")+" • برندة "+(VER?"✔":"✖");
+}
+function nav(d){if(!plans.length)return;pi=(pi+d+plans.length)%plans.length;draw()}
+function pick(){
+ if(!plans.length)return;
+ localStorage.setItem("myHome",JSON.stringify({W,D1,D2,FL,NOUR,VER,plan:plans[pi],date:new Date().toLocaleDateString("ar-SY")}));
+ alert("✔️ انحفظ بيتك المستقبلي!");
+}
+function saveImg(){const a=document.createElement("a");a.download="مخطط-بيتي.png";a.href=cv.toDataURL("image/png");a.click()}
+gen();
+</script>
+</body>
+</html>
