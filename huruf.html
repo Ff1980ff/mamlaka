@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدينة الحروف 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Baloo+Bhaijaan+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --leaf:#2f6d4f; --leaf2:#1d4a35; --moss:#e8f3e6;
+ --water:#0e6b8f; --water2:#0a4a63; --foam:#eaf9ff;
+ --sun:#ffcf5c; --sun2:#ff9d4d; --stone:#5a4636; --ink:#123024;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--moss);overflow-x:hidden}
+#backKing{position:fixed;top:10px;right:10px;z-index:55;border:none;border-radius:99px;background:#ffcf5c;color:#3a2405;padding:9px 14px;font-weight:bold;cursor:pointer;text-decoration:none;font-size:12px;box-shadow:0 6px 18px rgba(255,157,77,.4)}
+
+.falls-wrap{position:fixed;inset:0;z-index:-2;overflow:hidden}
+.sky{position:absolute;inset:0;background:linear-gradient(180deg,#0d3b2c 0%,#0a5a45 30%,#0e6b8f 65%,#0a4a63 100%)}
+.mist{position:absolute;bottom:0;left:0;right:0;height:40%;background:radial-gradient(60% 100% at 50% 100%,rgba(234,249,255,.35),transparent 70%);filter:blur(6px)}
+.falls{position:absolute;top:0;bottom:0;width:5%;background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(180,230,255,.5));filter:blur(1px);opacity:.85;animation:drop 1.1s linear infinite}
+.falls.f1{left:22%;animation-duration:1s}
+.falls.f2{left:32%;width:7%;animation-duration:.85s}
+.falls.f3{left:47%;width:4%;animation-duration:1.15s}
+.falls.f4{left:58%;width:6%;animation-duration:.95s}
+.falls.f5{left:70%;width:5%;animation-duration:1.05s}
+@keyframes drop{0%{background-position-y:-40px}100%{background-position-y:0}}
+.leaf{position:absolute;font-size:20px;opacity:.8;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:.9}100%{transform:translateY(110vh) rotate(360deg);opacity:.4}}
+
+nav{position:fixed;top:0;right:0;left:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:rgba(10,40,30,.55);backdrop-filter:blur(10px);border-bottom:1px solid rgba(234,249,255,.15)}
+nav .logo{font-weight:900;font-size:18px;color:var(--sun)}
+nav .links{display:flex;gap:16px;flex-wrap:wrap}
+nav a{color:var(--foam);text-decoration:none;font-size:13px;font-weight:700;opacity:.9}
+nav a:hover{color:var(--sun)}
+
+.hero{min-height:96vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px}
+.badge{font-size:70px;filter:drop-shadow(0 0 28px rgba(255,207,92,.5));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.hero h1{font-size:clamp(32px,8vw,58px);font-weight:900;margin:16px 0 8px;background:linear-gradient(90deg,var(--sun),var(--foam));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h2{font-size:clamp(14px,3vw,18px);color:var(--foam);opacity:.85;font-weight:700;letter-spacing:1px}
+.hero p{max-width:560px;margin-top:14px;color:var(--foam);opacity:.85;font-size:15px;line-height:2}
+.hero .btns{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap;justify-content:center}
+.btn{border:none;border-radius:99px;padding:14px 26px;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;transition:.25s}
+.btn.sun{background:linear-gradient(135deg,var(--sun),var(--sun2));color:#3a2405;box-shadow:0 8px 26px rgba(255,157,77,.35)}
+.btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:var(--foam)}
+.btn:hover{transform:translateY(-3px)}
+
+section{padding:70px 20px;max-width:1080px;margin:auto;position:relative}
+.stitle{text-align:center;margin-bottom:36px}
+.stitle h2{font-size:clamp(24px,5vw,34px);font-weight:900;color:var(--foam)}
+.stitle h2 span{color:var(--sun)}
+.stitle p{color:var(--foam);opacity:.75;font-size:13px;margin-top:8px}
+.panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:28px;padding:34px 22px;backdrop-filter:blur(8px)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
+.letter{aspect-ratio:1;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.2);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.25s;font-weight:900;color:var(--foam)}
+.letter:hover{transform:translateY(-6px) scale(1.05);border-color:var(--sun);box-shadow:0 12px 26px rgba(0,0,0,.3)}
+.letter .ch{font-size:32px}
+.letter small{font-size:9px;opacity:.7;margin-top:4px}
+
+.nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:12px}
+.num{aspect-ratio:1;background:linear-gradient(160deg,rgba(255,207,92,.18),rgba(255,157,77,.06));border:1px solid rgba(255,207,92,.35);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--sun);cursor:pointer;transition:.25s}
+.num:hover{transform:translateY(-5px);background:rgba(255,207,92,.3)}
+
+.colors{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:14px}
+.color{border-radius:18px;height:90px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;cursor:pointer;font-weight:900;font-size:12px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.4);transition:.25s;border:1px solid rgba(255,255,255,.25)}
+.color:hover{transform:scale(1.06)}
+
+#modal{position:fixed;inset:0;z-index:90;background:rgba(5,15,12,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+#modal.on{display:flex}
+.mcard{background:linear-gradient(160deg,#123024,#0a4a63);border:2px solid var(--sun);border-radius:26px;max-width:340px;width:100%;padding:34px 22px;text-align:center;animation:pop .35s}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.mcard .big{font-size:80px}
+.mcard h3{margin:14px 0 6px;font-size:22px;color:var(--sun)}
+.mcard p{color:var(--foam);opacity:.85;font-size:13px}
+.mcard .close{margin-top:18px}
+
+footer{text-align:center;padding:44px 20px;border-top:1px solid rgba(255,255,255,.15);color:var(--foam);opacity:.75;font-size:12px;line-height:2}
+footer b{color:var(--sun)}
+</style>
+</head>
+<body>
+<a id="backKing" href="index.html">🏰 المملكة</a>
+
+<div class="falls-wrap">
+ <div class="sky"></div>
+ <div class="falls f1"></div>
+ <div class="falls f2"></div>
+ <div class="falls f3"></div>
+ <div class="falls f4"></div>
+ <div class="falls f5"></div>
+ <div class="mist"></div>
+ <div id="leaves"></div>
+</div>
+
+<div id="modal" onclick="if(event.target===this)closeM()">
+ <div class="mcard">
+  <div class="big" id="mBig"></div>
+  <h3 id="mName"></h3>
+  <p id="mSub"></p>
+  <button class="btn sun close" onclick="closeM()">✨ رجوع</button>
+ </div>
+</div>
+
+<nav>
+ <div class="logo">🌿 مدينة الحروف</div>
+ <div class="links">
+  <a href="#letters">الحروف</a>
+  <a href="#numbers">الأرقام</a>
+  <a href="#colors">الألوان</a>
+ </div>
+</nav>
+
+<header class="hero">
+ <div class="badge">🏞️</div>
+ <h1>مدينة الحروف</h1>
+ <h2>City of Letters</h2>
+ <p>مدينة خضراء عند سفح شلال دافئ، فيها كل حرف بيت، وكل رقم درب، وكل لون قصة. تعال نكتشفها سوا 🌊</p>
+ <div class="btns">
+  <button class="btn sun" onclick="location.hash='#letters'">ابدأ الرحلة 🚪</button>
+  <button class="btn ghost" onclick="location.hash='#colors'">شوف الألوان 🎨</button>
+ </div>
+</header>
+
+<section id="letters">
+ <div class="stitle"><h2>حديقة <span>الحروف</span></h2><p>دوس على أي حرف تسمعه</p></div>
+ <div class="panel"><div class="grid" id="lettersGrid"></div></div>
+</section>
+
+<section id="numbers">
+ <div class="stitle"><h2>درب <span>الأرقام</span></h2><p>من ٠ لحد ٩ — دوس وتعلم</p></div>
+ <div class="panel"><div class="nums" id="numsGrid"></div></div>
+</section>
+
+<section id="colors">
+ <div class="stitle"><h2>قوس <span>الألوان</span></h2><p>كل لون من ألوان الطبيعة حوالينا</p></div>
+ <div class="panel"><div class="colors" id="colorsGrid"></div></div>
+</section>
+
+<footer>
+ <b>مدينة الحروف 🌿</b><br>
+ نتعلم بالطبيعة، نكبر بالمعرفة • ٢٠٢٦
+</footer>
+
+<script>
+const LETTERS=["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"];
+const NAMES={"ا":"ألف","ب":"باء","ت":"تاء","ث":"ثاء","ج":"جيم","ح":"حاء","خ":"خاء","د":"دال","ذ":"ذال","ر":"راء","ز":"زاي","س":"سين","ش":"شين","ص":"صاد","ض":"ضاد","ط":"طاء","ظ":"ظاء","ع":"عين","غ":"غين","ف":"فاء","ق":"قاف","ك":"كاف","ل":"لام","م":"ميم","ن":"نون","ه":"هاء","و":"واو","ي":"ياء"};
+document.getElementById("lettersGrid").innerHTML=LETTERS.map(l=>`<div class="letter" onclick="speak('${l}','${NAMES[l]}','حرف')"><div class="ch">${l}</div><small>${NAMES[l]}</small></div>`).join("");
+
+const NUMS=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
+const NNAMES=["صفر","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"];
+document.getElementById("numsGrid").innerHTML=NUMS.map((n,i)=>`<div class="num" onclick="speak('${n}','${NNAMES[i]}','رقم')">${n}</div>`).join("");
+
+const COLORS=[["#e63946","أحمر"],["#f4a261","برتقالي"],["#ffd166","أصفر"],["#2a9d8f","أخضر"],["#118ab2","أزرق"],["#6a4c93","بنفسجي"],["#8d5524","بني"],["#495057","رمادي"]];
+document.getElementById("colorsGrid").innerHTML=COLORS.map(c=>`<div class="color" style="background:${c[0]}" onclick="speak('','${c[1]}','لون')">${c[1]}</div>`).join("");
+
+function speak(big,name,label){
+ document.getElementById("mBig").textContent=big||"🎨";
+ document.getElementById("mName").textContent=name;
+ document.getElementById("mSub").textContent=label;
+ document.getElementById("modal").classList.add("on");
+ try{
+  const u=new SpeechSynthesisUtterance(name);
+  u.lang="ar";
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+ }catch(e){}
+}
+function closeM(){document.getElementById("modal").classList.remove("on")}
+
+const leafBox=document.getElementById("leaves");
+for(let i=0;i<14;i++){
+ const el=document.createElement("div");
+ el.className="leaf";
+ el.textContent=["🍃","","🌿"][i%3];
+ el.style.left=(Math.random()*100)+"%";
+ el.style.animationDuration=(8+Math.random()*10)+"s";
+ el.style.animationDelay=(Math.random()*10)+"s";
+ leafBox.appendChild(el);
+}
+</script>
+</body>
+</html>
