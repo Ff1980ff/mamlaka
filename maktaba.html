@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مكتبتي الشاملة</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:radial-gradient(circle at 50% 0%,#fdf8ee,#f3e5c8 75%);color:#3d2b1f;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:480px;background:#fffaf2;border:6px solid #d97706;border-radius:24px;padding:16px;min-height:85vh;box-shadow:0 6px 24px rgba(146,64,14,.15)}
+h2{text-align:center;font-size:20px;color:#92400e}
+.stats{text-align:center;font-size:11px;color:#a16201;margin:4px 0 10px}
+.bar{display:flex;gap:6px;margin-bottom:8px}
+.bar input{flex:1;border:none;border-radius:12px;padding:10px;font-size:13px;background:#fff;color:#3d2b1f;outline:none;border:1px solid #e7d7bd}
+.bar select{border:none;border-radius:12px;padding:8px;font-size:12px;background:#d97706;color:#fff;outline:none}
+.btn{border:none;border-radius:12px;padding:10px 14px;font-size:12px;font-weight:bold;cursor:pointer;color:#fff;background:#d97706}
+.btn.g{background:#e7d7bd;color:#7c5a2e}.btn.b{background:#38bdf8;color:#fff}.btn.r{background:#dc2626;color:#fff}
+.book{background:#fff;border:1px solid #eadbc2;border-right:8px solid var(--c);border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(146,64,14,.08)}
+.book h3{color:#92400e;font-size:15px}
+.book .au{color:#8a6d4b;font-size:12px;margin:3px 0}
+.pill{background:#fde68a;border-radius:99px;padding:3px 10px;font-size:10px;color:#92400e}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.acts button{border:none;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:bold;cursor:pointer;color:#fff;background:#f59e0b}
+.acts button.r{background:#dc2626}.acts button.b{background:#38bdf8}
+#form,#reader{display:none;position:fixed;inset:0;background:rgba(120,80,20,.45);z-index:50;padding:16px;overflow:auto}
+.panel{max-width:480px;margin:20px auto;background:#fffaf2;border:2px solid #d97706;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.panel input,.panel select,.panel textarea{width:100%;border:none;border-radius:12px;padding:11px;font-size:14px;background:#fff;color:#3d2b1f;outline:none;border:1px solid #e7d7bd}
+.panel textarea{min-height:140px;line-height:1.8}
+#rTxt{background:#fff;border:1px solid #eadbc2;border-radius:12px;padding:12px;font-size:14px;line-height:2;color:#3d2b1f;white-space:pre-wrap;max-height:55vh;overflow:auto}
+.empty{text-align:center;color:#b08954;margin-top:50px;font-size:14px}
+.empty span{font-size:50px;display:block}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>📚 مكتبتي الشاملة</h2>
+<div class="stats" id="stats"></div>
+<div class="bar">
+ <input id="q" placeholder="🔍 ابحث بعنوان أو مؤلف..." oninput="render()">
+ <select id="fc" onchange="render()"><option value="">كل الأقسام</option></select>
+ <button class="btn" onclick="openForm(null)">➕ أضف</button>
+</div>
+<div id="list"></div>
+</div>
+<div id="form"><div class="panel">
+ <h3 style="color:#92400e;text-align:center">📕 كتاب جديد</h3>
+ <input id="bTitle" placeholder="عنوان الكتاب / القصة">
+ <input id="bAuth" placeholder="المؤلف">
+ <select id="bCat"></select>
+ <input id="bLink" placeholder="رابط (اختياري)">
+ <textarea id="bText" placeholder="المحتوى / الملخص / الاقتباسات..."></textarea>
+ <div class="bar"><button class="btn" onclick="saveBook()">💾 حفظ</button><button class="btn g" onclick="closeForm()">🔙 رجوع</button></div>
+</div></div>
+<div id="reader"><div class="panel">
+ <h3 id="rTitle" style="color:#92400e;text-align:center"></h3>
+ <div id="rTxt"></div>
+ <div class="bar"><button class="btn b" onclick="copyR()">📋 نسخ</button><button class="btn g" onclick="document.getElementById('reader').style.display='none'">🔙 إغلاق</button></div>
+</div></div>
+<script>
+const CATS=[["ديني","#22c55e"],["علمي","#38bdf8"],["تاريخ","#f59e0b"],["أدب","#e879f9"],["أطفال","#fb7185"],["تطوير ذاتي","#a3e635"],["جغرافيا","#22d3ee"],["قصص","#facc15"],["أخرى","#94a3b8"]];
+let lib=JSON.parse(localStorage.getItem("myLib")||"[]"),eId=null,rText="";
+const fc=document.getElementById("fc"),bc=document.getElementById("bCat");
+CATS.forEach(c=>{fc.add(new Option(c[0],c[0]));bc.add(new Option(c[0],c[0]))});
+function save(){localStorage.setItem("myLib",JSON.stringify(lib))}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function render(){
+ const q=document.getElementById("q").value.trim(),c=fc.value;
+ const arr=lib.filter(b=>(!q||(b.title+b.author+b.text).includes(q))&&(!c||b.cat===c));
+ document.getElementById("stats").textContent="📚 "+lib.length+" كتاب • ⭐ "+lib.filter(b=>b.fav).length+" مفضلة";
+ document.getElementById("list").innerHTML=arr.length?arr.map(b=>{
+  const col=(CATS.find(x=>x[0]===b.cat)||["","#94a3b8"])[1];
+  return `<div class="book" style="--c:${col}"><h3>${b.fav?"⭐ ":""}${esc(b.title)}</h3><div class="au">✍️ ${esc(b.author)||"مجهول"} • <span class="pill">${b.cat}</span></div>
+  <div class="acts"><button onclick="readB('${b.id}')">📖 قراءة</button>${b.link?`<button class="b" onclick="window.open('${esc(b.link)}')">🔗 رابط</button>`:""}<button onclick="favB('${b.id}')">${b.fav?"💔":"⭐"}</button><button onclick="openForm('${b.id}')">✏️</button><button class="r" onclick="delB('${b.id}')">🗑</button></div></div>`;
+ }).join(""):`<div class="empty"><span>📚</span>مكتبتك فاضية — اضغط ➕ أضف أول كتاب!</div>`;
+}
+function openForm(id){
+ eId=id;const b=lib.find(x=>x.id===id);
+ document.getElementById("bTitle").value=b?b.title:"";
+ document.getElementById("bAuth").value=b?b.author:"";
+ document.getElementById("bCat").value=b?b.cat:"قصص";
+ document.getElementById("bLink").value=b?b.link:"";
+ document.getElementById("bText").value=b?b.text:"";
+ document.getElementById("form").style.display="block";
+}
+function closeForm(){document.getElementById("form").style.display="none"}
+function saveBook(){
+ const t=document.getElementById("bTitle").value.trim();
+ if(!t){alert("اكتب العنوان أولًا");return}
+ const o={id:eId||String(Date.now()),title:t,author:document.getElementById("bAuth").value,cat:bc.value,link:document.getElementById("bLink").value,text:document.getElementById("bText").value,fav:eId?(lib.find(x=>x.id===eId)||{}).fav:false,date:new Date().toLocaleDateString("ar-SY")};
+ if(eId)lib[lib.findIndex(x=>x.id===eId)]=o;else lib.unshift(o);
+ save();closeForm();render();
+}
+function delB(id){if(!confirm("حذف الكتاب؟"))return;lib=lib.filter(x=>x.id!==id);save();render()}
+function favB(id){const b=lib.find(x=>x.id===id);b.fav=!b.fav;save();render()}
+function readB(id){const b=lib.find(x=>x.id===id);rText=b.text||"لا محتوى — أضف نصًا بالتعديل";document.getElementById("rTitle").textContent="📖 "+b.title;document.getElementById("rTxt").textContent=rText;document.getElementById("reader").style.display="block"}
+function copyR(){const ta=document.createElement("textarea");ta.value=rText;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");alert("تم النسخ ✔️")}catch(e){}ta.remove()}
+render();
+</script>
+</body>
+</html>
