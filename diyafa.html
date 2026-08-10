@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الترحيب والشكر</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px;transition:background 1s}
+body.w{background:linear-gradient(160deg,#7c2d12,#f59e0b)}
+body.t{background:linear-gradient(160deg,#14532d,#22c55e)}
+.frame{width:100%;max-width:460px;background:rgba(255,255,255,.95);border-radius:28px;padding:26px;text-align:center;min-height:80vh;display:flex;flex-direction:column;justify-content:center;gap:14px;position:relative;overflow:hidden}
+.fl{position:absolute;font-size:26px;animation:fl 6s linear infinite;opacity:.7}
+@keyframes fl{0%{transform:translateY(110vh) rotate(0)}100%{transform:translateY(-20vh) rotate(360deg)}}
+h1{font-size:30px;color:#92400e}
+h1.g{color:#166534}
+.big{font-size:60px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+p{font-size:16px;line-height:2;color:#57534e}
+.name{font-size:18px;font-weight:bold;color:#b45309}
+.btn{border:none;border-radius:99px;padding:13px 22px;font-size:14px;font-weight:bold;cursor:pointer;background:#f59e0b;color:#fff;margin:4px}
+.btn.g{background:#22c55e}.btn.gr{background:#78716c}
+.gear{position:absolute;top:12px;left:12px;border:none;background:#fff;border-radius:50%;width:38px;height:38px;font-size:17px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+input{border:1px solid #d6d3d1;border-radius:12px;padding:10px;font-size:14px;width:100%;margin-bottom:8px;outline:none}
+#set{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;padding:20px}
+.sp{max-width:380px;margin:20vh auto;background:#fff;border-radius:20px;padding:20px}
+</style>
+</head>
+<body class="w">
+<div class="frame">
+<button class="gear" onclick="openSet()">⚙️</button>
+<div id="view"></div>
+</div>
+<div id="set"><div class="sp">
+<h3 style="text-align:center;color:#92400e;margin-bottom:10px">⚙️ خصّص صفحاتك</h3>
+<input id="nKing" placeholder="اسم المملكة (مثلا: مملكة أبي محمد)">
+<input id="nOwn" placeholder="اسمك (مثلا: أبو محمد)">
+<button class="btn g" onclick="saveSet()">💾 حفظ</button>
+<button class="btn gr" onclick="closeSet()">🔙 إغلاق</button>
+</div></div>
+<script>
+let CF=JSON.parse(localStorage.getItem("welCF")||'{"king":"مملكتي الذكية","own":"صاحب المملكة"}');
+let mode="w";
+const FLO=["🌸","⭐","💛","🌿","🦋","✨"];
+function floats(){
+ let h="";
+ for(let i=0;i<10;i++)h+=`<span class="fl" style="right:${Math.random()*95}%;animation-delay:${Math.random()*6}s">${FLO[i%6]}</span>`;
+ document.querySelector(".frame").insertAdjacentHTML("afterbegin",h);
+}
+function render(){
+ const v=document.getElementById("view");
+ if(mode==="w"){
+  document.body.className="w";
+  v.innerHTML=`<div class="big">🌅</div>
+  <h1>أهلًا وسهلًا ومرحبا</h1>
+  <div class="name">في ${CF.king}</div>
+  <p>هون بتلاقي تطبيقات علم، إيمان، ومتعة —<br>صنعت بمحبة لتخدمك وتخدم عيلتك وجيرانك.<br>تفضّل، البيت بيتك! 🏠</p>
+  <div><button class="btn g" onclick="goT()">💐 صفحة الشكر</button></div>
+  <div><button class="btn" onclick="shareW()">📤 شارك الترحيب</button></div>`;
+ }else{
+  document.body.className="t";
+  v.innerHTML=`<div class="big">💐</div>
+  <h1 class="g">شكرًا من القلب</h1>
+  <div class="name">يا أغلى الناس</div>
+  <p>شكرًا لوجودك بحياتنا،<br>وشكرًا لكل جار وصديق وصغير وكبير<br>فتح قلبه قبل جواله.<br>وجودكم بركة، وبيتكم بيتنا 🌿</p>
+  <div style="font-size:14px;color:#166534;font-weight:bold">— ${CF.own} —</div>
+  <div><button class="btn" onclick="goW()">🌅 صفحة الترحيب</button></div>
+  <div><button class="btn g" onclick="shareT()">📤 شارك الشكر</button></div>`;
+ }
+}
+function goT(){mode="t";render()}
+function goW(){mode="w";render()}
+function shareW(){
+ const t="🌅 أهلًا وسهلًا بكم في "+CF.king+"!\nتطبيقات علم وإيمان ومتعة، صنعت بمحبة لخدمة العيلة والجيران.\nمن "+CF.own+" 💛";
+ if(navigator.share)navigator.share({text:t}).catch(()=>{});
+ else alert(t);
+}
+function shareT(){
+ const t="💐 شكرًا من القلب لكل جار وصديق.\nوجودكم بركة، وبيتكم بيتنا 🌿\n— "+CF.own;
+ if(navigator.share)navigator.share({text:t}).catch(()=>{});
+ else alert(t);
+}
+function openSet(){document.getElementById("nKing").value=CF.king;document.getElementById("nOwn").value=CF.own;document.getElementById("set").style.display="block"}
+function closeSet(){document.getElementById("set").style.display="none"}
+function saveSet(){
+ CF.king=document.getElementById("nKing").value.trim()||CF.king;
+ CF.own=document.getElementById("nOwn").value.trim()||CF.own;
+ localStorage.setItem("welCF",JSON.stringify(CF));
+ closeSet();render();
+}
+floats();render();
+</script>
+</body>
+</html>
