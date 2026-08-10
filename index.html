@@ -76,10 +76,10 @@ section{padding:70px 20px;max-width:1000px;margin:auto}
 .mut{color:var(--muted);font-size:12px;text-align:center;padding:10px}
 footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:2}
 footer b{color:var(--amber)}
-#arada{position:fixed;inset:0;z-index:100;background:radial-gradient(70% 50% at 50% 100%,rgba(224,123,18,.35),transparent 70%),linear-gradient(160deg,#3a1608,#140a04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;transition:opacity .8s}
-#arada.hide{opacity:0;pointer-events:none}
-#arada .t1{font-size:clamp(24px,6vw,40px);font-weight:900;color:var(--amber)}
-#arada .t2{color:#e8c9a0;font-size:14px;line-height:1.9}
+#arada,#farewell{position:fixed;inset:0;z-index:100;background:radial-gradient(70% 50% at 50% 100%,rgba(224,123,18,.35),transparent 70%),linear-gradient(160deg,#3a1608,#140a04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;transition:opacity .8s}
+.hide{opacity:0;pointer-events:none}
+#arada .t1,#farewell .t1{font-size:clamp(24px,6vw,40px);font-weight:900;color:var(--amber)}
+#arada .t2,#farewell .t2{color:#e8c9a0;font-size:14px;line-height:1.9}
 .proc{width:100%;overflow:hidden;height:80px;position:relative}
 .proc .line{position:absolute;top:10px;white-space:nowrap;font-size:48px;animation:walk 8s linear infinite}
 @keyframes walk{from{transform:translateX(110%)}to{transform:translateX(-110%)}}
@@ -87,6 +87,7 @@ footer b{color:var(--amber)}
 #skip{position:absolute;top:14px;left:14px}
 #replay{position:fixed;bottom:16px;left:16px;z-index:60;border:none;border-radius:99px;background:var(--amber);font-size:20px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(245,165,36,.4)}
 #qahwa{position:fixed;bottom:16px;right:16px;z-index:60;border:none;border-radius:99px;background:#6b3b1c;font-size:20px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.45)}
+#wada{font-size:17px;font-weight:900;min-height:50px;color:var(--cream);line-height:1.9;padding:0 10px}
 #modal{position:fixed;inset:0;z-index:90;background:rgba(5,8,20,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
 #modal.on{display:flex}
 .mcard{background:var(--card);border:2px solid var(--amber);border-radius:22px;max-width:420px;width:100%;padding:26px 20px;text-align:center;animation:pop .35s}
@@ -105,12 +106,21 @@ footer b{color:var(--amber)}
  <div class="t1">🏰 مملكة التطبيقات</div>
  <div class="t2">الضيوف عندنا بينقبلوا متل ما بيقبلوا بدمشق:<br><b>عراضة شامية، طبل وسيوف، ويا هلا بتعلّي السما</b></div>
  <button class="btn amber" onclick="startArada()">🥁 دوس تنبدأ العراضة</button>
- <div class="proc"><div class="line">🥁 ️  ️  ️ 🕺 ️ 🗡️</div></div>
+ <div class="proc"><div class="line">🥁 ️  🕺 ️ 🕺 ️ 🗡️</div></div>
  <video id="arVid" style="display:none;max-width:94%;max-height:42vh;border-radius:16px" controls playsinline></video>
  <div id="hala"></div>
 </div>
+
+<div id="farewell" class="hide">
+ <div class="t1">🕊️ استودعك الله</div>
+ <div class="t2">اللي بودّع المملكة بيطلع منها ومعو:<br><b>خبزة دافية، فنجان قهوة، ودعوة من القلب</b></div>
+ <div id="wada"></div>
+ <button class="btn amber" onclick="wadaKhubza()">🥖 خذ خبزتك وامشي</button>
+ <button class="btn ghost" onclick="endFarewell()">🏰 ارجع لنا متى شئت</button>
+</div>
+
 <button id="replay" onclick="startArada()" title="عراضة!">🥁</button>
-<button id="qahwa" onclick="showCard('☕','قهوة الضيافة','أول شي منقدمو للضيف: قهوة المرة، وسكرها على كيفك. اشرب وامسك الفنجان — أهلًا وسهلاً فيك!','ضيافة المملكة 🛋️')" title="اسكبلي قهوة">☕</button>
+<button id="qahwa" onclick="showCard('☕','قهوة الضيافة','الدلة عالنا، والفنجان بإيدك، والسكر على كيفك. اشرب وريّح قلبك — وبجانبك تمر سكري، متل ما لازم.','ضيافة المملكة 🛋️')" title="اسكبلي قهوة">☕</button>
 
 <div id="modal" onclick="if(event.target===this)closeM()">
  <div class="mcard">
@@ -118,6 +128,7 @@ footer b{color:var(--amber)}
   <h3 id="mN"></h3>
   <p id="mD"></p>
   <div class="tag" id="mT"></div><br>
+  <button id="mL" class="btn ghost" style="display:none;margin-top:8px" onclick="openApp()">🚪 افتح التطبيق</button><br>
   <button class="btn amber close" onclick="closeM()">✨ كمل التجوال</button>
  </div>
 </div>
@@ -127,8 +138,10 @@ footer b{color:var(--amber)}
  <div class="links">
   <a href="#falsafa">الفلسفة</a>
   <a href="#apps">التطبيقات</a>
+  <a href="#diwan">الديوان 🍽️</a>
   <a href="#pub">الساحة 🌍</a>
   <a href="#tannour">التنور</a>
+  <a onclick="startFarewell();return false">🕊️ التوديعة</a>
   <a onclick="openWorkshop();return false">🔒 الخلوة</a>
  </div>
 </nav>
@@ -136,10 +149,10 @@ footer b{color:var(--amber)}
 <header class="hero">
  <div class="castle">🏰</div>
  <h1>مملكة التطبيقات</h1>
- <p>مملكة رقمية دافية، أسسها مهندس ومعلم على تنور الشام.<br>خبزها البساطة، وحُبّها الناس، وجيرانها تطبيقات بتخدم بعضها متل أهل الحارة.</p>
+ <p>مملكة رقمية دافية، أسسها مهندس ومعلم على تنور الشام.<br>خبزها البساطة، وحُبّها الناس، وضيافتها كاملة: عراضة، مناسف، قهوة، وتوديعة بتعلّي السما.</p>
  <div class="btns">
   <button class="btn amber" onclick="location.hash='#apps'">ادخل المملكة 🚪</button>
-  <button class="btn ghost" onclick="location.hash='#story'">حكايتنا 📖</button>
+  <button class="btn ghost" onclick="location.hash='#diwan'">مدّ إيدك ع المناسف 🍽️</button>
  </div>
 </header>
 
@@ -156,6 +169,12 @@ footer b{color:var(--amber)}
 <section id="apps">
  <div class="stitle rev"><h2>سجل <span>المملكة</span></h2><p>أربع وعشرون بصمة، وكل وحدة إلها حكاية — دوس ع أي بطاقة</p></div>
  <div id="circles"></div>
+</section>
+
+<section id="diwan">
+ <div class="stitle rev"><h2>ديوان <span>المناسف</span> 🍽️</h2>
+ <p>الضيف عندنا ما بيمشي جوعان — مدّ إيدك، كل صحن إلو حكاية</p></div>
+ <div class="grid" id="dishGrid"></div>
 </section>
 
 <section id="pub">
@@ -199,25 +218,26 @@ footer b{color:var(--amber)}
  <div class="timeline">
   <div class="titem rev"><b>القطعه 📡</b><p>انقطع النت نص الفهرس، بس المملكة ما وقفت — كمّلنا من الذاكرة والحب.</p></div>
   <div class="titem rev"><b>الأسماء العشرون 🏷️</b><p>قعدنا متل العيلة وسمّينا التطبيقات بأسماء من طفولتنا: الدفتر، الصخرة، البوابة، الضيافة...</p></div>
-  <div class="titem rev"><b>المِرسال والمكتشف 🕊️</b><p>صارت للمملكة عين بتكتشف وإيد بتجيب من العالم.</p></div>
   <div class="titem rev"><b>الرواق 🏛️</b><p>الناقل الذكي تروّض وصار صالة استقبال المملكة الرسمية.</p></div>
   <div class="titem rev"><b>الصخرة تبهر الجيران 🪨</b><p>صنايعي من برا شاف الصخرة وقال: "هالتفكير ما صار قبل إلا عندكم".</p></div>
-  <div class="titem rev"><b>التنور والساحة والخلوة 🔥</b><p>خبزنا الموقع على التنور، وقسمناه: ساحة للناس، وخلوة للمهندس.</p></div>
   <div class="titem rev"><b>رفع العلم 🚩</b><p>اننشر القصر ع الإنترنت، وصار للمملكة عنوان قدام العالم.</p></div>
   <div class="titem rev"><b>العراضة 🥁</b><p>وصرنا نستقبل الضيوف متل ما بدمشق: طبل، سيوف، ويا هلا بتعلّي السما.</p></div>
   <div class="titem rev"><b>فنجان القهوة ☕</b><p>قال المهندس: الضيافة بلا قهوة متل العراضة بلا طبل — فانزرعت القهوة بزاوية الاستقبال.</p></div>
+  <div class="titem rev"><b>ديوان المناسف 🍽️</b><p>وانبنى الديوان: منسف ملكي ومقلوبة وكنافة — لأن الضيف عندنا ما بيمشي جوعان.</p></div>
+  <div class="titem rev"><b>التوديعة 🕊️</b><p>وصرنا نودّع الضيف متل ما منستقبلو: استودعك الله، وخبزة بالطريق، ودعوة من القلب.</p></div>
  </div>
 </section>
 
 <footer>
  <b>مملكة التطبيقات 🏰</b><br>
  أسسها المهندس والمعلم — خبز بحب على تنور الشام ☕<br>
- سليمان للعلم والتعلم 🌿 • ٢٠٢٦
+ سليمان للعلم والتعلم 🌿 • ٢٠٢٦<br>
+ استودعك الله الذي لا تضيع ودائعه 🕊️
 </footer>
 
 <script>
 const APPS=[
- {n:"صخرة المعرفة",e:"🪨",d:"نتعلم أول وبعدين نختبر — المدرسة اللي أبهرت الصنايعية.",c:"بيت"},
+ {n:"صخرة المعرفة",e:"🪨",d:"نتعلم أول وبعدين نختبر — المدرسة اللي أبهرت الصنايعية.",c:"بيت",l:"sakhra.html"},
  {n:"دفتر المملكة",e:"📒",d:"ذاكرة المملكة وسجلها — كل شي بينحفظ هون.",c:"بيت"},
  {n:"بوابة المملكة",e:"🏠",d:"باب البيت اللي بيفتح للضيوف وبس.",c:"بيت"},
  {n:"مكتبتي الملكية",e:"📚",d:"كتبك وقراياتك، مرتبة متل مكتبة حقيقية.",c:"بيت"},
@@ -244,14 +264,28 @@ const APPS=[
 const CIRCLES=[["بيت","🏠 دائرة البيت — اللي بيمسك البيت"],["جيران","🤝 دائرة الجيران — اللي بيخدم الحارة"],["عالم","🌍 دائرة العالم — اللي بيطل ع الدنيا"]];
 document.getElementById("circles").innerHTML=CIRCLES.map(c=>`
  <div class="circle"><h3>${c[1]}</h3><div class="grid">
- ${APPS.filter(a=>a.c===c[0]).map(a=>`<div class="app" onclick="showCard('${a.e}','${a.n}','${a.d}','دائرة ${a.c} — من سجل المملكة')"><div class="e">${a.e}</div><b>${a.n}</b><small>${a.d}</small></div>`).join("")}
+ ${APPS.filter(a=>a.c===c[0]).map(a=>{const lk=a.l?`'${a.l}'`:'null';return `<div class="app" onclick="showCard('${a.e}','${a.n}','${a.d}','دائرة ${a.c} — من سجل المملكة',${lk})"><div class="e">${a.e}</div><b>${a.n}</b><small>${a.d}</small></div>`}).join("")}
  </div></div>`).join("");
 
-function showCard(e,n,d,t){
+const DISHES=[
+ {n:"المنسف الملكي",e:"🍖",d:"سيد المائدة: لحم غنم بلبن الجميد، رز أصفر، وصنوبر محمّص. بيتقدم للضيف الكبير، وبيتأكل بالأصابع وبالعافية."},
+ {n:"المقلوبة",e:"🍆",d:"بتتقلب قدام الضيف ليتصفّق لها — باذنجان ورز ولحم، وريحة بتفتح النفس من آخر الحارة."},
+ {n:"كبة مقلية",e:"🥟",d:"برغل ولحم وصنوبر — مقرمشة برا، دافية جوّا، ومتل كل شي بالمملكة: محشية حب."},
+ {n:"ورق عنب",e:"🍃",d:"ملفوف بإصبع ستّ الحارة، بزيت وزمن وحنان. اللي بيأكل وحدة، بيطلب صحن ثاني."},
+ {n:"مقدوس",e:"🫙",d:"مقدوس بلبن وثوم وجوز — فطور الأبطال، ومؤونة الشتاء، وسرّ من أسرار الستّات."},
+ {n:"كنافة",e:"🧀",d:"جبن مشطط بسكر وشيرة ومي زهر — ختام المائدة الملكي، وبس تبرد بتظل طيبة."}
+];
+document.getElementById("dishGrid").innerHTML=DISHES.map(d=>`<div class="app" onclick="showCard('${d.e}','${d.n}','${d.d}','من ديوان المملكة 🍽️ — صحتين وعافية!')"><div class="e">${d.e}</div><b>${d.n}</b><small>دوس ومدّ إيدك</small></div>`).join("");
+
+let mLk="";
+function openApp(){if(mLk)location.href=mLk}
+function showCard(e,n,d,t,l){
  document.getElementById("mE").textContent=e;
  document.getElementById("mN").textContent=n;
  document.getElementById("mD").textContent=d;
  document.getElementById("mT").textContent=t;
+ mLk=l||"";
+ document.getElementById("mL").style.display=l?"inline-block":"none";
  document.getElementById("modal").classList.add("on");
  chime();
 }
@@ -285,15 +319,24 @@ function endArada(){
  try{document.getElementById("arVid").pause()}catch(e){}
  document.getElementById("arada").classList.add("hide");
 }
+function startFarewell(){
+ document.getElementById("farewell").classList.remove("hide");
+ chime();
+}
+function endFarewell(){document.getElementById("farewell").classList.add("hide")}
+function wadaKhubza(){
+ document.getElementById("wada").textContent=KHUBAZ[Math.floor(Math.random()*KHUBAZ.length)];
+ chime();
+}
 
 let pub=JSON.parse(localStorage.getItem("kingPub")||"null")||[
- {n:"صخرة المعرفة",e:"🪨",d:"المدرسة الدافية — أول منشور رسمي للمملكة."},
+ {n:"صخرة المعرفة",e:"🪨",d:"المدرسة الدافية — أول منشور رسمي للمملكة.",l:"sakhra.html"},
  {n:"الرواق",e:"🏛️",d:"صالة استقبال المملكة — الناقل الذكي بعد الترويض."},
  {n:"موقع المملكة",e:"🌐",d:"هاد الموقع — خبزنا أول نسخة منه على التنور."}
 ];
 let priv=JSON.parse(localStorage.getItem("kingPriv")||"[]");
 function saveK(){localStorage.setItem("kingPub",JSON.stringify(pub));localStorage.setItem("kingPriv",JSON.stringify(priv))}
-function renderPub(){document.getElementById("pubGrid").innerHTML=pub.map(p=>`<div class="app" onclick="showCard('${p.e}','${p.n}','${p.d}','منشور بالساحة العامة 🌍')"><div class="e">${p.e}</div><b>${p.n}</b><small>${p.d}</small></div>`).join("")}
+function renderPub(){document.getElementById("pubGrid").innerHTML=pub.map(p=>{const lk=p.l?`'${p.l}'`:'null';return `<div class="app" onclick="showCard('${p.e}','${p.n}','${p.d}','منشور بالساحة العامة 🌍',${lk})"><div class="e">${p.e}</div><b>${p.n}</b><small>${p.d}</small></div>`}).join("")}
 function renderPriv(){
  document.getElementById("privList").innerHTML=priv.length?priv.map((p,i)=>`<div class="witem"><span>${p.e} <b>${p.n}</b></span><div><button class="btn amber" onclick="publish(${i})">🌍 طلعا للساحة</button> <button class="btn ghost" onclick="delPriv(${i})">🗑</button></div></div>`).join(""):'<p class="mut">الورشة فاضية — ضيف أول شغل.</p>';
  document.getElementById("pubList").innerHTML=pub.map((p,i)=>`<div class="witem"><span>${p.e} <b>${p.n}</b></span><button class="btn ghost" onclick="unpublish(${i})">🔧 رجعا للورشة</button></div>`).join("");
@@ -335,7 +378,8 @@ const KHUBAZ=[
  "الصبر تنور، والفرج خبزو. ⏳",
  "خذ من التنور خبزك، ومن الدنيا عبرك. 🌅",
  "الرغيف الحامي بيحتاج قلب دافي. 🔥",
- "الضيافة بلا قهوة، متل العراضة بلا طبل. ☕"
+ "الضيافة بلا قهوة، متل العراضة بلا طبل. ☕",
+ "الضيف أولو فداء، والتوديعة دعاء. 🕊️"
 ];
 function bake(){
  const k=document.getElementById("khubza");
