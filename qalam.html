@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>القلم الناطق</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(160deg,#fef9c3,#bae6fd);color:#1e293b;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:470px;background:#fff;border:6px solid #f59e0b;border-radius:26px;padding:14px;min-height:85vh;box-shadow:0 8px 24px rgba(0,0,0,.12);position:relative}
+h2{text-align:center;font-size:20px;color:#b45309}
+.sub{text-align:center;font-size:11px;color:#78716c;margin:4px 0 10px}
+.gear{position:absolute;top:12px;left:12px;border:none;border-radius:50%;width:42px;height:42px;font-size:20px;cursor:pointer;background:#f59e0b;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.2)}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;border:none;border-radius:14px;padding:10px 2px;font-size:12px;font-weight:bold;cursor:pointer;background:#fef3c7;color:#92400e}
+.tabs button.on{background:#f59e0b;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid.w{grid-template-columns:repeat(3,1fr)}
+.key{border:none;border-radius:16px;padding:10px 4px;font-size:17px;font-weight:bold;cursor:pointer;background:#fff;border:3px solid var(--c);color:#1e293b;box-shadow:0 3px 0 var(--c);display:flex;flex-direction:column;gap:4px;align-items:center}
+.key span{font-size:26px}
+.key:active{transform:translateY(3px);box-shadow:none}
+.panel{background:#fefce8;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px}
+input{width:100%;border:2px solid #fcd34d;border-radius:14px;padding:12px;font-size:16px;outline:none;background:#fff}
+.btn{border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;color:#fff;background:#22c55e}
+.btn.b{background:#38bdf8}.btn.g{background:#e7e5e4;color:#57534e}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.hide{display:none}
+.bmsg{text-align:center;font-size:12px;color:#78716c;min-height:16px}
+#set{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;padding:16px;overflow:auto}
+.spanel{max-width:440px;margin:30px auto;background:#fff;border:4px solid #f59e0b;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.spanel label{font-size:13px;font-weight:bold;color:#92400e}
+.spanel input[type=range]{padding:0;border:none}
+.spanel select{border:2px solid #fcd34d;border-radius:12px;padding:10px;font-size:14px;background:#fff}
+</style>
+</head>
+<body>
+<div class="frame">
+<button class="gear" onclick="openSet()">⚙️</button>
+<h2>🖊️ القلم الناطق</h2>
+<div class="sub">انقر أي شي واسمعو ينطق! 🔊</div>
+<div class="tabs">
+ <button id="t1" class="on" onclick="tab(1)">🔤 عربي</button>
+ <button id="t2" onclick="tab(2)">🅰️ إنجليزي</button>
+ <button id="t3" onclick="tab(3)">🖼️ كلمات</button>
+ <button id="t4" onclick="tab(4)">🔢 أرقام</button>
+ <button id="t5" onclick="tab(5)">✏️ اكتب</button>
+</div>
+<div id="p1"></div>
+<div id="p2" class="hide"></div>
+<div id="p3" class="hide"></div>
+<div id="p4" class="hide"></div>
+<div id="p5" class="hide">
+ <div class="panel">
+  <input id="free" placeholder="اكتب أي كلمة واسمعها...">
+  <div class="row">
+   <button class="btn" onclick="sayFree('ar-SA')">🔊 بالعربي</button>
+   <button class="btn b" onclick="sayFree('en-US')">🔊 إنجليزي</button>
+  </div>
+  <div class="bmsg">القلم بينطق أي كلمة تكتبها!</div>
+ </div>
+</div>
+</div>
+<div id="set"><div class="spanel">
+ <h3 style="text-align:center;color:#b45309">⚙️ ضبط القلم</h3>
+ <label>🐢 سرعة النطق: <span id="rv">0.9</span></label>
+ <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="0.9" oninput="document.getElementById('rv').textContent=this.value">
+ <label>🎵 طبقة الصوت: <span id="pv">1</span></label>
+ <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1" oninput="document.getElementById('pv').textContent=this.value">
+ <label>🗣️ الصوت العربي:</label>
+ <select id="vAr"></select>
+ <label>🗣️ الصوت الإنجليزي:</label>
+ <select id="vEn"></select>
+ <div class="row">
+  <button class="btn b" onclick="testV()">🔊 تجربة</button>
+  <button class="btn" onclick="saveSet()">💾 حفظ</button>
+  <button class="btn g" onclick="closeSet()">🔙 إغلاق</button>
+ </div>
+</div></div>
+<script>
+const AR=[["ا","أرنب","🐰"],["ب","بطة","🦆"],["ت","تفاحة","🍎"],["ث","ثعلب","🦊"],["ج","جمل","🐪"],["ح","حصان","🐴"],["خ","خروف","🐑"],["د","دب","🐻"],["ذ","ذرة","🌽"],["ر","روبوت","🤖"],["ز","زرافة","🦒"],["س","سمكة","🐟"],["ش","شمس","☀️"],["ص","صقر","🦅"],["ض","ضفدع","🐸"],["ط","طائرة","✈️"],["ظ","ظرف","✉️"],["ع","عنب","🍇"],["غ","غزال","🦌"],["ف","فيل","🐘"],["ق","قمر","🌙"],["ك","كتاب","📖"],["ل","ليمون","🍋"],["م","موز","🍌"],["ن","نجمة","⭐"],["ه","هدية","🎁"],["و","وردة","🌹"],["ي","يد","✋"]];
+const EN=[["A","Apple","🍎"],["B","Ball","⚽"],["C","Cat","🐱"],["D","Dog","🐶"],["E","Egg","🥚"],["F","Fish","🐟"],["G","Goat","🐐"],["H","Hat","🎩"],["I","Ice","🧊"],["J","Juice","🧃"],["K","Kite","🪁"],["L","Lion","🦁"],["M","Moon","🌙"],["N","Nose","👃"],["O","Orange","🍊"],["P","Pizza","🍕"],["Q","Queen","👸"],["R","Rabbit","🐰"],["S","Sun","☀️"],["T","Tiger","🐯"],["U","Umbrella","☂️"],["V","Violin","🎻"],["W","Water","💧"],["X","Box","📦"],["Y","Yo-yo","🪀"],["Z","Zebra","🦓"]];
+const WORDS=[["🐰","أرنب"],["🐱","قطة"],["🚗","سيارة"],["🏠","بيت"],["🍎","تفاحة"],["⚽","كرة"],["🌙","قمر"],["⭐","نجمة"],["🐘","فيل"],["🦁","أسد"],["🐝","نحلة"],["🌸","زهرة"]];
+const NUMS=[["١","واحد"],["٢","اثنان"],["٣","ثلاثة"],["٤","أربعة"],["٥","خمسة"],["٦","ستة"],["٧","سبعة"],["٨","ثمانية"],["٩","تسعة"],["١٠","عشرة"]];
+const PAL=["#ef4444","#f59e0b","#22c55e","#38bdf8","#a855f7","#ec4899"];
+let AC=null,VOICES=[],SET=JSON.parse(localStorage.getItem("penSet")||'{"rate":0.9,"pitch":1,"vAr":"","vEn":""}');
+function loadV(){VOICES=speechSynthesis.getVoices()||[];fillV()}
+if("speechSynthesis" in window){speechSynthesis.onvoiceschanged=loadV;loadV()}
+function fillV(){
+ const a=document.getElementById("vAr"),e=document.getElementById("vEn");
+ a.innerHTML='<option value="">تلقائي</option>';e.innerHTML='<option value="">تلقائي</option>';
+ VOICES.filter(v=>v.lang.startsWith("ar")).forEach(v=>a.add(new Option(v.name,v.name)));
+ VOICES.filter(v=>v.lang.startsWith("en")).forEach(v=>e.add(new Option(v.name,v.name)));
+ a.value=SET.vAr;e.value=SET.vEn;
+}
+function beep(f,d,type,when){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;const t=AC.currentTime+(when||0);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function speak(t,l){try{const x=new SpeechSynthesisUtterance(t);x.lang=l||"ar-SA";x.rate=SET.rate;x.pitch=SET.pitch;
+ const vn=l.startsWith("ar")?SET.vAr:SET.vEn;
+ const v=VOICES.find(v=>v.name===vn)||VOICES.find(v=>v.lang.startsWith(l.split("-")[0]));
+ if(v)x.voice=v;
+ speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function openSet(){document.getElementById("rate").value=SET.rate;document.getElementById("pitch").value=SET.pitch;document.getElementById("rv").textContent=SET.rate;document.getElementById("pv").textContent=SET.pitch;fillV();document.getElementById("set").style.display="block"}
+function closeSet(){document.getElementById("set").style.display="none"}
+function saveSet(){
+ SET.rate=parseFloat(document.getElementById("rate").value);
+ SET.pitch=parseFloat(document.getElementById("pitch").value);
+ SET.vAr=document.getElementById("vAr").value;
+ SET.vEn=document.getElementById("vEn").value;
+ localStorage.setItem("penSet",JSON.stringify(SET));
+ closeSet();alert("انحفظ الضبط ✔️");
+}
+function testV(){speak("مرحبًا! أنا قلمك الناطق","ar-SA");setTimeout(()=>speak("Hello! I am your talking pen","en-US"),1800)}
+function tab(n){[1,2,3,4,5].forEach(i=>{document.getElementById("p"+i).classList.toggle("hide",i!==n);document.getElementById("t"+i).classList.toggle("on",i===n)})}
+document.getElementById("p1").innerHTML=`<div class="grid">`+AR.map((x,i)=>`<button class="key" style="--c:${PAL[i%6]}" onclick="penL('${x[0]}','${x[1]}','ar')"><span>${x[2]}</span>${x[0]}</button>`).join("")+`</div>`;
+document.getElementById("p2").innerHTML=`<div class="grid">`+EN.map((x,i)=>`<button class="key" style="--c:${PAL[i%6]}" onclick="penL('${x[1]}','${x[1]}','en')"><span>${x[2]}</span>${x[0]}</button>`).join("")+`</div>`;
+document.getElementById("p3").innerHTML=`<div class="grid w">`+WORDS.map(x=>`<button class="key" style="--c:${PAL[x[1].length%6]}" onclick="penW('${x[1]}')"><span>${x[0]}</span>${x[1]}</button>`).join("")+`</div>`;
+document.getElementById("p4").innerHTML=`<div class="grid" style="grid-template-columns:repeat(5,1fr)">`+NUMS.map((x,i)=>`<button class="key" style="--c:${PAL[i%6]}" onclick="penN('${x[1]}')">${x[0]}</button>`).join("")+`</div>`;
+function penL(l,w,lang){beep(700,.08,"triangle");speak(lang==="ar"?("حرف "+l+" . "+l+" مثل "+w):("Letter "+l+" . "+l+" for "+w),lang==="ar"?"ar-SA":"en-US")}
+function penW(w){beep(700,.08,"triangle");speak(w,"ar-SA")}
+function penN(w){beep(700,.08,"triangle");speak(w,"ar-SA")}
+function sayFree(l){const t=document.getElementById("free").value.trim();if(!t){alert("اكتب كلمة أولًا");return}beep(700,.08,"triangle");speak(t,l)}
+</script>
+</body>
+</html>
