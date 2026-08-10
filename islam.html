@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الموسوعة الإسلامية الشاملة</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Traditional Arabic","Amiri",Tahoma,serif}
+body{background:radial-gradient(circle at 50% 0%,#064e3b,#022c22 70%);color:#fef3c7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:520px;background:#022c22;border:6px double #d4af37;border-radius:22px;padding:16px;min-height:85vh}
+.basm{text-align:center;font-size:26px;color:#d4af37}
+h2{text-align:center;font-size:19px;color:#a7f3d0;margin:4px 0 10px}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.tabs button{border:1px solid #d4af37;border-radius:99px;padding:8px 10px;font-size:11px;font-weight:bold;cursor:pointer;background:transparent;color:#d4af37}
+.tabs button.on{background:#d4af37;color:#022c22}
+.item{background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.4);border-radius:16px;padding:14px;margin-bottom:12px}
+.item h3{color:#d4af37;font-size:17px;margin-bottom:8px;text-align:center}
+.item p{font-size:19px;line-height:2.1;text-align:center;color:#fef3c7}
+.cnt{display:inline-block;background:#d4af37;color:#022c22;border-radius:99px;padding:2px 12px;font-size:12px;font-weight:bold;margin-top:6px}
+.btn{border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:bold;cursor:pointer;background:#d4af37;color:#022c22;display:block;margin:8px auto 0}
+.btn.sm{display:inline-block;margin:4px 2px}
+.names{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.names button{border:1px solid rgba(212,175,55,.5);background:rgba(212,175,55,.08);border-radius:12px;padding:9px 2px;font-size:14px;color:#fef3c7;cursor:pointer;font-family:inherit}
+.surs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:60vh;overflow:auto}
+.surs button{border:1px solid rgba(212,175,55,.5);background:rgba(212,175,55,.08);border-radius:12px;padding:9px;font-size:13px;color:#fef3c7;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between}
+.surs button b{color:#d4af37}
+input,select{border:1px solid #d4af37;border-radius:10px;padding:9px;font-size:13px;background:#064e3b;color:#fef3c7;outline:none;margin:3px}
+.st{text-align:center;font-size:12px;color:#a7f3d0;margin:8px 0}
+</style>
+</head>
+<body>
+<div class="frame">
+<div class="basm">﷽</div>
+<h2>🕌 الموسوعة الإسلامية الشاملة</h2>
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+</div>
+<script>
+const SURN="الفاتحة:7,البقرة:286,آل عمران:200,النساء:176,المائدة:120,الأنعام:165,الأعراف:206,الأنفال:75,التوبة:129,يونس:109,هود:123,يوسف:111,الرعد:43,إبراهيم:52,الحجر:99,النحل:128,الإسراء:111,الكهف:110,مريم:98,طه:135,الأنبياء:112,الحج:78,المؤمنون:118,النور:64,الفرقان:77,الشعراء:227,النمل:93,القصص:88,العنكبوت:69,الروم:60,لقمان:34,السجدة:30,الأحزاب:73,سبأ:54,فاطر:45,يس:83,الصافات:182,ص:88,الزمر:75,غافر:85,فصلت:54,الشورى:53,الزخرف:89,الدخان:59,الجاثية:37,الأحقاف:35,محمد:38,الفتح:29,الحجرات:18,ق:45,الذاريات:60,الطور:49,النجم:62,القمر:55,الرحمن:78,الواقعة:96,الحديد:29,المجادلة:22,الحشر:24,الممتحنة:13,الصف:14,الجمعة:11,المنافقون:11,التغابن:18,الطلاق:12,التحريم:12,الملك:30,القلم:52,الحاقة:52,المعارج:44,نوح:28,الجن:28,المزمل:20,المدثر:56,القيامة:40,الإنسان:31,المرسلات:50,النبأ:40,النازعات:46,عبس:42,التكوير:29,الانفطار:19,المطففين:36,الانشقاق:25,البروج:22,الطارق:17,الأعلى:19,الغاشية:26,الفجر:30,البلد:20,الشمس:15,الليل:21,الضحى:11,الشرح:8,التين:8,العلق:19,القدر:5,البينة:8,الزلزلة:8,العاديات:11,القارعة:11,التكاثر:8,العصر:3,الهمزة:9,الفيل:5,قريش:4,الماعون:7,الكوثر:3,الكافرون:6,النصر:3,المسد:5,الإخلاص:4,الفلق:5,الناس:6".split(",").map(x=>x.split(":"));
+const SEC={
+ arkan:{n:"🕌 الأركان",items:[
+  ["أركان الإسلام الخمسة","شَهَادَةُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَإِقَامُ الصَّلَاةِ، وَإِيتَاءُ الزَّكَاةِ، وَصَوْمُ رَمَضَانَ، وَحَجُّ الْبَيْتِ مَنِ اسْتَطَاعَ إِلَيْهِ سَبِيلًا"],
+  ["أركان الإيمان الستة","أَنْ تُؤْمِنَ بِاللَّهِ، وَمَلَائِكَتِهِ، وَكُتُبِهِ، وَرُسُلِهِ، وَالْيَوْمِ الْآخِرِ، وَتُؤْمِنَ بِالْقَدَرِ خَيْرِهِ وَشَرِّهِ"],
+  ["الإحسان","أَنْ تَعْبُدَ اللَّهَ كَأَنَّكَ تَرَاهُ، فَإِنْ لَمْ تَكُنْ تَرَاهُ فَإِنَّهُ يَرَاكَ"]]},
+ quran:{n:"📖 المختار",items:[
+  ["آية الكرسي","اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ"]]},
+ full:{n:" القرآن كامل",items:[]},
+ hadith:{n:"📚 الصحيحان",items:[]},
+ adhk:{n:"🤲 الأذكار",items:[
+  ["ذكار الصباح","اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ","١"],
+  ["ذكار المساء","اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ","١"],
+  ["عند النوم","بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا","١"],
+  ["عند الاستيقاظ","الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ","١"],
+  ["بعد الصلاة","أَسْتَغْفِرُ اللَّهَ (ثَلَاثًا) اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ","١"],
+  ["التسبيح","سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَاللَّهُ أَكْبَرُ","٣٣"]]},
+ salat:{n:"🕋 الصلاة",items:[
+  ["١ - النية والتكبير","تستقبل القبلة، ثم تكبّر: اللَّهُ أَكْبَرُ"],
+  ["٢ - القراءة","تقرأ الفاتحة وما تيسر"],
+  ["٣ - الركوع","سُبْحَانَ رَبِّيَ الْعَظِيمِ (ثلاثًا)"],
+  ["٤ - الرفع","سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ، رَبَّنَا وَلَكَ الْحَمْدُ"],
+  ["٥ - السجود","سُبْحَانَ رَبِّيَ الْأَعْلَى (ثلاثًا)"],
+  ["٦ - التشهد","التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ"],
+  ["٧ - السلام","السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ"]]},
+ seerah:{n:"🌙 السيرة",items:[
+  ["المولد","وُلِدَ ﷺ بمكة عام الفيل (نحو ٥٧١م) يتيم الأب، وتربى بحجر جده عبد المطلب ثم عمه أبي طالب"],
+  ["البعثة","نزل الوحي بغار حراء وعمره أربعون سنة: ﴿اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ﴾"],
+  ["الهجرة","هاجر ﷺ للمدينة سنة ٦٢٢م وأسس أول دولة إسلامية"],
+  ["الوفاة","توفي ﷺ سنة ١هـ وعمره ثلاث وستون، ودُفن بحجرة عائشة بالمدينة"]]},
+ names:{n:"📿 الأسماء",items:[]}
+};
+const NAMES99="الرَّحْمَنُ الرَّحِيمُ الْمَلِكُ الْقُدُّوسُ السَّلَامُ الْمُؤْمِنُ الْمُهَيْمِنُ الْعَزِيزُ الْجَبَّارُ الْمُتَكَبِّرُ الْخَالِقُ الْبَارِئُ الْمُصَوِّرُ الْغَفَّارُ الْقَهَّارُ الْوَهَّابُ الرَّزَّاقُ الْفَتَّاحُ الْعَلِيمُ الْقَابِضُ الْبَاسِطُ الْخَافِضُ الرَّافِعُ الْمُعِزُّ الْمُذِلُّ السَّمِيعُ الْبَصِيرُ الْحَكَمُ الْعَدْلُ اللَّطِيفُ الْخَبِيرُ الْحَلِيمُ الْعَظِيمُ الْغَفُورُ الشَّكُورُ الْعَلِيُّ الْكَبِيرُ الْحَفِيظُ الْمُقِيتُ الْحَسِيبُ الْجَلِيلُ الْكَرِيمُ الرَّقِيبُ الْمُجِيبُ الْوَاسِعُ الْحَكِيمُ الْوَدُودُ الْمَجِيدُ الْبَاعِثُ الشَّهِيدُ الْحَقُّ الْوَكِيلُ الْقَوِيُّ الْمَتِينُ الْوَلِيُّ الْحَمِيدُ الْمُحْصِي الْمُبْدِئُ الْمُعِيدُ الْمُحْيِي الْمُمِيتُ الْحَيُّ الْقَيُّومُ الْوَاجِدُ الْمَاجِدُ الْوَاحِدُ الْأَحَدُ الصَّمَدُ الْقَادِرُ الْمُقْتَدِرُ الْمُقَدِّمُ الْمُؤَخِّرُ الْأَوَّلُ الْآخِرُ الظَّاهِرُ الْبَاطِنُ الْوَالِي الْمُتَعَالِي الْبَرُّ التَّوَّابُ الْمُنْتَقِمُ الْعَفُوُّ الرَّءُوفُ مَالِكُ الْمُلْكِ ذُو الْجَلَالِ وَالْإِكْرَامِ الْمُقْسِطُ الْجَامِعُ الْغَنِيُّ الْمُغْنِي الْمَانِعُ الضَّارُّ النَّافِعُ النُّورُ الْهَادِي الْبَدِيعُ الْبَاقِي الْوَارِثُ الرَّشِيدُ الصَّبُورُ".split(" ");
+let cur="arkan",audioQ=[],ai=0;
+function speak(t){try{const x=new SpeechSynthesisUtterance(t.replace(/﴿.*?﴾|\(.*?\)/g,""));x.lang="ar-SA";x.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function renderTabs(){document.getElementById("tabs").innerHTML=Object.keys(SEC).map(k=>`<button class="${k===cur?"on":""}" onclick="setSec('${k}')">${SEC[k].n}</button>`).join("")}
+function setSec(k){cur=k;renderTabs();render()}
+function render(){
+ const c=document.getElementById("content");
+ if(cur==="names"){c.innerHTML=`<div class="names">`+NAMES99.map(n=>`<button onclick="speak('${n}')">${n}</button>`).join("")+`</div><p class="st">اضغط أي اسم لنطقه — ${NAMES99.length} اسمًا</p>`;return}
+ if(cur==="full"){c.innerHTML=`<p class="st">📖 ١١٤ سورة — اختر سورة (تحتاج نت 🌐)</p><div class="surs">`+SURN.map((s,i)=>`<button onclick="openSurah(${i+1})"><span>${i+1}. ${s[0]}</span><b>${s[1]} آية</b></button>`).join("")+`</div>`;return}
+ if(cur==="hadith"){c.innerHTML=`<div style="text-align:center"><select id="hb"><option value="bukhari">صحيح البخاري</option><option value="muslim">صحيح مسلم</option></select><input id="hf" type="number" value="1" style="width:80px" placeholder="رقم"><button class="btn sm" onclick="loadHad()">📜 عرض</button></div><div class="st">🌐 يحتاج نت — النصوص من المصدر مباشرة</div><div id="hadList"></div>`;return}
+ c.innerHTML=SEC[cur].items.map(x=>`<div class="item"><h3>${x[0]}</h3><p>${x[1]}</p>${x[2]?`<div style="text-align:center"><span class="cnt">التكرار: ${x[2]}</span></div>`:""}<button class="btn" onclick="speak(decodeURIComponent('${encodeURIComponent(x[1])}'))">🔊 استماع</button></div>`).join("");
+}
+async function openSurah(n){
+ const c=document.getElementById("content");
+ c.innerHTML=`<p class="st">⏳ تحميل سورة ${SURN[n-1][0]}...</p>`;
+ try{
+  const r=await fetch("https://api.alquran.cloud/v1/surah/"+n+"/quran-uthmani");
+  const j=await r.json();
+  audioQ=j.data.ayahs.map(a=>"https://cdn.islamic.network/quran/audio/128/ar.alafasy/"+a.number+".mp3");
+  c.innerHTML=`<div style="text-align:center"><button class="btn sm" onclick="setSec('full')">🔙 السور</button><button class="btn sm" onclick="playAll()">▶ تلاوة كاملة (العفاسي)</button></div><div class="item"><h3>سورة ${SURN[n-1][0]}</h3>`+j.data.ayahs.map((a,i)=>`<p style="margin-bottom:10px">${a.text} <b style="color:#d4af37">﴿${a.numberInSurah}﴾</b> <button class="btn sm" onclick="playA(${i})">🔊</button></p>`).join("")+`</div>`;
+ }catch(e){c.innerHTML=`<p class="st">❌ تحتاج اتصال بالنت 🌐</p><button class="btn" onclick="setSec('full')">🔙 رجوع</button>`}
+}
+function playA(i){const a=new Audio(audioQ[i]);a.play()}
+function playAll(){ai=0;nextA()}
+function nextA(){if(ai>=audioQ.length)return;const a=new Audio(audioQ[ai]);ai++;a.onended=nextA;a.play()}
+async function loadHad(){
+ const b=document.getElementById("hb").value,s=parseInt(document.getElementById("hf").value)||1;
+ const L=document.getElementById("hadList");
+ L.innerHTML=`<p class="st">⏳ تحميل الأحاديث ${s}-${s+4}...</p>`;
+ try{
+  const r=await fetch("https://api.hadith.gading.dev/books/"+b+"?range="+s+"-"+(s+4));
+  const j=await r.json();
+  L.innerHTML=j.data.hadiths.map(h=>`<div class="item"><h3>حديث رقم ${h.number}</h3><p style="font-size:16px">${h.arab}</p><button class="btn" onclick="speak(decodeURIComponent('${encodeURIComponent(h.arab)}'))">🔊 استماع</button></div>`).join("");
+ }catch(e){L.innerHTML=`<p class="st">❌ تحتاج نت 🌐</p>`}
+}
+renderTabs();render();
+</script>
+</body>
+</html>
