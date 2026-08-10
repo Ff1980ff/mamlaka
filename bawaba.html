@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بوابتي الذكية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:radial-gradient(circle at 50% 0%,#1e293b,#0f172a 70%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:500px;background:#0f172a;border:6px solid #38bdf8;border-radius:24px;padding:16px;min-height:85vh}
+h2{text-align:center;font-size:20px;color:#7dd3fc}
+.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 12px}
+input{width:100%;border:none;border-radius:14px;padding:11px;font-size:14px;background:#1e293b;color:#fff;outline:none;border:1px solid #334155;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.app{background:#1e293b;border:2px solid #334155;border-radius:18px;padding:14px 4px;text-align:center;cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:center}
+.app span{font-size:34px}
+.app b{font-size:11px;color:#e2e8f0}
+.app:active{transform:scale(.95)}
+.st{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px}
+#runner{display:none;position:fixed;inset:0;background:#000;z-index:60}
+#runner iframe{width:100%;height:100%;border:none}
+#runClose{position:fixed;top:10px;left:10px;z-index:61;border:none;border-radius:99px;background:#ef4444;color:#fff;padding:9px 16px;font-weight:bold;font-size:13px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="frame">
+<h2>🏠 بوابتي الذكية</h2>
+<div class="sub">كل تطبيقاتي بمكان واحد — متجري الخاص</div>
+<input id="q" placeholder="🔍 دور تطبيق..." oninput="render()">
+<div class="grid" id="grid"></div>
+<div class="st" id="st"></div>
+</div>
+<div id="runner"><button id="runClose" onclick="closeRun()">✖ إغلاق التطبيق</button><iframe id="runFrame"></iframe></div>
+<script>
+let db={codes:[],projs:[]};
+try{db=JSON.parse(localStorage.getItem("smartBook")||'{"codes":[],"projs":[]}')}catch(e){}
+function iconFor(n){
+ const m=[["قلم","🖊️"],["مترجم","📖"],["سبورة","🎓"],["جسم","🫀"],["ارض","🌍"],["كرة","🌍"],["عمل","💱"],["ايميل","📧"],["مكتب","📚"],["فيديو","🎬"],["قارئ","🔊"],["فلاش","🃏"],["اسلام","🕌"],["رسم","🎨"],["قص","📚"],["جيب","🎒"],["دفتر","📒"]];
+ for(const x of m)if(n.includes(x[0]))return x[1];
+ return "📱";
+}
+function apps(){
+ const a=db.codes.map(c=>({name:c.name||"بدون اسم",body:c.body}));
+ db.projs.forEach(p=>{if(p.code)a.push({name:p.name,body:p.code})});
+ return a;
+}
+function render(){
+ const q=document.getElementById("q").value.trim();
+ const list=apps().filter(x=>!q||x.name.includes(q));
+ document.getElementById("grid").innerHTML=list.map((x,i)=>`<div class="app" onclick="runApp(${i},'${q}')"><span>${iconFor(x.name)}</span><b>${x.name}</b></div>`).join("")||`<div style="grid-column:1/-1;text-align:center;color:#64748b">لا نتائج</div>`;
+ document.getElementById("st").textContent="📱 عندك "+apps().length+" تطبيقًا — احفظ أي كود جديد بالدفتر وبيظهر هون تلقائيًا!";
+ window._list=list;
+}
+function runApp(i){
+ const x=window._list[i];
+ document.getElementById("runFrame").srcdoc=x.body;
+ document.getElementById("runner").style.display="block";
+}
+function closeRun(){document.getElementById("runner").style.display="none";document.getElementById("runFrame").srcdoc=""}
+render();
+</script>
+</body>
+</html>
