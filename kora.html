@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الكرة الأرضية الذكية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+body{background:radial-gradient(circle at 50% 20%,#1e3a8a,#0c1030 70%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:470px;background:#0f172a;border:6px solid transparent;border-radius:26px;padding:16px;min-height:85vh;background:linear-gradient(#0f172a,#0f172a) padding-box,linear-gradient(45deg,#ef4444,#f59e0b,#22c55e,#3b82f6,#a855f7) border-box}
+#stage{min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.globe{font-size:74px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+h2{font-size:20px;background:linear-gradient(90deg,#f59e0b,#ef4444,#a855f7,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold}
+.motto{font-size:11px;color:#94a3b8}
+.menus{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%}
+.menu{border:none;border-radius:18px;padding:16px 4px;font-size:13px;font-weight:bold;cursor:pointer;color:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;background:linear-gradient(160deg,var(--a),var(--b));box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.menu span{font-size:30px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.cat{background:#1e293b;border:3px solid var(--c);border-radius:18px;color:#fff;padding:12px 4px;font-size:13px;cursor:pointer;display:flex;flex-direction:column;gap:5px;align-items:center;box-shadow:0 0 12px var(--c)}
+.cat span{font-size:30px}
+.bimg{font-size:80px;animation:pop .5s;cursor:pointer}
+@keyframes pop{from{transform:scale(.1)}}
+.ani{font-size:34px;letter-spacing:6px}
+.wname{font-size:28px;font-weight:bold}
+.fact{background:#1e293b;border:1px solid #475569;border-radius:14px;padding:10px;font-size:14px;color:#e2e8f0;line-height:1.7;max-width:95%}
+.bmsg{min-height:18px;color:#e2e8f0;font-size:13px}
+.bbtn{border:none;border-radius:13px;padding:9px 15px;font-size:13px;font-weight:bold;cursor:pointer;background:#f59e0b;color:#0f172a;margin:3px}
+.bbtn.blue{background:#38bdf8}.bbtn.gray{background:#334155;color:#fff}
+.pill{background:#1e293b;border:1px solid #475569;border-radius:99px;padding:4px 11px;font-size:11px}
+.btop{display:flex;justify-content:space-between;width:100%;margin-bottom:6px}
+.bdots{color:#94a3b8;font-size:11px}
+</style>
+</head>
+<body>
+<div class="frame"><div id="stage"></div></div>
+<script>
+const CONT=[
+ ["آسيا","🌏","#f59e0b","أكبر قارة بالعالم، فيها أكثر من نصف سكان الأرض!","🐼🐯🐫🐼"],
+ ["أفريقيا","🌍","#4ade80","فيها أطول نهر (النيل) وأكبر صحراء (الصحراء الكبرى)!","🦁🐘🦓"],
+ ["أوروبا","🌍","#38bdf8","قارة القلاع القديمة والمتاحف الجميلة!","🏰⛪"],
+ ["أمريكا الشمالية","🌎","#e879f9","فيها ناطحات السحاب والغابات الضخمة!","🗽🦬🌲"],
+ ["أمريكا الجنوبية","🌎","#fb7185","فيها أكبر غابة مطيرة بالعالم (الأمازون)!","🦜🐆🦥🌴"],
+ ["أستراليا","🌏","#facc15","قارة الكنغر، كل حيواناتها فريدة!","🦘🐨🦆🐊"],
+ ["أنتاركتيكا","🌐","#a5f3fc","القارة المتجمدة، أبرد مكان على الأرض!","🐧🧊🦭❄️"]
+];
+const OCEANS=[
+ ["المحيط الهادئ","🌊","#38bdf8","أكبر محيط، يغطي ثلث سطح الأرض!"],
+ ["المحيط الأطلسي","🌊","#3b82f6","يفصل بين أفريقيا وأمريكا، وشكلو حرف S!"],
+ ["المحيط الهندي","🌊","#0ea5e9","أدفا مياه كل المحيطات!"],
+ ["المتجمد الشمالي","🧊","#a5f3fc","محيط الجليد والدببة القطبية!"],
+ ["المتجمد الجنوبي","🧊","#67e8f9","يحيط بالقارة المتجمدة من كل الجهات!"]
+];
+const WONDERS=[
+ ["برج إيفل","🗼","فرنسا","برج حديدي يلمع بالأنوار ليلًا، ارتفاعه 330 مترًا!"],
+ ["الأهرامات","🔺","مصر","أقدم عجائب العالم، بناها الفراعنة قبل 4500 سنة!"],
+ ["سور الصين","🧱","الصين","أطول سور بالعالم، يمتد آلاف الكيلومترات!"],
+ ["تاج محل","🕌","الهند","قصر رخامي أبيض بناه皇帝 حبًا لزوجته!"],
+ ["البتراء","🏛️","الأردن","مدينة وردية منحوتة بالكامل بالصخر!"],
+ ["تمثال الحرية","🗽","أمريكا","تمثال عملاق يرمز للحرية، هدية من فرنسا!"],
+ ["الكعبة المشرفة","🕋","مكة","أقدس مكان للمسلمين، قبلة الصلاة حول العالم!"]
+];
+let sec=null,ii=0,AC=null;
+const stage=document.getElementById("stage");
+function beep(f,d,type,when){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;const t=AC.currentTime+(when||0);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function sWin(){[523,659,784,1047].forEach((f,i)=>beep(f,.18,"triangle",i*.14))}
+document.addEventListener("click",e=>{if(e.target.closest("button,.bimg"))beep(700,.06,"triangle")});
+function speak(t){try{const x=new SpeechSynthesisUtterance(t);x.lang="ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function home(){
+ stage.innerHTML=`<div class="globe">🌍</div><h2>الكرة الأرضية الذكية</h2><div class="motto">✨ دليل التائه • بر الأمان • بحر الوصول ✨</div>
+ <div class="menus">
+ <button class="menu" style="--a:#f59e0b;--b:#ef4444" onclick="list('c')"><span>🗺️</span>القارات</button>
+ <button class="menu" style="--a:#0ea5e9;--b:#3b82f6" onclick="list('o')"><span>🌊</span>المحيطات</button>
+ <button class="menu" style="--a:#a855f7;--b:#ec4899" onclick="list('w')"><span>✨</span>العجائب</button>
+ </div><div class="bdots">اضغط لتبدأ رحلة حول العالم!</div>`;
+}
+function data(){return sec==="c"?CONT:sec==="o"?OCEANS:WONDERS}
+function topBar(){const n=sec==="c"?"🗺️ القارات":sec==="o"?"🌊 المحيطات":"✨ العجائب";return`<div class="btop"><button class="bbtn gray" onclick="home()">🏠 الكرة</button><span class="pill">${n}</span></div>`}
+function list(s){sec=s;
+ stage.innerHTML=topBar()+`<div class="cats">`+data().map((x,i)=>`<button class="cat" style="--c:${x[2]}" onclick="show(${i})"><span>${x[1]}</span><b>${x[0]}</b></button>`).join("")+`</div>`;
+}
+function show(i){
+ ii=i;const x=data()[i],last=(i===data().length-1);
+ const extra=sec==="c"?`<div class="ani">${x[4]}</div>`:sec==="w"?`<span class="pill">${x[2]}</span>`:"";
+ stage.innerHTML=topBar()+
+ `<div class="bimg" onclick="speak('${x[0]}')">${x[1]}</div>
+ <div class="wname">${x[0]}</div>${extra}
+ <div class="fact">${x[3]}</div>
+ <div><button class="bbtn blue" onclick="show(${(i+1)%data().length})">التالي ⬅️</button>
+ <button class="bbtn gray" onclick="list('${sec}')">القائمة 🗺️</button></div>
+ <div class="bmsg">${last?"أحسنت! خلصت الجولة 🎉":""}</div>
+ ${last?`<button class="bbtn" onclick="home()">الكرة 🌍</button>`:""}
+ <div class="bdots">${i+1} / ${data().length}</div>`;
+ if(last)sWin();
+ speak(x[0]+" . "+x[3]);
+}
+home();
+</script>
+</body>
+</html>
