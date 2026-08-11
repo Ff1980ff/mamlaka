@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ناشر الكتب 📚</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding:14px;padding-bottom:40px}
+header{text-align:center;padding:10px;font-weight:900;color:#f5a524;font-size:19px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:11px;margin-top:4px}
+section{max-width:560px;margin:auto}
+label{display:block;margin:12px 0 6px;color:#9aa3c0;font-size:13px}
+input,button{width:100%;border-radius:12px;border:1px solid #2a3157;background:#141a33;color:#f7ead9;padding:12px;font-size:14px;font-family:inherit}
+.go{background:#f5a524;color:#241303;border:none;font-weight:900;font-size:16px;margin-top:16px;cursor:pointer}
+#log{margin-top:16px;background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:12px;font-size:13px;line-height:2;min-height:60px;word-break:break-all}
+</style>
+</head>
+<body>
+<header>📚 ناشر الكتب الملكي
+<small>ارفع PDF أو أي ملف ع المملكة — من موبايلك، بكبسة</small></header>
+<section>
+ <label>🔑 المفتاح السري:</label>
+ <input id="tok" type="password" placeholder="ghp_...">
+ <label>📄 اختار الملف (PDF أو غيره):</label>
+ <input type="file" id="f">
+ <label>🏷️ اسمو بالمملكة:</label>
+ <input id="name" placeholder="books/كتابي.pdf">
+ <button class="go" onclick="pub()">🚀 نشر بالمملكة</button>
+ <div id="log">جاهز... عبّي الحقول ودوس نشر.</div>
+</section>
+<script>
+const owner='ff1980ff',repo='mamlaka',branch='main';
+document.getElementById('f').onchange=e=>{const f=e.target.files[0];if(f&&!document.getElementById('name').value)document.getElementById('name').value='books/'+f.name};
+function log(t){const l=document.getElementById('log');l.innerHTML+='<br>'+t;l.scrollTop=1e9}
+async function pub(){
+ const tok=document.getElementById('tok').value.trim(),f=document.getElementById('f').files[0],path=document.getElementById('name').value.trim();
+ if(!tok||!f||!path){log('❌ عبّي المفتاح والملف والاسم');return}
+ log('⏳ عم نقرأ الملف ('+(f.size/1024/1024).toFixed(1)+' MB)...');
+ const b64=await new Promise(r=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.readAsDataURL(f)});
+ const H={Authorization:'token '+tok,'Content-Type':'application/json'};
+ const api='https://api.github.com/repos/'+owner+'/'+repo;
+ try{
+  log('⏳ عم نجيب رأس الفرع...');
+  let r=await fetch(api+'/git/ref/heads/'+branch,{headers:H});let j=await r.json();const baseSha=j.object.sha;
+  r=await fetch(api+'/git/commits/'+baseSha,{headers:H});j=await r.json();const baseTree=j.tree.sha;
+  log('⏳ عم نرفع الملف...');
+  r=await fetch(api+'/git/blobs',{method:'POST',headers:H,body:JSON.stringify({content:b64,encoding:'base64'})});j=await r.json();
+  if(!j.sha)throw new Error(j.message||'رفع الملف فشل');
+  const blobSha=j.sha;
+  r=await fetch(api+'/git/trees',{method:'POST',headers:H,body:JSON.stringify({base_tree:baseTree,tree:[{path:path,mode:'100644',type:'blob',sha:blobSha}]})});j=await r.json();
+  if(!j.sha)throw new Error(j.message||'الشجرة فشلت');
+  r=await fetch(api+'/git/commits',{method:'POST',headers:H,body:JSON.stringify({message:'📚 نشر: '+path,tree:j.sha,parents:[baseSha]})});j=await r.json();
+  if(!j.sha)throw new Error(j.message||'الحفظ فشل');
+  r=await fetch(api+'/git/refs/heads/'+branch,{method:'PATCH',headers:H,body:JSON.stringify({sha:j.sha})});
+  const url='https://'+owner+'.github.io/'+repo+'/'+encodeURI(path);
+  log('✅ <b>اننشر!</b> رابطك المباشر:');
+  log('<a href="'+url+'" target="_blank" style="color:#f5a524">'+url+'</a>');
+  log('💡 انسخ الرابط وضيفو بالسفارة 📎 أو بالمكتبة 📚 ليلاقيه الزوار.');
+ }catch(e){log('❌ صار غلط: '+e.message)}
+}
+</script>
+</body>
+</html>
