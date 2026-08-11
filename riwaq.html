@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الرواق 🏛️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:20px 10px;background:linear-gradient(135deg,#141a33,#1a2440);border-bottom:2px solid #f5a524}
+header h1{color:#f5a524;font-size:28px;margin-bottom:6px}
+header small{color:#9aa3c0;font-size:13px}
+.search{max-width:560px;margin:20px auto;padding:0 12px}
+.search input{width:100%;padding:14px;border-radius:14px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:16px;font-family:inherit}
+.search input:focus{outline:none;border-color:#f5a524}
+.grid{max-width:900px;margin:20px auto;padding:0 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.app{background:#141a33;border:2px solid #2a3157;border-radius:16px;padding:16px 10px;text-align:center;transition:.3s;cursor:pointer;text-decoration:none;display:block}
+.app:hover{border-color:#f5a524;transform:translateY(-4px);box-shadow:0 8px 20px rgba(245,165,36,.2)}
+.app .e{font-size:38px;margin-bottom:8px}
+.app b{color:#f7ead9;font-size:14px;display:block;line-height:1.6}
+.app small{color:#9aa3c0;font-size:11px;display:block;margin-top:4px}
+.stats{max-width:560px;margin:30px auto;padding:0 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:linear-gradient(135deg,#141a33,#1a2440);border:1px solid #a78bfa;border-radius:14px;padding:16px;text-align:center}
+.stat .num{font-size:28px;font-weight:900;color:#a78bfa}
+.stat .lbl{font-size:11px;color:#9aa3c0;margin-top:4px}
+.quick{max-width:560px;margin:20px auto;padding:0 12px}
+.quick h3{color:#f5a524;font-size:16px;margin-bottom:12px;text-align:center}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.quick-item{background:#141a33;border:1px solid #2a3157;border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:.3s}
+.quick-item:hover{border-color:#f5a524;background:#1a2440}
+.quick-item .e{font-size:28px}
+.quick-item b{display:block;font-size:13px;margin-top:6px;color:#f7ead9}
+footer{text-align:center;padding:30px 10px;color:#9aa3c0;font-size:12px;line-height:2}
+footer b{color:#f5a524}
+</style>
+</head>
+<body>
+
+<header>
+ <h1>🏛️ الرواق</h1>
+ <small>صالة استقبال المملكة — كل شي بيمرق من هون</small>
+</header>
+
+<div class="search">
+ <input id="q" placeholder="🔍 ابحث عن تطبيق..." oninput="filter()">
+</div>
+
+<div class="grid" id="apps"></div>
+
+<div class="stats">
+ <div class="stat"><div class="num" id="count">0</div><div class="lbl">تطبيق متاح</div></div>
+ <div class="stat"><div class="num">25</div><div class="lbl">بصمة بالمملكة</div></div>
+ <div class="stat"><div class="num">3</div><div class="lbl">دوائر</div></div>
+</div>
+
+<div class="quick">
+ <h3>⚡ وصول سريع</h3>
+ <div class="quick-grid">
+  <div class="quick-item" onclick="location.href='index.html'"><div class="e">🏰</div><b>القصر</b></div>
+  <div class="quick-item" onclick="location.href='bawaba.html'"><div class="e">🏠</div><b>البوابة</b></div>
+  <div class="quick-item" onclick="location.href='daftar.html'"><div class="e">📒</div><b>الدفتر</b></div>
+  <div class="quick-item" onclick="location.href='sakhra.html'"><div class="e">🪨</div><b>الصخرة</b></div>
+ </div>
+</div>
+
+<footer>
+ <b>الرواق 🏛️</b> — صالة استقبال المملكة<br>
+ من هنا بتبلش، ومن هنا بترجع 🕊️
+</footer>
+
+<script>
+const APPS=[
+ {n:'صخرة المعرفة',e:'🪨',d:'المدرسة الدافية',l:'sakhra.html',c:'بيت'},
+ {n:'مدينة الحروف',e:'🌿',d:'حروف وأرقام وألوان',l:'huruf.html',c:'بيت'},
+ {n:'دفتر المملكة',e:'📒',d:'ذاكرة المملكة',l:'daftar.html',c:'بيت'},
+ {n:'بوابة المملكة',e:'🏠',d:'باب البيت',l:'bawaba.html',c:'بيت'},
+ {n:'مكتبتي الملكية',e:'📚',d:'كتبك وقراياتك',l:'maktaba.html',c:'بيت'},
+ {n:'السبورة',e:'🎓',d:'سبورة الشرح',l:'saboura.html',c:'بيت'},
+ {n:'مهندسي المعماري',e:'🏗️',d:'عدّة المهندس',l:'handasi.html',c:'بيت'},
+ {n:'مترجمي الناطق',e:'📖',d:'جسر بين اللغات',l:'mutarjim.html',c:'جيران'},
+ {n:'قلمي الناطق',e:'🖊️',d:'كتابة تتحول لصوت',l:'qalam.html',c:'جيران'},
+ {n:'مصنع الإيميلات',e:'📧',d:'رسائل بأدب الشوام',l:'mail.html',c:'جيران'},
+ {n:'صراف العملات',e:'💱',d:'حسباتك مظبوطة',l:'sarraf.html',c:'جيران'},
+ {n:'كرتنا الزرقاء',e:'🌍',d:'خريطتك بلمسة',l:'kora.html',c:'جيران'},
+ {n:'مرسمي الصغير',e:'🎨',d:'ألوان الطفل',l:'marsam.html',c:'جيران'},
+ {n:'فلاشاتي الذكية',e:'🃏',d:'بطاقات حفظ',l:'flash.html',c:'جيران'},
+ {n:'موسوعتي الإسلامية',e:'🕌',d:'نور وهداية',l:'islam.html',c:'جيران'},
+ {n:'استوديو الفيديو',e:'🎬',d:'صوّر وقصّ وركّب',l:'video.html',c:'جيران'},
+ {n:'قارئي الذكي',e:'🔊',d:'بيقرأ لك',l:'qari.html',c:'جيران'},
+ {n:'روضة الجيب',e:'📱',d:'أول خطوة للصغار',l:'rawda.html',c:'جيران'},
+ {n:'أسرار جسمي',e:'🫀',d:'اعرف جسمك',l:'jismi.html',c:'جيران'},
+ {n:'ضيافة وترحيب',e:'🛋️',d:'أهلًا وسهلًا',l:'diyafa.html',c:'عالم'},
+ {n:'سفارة الروابط',e:'📎',d:'سفير الروابط',l:'safara.html',c:'عالم'},
+ {n:'المِرسال',e:'🕊️',d:'رسول المملكة',l:'mirsal.html',c:'عالم'},
+ {n:'المكتشف',e:'🔭',d:'عين المملكة',l:'muktashif.html',c:'عالم'},
+ {n:'الرواق',e:'🏛️',d:'صالة الاستقبال',l:'riwaq.html',c:'عالم'}
+];
+function render(list){
+ document.getElementById('apps').innerHTML=list.map(a=>`
+  <a href="${a.l}" class="app">
+   <div class="e">${a.e}</div>
+   <b>${a.n}</b>
+   <small>${a.d}</small>
+  </a>
+ `).join('');
+ document.getElementById('count').textContent=list.length;
+}
+function filter(){
+ const q=document.getElementById('q').value.toLowerCase();
+ render(APPS.filter(a=>a.n.toLowerCase().includes(q)||a.d.toLowerCase().includes(q)));
+}
+render(APPS);
+</script>
+</body>
+</html>
