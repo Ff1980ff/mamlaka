@@ -19,14 +19,19 @@ section.on{display:block}
 .go{width:100%;border-radius:12px;border:none;background:#d29a63;color:#2b1608;font-weight:900;font-size:16px;padding:14px;cursor:pointer;font-family:inherit}
 .cup{text-align:center;font-size:52px;margin:10px}
 .note{text-align:center;color:#a8907c;font-size:12px;margin:12px;line-height:1.9}
-.item{background:#241610;border:1px solid #3a2417;border-radius:14px;padding:14px;margin:8px 0;cursor:pointer;transition:.3s}
-.item:hover{border-color:#d29a63}
-.item b{color:#d29a63;font-size:15px}
-.item small{color:#a8907c;display:block;font-size:11px;margin-top:4px}
-.rbar{display:flex;gap:8px;justify-content:center;margin:10px}
-.rbar button{border-radius:10px;border:1px solid #3a2417;background:#241610;color:#f3e9dc;padding:8px 16px;font-weight:900;cursor:pointer;font-family:inherit}
-#rbody{background:#1c110a;border:1px solid #3a2417;border-radius:14px;padding:18px;line-height:2.2;white-space:pre-wrap}
+.item{background:#241610;border:1px solid #3a2417;border-radius:14px;padding:14px;margin:8px 0;transition:.3s}
+.item b{color:#d29a63;font-size:15px;display:block}
+.item small{color:#a8907c;display:block;font-size:11px;margin-top:4px;margin-bottom:8px}
+.item-btns{display:flex;gap:6px;flex-wrap:wrap}
+.item-btns button{border-radius:10px;border:1px solid #3a2417;background:#1c110a;color:#f3e9dc;padding:8px 12px;font-weight:900;cursor:pointer;font-family:inherit;font-size:12px;flex:1}
+.item-btns button:hover{border-color:#d29a63}
+.rbar{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
+.rbar button{border-radius:10px;border:1px solid #3a2417;background:#241610;color:#f3e9dc;padding:8px 14px;font-weight:900;cursor:pointer;font-family:inherit;font-size:12px}
+#rbody{background:#1c110a;border:1px solid #3a2417;border-radius:14px;padding:18px;line-height:2.2;white-space:pre-wrap;font-size:17px}
 .moral{margin-top:12px;color:#d29a63;font-weight:900;border-top:1px dashed #3a2417;padding-top:10px}
+#pdfbox{background:#0a0503;border:1px solid #3a2417;border-radius:14px;padding:10px;margin-top:12px;display:none}
+#pdfbox iframe{width:100%;height:75vh;border:none;border-radius:10px;background:#fff}
+.badge{display:inline-block;background:#d29a63;color:#2b1608;font-size:10px;font-weight:900;padding:2px 8px;border-radius:99px;margin-right:6px}
 </style>
 </head>
 <body>
@@ -62,7 +67,13 @@ section.on{display:block}
 
 <section id="p2">
  <div id="shelf"></div>
- <div class="note">الرف مستني كتبك — انشرها بـ 📚 ناشر الكتب، وقلّي عناوينها لأضيفها هون.</div>
+ <div id="pdfbox">
+  <div class="rbar">
+   <button onclick="closePdf()">🏠 الرف</button>
+   <button onclick="dlBook()">⬇️ تنزيل</button>
+  </div>
+  <iframe id="pdfv"></iframe>
+ </div>
 </section>
 
 <script>
@@ -73,10 +84,11 @@ const ST=[
 {t:'الجار قبل الدار',m:1,b:`كان في رجل بدو يبني دار، فسأل المختار: وين أبني؟\nقال المختار: اسأل عن الجيران قبل المكان.\nإن كان الجار طيب، ابني دارك ولو ع صخر.\nوإن كان الجار سيئ، بتنهدم دارك ولو ع حرير.\nبنى الرجل دارو جنب جار بيشارك خبزو، فصارت دارو دارين.`,x:'اختار جارك قبل دارك، بتسكن دارك.'}
 ];
 const BOOKS=[
-// ضيف كتبك هون متل: {t:'عنوان الكتاب',l:'books/اسم.pdf'}
+{t:'كتاب زكي الملكي',d:'حروف وأرقام وألوان للصغار',id:'1wJBN69Xhrkmknl6wnfFPVqpPTrJs2CQW'}
 ];
 const secs=['p0','p1','p2'];
-function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j));if(i===1)closeR()}
+let curBook=null;
+function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j));if(i===1)closeR();if(i===2)closePdf()}
 function serve(){const s=ST[Math.floor(Math.random()*ST.length)];
  document.getElementById('cup').textContent='☕';
  document.getElementById('served').innerHTML=`<div class="card" style="text-align:right"><h3>📖 ${s.t}</h3><div style="white-space:pre-wrap">${s.b}</div><div class="moral">🌙 العبرة: ${s.x}</div></div>`}
@@ -87,8 +99,21 @@ function openR(i){const s=ST[i];document.getElementById('list').style.display='n
  document.getElementById('rbody').innerHTML=`<h3 style="color:#d29a63">📖 ${s.t} <small style="color:#a8907c">(☕ ${s.m} د)</small></h3>\n\n${s.b}\n\n<div class="moral">🌙 العبرة: ${s.x}</div>`;
  r.scrollIntoView()}
 function closeR(){document.getElementById('list').style.display='block';document.getElementById('reader').style.display='none'}
+function openB(i){
+ const b=BOOKS[i];curBook=b;
+ document.getElementById('shelf').style.display='none';
+ const box=document.getElementById('pdfbox');box.style.display='block';
+ document.getElementById('pdfv').src='https://drive.google.com/file/d/'+b.id+'/preview';
+ box.scrollIntoView();
+}
+function closePdf(){
+ document.getElementById('pdfv').src='';
+ document.getElementById('pdfbox').style.display='none';
+ document.getElementById('shelf').style.display='block';
+}
+function dlBook(){if(curBook){const a=document.createElement('a');a.href='https://drive.google.com/uc?export=download&id='+curBook.id;a.download=curBook.t+'.pdf';a.click()}}
 document.getElementById('list').innerHTML=ST.map((s,i)=>`<div class="item" onclick="openR(${i})"><b>📖 ${s.t}</b><small>☕ قراءة ${s.m} دقيقة — دوس تقرأ</small></div>`).join('');
-document.getElementById('shelf').innerHTML=BOOKS.length?BOOKS.map(b=>`<div class="item" onclick="location.href='${b.l}'"><b>📚 ${b.t}</b><small>دوس تقرأ أو تنزّل</small></div>`).join(''):`<div class="card" style="text-align:center">📚 الرف فاضي هلأ... أول كتاب بينزل بالناشر، بيطلع هون.</div>`;
+document.getElementById('shelf').innerHTML=BOOKS.length?BOOKS.map((b,i)=>`<div class="item"><b>📚 ${b.t} <span class="badge">PDF</span></b><small>${b.d}</small><div class="item-btns"><button onclick="openB(${i})">📖 اقرأ جوّا المكتبة</button><button onclick="window.open('https://drive.google.com/file/d/${b.id}/view')">🔗 فتح بالمتصفح</button></div></div>`).join(''):`<div class="card" style="text-align:center">📚 الرف فاضي هلأ...</div>`;
 </script>
 </body>
 </html>
