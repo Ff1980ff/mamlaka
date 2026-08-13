@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدينة الألعاب 🎮</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#f5a524;font-size:22px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-top:4px}
+.wrap{max-width:600px;margin:auto;padding:0 12px}
+.hub{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+.g{background:#141a33;border:2px solid #2a3157;border-radius:16px;padding:20px 10px;text-align:center;cursor:pointer;transition:.3s}
+.g:hover{border-color:#f5a524;transform:translateY(-3px)}
+.g .e{font-size:42px}
+.g b{display:block;font-size:17px;margin-top:8px}
+.g small{color:#9aa3c0;font-size:12px}
+.screen{display:none}
+.screen.on{display:block}
+.back{border-radius:12px;border:1px solid #2a3157;background:#141a33;color:#f7ead9;padding:10px 18px;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin:8px 0}
+.st{text-align:center;font-size:19px;font-weight:900;color:#22d3ee;margin:12px 0;line-height:1.8}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mem button{aspect-ratio:1;border-radius:14px;border:2px solid #2a3157;background:#1a2440;font-size:34px;cursor:pointer}
+.mem button.ok{border-color:#4ade80;background:#14331f}
+.big{width:100%;border-radius:14px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:19px;padding:15px;cursor:pointer;font-family:inherit;margin:6px 0}
+.opt{width:100%;border-radius:14px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-weight:900;font-size:22px;padding:16px;cursor:pointer;font-family:inherit;margin:6px 0}
+.opt.ok{background:#16a34a;border:none}
+.opt.no{background:#dc2626;border:none}
+.xo{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:330px;margin:auto}
+.xo button{aspect-ratio:1;border-radius:14px;border:2px solid #2a3157;background:#1a2440;font-size:44px;font-weight:900;cursor:pointer;color:#f7ead9}
+.swatch{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.swatch button{border-radius:14px;border:none;padding:22px;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;color:#fff}
+#word{font-size:52px;font-weight:900;text-align:center;margin:20px 0}
+</style>
+</head>
+<body>
+<header>🎮 مدينة الألعاب
+<small>٤ ألعاب كاملة — تلعب حتى بلا نت!</small></header>
+
+<div class="wrap">
+<div id="hub" class="hub">
+ <div class="g" onclick="openG('mem')"><div class="e">🧠</div><b>ذاكرة المملكة</b><small>طابق الأزواج</small></div>
+ <div class="g" onclick="openG('math')"><div class="e">➗</div><b>رياضيات البرق</b><small>١٠ جولات</small></div>
+ <div class="g" onclick="openG('xo')"><div class="e">⭕</div><b>إكس أو</b><small>ضد الجوال</small></div>
+ <div class="g" onclick="openG('col')"><div class="e">🎨</div><b>صياد الألوان</b><small>ركّز منيح!</small></div>
+</div>
+
+<div id="s-mem" class="screen">
+ <button class="back" onclick="home()">🏠 المدينة</button>
+ <div class="st" id="memst"></div>
+ <div class="mem" id="mem"></div>
+ <button class="big" onclick="memStart()">🔄 لعبة جديدة</button>
+</div>
+
+<div id="s-math" class="screen">
+ <button class="back" onclick="home()">🏠 المدينة</button>
+ <div class="st" id="mathst"></div>
+ <div id="mathq" style="text-align:center;font-size:48px;font-weight:900;color:#f5a524;margin:14px 0"></div>
+ <div id="matho"></div>
+ <button class="big" onclick="mathStart()">🔄 لعبة جديدة</button>
+</div>
+
+<div id="s-xo" class="screen">
+ <button class="back" onclick="home()">🏠 المدينة</button>
+ <div class="st" id="xost">إنت ❌ — والجوال ⭕</div>
+ <div class="xo" id="xo"></div>
+ <button class="big" onclick="xoStart()">🔄 لعبة جديدة</button>
+</div>
+
+<div id="s-col" class="screen">
+ <button class="back" onclick="home()">🏠 المدينة</button>
+ <div class="st" id="colst"></div>
+ <div id="word"></div>
+ <div class="swatch" id="cols"></div>
+ <button class="big" onclick="colStart()">🔄 لعبة جديدة</button>
+</div>
+</div>
+
+<script>
+function openG(g){document.getElementById('hub').style.display='none';document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById('s-'+g).classList.add('on');
+ if(g==='mem')memStart();if(g==='math')mathStart();if(g==='xo')xoStart();if(g==='col')colStart()}
+function home(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById('hub').style.display='grid'}
+
+/* 🧠 الذاكرة */
+let mA=[],mO=[],mL=false,mM=0,mD=0;
+function memStart(){mA=['🐪','🐪','','🏰','','☕','','📖','️','🖊️','⭐','⭐'].sort(()=>Math.random()-.5);mO=[];mL=false;mM=0;mD=0;
+ document.getElementById('mem').innerHTML=mA.map((e,i)=>`<button id="c${i}" onclick="flip(${i})">❓</button>`).join('');
+ document.getElementById('memst').textContent='🧠 افتح وطابق الأزواج!'}
+function flip(i){if(mL)return;const b=document.getElementById('c'+i);if(b.dataset.o)return;b.dataset.o=1;b.textContent=mA[i];mO.push(i);
+ if(mO.length===2){mM++;mL=true;const a=mO[0],c=mO[1];
+  if(mA[a]===mA[c]){document.getElementById('c'+a).classList.add('ok');document.getElementById('c'+c).classList.add('ok');mD++;mO=[];mL=false;
+   if(mD===6)document.getElementById('memst').textContent='🎉 فزت بـ '+mM+' حركة!'}
+  else setTimeout(()=>{[a,c].forEach(x=>{const e=document.getElementById('c'+x);e.textContent='❓';delete e.dataset.o});mO=[];mL=false},700)}}
+
+/* ➗ رياضيات */
+let sc=0,rd=0,ans=0;
+function mathStart(){sc=0;rd=0;mathNext()}
+function mathNext(){
+ if(rd>=10){document.getElementById('mathq').textContent='';document.getElementById('matho').innerHTML='';
+  document.getElementById('mathst').textContent=sc>=8?'🏆 بطل الرياضيات! '+sc+'/١٠':sc>=5?'💪 منيح! '+sc+'/١٠':'🌱 تدرّب وارجع! '+sc+'/١٠';return}
+ rd++;const a=2+Math.floor(Math.random()*9),b=1+Math.floor(Math.random()*9),p=Math.random()<.5;
+ ans=p?a+b:Math.abs(a-b);
+ document.getElementById('mathst').textContent='جولة '+rd+'/١٠ — نقاطك: '+sc;
+ document.getElementById('mathq').textContent=a+(p?' + ':' − ')+b+' = ؟';
+ const opts=[ans];while(opts.length<3){const w=ans+1+Math.floor(Math.random()*8)*(Math.random()<.5?1:-1);if(!opts.includes(w)&&w>=0)opts.push(w)}
+ opts.sort(()=>Math.random()-.5);
+ document.getElementById('matho').innerHTML=opts.map(o=>`<button class="opt" onclick="mchk(this,${o})">${o}</button>`).join('')}
+function mchk(b,o){if(o===ans){b.classList.add('ok');sc++}else{b.classList.add('no')}setTimeout(mathNext,600)}
+
+/* ⭕ إكس أو */
+let B=[],busy=false;
+const LN=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function xoStart(){B=Array(9).fill('');busy=false;xoDraw();document.getElementById('xost').textContent='إنت ❌ — والجوال ⭕... دورك!'}
+function xoDraw(){document.getElementById('xo').innerHTML=B.map((v,i)=>`<button onclick="xp(${i})">${v}</button>`).join('')}
+function win(b,p){return LN.some(l=>b[l[0]]===p&&b[l[1]]===p&&b[l[2]]===p)}
+function xp(i){if(busy||B[i])return;B[i]='❌';
+ if(win(B,'❌')){xoDraw();document.getElementById('xost').textContent='🎉 فزت!';return}
+ if(B.every(x=>x)){xoDraw();document.getElementById('xost').textContent='🤝 تعادل!';return}
+ busy=true;xoDraw();
+ setTimeout(()=>{ai();busy=false;
+  if(win(B,'⭕')){document.getElementById('xost').textContent='😅 الجوال فاز هالمرة!'}
+  else if(B.every(x=>x)){document.getElementById('xost').textContent='🤝 تعادل!'}
+  else xoDraw()},500)}
+function ai(){for(const p of ['⭕','❌']){for(let i=0;i<9;i++){if(!B[i]){B[i]=p;if(win(B,p)){if(p==='⭕'){xoDraw();return}B[i]='';xoDraw();return}B[i]=''}}}
+ if(!B[4])B[4]='⭕';else{const c=[0,2,6,8].filter(i=>!B[i]);B[c.length?c[Math.floor(Math.random()*c.length)]:B.findIndex(x=>!x)]='⭕'}
+ xoDraw()}
+
+/* 🎨 صياد الألوان */
+const COL=[['أحمر','#ef4444'],['أزرق','#3b82f6'],['أخضر','#22c55e'],['أصفر','#eab308']];
+let csc=0,crd=0,cw=0;
+function colStart(){csc=0;crd=0;colNext()}
+function colNext(){
+ if(crd>=10){document.getElementById('word').textContent='';document.getElementById('cols').innerHTML='';
+  document.getElementById('colst').textContent=csc>=8?'🦅 عين صقر! '+csc+'/١٠':csc>=5?'👍 منيح! '+csc+'/١٠':'🌱 ركّز أكتر! '+csc+'/١';return}
+ crd++;cw=Math.floor(Math.random()*4);const ink=Math.floor(Math.random()*4);
+ document.getElementById('colst').textContent='دوس ع اللون اللي **بتحكي عنو** الكلمة (مو لون الكتابة!) — '+crd+'/١٠ نقاط: '+csc;
+ const w=document.getElementById('word');w.textContent=COL[cw][0];w.style.color=COL[ink][1];
+ document.getElementById('cols').innerHTML=COL.map((c,i)=>`<button style="background:${c[1]}" onclick="cchk(this,${i})">${c[0]}</button>`).join('')}
+function cchk(b,i){if(i===cw){csc++;b.style.outline='4px solid #fff'}else{b.style.outline='4px solid #000'}setTimeout(colNext,600)}
+</script>
+</body>
+</html>
