@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مكتبة رواية القهوة ☕</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#140d08;color:#f3e9dc;padding-bottom:40px}
+header{text-align:center;padding:16px 10px;font-weight:900;color:#d29a63;font-size:20px}
+header small{display:block;color:#a8907c;font-weight:400;font-size:12px;margin-top:4px}
+.tabs{display:flex;gap:6px;justify-content:center;margin:8px;flex-wrap:wrap}
+.tab{border:1px solid #3a2417;background:#241610;color:#f3e9dc;border-radius:99px;padding:10px 16px;font-weight:900;font-size:13px;cursor:pointer}
+.tab.on{background:#d29a63;color:#2b1608}
+section{max-width:560px;margin:auto;padding:0 12px;display:none}
+section.on{display:block}
+.card{background:#241610;border:1px solid #3a2417;border-radius:14px;padding:16px;margin:10px 0;line-height:2}
+.card h3{color:#d29a63;font-size:15px;margin-bottom:6px}
+.go{width:100%;border-radius:12px;border:none;background:#d29a63;color:#2b1608;font-weight:900;font-size:16px;padding:14px;cursor:pointer;font-family:inherit}
+.cup{text-align:center;font-size:52px;margin:10px}
+.note{text-align:center;color:#a8907c;font-size:12px;margin:12px;line-height:1.9}
+.item{background:#241610;border:1px solid #3a2417;border-radius:14px;padding:14px;margin:8px 0;cursor:pointer;transition:.3s}
+.item:hover{border-color:#d29a63}
+.item b{color:#d29a63;font-size:15px}
+.item small{color:#a8907c;display:block;font-size:11px;margin-top:4px}
+.rbar{display:flex;gap:8px;justify-content:center;margin:10px}
+.rbar button{border-radius:10px;border:1px solid #3a2417;background:#241610;color:#f3e9dc;padding:8px 16px;font-weight:900;cursor:pointer;font-family:inherit}
+#rbody{background:#1c110a;border:1px solid #3a2417;border-radius:14px;padding:18px;line-height:2.2;white-space:pre-wrap}
+.moral{margin-top:12px;color:#d29a63;font-weight:900;border-top:1px dashed #3a2417;padding-top:10px}
+</style>
+</head>
+<body>
+<header>☕ مكتبة رواية القهوة
+<small>مكتبة التخديم — منسكب لك الحكاية متل ما بنسكب القهوة</small></header>
+
+<div class="tabs">
+ <button class="tab on" onclick="tab(0)">🫖 خدمني</button>
+ <button class="tab" onclick="tab(1)">📖 القصص</button>
+ <button class="tab" onclick="tab(2)">📚 رف الكتب</button>
+</div>
+
+<section id="p0" class="on">
+ <div class="card" style="text-align:center">
+  <div class="cup" id="cup">🫖</div>
+  <button class="go" onclick="serve()">🫖 خدمني حكاية</button>
+  <div id="served"></div>
+ </div>
+ <div class="note">كل كبسة = فنجان حكاية جديد. اهلا بالضيف!</div>
+</section>
+
+<section id="p1">
+ <div id="list"></div>
+ <div id="reader" style="display:none">
+  <div class="rbar">
+   <button onclick="closeR()">🏠 الرف</button>
+   <button onclick="fs(1)">أ+</button>
+   <button onclick="fs(-1)">أ−</button>
+  </div>
+  <div id="rbody"></div>
+ </div>
+</section>
+
+<section id="p2">
+ <div id="shelf"></div>
+ <div class="note">الرف مستني كتبك — انشرها بـ 📚 ناشر الكتب، وقلّي عناوينها لأضيفها هون.</div>
+</section>
+
+<script>
+const ST=[
+{t:'فنجان الضيف',m:1,b:`دخل ضيف ع البيت وقت الغروب، والأم كانت عم تسكب القهوة.\nقال الصغير: عندنا بس فنجانين، والضيف ثالث.\nابتسمت الأم وسكبت ثلاثة فناجين، وقالت: القهوة ما بتنحسب بالعدد، بتنحسب بالقلب.\nشرب الضيف فنجانو وقال: والله ما شربت قهوة أطيب من هيك.\nما كان سر الطيبة بالبن — كان سرها بالترحيب.\nمن يومها، صار الصغير يسكب القهوة وهو يحسب القلوب، مو الفناجين.`,x:'الكرم بالقلب، مو بالصينية.'},
+{t:'صبر التنور',m:1,b:`سأل الولد جدّو: ليش العجينة بتنتظر قبل ما تنخبز؟\nقال الجد: لأنو العجينة اللي ما بتنتظر، بتطلع خبزتها ناقصة.\nالتنور بيعلّمنا: النار القوية ما بتسرّع الخبز، بتحرّقو.\nوالصبر الطويل بيطلّع خبز طيب، ريحتو بتوصل لآخر الحارة.\nكل شي حلو بهالحياة متل الخبزة: بدو وقتو، وبدو ناره الهادية، وبدو إيد صبور.`,x:'الأشياء الطيبة بتيجي لمن ينتظرها قدّها بالظبط.'},
+{t:'قهوة الصباح',m:2,b:`كل صباح، كانت أم محمد تحط الركوة ع النار قبل أذان الفجر بقليل.\nما كانت تشرب القهوة لحالها — كانت تسكب أول فنجان لروح زوجها، وتوزع الباقي ع ولادها.\nكبر الولاد وتفرقوا بالبلاد، وبقيت الركوة.\nكل واحد فيهم، وين ما كان، أول ما يشم ريحة قهوة الصباح بيتذكر:\nالبيت مو جدران — البيت ريحة.`,x:'اللي بيربطنا بالبيت مو المكان، ريحة المحبة فيه.'},
+{t:'الجار قبل الدار',m:1,b:`كان في رجل بدو يبني دار، فسأل المختار: وين أبني؟\nقال المختار: اسأل عن الجيران قبل المكان.\nإن كان الجار طيب، ابني دارك ولو ع صخر.\nوإن كان الجار سيئ، بتنهدم دارك ولو ع حرير.\nبنى الرجل دارو جنب جار بيشارك خبزو، فصارت دارو دارين.`,x:'اختار جارك قبل دارك، بتسكن دارك.'}
+];
+const BOOKS=[
+// ضيف كتبك هون متل: {t:'عنوان الكتاب',l:'books/اسم.pdf'}
+];
+const secs=['p0','p1','p2'];
+function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j));if(i===1)closeR()}
+function serve(){const s=ST[Math.floor(Math.random()*ST.length)];
+ document.getElementById('cup').textContent='☕';
+ document.getElementById('served').innerHTML=`<div class="card" style="text-align:right"><h3>📖 ${s.t}</h3><div style="white-space:pre-wrap">${s.b}</div><div class="moral">🌙 العبرة: ${s.x}</div></div>`}
+let fsize=17;
+function fs(d){fsize=Math.max(14,Math.min(24,fsize+d));document.getElementById('rbody').style.fontSize=fsize+'px'}
+function openR(i){const s=ST[i];document.getElementById('list').style.display='none';
+ const r=document.getElementById('reader');r.style.display='block';
+ document.getElementById('rbody').innerHTML=`<h3 style="color:#d29a63">📖 ${s.t} <small style="color:#a8907c">(☕ ${s.m} د)</small></h3>\n\n${s.b}\n\n<div class="moral">🌙 العبرة: ${s.x}</div>`;
+ r.scrollIntoView()}
+function closeR(){document.getElementById('list').style.display='block';document.getElementById('reader').style.display='none'}
+document.getElementById('list').innerHTML=ST.map((s,i)=>`<div class="item" onclick="openR(${i})"><b>📖 ${s.t}</b><small>☕ قراءة ${s.m} دقيقة — دوس تقرأ</small></div>`).join('');
+document.getElementById('shelf').innerHTML=BOOKS.length?BOOKS.map(b=>`<div class="item" onclick="location.href='${b.l}'"><b>📚 ${b.t}</b><small>دوس تقرأ أو تنزّل</small></div>`).join(''):`<div class="card" style="text-align:center">📚 الرف فاضي هلأ... أول كتاب بينزل بالناشر، بيطلع هون.</div>`;
+</script>
+</body>
+</html>
