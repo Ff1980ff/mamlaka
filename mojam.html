@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المعجم الملكي 📖</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:14px;font-weight:900;color:#f5a524;font-size:20px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:11px;margin-top:4px}
+.tabs{display:flex;gap:6px;justify-content:center;margin:8px;flex-wrap:wrap}
+.tab{border:1px solid #2a3157;background:#141a33;color:#f7ead9;border-radius:99px;padding:10px 14px;font-weight:900;font-size:13px;cursor:pointer}
+.tab.on{background:#f5a524;color:#241303}
+section{max-width:600px;margin:auto;padding:0 12px;display:none}
+section.on{display:block}
+.bar{display:flex;gap:8px;margin:10px 0}
+.bar input{flex:1;padding:13px;border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:16px;font-family:inherit}
+.bar select{border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-family:inherit;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{border:1px solid #2a3157;background:#141a33;color:#9aa3c0;border-radius:99px;padding:6px 12px;font-size:11px;cursor:pointer}
+.chip.on{background:#22d3ee;color:#04222b;border:none;font-weight:900}
+.item{background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:12px 14px;margin:8px 0;display:flex;align-items:center;gap:10px}
+.item .w{flex:1;font-size:17px;font-weight:900}
+.item .t{flex:1;font-size:15px;color:#22d3ee;direction:ltr;text-align:left}
+.item button{border:none;background:#1a2440;color:#f7ead9;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:14px}
+.count{text-align:center;color:#9aa3c0;font-size:12px;margin:6px}
+.quiz{background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:18px;text-align:center;margin:10px 0}
+.quiz .q{font-size:26px;font-weight:900;color:#f5a524;margin:12px 0}
+.quiz button{display:block;width:100%;margin:8px 0;padding:13px;border-radius:12px;border:1px solid #2a3157;background:#1a2440;color:#f7ead9;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.quiz button.ok{background:#16a34a;border:none}
+.quiz button.no{background:#dc2626;border:none}
+.score{font-size:14px;color:#9aa3c0}
+.note{text-align:center;color:#9aa3c0;font-size:12px;margin:12px;line-height:1.9}
+</style>
+</head>
+<body>
+<header>📖 المعجم الملكي
+<small>عربي ⇄ إنكليزي — يبحث، ينطق، ويختبرك • <span id="tot"></span> كلمة</small></header>
+
+<div class="tabs">
+ <button class="tab on" onclick="tab(0)">🔍 بحث</button>
+ <button class="tab" onclick="tab(1)">🎮 اختبرني</button>
+ <button class="tab" onclick="tab(2)">⭐ محفوظاتي</button>
+ <button class="tab" onclick="tab(3)">📅 كلمة اليوم</button>
+</div>
+
+<section id="p0" class="on">
+ <div class="bar">
+  <input id="q" placeholder="اكتب عربي أو إنكليزي..." oninput="go()">
+  <select id="dir" onchange="go()"><option value="both">⇄ الكل</option><option value="ae">ع→إ</option><option value="ea">إ→ع</option></select>
+ </div>
+ <div class="chips" id="chips"></div>
+ <div class="count" id="cnt"></div>
+ <div id="list"></div>
+</section>
+
+<section id="p1">
+ <div class="quiz" id="quiz"></div>
+ <div class="note">جاوب وبيتصحح لحالو — كل إجابة صح بنقطة! 🏆</div>
+</section>
+
+<section id="p2"><div id="favlist"></div><div class="note">⭐ الكلمات اللي حفظتها بالنجمة بتبقى هون — حتى بلا نت.</div></section>
+
+<section id="p3"><div class="quiz" id="wod"></div><div class="note">📅 كل يوم كلمة جديدة تلقائيًا.</div></section>
+
+<script>
+const D={
+'أرقام':[['صفر','zero'],['واحد','one'],['اثنان','two'],['ثلاثة','three'],['أربعة','four'],['خمسة','five'],['ستة','six'],['سبعة','seven'],['ثمانية','eight'],['تسعة','nine'],['عشرة','ten'],['أحد عشر','eleven'],['اثنا عشر','twelve'],['عشرون','twenty'],['ثلاثون','thirty'],['أربعون','forty'],['خمسون','fifty'],['ستون','sixty'],['سبعون','seventy'],['ثمانون','eighty'],['تسعون','ninety'],['مئة','hundred'],['ألف','thousand'],['مليون','million'],['أول','first'],['ثاني','second'],['ثالث','third'],['نصف','half'],['ربع','quarter']],
+'ألوان':[['أحمر','red'],['أزرق','blue'],['أخضر','green'],['أصفر','yellow'],['أسود','black'],['أبيض','white'],['برتقالي','orange'],['بنفسجي','purple'],['وردي','pink'],['بني','brown'],['رمادي','gray'],['ذهبي','gold'],['فضي','silver']],
+'عائلة':[['أب','father'],['أم','mother'],['أخ','brother'],['أخت','sister'],['جد','grandfather'],['جدة','grandmother'],['ابن','son'],['ابنة','daughter'],['عم','uncle'],['خال','uncle'],['عمة','aunt'],['خالة','aunt'],['زوج','husband'],['زوجة','wife'],['طفل','child'],['عائلة','family'],['صديق','friend']],
+'جسم':[['رأس','head'],['عين','eye'],['أذن','ear'],['أنف','nose'],['فم','mouth'],['سن','tooth'],['لسان','tongue'],['يد','hand'],['إصبع','finger'],['ذراع','arm'],['كتف','shoulder'],['قدم','foot'],['ساق','leg'],['ركبة','knee'],['قلب','heart'],['دم','blood'],['شعر','hair'],['وجه','face'],['ظهر','back'],['رقبة','neck']],
+'حيوانات':[['أسد','lion'],['نمر','tiger'],['فيل','elephant'],['حصان','horse'],['حمار','donkey'],['جمل','camel'],['بقرة','cow'],['خروف','sheep'],['ماعز','goat'],['دجاجة','chicken'],['ديك','rooster'],['قطة','cat'],['كلب','dog'],['أرنب','rabbit'],['طائر','bird'],['عصفور','sparrow'],['حمامة','dove'],['غراب','crow'],['نسر','eagle'],['سمكة','fish'],['قرد','monkey'],['دب','bear'],['ذئب','wolf'],['ثعلب','fox'],['فأر','mouse'],['أفعى','snake'],['سلحفاة','turtle'],['نحلة','bee'],['نملة','ant'],['فراشة','butterfly'],['بطة','duck']],
+'طعام':[['خبز','bread'],['ماء','water'],['حليب','milk'],['شاي','tea'],['قهوة','coffee'],['عصير','juice'],['لحم','meat'],['رز','rice'],['معكرونة','pasta'],['بيض','egg'],['جبن','cheese'],['زبدة','butter'],['زيت','oil'],['عسل','honey'],['سكر','sugar'],['ملح','salt'],['فلفل','pepper'],['خضار','vegetables'],['فاكهة','fruit'],['تفاحة','apple'],['موز','banana'],['برتقال','orange'],['عنب','grapes'],['بطيخ','watermelon'],['فراولة','strawberry'],['تمر','dates'],['زيتون','olive'],['شوربا','soup'],['سلطة','salad'],['كعكة','cake'],['حلوى','candy']],
+'بيت':[['بيت','house'],['باب','door'],['نافذة','window'],['جدار','wall'],['سقف','roof'],['غرفة','room'],['مطبخ','kitchen'],['حمام','bathroom'],['سرير','bed'],['طاولة','table'],['كرسي','chair'],['خزانة','closet'],['ثلاجة','refrigerator'],['فرن','oven'],['صحن','plate'],['كوب','cup'],['ملعقة','spoon'],['شوكة','fork'],['سكين','knife'],['مفتاح','key'],['قفل','lock'],['درج','stairs'],['حديقة','garden']],
+'طبيعة':[['شمس','sun'],['قمر','moon'],['نجمة','star'],['سماء','sky'],['غيمة','cloud'],['مطر','rain'],['ثلج','snow'],['ريح','wind'],['برق','lightning'],['رعد','thunder'],['ضباب','fog'],['جبل','mountain'],['وادي','valley'],['نهر','river'],['بحر','sea'],['شاطئ','beach'],['جزيرة','island'],['غابة','forest'],['شجرة','tree'],['ورقة','leaf'],['زهرة','flower'],['عشب','grass'],['حجر','stone'],['رمل','sand'],['تراب','soil'],['صحراء','desert'],['واحة','oasis']],
+'وقت':[['وقت','time'],['ثانية','second'],['دقيقة','minute'],['ساعة','hour'],['يوم','day'],['ليلة','night'],['أسبوع','week'],['شهر','month'],['سنة','year'],['صباح','morning'],['مساء','evening'],['ظهر','noon'],['فجر','dawn'],['غروب','sunset'],['شروق','sunrise'],['اليوم','today'],['غدا','tomorrow'],['أمس','yesterday'],['الآن','now'],['سبت','Saturday'],['أحد','Sunday'],['اثنين','Monday'],['ثلاثاء','Tuesday'],['أربعاء','Wednesday'],['خميس','Thursday'],['جمعة','Friday']],
+'أفعال':[['أكل','eat'],['شرب','drink'],['نام','sleep'],['صحى','wake up'],['مشى','walk'],['جرى','run'],['قفز','jump'],['سبح','swim'],['طار','fly'],['كتب','write'],['قرأ','read'],['تكلم','speak'],['قال','say'],['سمع','hear'],['رأى','see'],['نظر','look'],['لمس','touch'],['فكر','think'],['تعلم','learn'],['علم','teach'],['لعب','play'],['عمل','work'],['صنع','make'],['بنى','build'],['كسر','break'],['فتح','open'],['أغلق','close'],['دخل','enter'],['خرج','exit'],['جاء','come'],['ذهب','go'],['رجع','return'],['وقف','stand'],['جلس','sit'],['أخذ','take'],['أعطى','give'],['اشترى','buy'],['باع','sell'],['أحب','love'],['ضحك','laugh'],['بكى','cry'],['ابتسم','smile'],['ساعد','help'],['انتظر','wait'],['وجد','find'],['ربح','win'],['خسر','lose'],['بدأ','begin'],['انتهى','finish'],['عاش','live']],
+'صفات':[['كبير','big'],['صغير','small'],['طويل','tall'],['قصير','short'],['سريع','fast'],['بطيء','slow'],['حار','hot'],['بارد','cold'],['جديد','new'],['قديم','old'],['جميل','beautiful'],['نظيف','clean'],['غني','rich'],['فقير','poor'],['سعيد','happy'],['حزين','sad'],['تعبان','tired'],['قوي','strong'],['ضعيف','weak'],['ثقيل','heavy'],['خفيف','light'],['سهل','easy'],['صعب','hard'],['قريب','near'],['بعيد','far'],['مبكر','early'],['متأخر','late'],['كامل','full'],['فاضي','empty'],['صحيح','right'],['غلط','wrong'],['لطيف','kind'],['شجاع','brave'],['خجول','shy'],['ذكي','smart'],['حكيم','wise'],['صادق','honest'],['كريم','generous'],['صبور','patient'],['هادئ','calm'],['جائع','hungry'],['عطشان','thirsty']],
+'مهن':[['معلم','teacher'],['طالب','student'],['طبيب','doctor'],['ممرض','nurse'],['مهندس','engineer'],['نجار','carpenter'],['حداد','blacksmith'],['خباز','baker'],['طباخ','cook'],['سائق','driver'],['طيار','pilot'],['بحار','sailor'],['شرطي','policeman'],['جندي','soldier'],['قاضي','judge'],['محامي','lawyer'],['كاتب','writer'],['شاعر','poet'],['رسام','painter'],['فلاح','farmer'],['راعي','shepherd'],['صياد','fisherman'],['تاجر','merchant'],['خياط','tailor'],['حلاق','barber']],
+'أماكن':[['مدينة','city'],['قرية','village'],['شارع','street'],['سوق','market'],['مدرسة','school'],['جامعة','university'],['مستشفى','hospital'],['مسجد','mosque'],['مطعم','restaurant'],['فندق','hotel'],['بنك','bank'],['مكتبة','library'],['ملعب','stadium'],['مطار','airport'],['ميناء','port'],['محطة','station'],['جسر','bridge'],['طريق','road'],['ساحة','square'],['متحف','museum'],['مصنع','factory'],['مزرعة','farm']],
+'مدرسة':[['كتاب','book'],['دفتر','notebook'],['قلم','pen'],['قلم رصاص','pencil'],['ممحاة','eraser'],['مسطرة','ruler'],['مقص','scissors'],['ورقة','paper'],['لوح','board'],['حقيبة','bag'],['درس','lesson'],['واجب','homework'],['امتحان','exam'],['علامة','grade'],['صف','class'],['سؤال','question'],['جواب','answer'],['كلمة','word'],['جملة','sentence'],['حرف','letter'],['قصة','story'],['خريطة','map'],['علوم','science'],['رياضيات','math'],['تاريخ','history'],['جغرافيا','geography'],['لغة','language']],
+'نقل':[['سيارة','car'],['باص','bus'],['شاحنة','truck'],['دراجة','bicycle'],['دراجة نارية','motorcycle'],['قطار','train'],['طائرة','airplane'],['باخرة','ship'],['قارب','boat'],['تاكسي','taxi'],['عجلة','wheel'],['محرك','engine'],['بنزين','gasoline']],
+'مشاعر':[['حب','love'],['فرح','joy'],['حزن','sadness'],['خوف','fear'],['أمل','hope'],['حلم','dream'],['غضب','anger'],['سلام','peace'],['أمان','safety'],['ثقة','confidence'],['احترام','respect'],['شكر','thanks'],['اعتذار','apology'],['حنين','nostalgia']],
+'عبارات':[['صباح الخير','good morning'],['مساء الخير','good evening'],['كيف حالك؟','how are you?'],['أنا بخير','I am fine'],['ما اسمك؟','what is your name?'],['تشرفنا','nice to meet you'],['أهلا وسهلا','welcome'],['مع السلامة','goodbye'],['إلى اللقاء','see you later'],['شكرا','thank you'],['عفوا','you are welcome'],['من فضلك','please'],['آسف','sorry'],['نعم','yes'],['لا','no'],['ربما','maybe'],['لا أعرف','I do not know'],['أنا أحبك','I love you'],['كم السعر؟','how much is the price?'],['أين الحمام؟','where is the bathroom?'],['ساعدني','help me'],['ما هذا؟','what is this?'],['هذا جميل','this is beautiful'],['الحمد لله','praise be to God'],['إن شاء الله','God willing'],['ما شاء الله','as God willed']]
+};
+const FLAT=[];for(const c in D)D[c].forEach(p=>FLAT.push({a:p[0],e:p[1],c:c}));
+let curCat='الكل',score=0,favs=JSON.parse(localStorage.getItem('mojam_fav')||'[]');
+const secs=['p0','p1','p2','p3'];
+function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j));if(i===1)quiz();if(i===2)renderFav();if(i===3)wod()}
+function sp(t,l){const u=new SpeechSynthesisUtterance(t);u.lang=l==='ar'?'ar-SA':'en-US';speechSynthesis.cancel();speechSynthesis.speak(u)}
+document.getElementById('tot').textContent=FLAT.length;
+document.getElementById('chips').innerHTML=['الكل',...Object.keys(D)].map(c=>`<button class="chip${c===curCat?' on':''}" onclick="setCat('${c}')">${c}</button>`).join('');
+function setCat(c){curCat=c;document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('on',b.textContent===c));go()}
+function go(){
+ const q=document.getElementById('q').value.trim().toLowerCase(),dir=document.getElementById('dir').value;
+ let L=FLAT.filter(w=>(curCat==='الكل'||w.c===curCat)&&(!q||(dir!=='ea'&&w.a.includes(q))||(dir!=='ae'&&w.e.toLowerCase().includes(q))));
+ document.getElementById('cnt').textContent=L.length+' نتيجة';
+ document.getElementById('list').innerHTML=L.slice(0,80).map(w=>{
+  const f=favs.includes(w.a);
+  return `<div class="item"><div class="w">${w.a} <button onclick="sp('${w.a}','ar')">🔊</button></div><div class="t">${w.e} <button onclick="sp('${w.e}','en')">🔊</button></div><button onclick="fav('${w.a}')">${f?'⭐':'☆'}</button></div>`}).join('')||'<div class="note">ما في نتيجة — جرّب كلمة تانية.</div>';
+}
+function fav(a){favs=favs.includes(a)?favs.filter(x=>x!==a):[...favs,a];localStorage.setItem('mojam_fav',JSON.stringify(favs));go()}
+function renderFav(){const L=FLAT.filter(w=>favs.includes(w.a));document.getElementById('favlist').innerHTML=L.length?L.map(w=>`<div class="item"><div class="w">${w.a} <button onclick="sp('${w.a}','ar')">🔊</button></div><div class="t">${w.e} <button onclick="sp('${w.e}','en')">🔊</button></div><button onclick="fav('${w.a}');renderFav()">⭐</button></div>`).join(''):'<div class="note">لسا ما حفظت شي — علّم نجمة ع أي كلمة!</div>'}
+function quiz(){
+ const w=FLAT[Math.floor(Math.random()*FLAT.length)],ar2en=Math.random()<.5;
+ const opts=[w];while(opts.length<4){const c=FLAT[Math.floor(Math.random()*FLAT.length)];if(!opts.includes(c))opts.push(c)}
+ opts.sort(()=>Math.random()-.5);
+ const q=ar2en?w.a:w.e,ans=ar2en?w.e:w.a;
+ document.getElementById('quiz').innerHTML=`<div class="score">🏆 نقاطك: ${score}</div><div class="q">${q}</div>`+opts.map(o=>{const t=ar2en?o.e:o.a;return `<button onclick="chk(this,'${t}','${ans}')">${t}</button>`}).join('');
+}
+function chk(b,t,a){if(t===a){b.className='ok';score++}else{b.className='no'}setTimeout(quiz,700)}
+function wod(){const now=new Date(),d=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5),w=FLAT[d%FLAT.length];
+ document.getElementById('wod').innerHTML=`<div class="q">${w.a} = ${w.e}</div><button onclick="sp('${w.a}','ar')">🔊 عربي</button> <button onclick="sp('${w.e}','en')">🔊 إنكليزي</button><div class="score">الباب: ${w.c}</div>`}
+go();
+</script>
+</body>
+</html>
