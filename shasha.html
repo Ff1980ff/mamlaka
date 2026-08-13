@@ -17,6 +17,8 @@ canvas{width:100%;border-radius:16px;border:2px solid #2a3157;margin:10px 0;back
 .btns button.sec{background:#141a33;color:#f7ead9;border:1px solid #2a3157}
 .btns button.rec{background:#dc2626;color:#fff;animation:bl 1s infinite}
 @keyframes bl{50%{opacity:.5}}
+.sw{display:flex;gap:8px;align-items:center;font-size:16px;color:#9aa3c0;margin:8px 0}
+.sw input{width:22px;height:22px;accent-color:#f5a524}
 #st{text-align:center;font-size:16px;font-weight:900;color:#22d3ee;margin:10px;line-height:1.9}
 video{width:100%;border-radius:16px;border:2px solid #2a3157;margin:10px 0}
 a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius:12px;padding:14px;font-weight:900;text-decoration:none;font-size:16px}
@@ -24,10 +26,11 @@ a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius
 </head>
 <body>
 <header>🎥 استوديو شاشة المملكة
-<small>المملكة ترسم الفيديو لحالها — وصوتك بيصير التعليق!</small></header>
+<small>المملكة ترسم الفيديو + القلم بيقرأ + صوتك التعليق!</small></header>
 
 <div class="wrap">
  <textarea id="txt">صباح الخير يا مملكة! القلم بيحكي والكلمة بتضيء. تعالوا فرجيكم ٣٠ تطبيق مجاني!</textarea>
+ <label class="sw"><input type="checkbox" id="tts" checked> 🔊 القلم يقرأ المشهد (صوتو بيدخل بالفيديو عبر الميك)</label>
  <canvas id="cv" width="540" height="960"></canvas>
  <div class="btns">
   <button class="sec" onclick="preview()">👀 معاينة</button>
@@ -41,9 +44,10 @@ a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius
 <script>
 const cv=document.getElementById('cv'),cx=cv.getContext('2d');
 const EMO=['🏰','','🐪','','🖊️','⭐','🕊️'];
-let lines=[],dur=0,t0=0,raf=null,rec=null,chunks=[],recording=false,hasMic=false;
+let lines=[],dur=0,t0=0,raf=null,rec=null,chunks=[],recording=false,hasMic=false,lastLine=-1;
 const LPW=1400;
 function st(t){document.getElementById('st').textContent=t}
+function say(t){const u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=1;speechSynthesis.speak(u)}
 function timeline(){
  cx.font='bold 36px Tahoma';
  const ws=document.getElementById('txt').value.trim().split(/\s+/);
@@ -60,10 +64,15 @@ function draw(t){
  cx.fillStyle='#f5a524';cx.font='bold 46px Tahoma';cx.fillText('🏰 مملكة التطبيقات',270,130);
  cx.fillStyle='#9aa3c0';cx.font='24px Tahoma';cx.fillText('واحة عربية مجانية للصغار والكبار',270,175);
  cx.font='bold 36px Tahoma';
+ const li=Math.floor((t-1200)/LPW);
+ if(li!==lastLine){
+  if(li>lastLine&&li>=0&&li<lines.length&&document.getElementById('tts').checked)say(lines[li]);
+  lastLine=li;
+ }
  for(let i=0;i<lines.length;i++){
   const lt=t-1200-i*LPW;if(lt<0)break;
   const a=Math.min(1,lt/350);
-  cx.fillStyle=i===Math.floor((t-1200)/LPW)?'rgba(34,211,238,'+a+')':'rgba(247,234,217,'+a+')';
+  cx.fillStyle=i===li?'rgba(34,211,238,'+a+')':'rgba(247,234,217,'+a+')';
   cx.fillText(lines[i],270,280+i*70);
  }
  const et=t-1200-lines.length*LPW;
@@ -77,10 +86,10 @@ function draw(t){
  cx.fillStyle='#f5a524';cx.fillRect(0,950,540*Math.min(1,t/dur),10);
 }
 function loop(){raf=requestAnimationFrame(loop);const t=performance.now()-t0;draw(recording?Math.min(t,dur):(t%(dur+600)))}
-function preview(){cancelAnimationFrame(raf);timeline();recording=false;t0=performance.now();loop();st('👀 معاينة شغالة — دوس سجّل لما تجهز')}
+function preview(){cancelAnimationFrame(raf);speechSynthesis.cancel();timeline();recording=false;lastLine=-1;t0=performance.now();loop();st('👀 معاينة — اسمع القلم وشوف المشهد')}
 async function startRec(){
  if(recording){stopRec();return}
- if(!window.MediaRecorder||!cv.captureStream){st('❌ متصفحك ما بيدعم التسجيل — افتح الصفحة بكروم حديث');return}
+ if(!window.MediaRecorder||!cv.captureStream){st('❌ متصفحك ما بيدعم التسجيل — افتح بكروم حديث');return}
  let mic=null;
  try{mic=await navigator.mediaDevices.getUserMedia({audio:true});hasMic=true}catch(e){hasMic=false}
  timeline();
@@ -92,19 +101,19 @@ async function startRec(){
   const b=new Blob(chunks,{type:'video/webm'}),u=URL.createObjectURL(b);
   document.getElementById('play').src=u;document.getElementById('play').style.display='block';
   const a=document.getElementById('dl');a.href=u;a.download='mamlaka-video.webm';a.style.display='block';
-  st(hasMic?'✅ الفيديو جاهز مع صوتك! نزّلو وانشره':'✅ الفيديو جاهز (بدون صوت — الميك ما انفتح)');
+  st(hasMic?'✅ الفيديو جاهز! نزّلو وانشره':'✅ جاهز بس بدون صوت ميك');
  };
- cancelAnimationFrame(raf);
+ cancelAnimationFrame(raf);speechSynthesis.cancel();
  let n=3;
  const cd=()=>{
   if(n>0){
-   draw(0);cx.fillStyle='rgba(0,0,0,.55)';cx.fillRect(0,0,540,540*1.78);
+   draw(0);cx.fillStyle='rgba(0,0,0,.55)';cx.fillRect(0,0,540,960);
    cx.fillStyle='#f5a524';cx.font='bold 220px Tahoma';cx.textAlign='center';cx.fillText(n,270,600);
-   st('🎬 جهّز صوتك... '+n);n--;setTimeout(cd,800);
+   st('🎬 جهّز حلقك... '+n);n--;setTimeout(cd,800);
   }else{
-   rec.start();recording=true;t0=performance.now();loop();
+   rec.start();recording=true;lastLine=-1;t0=performance.now();loop();
    const rb=document.getElementById('rb');rb.textContent='⏹️ أوقف واحفظ';rb.classList.add('rec');
-   st(hasMic?'⏺️ عم نسجّل مع صوتك — احكي على المشهد!':'⏺️ عم نسجّل بدون صوت');
+   st(hasMic?'⏺️ عم نسجّل — القلم بيقرأ والميك بيسمع كل شي!':'⏺️ عم نسجّل بدون ميك');
    setTimeout(()=>{if(recording)stopRec()},dur+200);
   }
  };
@@ -112,7 +121,7 @@ async function startRec(){
 }
 function stopRec(){
  if(!recording)return;
- recording=false;cancelAnimationFrame(raf);
+ recording=false;cancelAnimationFrame(raf);speechSynthesis.cancel();
  if(rec&&rec.state!=='inactive')rec.stop();
  const rb=document.getElementById('rb');rb.textContent='⏺️ سجّل الفيديو';rb.classList.remove('rec');
 }
