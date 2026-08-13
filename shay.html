@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ركن الشاي والكعكة 🫖</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#160d10;color:#f7e9e2;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#e6b980;font-size:21px}
+header small{display:block;color:#b39a8d;font-weight:400;font-size:13px;margin-top:4px}
+.tabs{display:flex;gap:6px;justify-content:center;margin:8px;flex-wrap:wrap}
+.tab{border:1px solid #3a2a24;background:#241619;color:#f7e9e2;border-radius:99px;padding:11px 15px;font-weight:900;font-size:14px;cursor:pointer}
+.tab.on{background:#e6b980;color:#3a1c10}
+section{max-width:560px;margin:auto;padding:0 12px;display:none}
+section.on{display:block}
+.card{background:#241619;border:1px solid #3a2a24;border-radius:14px;padding:16px;margin:10px 0;line-height:2.1;font-size:17px}
+.card h3{color:#e6b980;font-size:17px;margin-bottom:6px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.btns button{border:1px solid #3a2a24;background:#241619;color:#f7e9e2;border-radius:99px;padding:11px 16px;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit}
+.btns button.on{background:#f0a8c0;color:#3a1c2a;border:none}
+.cup{text-align:center;font-size:64px;margin:10px}
+.note{text-align:center;color:#b39a8d;font-size:13px;margin:12px;line-height:1.9}
+.go{width:100%;border-radius:12px;border:none;background:#e6b980;color:#3a1c10;font-weight:900;font-size:17px;padding:14px;cursor:pointer;font-family:inherit}
+.moral{margin-top:10px;color:#e6b980;font-weight:900;border-top:1px dashed #3a2a24;padding-top:10px}
+</style>
+</head>
+<body>
+<header>🫖 ركن الشاي والكعكة
+<small>حسب طلب الجمهور — ضيافة المملكة المفتوحة</small></header>
+
+<div class="tabs">
+ <button class="tab on" onclick="tab(0)">🫖 اسكب شاي</button>
+ <button class="tab" onclick="tab(1)">🍰 الكعكات</button>
+ <button class="tab" onclick="tab(2)">🛋️ لعبة الضيافة</button>
+ <button class="tab" onclick="tab(3)">📜 حكايا الركن</button>
+</div>
+
+<section id="p0" class="on">
+ <div class="btns" id="teab"></div>
+ <div class="cup" id="cup">🫖</div>
+ <div class="card" id="teaf" style="text-align:center">اختار نكهة الشاي... واسكبو!</div>
+</section>
+
+<section id="p1">
+ <div class="btns" id="cakeb"></div>
+ <div class="cup" id="cakee">🍰</div>
+ <div class="card" id="caker" style="text-align:center">اختار كعكة... وشوف وصفتها!</div>
+</section>
+
+<section id="p2">
+ <div class="card" style="text-align:center">
+  <div class="cup" id="ge">🚪</div>
+  <div id="gname" style="font-size:19px;font-weight:900;color:#e6b980">اضغط ليشوف مين دق الباب...</div>
+  <button class="go" onclick="knock()" style="margin-top:10px">🚪 دق الباب!</button>
+ </div>
+ <div class="card">
+  <h3>🫖 شو رح تقدم؟</h3>
+  <div class="btns" id="gt"></div>
+  <div class="btns" id="gc"></div>
+  <button class="go" onclick="serve()">🛋️ قدّم الصينية</button>
+  <div id="gres" class="note"></div>
+ </div>
+ <div class="note">⭐ نقاط الكرم: <b id="ks" style="color:#e6b980">0</b> — كل ضيف بيكرم، بتكبر المملكة!</div>
+</section>
+
+<section id="p3">
+ <div class="card"><h3>🍃 كاسة الميرمية</h3>دخلت سلمى ع البيت زعلانة من امتحان الرياضيات.
+ما سألت الجدة، ولا عاتبت — بس حطت كاسة ميرمية قدامها وقالت: اشربي الأول، الزعل بيذوب مع البخار.
+شربت سلمى، وضحكت، وفتحت كتابها.
+والاختبار اللي كان جبل، صار تلّة صغيرة.
+<div class="moral">🌙 العبرة: أول ضيافة وبعدين حكي — الكرم بيفتح القلوب.</div></div>
+ <div class="card"><h3>🌴 كعكة الجدة</h3>كل جمعة، كانت الجدة تخبي كعكة التمر عن الولاد لين بعد الغداء.
+مرة بكى الصغير: بدّي الكعكة هلأ!
+قالت الجدة: الكعكة متل الفرحة — اللي بيستناها، بتكبر بقلبو.
+وجات بعد الغداء، فأكلها الصغير وقال: والله أطيب من كل مرة!
+لأنو استناها.
+<div class="moral">🌙 العبرة: الصبر بيحلي الطيب.</div></div>
+</section>
+
+<script>
+const TEA=[
+{n:'شاي أسود',e:'🫖',f:'سيد الضيافة الشامية — أول كاسة للضيف، والتانية للمضيف.'},
+{n:'نعنع',e:'🌿',f:'بينعش النفس ويفتح الصدر — ريحتو بتوصل لآخر الحارة.'},
+{n:'ميرمية',e:'🍃',f:'حكمة الجدة: بتصفّي الذاكرة وبتهدّي الأعصاب.'},
+{n:'بابونج',e:'🌼',f:'كاسة قبل النوم = نومة هانية وأحلام وردية.'},
+{n:'زهورات',e:'🌺',f:'باقة من جبال الشام: ورد، ياسمين، وحنين.'}
+];
+const CAKE=[
+{n:'كعكة التمر',e:'🌴',r:'طحين + تمر معجون + سمن + رشة هيل ← تنخبز ع نار هادية، وتقدم مع الشاي الأسود.'},
+{n:'كعكة الجزر',e:'🥕',r:'جزر مبروش + طحين + قرفة + جوز ← أحلى شي مع طبقة جبنة كريمية.'},
+{n:'كعكة الشوكولا',e:'🍫',r:'كاكاو + طحين + بيض + سكر ← تذوب الشوكولا فوقها وتنصب وهي دافية.'},
+{n:'كعكة البرتقال',e:'🍊',r:'عصير برتقال + طحين + سكر + زيت ← ريحتها بتفيق الحي كلو.'}
+];
+const GUESTS=['أبو خالد','أم محمد','الجد أبو صالح','جار جديد','مسافر تعبان','طالب علم'];
+const THANKS=['الله يكرم أصلك!','بيتكم بيت الكرم!','ما شاء الله، ضيافة ما في متلها!','الضيف بيحب اللي بيكرمو!','تسلم إيدك، شاي بيفتح النفس!'];
+let gT=-1,gC=-1,ks=0,curG=null;
+const secs=['p0','p1','p2','p3'];
+function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j))}
+document.getElementById('teab').innerHTML=TEA.map((t,i)=>`<button onclick="pour(${i})">${t.e} ${t.n}</button>`).join('');
+document.getElementById('cakeb').innerHTML=CAKE.map((c,i)=>`<button onclick="bake(${i})">${c.e} ${c.n}</button>`).join('');
+function pour(i){document.getElementById('cup').textContent='🍵';
+ document.getElementById('teaf').innerHTML=`<h3>${TEA[i].e} شاي ${TEA[i].n}</h3>${TEA[i].f}`}
+function bake(i){document.getElementById('cakee').textContent=CAKE[i].e;
+ document.getElementById('caker').innerHTML=`<h3>${CAKE[i].e} ${CAKE[i].n}</h3>${CAKE[i].r}`}
+document.getElementById('gt').innerHTML=TEA.map((t,i)=>`<button onclick="selT(${i})">${t.e} ${t.n}</button>`).join('');
+document.getElementById('gc').innerHTML=CAKE.map((c,i)=>`<button onclick="selC(${i})">${c.e} ${c.n}</button>`).join('');
+function selT(i){gT=i;[...document.getElementById('gt').children].forEach((b,j)=>b.classList.toggle('on',j===i))}
+function selC(i){gC=i;[...document.getElementById('gc').children].forEach((b,j)=>b.classList.toggle('on',j===i))}
+function knock(){curG=GUESTS[Math.floor(Math.random()*GUESTS.length)];
+ document.getElementById('ge').textContent='🧑🌾';
+ document.getElementById('gname').textContent='وصل الضيف: '+curG+' — جهّز الصينية!';
+ document.getElementById('gres').textContent=''}
+function serve(){
+ if(!curG){document.getElementById('gres').textContent='دوس "دق الباب" أول شي!';return}
+ if(gT<0||gC<0){document.getElementById('gres').textContent='⚠️ ناقص شي بالصينية — اختار شاي وكعكة!';return}
+ ks++;document.getElementById('ks').textContent=ks;
+ document.getElementById('ge').textContent='😊';
+ document.getElementById('gres').innerHTML=`<b style="color:#e6b980">${curG}:</b> ${THANKS[Math.floor(Math.random()*THANKS.length)]}<br>⭐ +١ نقطة كرم!`}
+</script>
+</body>
+</html>
