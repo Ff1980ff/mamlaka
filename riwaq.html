@@ -49,8 +49,8 @@ footer b{color:#f5a524}
 
 <div class="stats">
  <div class="stat"><div class="num" id="count">0</div><div class="lbl">تطبيق متاح</div></div>
- <div class="stat"><div class="num">25</div><div class="lbl">بصمة بالمملكة</div></div>
- <div class="stat"><div class="num">3</div><div class="lbl">دوائر</div></div>
+ <div class="stat"><div class="num">29</div><div class="lbl">بصمة بالمملكة</div></div>
+ <div class="stat"><div class="num">4</div><div class="lbl">دوائر</div></div>
 </div>
 
 <div class="quick">
@@ -58,8 +58,8 @@ footer b{color:#f5a524}
  <div class="quick-grid">
   <div class="quick-item" onclick="location.href='index.html'"><div class="e">🏰</div><b>القصر</b></div>
   <div class="quick-item" onclick="location.href='bawaba.html'"><div class="e">🏠</div><b>البوابة</b></div>
-  <div class="quick-item" onclick="location.href='daftar.html'"><div class="e">📒</div><b>الدفتر</b></div>
-  <div class="quick-item" onclick="location.href='sakhra.html'"><div class="e">🪨</div><b>الصخرة</b></div>
+  <div class="quick-item" onclick="location.href='mahatta.html'"><div class="e">🐪</div><b>محطة القافلة</b></div>
+  <div class="quick-item" onclick="location.href='qahwa.html'"><div class="e">☕</div><b>مكتبة القهوة</b></div>
  </div>
 </div>
 
@@ -93,8 +93,13 @@ const APPS=[
  {n:'سفارة الروابط',e:'📎',d:'سفير الروابط',l:'safara.html',c:'عالم'},
  {n:'المِرسال',e:'🕊️',d:'رسول المملكة',l:'mirsal.html',c:'عالم'},
  {n:'المكتشف',e:'🔭',d:'عين المملكة',l:'muktashif.html',c:'عالم'},
- {n:'الرواق',e:'🏛️',d:'صالة الاستقبال',l:'riwaq.html',c:'عالم'}
+ {n:'الرواق',e:'🏛️',d:'صالة الاستقبال',l:'riwaq.html',c:'عالم'},
+ {n:'ناشر الكتب الملكي ✨',e:'📤',d:'ارفع كتبك للمملكة',l:'nashir.html',c:'واحة'},
+ {n:'المطوّر الملكي ✨',e:'📐',d:'مهندس بيصمم لحالو',l:'mutawer.html',c:'واحة'},
+ {n:'محطة القافلة ✨',e:'🐪',d:'بئر ومشفى وخان وسوق',l:'mahatta.html',c:'واحة'},
+ {n:'مكتبة رواية القهوة ✨',e:'☕',d:'حكايا تنسكب فناجين',l:'qahwa.html',c:'واحة'}
 ];
+
 function render(list){
  document.getElementById('apps').innerHTML=list.map(a=>`
   <a href="${a.l}" class="app">
@@ -105,10 +110,12 @@ function render(list){
  `).join('');
  document.getElementById('count').textContent=list.length;
 }
+
 function filter(){
  const q=document.getElementById('q').value.toLowerCase();
  render(APPS.filter(a=>a.n.toLowerCase().includes(q)||a.d.toLowerCase().includes(q)));
 }
+
 render(APPS);
 </script>
 </body>
