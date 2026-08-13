@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الاستوديو الملكي 🎬</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#f5a524;font-size:21px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-top:4px}
+.wrap{max-width:600px;margin:auto;padding:0 12px}
+video{width:100%;border-radius:16px;border:2px solid #2a3157;background:#000;margin:10px 0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btns button{flex:1;border-radius:12px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:16px;padding:14px;cursor:pointer;font-family:inherit}
+.btns button.sec{background:#141a33;color:#f7ead9;border:1px solid #2a3157}
+.btns button:disabled{opacity:.4}
+#st{text-align:center;font-size:17px;font-weight:900;color:#22d3ee;margin:10px}
+.rec{color:#f87171!important;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.3}}
+a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius:12px;padding:14px;font-weight:900;text-decoration:none;margin:10px 0;font-size:16px}
+.note{color:#9aa3c0;font-size:13px;text-align:center;line-height:2;margin:10px}
+</style>
+</head>
+<body>
+<header>🎬 الاستوديو الملكي
+<small>صوّر حالك وأنت تشرح المملكة — من جوّا المملكة!</small></header>
+
+<div class="wrap">
+ <video id="v" autoplay muted playsinline></video>
+ <div id="st">📷 جاهز للتصوير</div>
+ <div class="btns">
+  <button class="sec" onclick="startCam()">📷 شغّل الكاميرا</button>
+  <button onclick="rec()" id="rb" disabled>⏺️ ابدأ التسجيل</button>
+  <button class="sec" onclick="stopR()" id="sb" disabled>⏹️ أوقف واحفظ</button>
+ </div>
+ <video id="play" controls style="display:none"></video>
+ <a id="dl" class="dl" style="display:none">⬇️ نزّل الفيديو ع جوالك</a>
+ <div class="note">💡 وصفة المنادي: صوّر حالك ٣٠ ثانية وأنت تفتح الرواق وتشرح بيت واحد ← انشر الفيديو + رابط المملكة!</div>
+</div>
+
+<script>
+let stream=null,rec=null,chunks=[],sec=0,timer=null;
+async function startCam(){
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+  document.getElementById('v').srcObject=stream;
+  document.getElementById('rb').disabled=false;
+  document.getElementById('st').textContent='📷 الكاميرا شغالة — دوس ابدأ التسجيل';
+ }catch(e){document.getElementById('st').textContent='❌ الموبايل رفض الكاميرا — فعّل الإذن من الإعدادات'}
+}
+function rec(){
+ chunks=[];rec=new MediaRecorder(stream);
+ rec.ondataavailable=e=>chunks.push(e.data);
+ rec.onstop=()=>{
+  const blob=new Blob(chunks,{type:'video/webm'});
+  const url=URL.createObjectURL(blob);
+  document.getElementById('play').src=url;document.getElementById('play').style.display='block';
+  const a=document.getElementById('dl');a.href=url;a.download='mamlaka-video.webm';a.style.display='block';
+  document.getElementById('st').textContent='✅ انحفط! شوف النتيجة ونزّلو';
+ };
+ rec.start();sec=0;timer=setInterval(()=>{sec++;document.getElementById('st').textContent='⏺️ عم نسجل... '+sec+' ثانية'},1000);
+ document.getElementById('st').classList.add('rec');
+ document.getElementById('rb').disabled=true;document.getElementById('sb').disabled=false;
+}
+function stopR(){
+ rec.stop();clearInterval(timer);
+ document.getElementById('st').classList.remove('rec');
+ document.getElementById('rb').disabled=false;document.getElementById('sb').disabled=true;
+}
+</script>
+</body>
+</html>
