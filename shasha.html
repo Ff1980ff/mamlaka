@@ -13,10 +13,11 @@ header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-t
 textarea{width:100%;min-height:80px;padding:14px;border-radius:14px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:18px;font-family:inherit;line-height:1.9}
 canvas{width:100%;border-radius:16px;border:2px solid #2a3157;margin:10px 0;background:#0b1026}
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.btns button{flex:1;border-radius:12px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:16px;padding:14px;cursor:pointer;font-family:inherit}
+.btns button{flex:1;border-radius:12px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:17px;padding:15px;cursor:pointer;font-family:inherit}
 .btns button.sec{background:#141a33;color:#f7ead9;border:1px solid #2a3157}
-.btns button:disabled{opacity:.4}
-#st{text-align:center;font-size:16px;font-weight:900;color:#22d3ee;margin:10px}
+.btns button.rec{background:#dc2626;color:#fff;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.5}}
+#st{text-align:center;font-size:16px;font-weight:900;color:#22d3ee;margin:10px;line-height:1.9}
 video{width:100%;border-radius:16px;border:2px solid #2a3157;margin:10px 0}
 a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius:12px;padding:14px;font-weight:900;text-decoration:none;font-size:16px}
 </style>
@@ -30,19 +31,19 @@ a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius
  <canvas id="cv" width="540" height="960"></canvas>
  <div class="btns">
   <button class="sec" onclick="preview()">👀 معاينة</button>
-  <button onclick="startRec()">⏺️ سجّل الفيديو</button>
-  <button class="sec" onclick="stopRec()" id="sb" disabled>⏹️ أوقف</button>
+  <button id="rb" onclick="startRec()">⏺️ سجّل الفيديو</button>
  </div>
- <div id="st">✍️ عدّل جملتك ← معاينة ← سجّل مع صوتك ← نزّل</div>
+ <div id="st">✍️ عدّل جملتك ← معاينة ← سجّل ← نزّل</div>
  <video id="play" controls style="display:none"></video>
  <a id="dl" class="dl" style="display:none">⬇️ نزّل الفيديو</a>
 </div>
 
 <script>
 const cv=document.getElementById('cv'),cx=cv.getContext('2d');
-const EMO=['🏰','☕','🐪','📖','🖊️','⭐','🕊️'];
-let lines=[],dur=0,t0=0,raf=null,rec=null,chunks=[],mic=null,recording=false,prev=false;
+const EMO=['🏰','','🐪','','🖊️','⭐','🕊️'];
+let lines=[],dur=0,t0=0,raf=null,rec=null,chunks=[],recording=false,hasMic=false;
 const LPW=1400;
+function st(t){document.getElementById('st').textContent=t}
 function timeline(){
  cx.font='bold 36px Tahoma';
  const ws=document.getElementById('txt').value.trim().split(/\s+/);
@@ -76,26 +77,45 @@ function draw(t){
  cx.fillStyle='#f5a524';cx.fillRect(0,950,540*Math.min(1,t/dur),10);
 }
 function loop(){raf=requestAnimationFrame(loop);const t=performance.now()-t0;draw(recording?Math.min(t,dur):(t%(dur+600)))}
-function preview(){timeline();prev=true;recording=false;t0=performance.now();cancelAnimationFrame(raf);loop()}
+function preview(){cancelAnimationFrame(raf);timeline();recording=false;t0=performance.now();loop();st('👀 معاينة شغالة — دوس سجّل لما تجهز')}
 async function startRec(){
- try{mic=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){document.getElementById('st').textContent='❌ فعّل إذن الميكروفون من إعدادات المتصفح';return}
+ if(recording){stopRec();return}
+ if(!window.MediaRecorder||!cv.captureStream){st('❌ متصفحك ما بيدعم التسجيل — افتح الصفحة بكروم حديث');return}
+ let mic=null;
+ try{mic=await navigator.mediaDevices.getUserMedia({audio:true});hasMic=true}catch(e){hasMic=false}
  timeline();
  const stream=cv.captureStream(30);
- mic.getAudioTracks().forEach(tr=>stream.addTrack(tr));
+ if(mic)mic.getAudioTracks().forEach(tr=>stream.addTrack(tr));
  chunks=[];rec=new MediaRecorder(stream);
  rec.ondataavailable=e=>chunks.push(e.data);
  rec.onstop=()=>{
   const b=new Blob(chunks,{type:'video/webm'}),u=URL.createObjectURL(b);
   document.getElementById('play').src=u;document.getElementById('play').style.display='block';
   const a=document.getElementById('dl');a.href=u;a.download='mamlaka-video.webm';a.style.display='block';
-  document.getElementById('st').textContent='✅ الفيديو جاهز! نزّلو وانشره ع المنصات';
+  st(hasMic?'✅ الفيديو جاهز مع صوتك! نزّلو وانشره':'✅ الفيديو جاهز (بدون صوت — الميك ما انفتح)');
  };
- rec.start();recording=true;prev=false;t0=performance.now();cancelAnimationFrame(raf);loop();
- document.getElementById('sb').disabled=false;
- document.getElementById('st').textContent='⏺️ عم نسجّل... احكي بصوتك على المشهد!';
- setTimeout(()=>{if(recording)stopRec()},dur+200);
+ cancelAnimationFrame(raf);
+ let n=3;
+ const cd=()=>{
+  if(n>0){
+   draw(0);cx.fillStyle='rgba(0,0,0,.55)';cx.fillRect(0,0,540,540*1.78);
+   cx.fillStyle='#f5a524';cx.font='bold 220px Tahoma';cx.textAlign='center';cx.fillText(n,270,600);
+   st('🎬 جهّز صوتك... '+n);n--;setTimeout(cd,800);
+  }else{
+   rec.start();recording=true;t0=performance.now();loop();
+   const rb=document.getElementById('rb');rb.textContent='⏹️ أوقف واحفظ';rb.classList.add('rec');
+   st(hasMic?'⏺️ عم نسجّل مع صوتك — احكي على المشهد!':'⏺️ عم نسجّل بدون صوت');
+   setTimeout(()=>{if(recording)stopRec()},dur+200);
+  }
+ };
+ cd();
 }
-function stopRec(){recording=false;cancelAnimationFrame(raf);if(rec&&rec.state!=='inactive')rec.stop();if(mic)mic.getTracks().forEach(t=>t.stop());document.getElementById('sb').disabled=true}
+function stopRec(){
+ if(!recording)return;
+ recording=false;cancelAnimationFrame(raf);
+ if(rec&&rec.state!=='inactive')rec.stop();
+ const rb=document.getElementById('rb');rb.textContent='⏺️ سجّل الفيديو';rb.classList.remove('rec');
+}
 timeline();draw(0);
 </script>
 </body>
