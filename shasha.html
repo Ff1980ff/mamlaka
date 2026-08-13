@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>استوديو الشاشة 🎥</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#f5a524;font-size:21px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-top:4px}
+.wrap{max-width:600px;margin:auto;padding:0 12px}
+textarea{width:100%;min-height:80px;padding:14px;border-radius:14px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:18px;font-family:inherit;line-height:1.9}
+canvas{width:100%;border-radius:16px;border:2px solid #2a3157;margin:10px 0;background:#0b1026}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btns button{flex:1;border-radius:12px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:16px;padding:14px;cursor:pointer;font-family:inherit}
+.btns button.sec{background:#141a33;color:#f7ead9;border:1px solid #2a3157}
+.btns button:disabled{opacity:.4}
+#st{text-align:center;font-size:16px;font-weight:900;color:#22d3ee;margin:10px}
+video{width:100%;border-radius:16px;border:2px solid #2a3157;margin:10px 0}
+a.dl{display:block;text-align:center;background:#16a34a;color:#fff;border-radius:12px;padding:14px;font-weight:900;text-decoration:none;font-size:16px}
+</style>
+</head>
+<body>
+<header>🎥 استوديو شاشة المملكة
+<small>المملكة ترسم الفيديو لحالها — وصوتك بيصير التعليق!</small></header>
+
+<div class="wrap">
+ <textarea id="txt">صباح الخير يا مملكة! القلم بيحكي والكلمة بتضيء. تعالوا فرجيكم ٣٠ تطبيق مجاني!</textarea>
+ <canvas id="cv" width="540" height="960"></canvas>
+ <div class="btns">
+  <button class="sec" onclick="preview()">👀 معاينة</button>
+  <button onclick="startRec()">⏺️ سجّل الفيديو</button>
+  <button class="sec" onclick="stopRec()" id="sb" disabled>⏹️ أوقف</button>
+ </div>
+ <div id="st">✍️ عدّل جملتك ← معاينة ← سجّل مع صوتك ← نزّل</div>
+ <video id="play" controls style="display:none"></video>
+ <a id="dl" class="dl" style="display:none">⬇️ نزّل الفيديو</a>
+</div>
+
+<script>
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const EMO=['🏰','☕','🐪','📖','🖊️','⭐','🕊️'];
+let lines=[],dur=0,t0=0,raf=null,rec=null,chunks=[],mic=null,recording=false,prev=false;
+const LPW=1400;
+function timeline(){
+ cx.font='bold 36px Tahoma';
+ const ws=document.getElementById('txt').value.trim().split(/\s+/);
+ lines=[];let cur='';
+ for(const w of ws){const t=cur?cur+' '+w:w;if(cx.measureText(t).width>460){lines.push(cur);cur=w}else cur=t}
+ if(cur)lines.push(cur);
+ dur=1200+lines.length*LPW+3000;
+}
+function draw(t){
+ cx.fillStyle='#0b1026';cx.fillRect(0,0,540,960);
+ for(let i=0;i<50;i++){cx.fillStyle='rgba(247,234,217,'+(0.15+0.25*Math.abs(Math.sin(t/900+i)))+')';cx.fillRect((i*97)%540,(i*173)%960,2,2)}
+ for(let i=0;i<EMO.length;i++){const x=60+i*70+Math.sin(t/1200+i)*15,y=880+Math.cos(t/1000+i)*12;cx.font='30px Tahoma';cx.textAlign='center';cx.fillText(EMO[i],x,y)}
+ cx.textAlign='center';
+ cx.fillStyle='#f5a524';cx.font='bold 46px Tahoma';cx.fillText('🏰 مملكة التطبيقات',270,130);
+ cx.fillStyle='#9aa3c0';cx.font='24px Tahoma';cx.fillText('واحة عربية مجانية للصغار والكبار',270,175);
+ cx.font='bold 36px Tahoma';
+ for(let i=0;i<lines.length;i++){
+  const lt=t-1200-i*LPW;if(lt<0)break;
+  const a=Math.min(1,lt/350);
+  cx.fillStyle=i===Math.floor((t-1200)/LPW)?'rgba(34,211,238,'+a+')':'rgba(247,234,217,'+a+')';
+  cx.fillText(lines[i],270,280+i*70);
+ }
+ const et=t-1200-lines.length*LPW;
+ if(et>0){
+  const a=Math.min(1,et/400);
+  cx.fillStyle='rgba(245,165,36,'+a+')';cx.font='bold 30px Tahoma';
+  cx.fillText('🔗 ff1980ff.github.io/mamlaka',270,280+lines.length*70+40);
+  cx.fillStyle='rgba(74,222,128,'+a+')';cx.font='bold 26px Tahoma';
+  cx.fillText('مجاني ١٠٠٪ — بدون تسجيل',270,280+lines.length*70+85);
+ }
+ cx.fillStyle='#f5a524';cx.fillRect(0,950,540*Math.min(1,t/dur),10);
+}
+function loop(){raf=requestAnimationFrame(loop);const t=performance.now()-t0;draw(recording?Math.min(t,dur):(t%(dur+600)))}
+function preview(){timeline();prev=true;recording=false;t0=performance.now();cancelAnimationFrame(raf);loop()}
+async function startRec(){
+ try{mic=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){document.getElementById('st').textContent='❌ فعّل إذن الميكروفون من إعدادات المتصفح';return}
+ timeline();
+ const stream=cv.captureStream(30);
+ mic.getAudioTracks().forEach(tr=>stream.addTrack(tr));
+ chunks=[];rec=new MediaRecorder(stream);
+ rec.ondataavailable=e=>chunks.push(e.data);
+ rec.onstop=()=>{
+  const b=new Blob(chunks,{type:'video/webm'}),u=URL.createObjectURL(b);
+  document.getElementById('play').src=u;document.getElementById('play').style.display='block';
+  const a=document.getElementById('dl');a.href=u;a.download='mamlaka-video.webm';a.style.display='block';
+  document.getElementById('st').textContent='✅ الفيديو جاهز! نزّلو وانشره ع المنصات';
+ };
+ rec.start();recording=true;prev=false;t0=performance.now();cancelAnimationFrame(raf);loop();
+ document.getElementById('sb').disabled=false;
+ document.getElementById('st').textContent='⏺️ عم نسجّل... احكي بصوتك على المشهد!';
+ setTimeout(()=>{if(recording)stopRec()},dur+200);
+}
+function stopRec(){recording=false;cancelAnimationFrame(raf);if(rec&&rec.state!=='inactive')rec.stop();if(mic)mic.getTracks().forEach(t=>t.stop());document.getElementById('sb').disabled=true}
+timeline();draw(0);
+</script>
+</body>
+</html>
