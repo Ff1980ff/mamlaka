@@ -21,7 +21,7 @@ header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-t
 .back{border-radius:12px;border:1px solid #2a3157;background:#141a33;color:#f7ead9;padding:10px 18px;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin:8px 0}
 .st{text-align:center;font-size:19px;font-weight:900;color:#22d3ee;margin:12px 0;line-height:1.8}
 .mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.mem button{aspect-ratio:1;border-radius:14px;border:2px solid #2a3157;background:#1a2440;font-size:34px;cursor:pointer}
+.mem button{aspect-ratio:1;border-radius:14px;border:2px solid #2a3157;background:#1a2440;font-size:30px;cursor:pointer}
 .mem button.ok{border-color:#4ade80;background:#14331f}
 .big{width:100%;border-radius:14px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:19px;padding:15px;cursor:pointer;font-family:inherit;margin:6px 0}
 .opt{width:100%;border-radius:14px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-weight:900;font-size:22px;padding:16px;cursor:pointer;font-family:inherit;margin:6px 0}
@@ -32,18 +32,20 @@ header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-t
 .swatch{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .swatch button{border-radius:14px;border:none;padding:22px;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;color:#fff}
 #word{font-size:52px;font-weight:900;text-align:center;margin:20px 0}
+#rdl{font-size:70px;text-align:center;margin:16px 0}
 </style>
 </head>
 <body>
 <header>🎮 مدينة الألعاب
-<small>٤ ألعاب كاملة — تلعب حتى بلا نت!</small></header>
+<small>٥ ألعاب كاملة — تلعب حتى بلا نت!</small></header>
 
 <div class="wrap">
 <div id="hub" class="hub">
- <div class="g" onclick="openG('mem')"><div class="e">🧠</div><b>ذاكرة المملكة</b><small>طابق الأزواج</small></div>
- <div class="g" onclick="openG('math')"><div class="e">➗</div><b>رياضيات البرق</b><small>١٠ جولات</small></div>
+ <div class="g" onclick="openG('mem')"><div class="e">🧠</div><b>ذاكرة المملكة</b><small>طابق ٨ أزواج</small></div>
+ <div class="g" onclick="openG('math')"><div class="e">➗</div><b>رياضيات البرق</b><small>جمع طرح ضرب</small></div>
  <div class="g" onclick="openG('xo')"><div class="e">⭕</div><b>إكس أو</b><small>ضد الجوال</small></div>
  <div class="g" onclick="openG('col')"><div class="e">🎨</div><b>صياد الألوان</b><small>ركّز منيح!</small></div>
+ <div class="g" onclick="openG('rdl')"><div class="e">🎯</div><b>خمّن الكلمة</b><small>ألغاز إيموجي</small></div>
 </div>
 
 <div id="s-mem" class="screen">
@@ -75,22 +77,30 @@ header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-t
  <div class="swatch" id="cols"></div>
  <button class="big" onclick="colStart()">🔄 لعبة جديدة</button>
 </div>
+
+<div id="s-rdl" class="screen">
+ <button class="back" onclick="home()">🏠 المدينة</button>
+ <div class="st" id="rdlst"></div>
+ <div id="rdl"></div>
+ <div id="rdlo"></div>
+ <button class="big" onclick="rdlStart()">🔄 لعبة جديدة</button>
+</div>
 </div>
 
 <script>
 function openG(g){document.getElementById('hub').style.display='none';document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById('s-'+g).classList.add('on');
- if(g==='mem')memStart();if(g==='math')mathStart();if(g==='xo')xoStart();if(g==='col')colStart()}
+ if(g==='mem')memStart();if(g==='math')mathStart();if(g==='xo')xoStart();if(g==='col')colStart();if(g==='rdl')rdlStart()}
 function home(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById('hub').style.display='grid'}
 
 /* 🧠 الذاكرة */
 let mA=[],mO=[],mL=false,mM=0,mD=0;
-function memStart(){mA=['🐪','🐪','','🏰','','☕','','📖','️','🖊️','⭐','⭐'].sort(()=>Math.random()-.5);mO=[];mL=false;mM=0;mD=0;
+function memStart(){mA=['🐪','🐪','🏰','🏰','☕','☕','📖','','🖊️','🖊️','⭐','⭐','🌙','🌙','🎈','🎈'].sort(()=>Math.random()-.5);mO=[];mL=false;mM=0;mD=0;
  document.getElementById('mem').innerHTML=mA.map((e,i)=>`<button id="c${i}" onclick="flip(${i})">❓</button>`).join('');
- document.getElementById('memst').textContent='🧠 افتح وطابق الأزواج!'}
+ document.getElementById('memst').textContent='🧠 افتح وطابق ٨ أزواج!'}
 function flip(i){if(mL)return;const b=document.getElementById('c'+i);if(b.dataset.o)return;b.dataset.o=1;b.textContent=mA[i];mO.push(i);
  if(mO.length===2){mM++;mL=true;const a=mO[0],c=mO[1];
   if(mA[a]===mA[c]){document.getElementById('c'+a).classList.add('ok');document.getElementById('c'+c).classList.add('ok');mD++;mO=[];mL=false;
-   if(mD===6)document.getElementById('memst').textContent='🎉 فزت بـ '+mM+' حركة!'}
+   if(mD===8)document.getElementById('memst').textContent='🎉 فزت بـ '+mM+' حركة!'}
   else setTimeout(()=>{[a,c].forEach(x=>{const e=document.getElementById('c'+x);e.textContent='❓';delete e.dataset.o});mO=[];mL=false},700)}}
 
 /* ➗ رياضيات */
@@ -99,10 +109,13 @@ function mathStart(){sc=0;rd=0;mathNext()}
 function mathNext(){
  if(rd>=10){document.getElementById('mathq').textContent='';document.getElementById('matho').innerHTML='';
   document.getElementById('mathst').textContent=sc>=8?'🏆 بطل الرياضيات! '+sc+'/١٠':sc>=5?'💪 منيح! '+sc+'/١٠':'🌱 تدرّب وارجع! '+sc+'/١٠';return}
- rd++;const a=2+Math.floor(Math.random()*9),b=1+Math.floor(Math.random()*9),p=Math.random()<.5;
- ans=p?a+b:Math.abs(a-b);
+ rd++;
+ const op=Math.random();let a,b,sym;
+ if(op<0.34){a=2+Math.floor(Math.random()*9);b=1+Math.floor(Math.random()*9);ans=a+b;sym=' + '}
+ else if(op<0.67){a=2+Math.floor(Math.random()*9);b=1+Math.floor(Math.random()*9);ans=Math.abs(a-b);sym=' − '}
+ else{a=2+Math.floor(Math.random()*8);b=2+Math.floor(Math.random()*8);ans=a*b;sym=' × '}
  document.getElementById('mathst').textContent='جولة '+rd+'/١٠ — نقاطك: '+sc;
- document.getElementById('mathq').textContent=a+(p?' + ':' − ')+b+' = ؟';
+ document.getElementById('mathq').textContent=a+sym+b+' = ؟';
  const opts=[ans];while(opts.length<3){const w=ans+1+Math.floor(Math.random()*8)*(Math.random()<.5?1:-1);if(!opts.includes(w)&&w>=0)opts.push(w)}
  opts.sort(()=>Math.random()-.5);
  document.getElementById('matho').innerHTML=opts.map(o=>`<button class="opt" onclick="mchk(this,${o})">${o}</button>`).join('')}
@@ -132,12 +145,33 @@ let csc=0,crd=0,cw=0;
 function colStart(){csc=0;crd=0;colNext()}
 function colNext(){
  if(crd>=10){document.getElementById('word').textContent='';document.getElementById('cols').innerHTML='';
-  document.getElementById('colst').textContent=csc>=8?'🦅 عين صقر! '+csc+'/١٠':csc>=5?'👍 منيح! '+csc+'/١٠':'🌱 ركّز أكتر! '+csc+'/١';return}
+  document.getElementById('colst').textContent=csc>=8?'🦅 عين صقر! '+csc+'/١٠':csc>=5?'👍 منيح! '+csc+'/١٠':'🌱 ركّز أكتر! '+csc+'/١٠';return}
  crd++;cw=Math.floor(Math.random()*4);const ink=Math.floor(Math.random()*4);
- document.getElementById('colst').textContent='دوس ع اللون اللي **بتحكي عنو** الكلمة (مو لون الكتابة!) — '+crd+'/١٠ نقاط: '+csc;
+ document.getElementById('colst').textContent='دوس ع اللون اللي بتحكي عنو الكلمة (مو لون الكتابة!) — '+crd+'/١٠ نقاط: '+csc;
  const w=document.getElementById('word');w.textContent=COL[cw][0];w.style.color=COL[ink][1];
  document.getElementById('cols').innerHTML=COL.map((c,i)=>`<button style="background:${c[1]}" onclick="cchk(this,${i})">${c[0]}</button>`).join('')}
 function cchk(b,i){if(i===cw){csc++;b.style.outline='4px solid #fff'}else{b.style.outline='4px solid #000'}setTimeout(colNext,600)}
+
+/* 🎯 خمّن الكلمة */
+const RDL=[
+{e:'🦁',a:'أسد',o:['أسد','ذئب','ثعلب','دب']},{e:'🍯',a:'عسل',o:['عسل','سكر','دبس','مربى']},
+{e:'🕌',a:'مسجد',o:['مسجد','مدرسة','بيت','سوق']},{e:'🌧️',a:'مطر',o:['مطر','ثلج','ريح','ضباب']},
+{e:'🖊️',a:'قلم',o:['قلم','ورقة','كتاب','مسطرة']},{e:'🐘',a:'فيل',o:['فيل','جمل','حصان','زرافة']},
+{e:'☕',a:'قهوة',o:['قهوة','شاي','حليب','عصير']},{e:'🌴',a:'نخلة',o:['نخلة','شجرة','زهرة','عشبة']},
+{e:'🔑',a:'مفتاح',o:['مفتاح','قفل','باب','نافذة']},{e:'⭐',a:'نجمة',o:['نجمة','قمر','شمس','غيمة']},
+{e:'🐪',a:'جمل',o:['جمل','حصان','حمار','بقرة']},{e:'🍉',a:'بطيخ',o:['بطيخ','شمام','تفاح','عنب']}
+];
+let rsc=0,rrd=0,rcur=null;
+function rdlStart(){rsc=0;rrd=0;rdlNext()}
+function rdlNext(){
+ if(rrd>=10){document.getElementById('rdl').textContent='';document.getElementById('rdlo').innerHTML='';
+  document.getElementById('rdlst').textContent=rsc>=8?'🎯 صياد كلمات! '+rsc+'/١٠':rsc>=5?'👍 منيح! '+rsc+'/١٠':'🌱 جرّب تاني! '+rsc+'/١٠';return}
+ rrd++;rcur=RDL[Math.floor(Math.random()*RDL.length)];
+ document.getElementById('rdlst').textContent='شو هاد الشي؟ — '+rrd+'/١٠ نقاط: '+rsc;
+ document.getElementById('rdl').textContent=rcur.e;
+ const opts=[...rcur.o].sort(()=>Math.random()-.5);
+ document.getElementById('rdlo').innerHTML=opts.map(o=>`<button class="opt" onclick="rchk(this,'${o}')">${o}</button>`).join('')}
+function rchk(b,o){if(o===rcur.a){b.classList.add('ok');rsc++}else{b.classList.add('no')}setTimeout(rdlNext,600)}
 </script>
 </body>
 </html>
