@@ -6,37 +6,40 @@
 <title>المعجم الملكي 📖</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
-body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
-header{text-align:center;padding:14px;font-weight:900;color:#f5a524;font-size:20px}
-header small{display:block;color:#9aa3c0;font-weight:400;font-size:11px;margin-top:4px}
+body{background:#0b1026;color:#f7ead9;padding-bottom:60px}
+header{text-align:center;padding:14px;font-weight:900;color:#f5a524;font-size:22px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-top:4px}
 .tabs{display:flex;gap:6px;justify-content:center;margin:8px;flex-wrap:wrap}
-.tab{border:1px solid #2a3157;background:#141a33;color:#f7ead9;border-radius:99px;padding:10px 14px;font-weight:900;font-size:13px;cursor:pointer}
+.tab{border:1px solid #2a3157;background:#141a33;color:#f7ead9;border-radius:99px;padding:12px 16px;font-weight:900;font-size:15px;cursor:pointer}
 .tab.on{background:#f5a524;color:#241303}
 section{max-width:600px;margin:auto;padding:0 12px;display:none}
 section.on{display:block}
 .bar{display:flex;gap:8px;margin:10px 0}
-.bar input{flex:1;padding:13px;border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:16px;font-family:inherit}
-.bar select{border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-family:inherit;font-size:13px}
+.bar input{flex:1;padding:14px;border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:19px;font-family:inherit}
+.bar select{border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-family:inherit;font-size:15px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.chip{border:1px solid #2a3157;background:#141a33;color:#9aa3c0;border-radius:99px;padding:6px 12px;font-size:11px;cursor:pointer}
+.chip{border:1px solid #2a3157;background:#141a33;color:#9aa3c0;border-radius:99px;padding:8px 14px;font-size:13px;cursor:pointer}
 .chip.on{background:#22d3ee;color:#04222b;border:none;font-weight:900}
-.item{background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:12px 14px;margin:8px 0;display:flex;align-items:center;gap:10px}
-.item .w{flex:1;font-size:17px;font-weight:900}
-.item .t{flex:1;font-size:15px;color:#22d3ee;direction:ltr;text-align:left}
-.item button{border:none;background:#1a2440;color:#f7ead9;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:14px}
-.count{text-align:center;color:#9aa3c0;font-size:12px;margin:6px}
+.item{background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:14px;margin:8px 0;display:flex;align-items:center;gap:10px}
+.item .w{flex:1;font-size:20px;font-weight:900}
+.item .t{flex:1;font-size:18px;color:#22d3ee;direction:ltr;text-align:left}
+.item button{border:none;background:#1a2440;color:#f7ead9;border-radius:10px;padding:9px 12px;cursor:pointer;font-size:17px}
+.count{text-align:center;color:#9aa3c0;font-size:14px;margin:6px}
 .quiz{background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:18px;text-align:center;margin:10px 0}
-.quiz .q{font-size:26px;font-weight:900;color:#f5a524;margin:12px 0}
-.quiz button{display:block;width:100%;margin:8px 0;padding:13px;border-radius:12px;border:1px solid #2a3157;background:#1a2440;color:#f7ead9;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.quiz .q{font-size:30px;font-weight:900;color:#f5a524;margin:12px 0}
+.quiz button{display:block;width:100%;margin:8px 0;padding:14px;border-radius:12px;border:1px solid #2a3157;background:#1a2440;color:#f7ead9;font-size:19px;font-weight:700;cursor:pointer;font-family:inherit}
 .quiz button.ok{background:#16a34a;border:none}
 .quiz button.no{background:#dc2626;border:none}
-.score{font-size:14px;color:#9aa3c0}
-.note{text-align:center;color:#9aa3c0;font-size:12px;margin:12px;line-height:1.9}
+.score{font-size:16px;color:#9aa3c0}
+.note{text-align:center;color:#9aa3c0;font-size:14px;margin:12px;line-height:1.9}
+.zoombar{position:fixed;bottom:12px;left:12px;display:flex;gap:8px;align-items:center;z-index:99;background:#141a33;border:2px solid #f5a524;border-radius:99px;padding:6px 12px}
+.zoombar button{border:none;background:#f5a524;color:#241303;border-radius:99px;width:38px;height:38px;font-weight:900;font-size:16px;cursor:pointer}
+#zv{color:#f7ead9;font-size:13px;font-weight:900}
 </style>
 </head>
 <body>
 <header>📖 المعجم الملكي
-<small>عربي ⇄ إنكليزي — يبحث، ينطق، ويختبرك • <span id="tot"></span> كلمة</small></header>
+<small>عربي ⇄ إنكليزي + شامي — يبحث، ينطق، ويختبرك • <span id="tot"></span> كلمة</small></header>
 
 <div class="tabs">
  <button class="tab on" onclick="tab(0)">🔍 بحث</button>
@@ -64,6 +67,12 @@ section.on{display:block}
 
 <section id="p3"><div class="quiz" id="wod"></div><div class="note">📅 كل يوم كلمة جديدة تلقائيًا.</div></section>
 
+<div class="zoombar">
+ <button onclick="zm(-1)">أ−</button>
+ <span id="zv"></span>
+ <button onclick="zm(1)">أ+</button>
+</div>
+
 <script>
 const D={
 'أرقام':[['صفر','zero'],['واحد','one'],['اثنان','two'],['ثلاثة','three'],['أربعة','four'],['خمسة','five'],['ستة','six'],['سبعة','seven'],['ثمانية','eight'],['تسعة','nine'],['عشرة','ten'],['أحد عشر','eleven'],['اثنا عشر','twelve'],['عشرون','twenty'],['ثلاثون','thirty'],['أربعون','forty'],['خمسون','fifty'],['ستون','sixty'],['سبعون','seventy'],['ثمانون','eighty'],['تسعون','ninety'],['مئة','hundred'],['ألف','thousand'],['مليون','million'],['أول','first'],['ثاني','second'],['ثالث','third'],['نصف','half'],['ربع','quarter']],
@@ -82,10 +91,15 @@ const D={
 'مدرسة':[['كتاب','book'],['دفتر','notebook'],['قلم','pen'],['قلم رصاص','pencil'],['ممحاة','eraser'],['مسطرة','ruler'],['مقص','scissors'],['ورقة','paper'],['لوح','board'],['حقيبة','bag'],['درس','lesson'],['واجب','homework'],['امتحان','exam'],['علامة','grade'],['صف','class'],['سؤال','question'],['جواب','answer'],['كلمة','word'],['جملة','sentence'],['حرف','letter'],['قصة','story'],['خريطة','map'],['علوم','science'],['رياضيات','math'],['تاريخ','history'],['جغرافيا','geography'],['لغة','language']],
 'نقل':[['سيارة','car'],['باص','bus'],['شاحنة','truck'],['دراجة','bicycle'],['دراجة نارية','motorcycle'],['قطار','train'],['طائرة','airplane'],['باخرة','ship'],['قارب','boat'],['تاكسي','taxi'],['عجلة','wheel'],['محرك','engine'],['بنزين','gasoline']],
 'مشاعر':[['حب','love'],['فرح','joy'],['حزن','sadness'],['خوف','fear'],['أمل','hope'],['حلم','dream'],['غضب','anger'],['سلام','peace'],['أمان','safety'],['ثقة','confidence'],['احترام','respect'],['شكر','thanks'],['اعتذار','apology'],['حنين','nostalgia']],
+'شامي':[['وين','where'],['مين','who'],['ليش','why'],['هلق','now'],['بكرا','tomorrow'],['إمبارح','yesterday'],['كتير','a lot'],['شوي','a little'],['يلا','let us go'],['هيك','like this'],['هون','here'],['بدي','I want'],['زبط','done'],['طيب','fine'],['صبي','boy'],['بنت','girl'],['مرة','woman'],['رجال','man'],['مصاري','money'],['أكل','food'],['شباك','window'],['دفا','warmth'],['برد','cold'],['جوعان','hungry'],['نعسان','sleepy'],['فرحان','happy'],['زعلان','upset'],['كفي','enough'],['عيلة','family'],['سهر','staying up late']],
+'هندسة':[['مخطط','plan'],['رسمة','drawing'],['مقياس','scale'],['طول','length'],['عرض','width'],['ارتفاع','height'],['مساحة','area'],['حجم','volume'],['زاوية','angle'],['عمود','column'],['أساس','foundation'],['خرسانة','concrete'],['حديد','steel'],['طوب','brick'],['إسمنت','cement'],['أنبوب','pipe'],['سلك','wire'],['مفتاح ربط','wrench'],['مثقب','drill'],['منشار','saw'],['مطرقة','hammer'],['مسمار','nail'],['برغي','screw'],['لحام','welding'],['دهان','paint'],['عزل','insulation'],['تصميم','design'],['جسر','bridge'],['سقف','ceiling']],
 'عبارات':[['صباح الخير','good morning'],['مساء الخير','good evening'],['كيف حالك؟','how are you?'],['أنا بخير','I am fine'],['ما اسمك؟','what is your name?'],['تشرفنا','nice to meet you'],['أهلا وسهلا','welcome'],['مع السلامة','goodbye'],['إلى اللقاء','see you later'],['شكرا','thank you'],['عفوا','you are welcome'],['من فضلك','please'],['آسف','sorry'],['نعم','yes'],['لا','no'],['ربما','maybe'],['لا أعرف','I do not know'],['أنا أحبك','I love you'],['كم السعر؟','how much is the price?'],['أين الحمام؟','where is the bathroom?'],['ساعدني','help me'],['ما هذا؟','what is this?'],['هذا جميل','this is beautiful'],['الحمد لله','praise be to God'],['إن شاء الله','God willing'],['ما شاء الله','as God willed']]
 };
 const FLAT=[];for(const c in D)D[c].forEach(p=>FLAT.push({a:p[0],e:p[1],c:c}));
 let curCat='الكل',score=0,favs=JSON.parse(localStorage.getItem('mojam_fav')||'[]');
+let z=parseFloat(localStorage.getItem('mojam_zoom')||'1');
+function applyZ(){document.body.style.zoom=z;document.getElementById('zv').textContent=Math.round(z*100)+'%'}
+function zm(d){z=Math.max(1,Math.min(1.6,+(z+d*0.1).toFixed(2)));localStorage.setItem('mojam_zoom',z);applyZ()}
 const secs=['p0','p1','p2','p3'];
 function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j));if(i===1)quiz();if(i===2)renderFav();if(i===3)wod()}
 function sp(t,l){const u=new SpeechSynthesisUtterance(t);u.lang=l==='ar'?'ar-SA':'en-US';speechSynthesis.cancel();speechSynthesis.speak(u)}
@@ -112,7 +126,7 @@ function quiz(){
 function chk(b,t,a){if(t===a){b.className='ok';score++}else{b.className='no'}setTimeout(quiz,700)}
 function wod(){const now=new Date(),d=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5),w=FLAT[d%FLAT.length];
  document.getElementById('wod').innerHTML=`<div class="q">${w.a} = ${w.e}</div><button onclick="sp('${w.a}','ar')">🔊 عربي</button> <button onclick="sp('${w.e}','en')">🔊 إنكليزي</button><div class="score">الباب: ${w.c}</div>`}
-go();
+applyZ();go();
 </script>
 </body>
 </html>
