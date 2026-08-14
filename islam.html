@@ -3,107 +3,230 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>الموسوعة الإسلامية الشاملة</title>
+<title>موسوعتي الإسلامية 🕌</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Traditional Arabic","Amiri",Tahoma,serif}
-body{background:radial-gradient(circle at 50% 0%,#064e3b,#022c22 70%);color:#fef3c7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
-.frame{width:100%;max-width:520px;background:#022c22;border:6px double #d4af37;border-radius:22px;padding:16px;min-height:85vh}
-.basm{text-align:center;font-size:26px;color:#d4af37}
-h2{text-align:center;font-size:19px;color:#a7f3d0;margin:4px 0 10px}
-.tabs{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
-.tabs button{border:1px solid #d4af37;border-radius:99px;padding:8px 10px;font-size:11px;font-weight:bold;cursor:pointer;background:transparent;color:#d4af37}
-.tabs button.on{background:#d4af37;color:#022c22}
-.item{background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.4);border-radius:16px;padding:14px;margin-bottom:12px}
-.item h3{color:#d4af37;font-size:17px;margin-bottom:8px;text-align:center}
-.item p{font-size:19px;line-height:2.1;text-align:center;color:#fef3c7}
-.cnt{display:inline-block;background:#d4af37;color:#022c22;border-radius:99px;padding:2px 12px;font-size:12px;font-weight:bold;margin-top:6px}
-.btn{border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:bold;cursor:pointer;background:#d4af37;color:#022c22;display:block;margin:8px auto 0}
-.btn.sm{display:inline-block;margin:4px 2px}
-.names{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.names button{border:1px solid rgba(212,175,55,.5);background:rgba(212,175,55,.08);border-radius:12px;padding:9px 2px;font-size:14px;color:#fef3c7;cursor:pointer;font-family:inherit}
-.surs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:60vh;overflow:auto}
-.surs button{border:1px solid rgba(212,175,55,.5);background:rgba(212,175,55,.08);border-radius:12px;padding:9px;font-size:13px;color:#fef3c7;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between}
-.surs button b{color:#d4af37}
-input,select{border:1px solid #d4af37;border-radius:10px;padding:9px;font-size:13px;background:#064e3b;color:#fef3c7;outline:none;margin:3px}
-.st{text-align:center;font-size:12px;color:#a7f3d0;margin:8px 0}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#071a12;color:#eef7ef;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#34d399;font-size:21px}
+header small{display:block;color:#8fb8a5;font-weight:400;font-size:13px;margin-top:4px}
+.tabs{display:flex;gap:6px;justify-content:center;margin:8px;flex-wrap:wrap}
+.tab{border:1px solid #1d3a2c;background:#0d241a;color:#eef7ef;border-radius:99px;padding:11px 15px;font-weight:900;font-size:14px;cursor:pointer}
+.tab.on{background:#34d399;color:#06281a}
+section{max-width:600px;margin:auto;padding:0 12px;display:none}
+section.on{display:block}
+.card{background:#0d241a;border:1px solid #1d3a2c;border-radius:14px;padding:16px;margin:10px 0;line-height:2.1;font-size:17px}
+.card h3{color:#34d399;font-size:18px;margin-bottom:6px}
+.lesson{margin-top:10px;color:#fbbf24;font-weight:900;border-top:1px dashed #1d3a2c;padding-top:10px;font-size:15px}
+.note{text-align:center;color:#8fb8a5;font-size:13px;margin:12px;line-height:1.9}
+.big{width:100%;border-radius:14px;border:none;background:#34d399;color:#06281a;font-weight:900;font-size:20px;padding:18px;cursor:pointer;font-family:inherit}
+#sbq{font-size:44px;font-weight:900;text-align:center;color:#34d399;margin:10px}
+#sbc{font-size:60px;font-weight:900;text-align:center;color:#fbbf24}
+.quiz .q{font-size:26px;font-weight:900;color:#fbbf24;margin:12px 0;text-align:center}
+.opt{width:100%;border-radius:14px;border:2px solid #1d3a2c;background:#0d241a;color:#eef7ef;font-weight:900;font-size:19px;padding:15px;cursor:pointer;font-family:inherit;margin:6px 0}
+.opt.ok{background:#16a34a;border:none}
+.opt.no{background:#dc2626;border:none}
+.score{text-align:center;font-size:16px;color:#8fb8a5}
+.rlen{display:flex;gap:6px;justify-content:center;margin:8px}
+.rlen button{border:1px solid #1d3a2c;background:#0d241a;color:#eef7ef;border-radius:99px;padding:8px 14px;font-weight:900;cursor:pointer;font-family:inherit}
+.rlen button.on{background:#fbbf24;color:#241303}
 </style>
 </head>
 <body>
-<div class="frame">
-<div class="basm">﷽</div>
-<h2>🕌 الموسوعة الإسلامية الشاملة</h2>
-<div class="tabs" id="tabs"></div>
-<div id="content"></div>
+<header>🕌 موسوعتي الإسلامية
+<small>نور وهداية — أركان، مواسم، أذكار، وسبحة</small></header>
+
+<div class="tabs">
+ <button class="tab on" onclick="tab(0)">🕋 الأركان</button>
+ <button class="tab" onclick="tab(1)">🌙 المواسم</button>
+ <button class="tab" onclick="tab(2)">📿 أذكار</button>
+ <button class="tab" onclick="tab(3)">📖 سور</button>
+ <button class="tab" onclick="tab(4)">🧿 السبحة</button>
+ <button class="tab" onclick="tab(5)">🎯 اختبر معلوماتك</button>
 </div>
+
+<section id="p0" class="on">
+ <div class="card"><h3>١. الشهادتان</h3>أشهد أن لا إله إلا الله وأشهد أن محمدًا رسول الله — باب الدخول للإسلام، وأول ما يتعلمه الصغير.</div>
+ <div class="card"><h3>٢. الصلاة</h3>عماد الدين — خمس صلوات بتنظم اليوم: الفجر، الظهر، العصر، المغرب، العشاء.<div class="lesson">💡 اللي بيحافظ ع صلاتو، بيحافظ ع وقتو كلو.</div></div>
+ <div class="card"><h3>٣. الزكاة</h3>حق الفقير بالمال — ٢.٥٪ من المال المدخر كل سنة، بتطهّر المال والقلب.<div class="lesson">💡 المال أمانة، والعطاء بيزيد البركة.</div></div>
+ <div class="card"><h3>٤. صوم رمضان</h3>شهر الصيام والقرآن — من الفجر للمغرب، بيعلّم الصبر ويخلّينا نحس بالجيعان.<div class="lesson">💡 الجوع بيعلّم الرحمة.</div></div>
+ <div class="card"><h3>٥. الحج</h3>رحلة العمر لمن قدر — طواف وسعي وعرفة، والناس كلهم سواسية بثياب بيضا.<div class="lesson">💡 قدام الله ما في غني وفقير — في قلوب صادقة.</div></div>
+</section>
+
+<section id="p1">
+ <div class="card"><h3>🌙 رمضان</h3>شهر بيهلّ ع العالم متل الضيف العزيز. سحور قبل الفجر، وإفطار ع أذان المغرب، والقرآن بيختم بالمساجد. وفيه ليلة القدر — خير من ألف شهر. العيلة بتتلم ع السفرة، والجار بيبعت لجارو صحن.<div class="lesson">💡 رمضان مدرسة: صبر، رحمة، وقرآن.</div></div>
+ <div class="card"><h3>🎉 عيد الفطر</h3>بيجي بعد رمضان متل الجائزة. قبل صلاتو بنطلع زكاة الفطر حتى ما يبقى فقير جيعان بالعيد. لبس جديد، زيارة الأقارب، وكعك ومعمول بيفوح من كل بيت.<div class="lesson">💡 الفرحة الحقيقية بتكمل لما نفرّح غيرنا.</div></div>
+ <div class="card"><h3>🐑 عيد الأضحى</h3>بيجي بعد وقفة عرفة. التكبيرات بتملا الشوارع، والأضحية بتنقسم: ثلث للبيت، ثلث للأقارب، وثلث للفقراء. بيذكّرنا بسيدنا إبراهيم لما أطاع ربو.<div class="lesson">💡 الطاعة والعطاء توأم.</div></div>
+ <div class="card"><h3>🕋 الحج</h3>أكبر موسم بالمسلمين — ملايين من كل لون وبلد بيوقفوا بعرفة بنفس اللبس الأبيض. ما في ألقاب ولا رتب — في عبد ورب.<div class="lesson">💡 الحج بيعلّم المساواة قبل ما يعلّم المناسك.</div></div>
+ <div class="card"><h3>💰 الزكاة</h3>موسم خير بيتم كل سنة هلالية: بيحسب المسلم مالو المدخر وبيطلع ربع العشر. بتوصل للفقير والمحتاج واليتيم، فتسدّ جوع وتستر بيت.<div class="lesson">💡 الزكاة ما بتنقص المال — بتنمّي البركة.</div></div>
+ <div class="card"><h3>⏰ الوقت والصلاة</h3>الإسلام رتب اليوم ع خمس وقفات: الفجر بيفتح النهار، والعصر بيذكّر وسط الشغل، والمغرب مع الغروب، والعشاء ختام. الوقت عند المسلم أمانة — "الوقت كالسيف إن لم تقطعه قطعك".<div class="lesson">💡 اللي بيرتب صلاتو، بيرتب حياتو.</div></div>
+</section>
+
+<section id="p2">
+ <div class="card"><h3>🌅 ذكر الصباح</h3>«اللهم بك أصبحنا، وبك أمسينا، وبك نحيا، وبك نموت، وإليك النشور»</div>
+ <div class="card"><h3>🌇 ذكر المساء</h3>«اللهم بك أمسينا، وبك أصبحنا، وبك نحيا، وبك نموت، وإليك المصير»</div>
+ <div class="card"><h3>🛡️ الحرز (٣ مرات)</h3>«بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء وهو السميع العليم»</div>
+ <div class="card"><h3>🕌 بعد كل صلاة</h3>«اللهم أنت السلام ومنك السلام، تباركت يا ذا الجلال والإكرام»</div>
+ <div class="card"><h3>😴 قبل النوم</h3>«باسمك ربي وضعت جنبي، وبك أرفعه، فإن أمسكت نفسي فارحمها، وإن أرسلتها فاحفظها بما تحفظ به عبادك الصالحين»</div>
+</section>
+
+<section id="p3">
+ <div class="card"><h3>سورة الإخلاص</h3>قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ</div>
+ <div class="card"><h3>سورة الفلق</h3>قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ</div>
+ <div class="card"><h3>سورة الناس</h3>قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ</div>
+</section>
+
+<section id="p4">
+ <div class="card" style="text-align:center">
+  <div id="sbq">سبحان الله</div>
+  <div id="sbc">0</div>
+  <div class="note" id="sbt">الهدف: ٣٣</div>
+  <button class="big" onclick="tap()">📿 سبّح</button>
+  <button class="big" style="background:#1d3a2c;color:#eef7ef;margin-top:8px" onclick="resetSb()">🔄 تصفير</button>
+ </div>
+ <div class="note">السبحة بتنتقل لحالها: سبحان الله ٣٣ ← الحمد لله ٣٣ ← الله أكبر ٣٤</div>
+</section>
+
+<section id="p5">
+ <div class="rlen">
+  <button id="r10" class="on" onclick="setR(10)">١٠ أسئلة</button>
+  <button id="r25" onclick="setR(25)">٢٥ سؤال</button>
+  <button id="r101" onclick="setR(101)">١٠ كاملين!</button>
+ </div>
+ <div class="card quiz">
+  <div class="score" id="iqs"></div>
+  <div class="q" id="iqq"></div>
+  <div id="iqo"></div>
+ </div>
+ <div class="note">🎯 بنك ١٠١ سؤال — كل جولة بتسحب عشوائي!</div>
+</section>
+
 <script>
-const SURN="الفاتحة:7,البقرة:286,آل عمران:200,النساء:176,المائدة:120,الأنعام:165,الأعراف:206,الأنفال:75,التوبة:129,يونس:109,هود:123,يوسف:111,الرعد:43,إبراهيم:52,الحجر:99,النحل:128,الإسراء:111,الكهف:110,مريم:98,طه:135,الأنبياء:112,الحج:78,المؤمنون:118,النور:64,الفرقان:77,الشعراء:227,النمل:93,القصص:88,العنكبوت:69,الروم:60,لقمان:34,السجدة:30,الأحزاب:73,سبأ:54,فاطر:45,يس:83,الصافات:182,ص:88,الزمر:75,غافر:85,فصلت:54,الشورى:53,الزخرف:89,الدخان:59,الجاثية:37,الأحقاف:35,محمد:38,الفتح:29,الحجرات:18,ق:45,الذاريات:60,الطور:49,النجم:62,القمر:55,الرحمن:78,الواقعة:96,الحديد:29,المجادلة:22,الحشر:24,الممتحنة:13,الصف:14,الجمعة:11,المنافقون:11,التغابن:18,الطلاق:12,التحريم:12,الملك:30,القلم:52,الحاقة:52,المعارج:44,نوح:28,الجن:28,المزمل:20,المدثر:56,القيامة:40,الإنسان:31,المرسلات:50,النبأ:40,النازعات:46,عبس:42,التكوير:29,الانفطار:19,المطففين:36,الانشقاق:25,البروج:22,الطارق:17,الأعلى:19,الغاشية:26,الفجر:30,البلد:20,الشمس:15,الليل:21,الضحى:11,الشرح:8,التين:8,العلق:19,القدر:5,البينة:8,الزلزلة:8,العاديات:11,القارعة:11,التكاثر:8,العصر:3,الهمزة:9,الفيل:5,قريش:4,الماعون:7,الكوثر:3,الكافرون:6,النصر:3,المسد:5,الإخلاص:4,الفلق:5,الناس:6".split(",").map(x=>x.split(":"));
-const SEC={
- arkan:{n:"🕌 الأركان",items:[
-  ["أركان الإسلام الخمسة","شَهَادَةُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَإِقَامُ الصَّلَاةِ، وَإِيتَاءُ الزَّكَاةِ، وَصَوْمُ رَمَضَانَ، وَحَجُّ الْبَيْتِ مَنِ اسْتَطَاعَ إِلَيْهِ سَبِيلًا"],
-  ["أركان الإيمان الستة","أَنْ تُؤْمِنَ بِاللَّهِ، وَمَلَائِكَتِهِ، وَكُتُبِهِ، وَرُسُلِهِ، وَالْيَوْمِ الْآخِرِ، وَتُؤْمِنَ بِالْقَدَرِ خَيْرِهِ وَشَرِّهِ"],
-  ["الإحسان","أَنْ تَعْبُدَ اللَّهَ كَأَنَّكَ تَرَاهُ، فَإِنْ لَمْ تَكُنْ تَرَاهُ فَإِنَّهُ يَرَاكَ"]]},
- quran:{n:"📖 المختار",items:[
-  ["آية الكرسي","اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ"]]},
- full:{n:" القرآن كامل",items:[]},
- hadith:{n:"📚 الصحيحان",items:[]},
- adhk:{n:"🤲 الأذكار",items:[
-  ["ذكار الصباح","اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ","١"],
-  ["ذكار المساء","اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ","١"],
-  ["عند النوم","بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا","١"],
-  ["عند الاستيقاظ","الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ","١"],
-  ["بعد الصلاة","أَسْتَغْفِرُ اللَّهَ (ثَلَاثًا) اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ","١"],
-  ["التسبيح","سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَاللَّهُ أَكْبَرُ","٣٣"]]},
- salat:{n:"🕋 الصلاة",items:[
-  ["١ - النية والتكبير","تستقبل القبلة، ثم تكبّر: اللَّهُ أَكْبَرُ"],
-  ["٢ - القراءة","تقرأ الفاتحة وما تيسر"],
-  ["٣ - الركوع","سُبْحَانَ رَبِّيَ الْعَظِيمِ (ثلاثًا)"],
-  ["٤ - الرفع","سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ، رَبَّنَا وَلَكَ الْحَمْدُ"],
-  ["٥ - السجود","سُبْحَانَ رَبِّيَ الْأَعْلَى (ثلاثًا)"],
-  ["٦ - التشهد","التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ"],
-  ["٧ - السلام","السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ"]]},
- seerah:{n:"🌙 السيرة",items:[
-  ["المولد","وُلِدَ ﷺ بمكة عام الفيل (نحو ٥٧١م) يتيم الأب، وتربى بحجر جده عبد المطلب ثم عمه أبي طالب"],
-  ["البعثة","نزل الوحي بغار حراء وعمره أربعون سنة: ﴿اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ﴾"],
-  ["الهجرة","هاجر ﷺ للمدينة سنة ٦٢٢م وأسس أول دولة إسلامية"],
-  ["الوفاة","توفي ﷺ سنة ١هـ وعمره ثلاث وستون، ودُفن بحجرة عائشة بالمدينة"]]},
- names:{n:"📿 الأسماء",items:[]}
-};
-const NAMES99="الرَّحْمَنُ الرَّحِيمُ الْمَلِكُ الْقُدُّوسُ السَّلَامُ الْمُؤْمِنُ الْمُهَيْمِنُ الْعَزِيزُ الْجَبَّارُ الْمُتَكَبِّرُ الْخَالِقُ الْبَارِئُ الْمُصَوِّرُ الْغَفَّارُ الْقَهَّارُ الْوَهَّابُ الرَّزَّاقُ الْفَتَّاحُ الْعَلِيمُ الْقَابِضُ الْبَاسِطُ الْخَافِضُ الرَّافِعُ الْمُعِزُّ الْمُذِلُّ السَّمِيعُ الْبَصِيرُ الْحَكَمُ الْعَدْلُ اللَّطِيفُ الْخَبِيرُ الْحَلِيمُ الْعَظِيمُ الْغَفُورُ الشَّكُورُ الْعَلِيُّ الْكَبِيرُ الْحَفِيظُ الْمُقِيتُ الْحَسِيبُ الْجَلِيلُ الْكَرِيمُ الرَّقِيبُ الْمُجِيبُ الْوَاسِعُ الْحَكِيمُ الْوَدُودُ الْمَجِيدُ الْبَاعِثُ الشَّهِيدُ الْحَقُّ الْوَكِيلُ الْقَوِيُّ الْمَتِينُ الْوَلِيُّ الْحَمِيدُ الْمُحْصِي الْمُبْدِئُ الْمُعِيدُ الْمُحْيِي الْمُمِيتُ الْحَيُّ الْقَيُّومُ الْوَاجِدُ الْمَاجِدُ الْوَاحِدُ الْأَحَدُ الصَّمَدُ الْقَادِرُ الْمُقْتَدِرُ الْمُقَدِّمُ الْمُؤَخِّرُ الْأَوَّلُ الْآخِرُ الظَّاهِرُ الْبَاطِنُ الْوَالِي الْمُتَعَالِي الْبَرُّ التَّوَّابُ الْمُنْتَقِمُ الْعَفُوُّ الرَّءُوفُ مَالِكُ الْمُلْكِ ذُو الْجَلَالِ وَالْإِكْرَامِ الْمُقْسِطُ الْجَامِعُ الْغَنِيُّ الْمُغْنِي الْمَانِعُ الضَّارُّ النَّافِعُ النُّورُ الْهَادِي الْبَدِيعُ الْبَاقِي الْوَارِثُ الرَّشِيدُ الصَّبُورُ".split(" ");
-let cur="arkan",audioQ=[],ai=0;
-function speak(t){try{const x=new SpeechSynthesisUtterance(t.replace(/﴿.*?﴾|\(.*?\)/g,""));x.lang="ar-SA";x.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
-function renderTabs(){document.getElementById("tabs").innerHTML=Object.keys(SEC).map(k=>`<button class="${k===cur?"on":""}" onclick="setSec('${k}')">${SEC[k].n}</button>`).join("")}
-function setSec(k){cur=k;renderTabs();render()}
-function render(){
- const c=document.getElementById("content");
- if(cur==="names"){c.innerHTML=`<div class="names">`+NAMES99.map(n=>`<button onclick="speak('${n}')">${n}</button>`).join("")+`</div><p class="st">اضغط أي اسم لنطقه — ${NAMES99.length} اسمًا</p>`;return}
- if(cur==="full"){c.innerHTML=`<p class="st">📖 ١١٤ سورة — اختر سورة (تحتاج نت 🌐)</p><div class="surs">`+SURN.map((s,i)=>`<button onclick="openSurah(${i+1})"><span>${i+1}. ${s[0]}</span><b>${s[1]} آية</b></button>`).join("")+`</div>`;return}
- if(cur==="hadith"){c.innerHTML=`<div style="text-align:center"><select id="hb"><option value="bukhari">صحيح البخاري</option><option value="muslim">صحيح مسلم</option></select><input id="hf" type="number" value="1" style="width:80px" placeholder="رقم"><button class="btn sm" onclick="loadHad()">📜 عرض</button></div><div class="st">🌐 يحتاج نت — النصوص من المصدر مباشرة</div><div id="hadList"></div>`;return}
- c.innerHTML=SEC[cur].items.map(x=>`<div class="item"><h3>${x[0]}</h3><p>${x[1]}</p>${x[2]?`<div style="text-align:center"><span class="cnt">التكرار: ${x[2]}</span></div>`:""}<button class="btn" onclick="speak(decodeURIComponent('${encodeURIComponent(x[1])}'))">🔊 استماع</button></div>`).join("");
+const secs=['p0','p1','p2','p3','p4','p5'];
+function tab(i){document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',i===j));secs.forEach((s,j)=>document.getElementById(s).classList.toggle('on',i===j));if(i===5)iqStart()}
+const IQ=[
+['كم عدد أركان الإسلام؟','٥','٣','٤','٦'],
+['كم عدد أركان الإيمان؟','٦','٥','٧','٣'],
+['شو أول أركان الإسلام؟','الشهادتان','الصلاة','الزكاة','الحج'],
+['كم صلاة مفروضة باليوم؟','٥','٤','٦','٣'],
+['كم نسبة الزكاة؟','٢.٥٪','٥٪','١٠٪','١٪'],
+['بأي شهر بنصوم؟','رمضان','شعبان','محرم','رجب'],
+['الحج لوين؟','مكة','المدينة','القدس','مصر'],
+['ليلة خير من ألف شهر؟','القدر','العيد','الجمعة','النصف'],
+['أول عيد بعد رمضان؟','الفطر','الأضحى','المولد','رأس السنة'],
+['عيد بييجي بعد وقفة عرفة؟','الأضحى','الفطر','الجمعة','شم النسيم'],
+['كم سورة بالقرآن؟','١١٤','١٠٠','٩٩','١٢'],
+['كم جزء بالقرآن؟','٣','٢٠','٠','٦٠'],
+['أول سورة بالقرآن؟','الفاتحة','البقرة','يس','الناس'],
+['أطول سورة؟','البقرة','آل عمران','النساء','الأعراف'],
+['أقصر سورة؟','الكوثر','الإخلاص','العصر','الفيل'],
+['سورة بتعدل ثلث القرآن؟','الإخلاص','الفاتحة','يس','الملك'],
+['سورة ما بتبلش بالبسملة؟','التوبة','الأنفال','الحج','النمل'],
+['سورة سميت ع اسم حيوان بيحرث الأرض؟','البقرة','الفيل','النحل','العنكبوت'],
+['سورة بتحكي عن الفيل؟','الفيل','العاديات','القارعة','الهمزة'],
+['أول شي نزل من القرآن؟','اقرأ','يا أيها المدثر','الفاتحة','الناس'],
+['سورة اسمها قلب القرآن؟','يس','الرحمن','الواقعة','الدخان'],
+['المعوذتين هنّ؟','الفلق والناس','الإخلاص والفلق','الناس ويس','الفاتحة والبقرة'],
+['سورة سميت ع اسم ليلة عظيمة؟','القدر','الدخان','الجمعة','الليل'],
+['سورة سميت ع اسم أم سيدنا عيسى؟','مريم','النساء','المائدة','هود'],
+['قصة سيدنا يوسف بأي سورة؟','يوسف','الرعد','إبراهيم','الحجر'],
+['أول نبي؟','آدم','نوح','إدريس','شيث'],
+['خاتم الأنبياء؟','محمد ','عيسى','موسى','إبراهيم'],
+['نبي حكى وهو رضيع؟','عيسى','يحيى','إسماعيل','إسحاق'],
+['نبي ابتلعه الحوت؟','يونس','أيوب','زكريا','هارون'],
+['نبي بنى الكعبة مع ابنه؟','إبراهيم','نوح','آدم','يعقوب'],
+['ابن سيدنا إبراهيم اللي ساعده بالكعبة؟','إسماعيل','إسحاق','يعقوب','يوسف'],
+['نبي انفلقله البحر بعصاتو؟','موسى','هارون','يوشع','داود'],
+['نبي اشتهر بالصبر ع المرض؟','أيوب','يونس','يعقوب','إبراهيم'],
+['نبي فهم لغة الطير والنمل؟','سليمان','داود','موسى','يوسف'],
+['معجزة سيدنا صالح؟','الناقة','العصا','الطير','الريح'],
+['نبي ألقي بالنار فصارت بردًا؟','إبراهيم','إسماعيل','لوط','هود'],
+['كم نبي انذكروا بالقرآن بالاسم؟','٢','١٠','٩','٥٠'],
+['خليل الله؟','إبراهيم','موسى','عيسى','نوح'],
+['كليم الله؟','موسى','عيسى','آدم','نوح'],
+['أبو الأنبياء؟','إبراهيم','آدم','نوح','يعقوب'],
+['أول رسول؟','نوح','آدم','إدريس','هود'],
+['نبي بنى السفينة؟','نوح','يونس','موسى','صالح'],
+['أول رجل أسلم؟','أبو بكر','عمر','عثمان','علي'],
+['أول امرأة أسلمت؟','خديجة','عائشة','فاطمة','آمنة'],
+['رفيق هجرة النبي للمدينة؟','أبو بكر','عمر','حمزة','بلال'],
+['صحابي لقبوه سيف الله؟','خالد بن الوليد','سعد','الزبير','طلحة'],
+['عم النبي الشهيد بأحد؟','حمزة','العباس','أبو طالب','أبو لهب'],
+['مرضع النبي ﷺ؟','حليمة السعدية','ثويبة','آمنة','بركة'],
+['مدينة مولد النبي ﷺ؟','مكة','المدينة','الطائف','القدس'],
+['مدينة الهجرة؟','المدينة','مكة','خيبر','ينبع'],
+['غار الاختباء بالهجرة؟','ثور','حراء','أحد','الكهف'],
+['غار أول وحي؟','حراء','ثور','الكهف','أحد'],
+['أول معركة بالإسلام؟','بدر','أحد','الخندق','حنين'],
+['معركة ترك فيها الرماة مواقعهم؟','أحد','بدر','الخندق','تبوك'],
+['معركة الخندق اسمها كمان؟','الأحزاب','بدر','حنين','مؤتة'],
+['أول قبلة للمسلمين؟','الأقصى','الكعبة','قبا','سيناء'],
+['قبلتنا هلأ؟','الكعبة','الأقصى','قبا','الطور'],
+['أول مسجد بني بالإسلام؟','قبا','الحرام','النبوي','الأقصى'],
+['بئر زمزم بأي مسجد؟','الحرام','النبوي','الأقصى','قبا'],
+['جبل الوقوف بالحج؟','عرفات','ثور','أحد','حراء'],
+['كم شوط بالطواف؟','٧','٣','٥','٩'],
+['كم شوط بالسعي؟','٧','٤','٦','٨'],
+['ليش سعت هاجر بين الصفا والمروة؟','تدور ع مي','تلحق قافلة','تتهرب','تتمرّن'],
+['شو بيرمي الحجاج بالجمرات؟','حصى','تمر','مي','رمل'],
+['لبس الحاج اسمو؟','إحرام','ثوب','عباية','كساء'],
+['كم ركعة بالفجر؟','٢','٤','٣','١'],
+['كم ركعة بالظهر؟','٤','٢','٣','٥'],
+['كم ركعة بالمغرب؟','٣','٤','٢','٥'],
+['كم ركعة بالعصر؟','٤','٢','٣','٦'],
+['كم ركعة بالعشا؟','٤','٣','٢','٥'],
+['صلاة خاصة برمضان؟','التراويح','الجمعة','العيد','الاستسقاء'],
+['صلاة بلا ركوع ولا سجود؟','الجنازة','الجمعة','الكسوف','الضحى'],
+['بشو بنبلش الصلاة؟','الله أكبر','السلام','الفاتحة','آمين'],
+['بشو بنختم الصلاة؟','السلام','الله أكبر','التشهد','الاستغفار'],
+['الأذان ليش؟','نداء للصلاة','تحية','دعاء','تكبير'],
+['الحرز كم مرة؟','٣','١','٧','٥'],
+['سبحان الله بعد الصلاة؟','٣','٣٤','٩٩','١٠'],
+['الحمد لله بعد الصلاة؟','٣','٣٤','٦٦','١١'],
+['الله أكبر بعد الصلاة؟','٣٤','٣٣','٣٥','٩٩'],
+['شو بنقول قبل النوم؟','باسمك ربي وضعت جنبي','الحمد لله','أستغفر الله','ما شاء الله'],
+['شو بنقول قبل الأكل؟','بسم الله','الحمد لله','الله أكبر','توكلت'],
+['وبعد الأكل؟','الحمد لله','بسم الله','سبحان الله','آمين'],
+['زكاة الفطر بنطلعها؟','قبل صلاة العيد','بعد العيد','بمنتصف رمضان','بآخر السنة'],
+['الأضحية بأي عيد؟','الأضحى','الفطر','الجمعة','المولد'],
+['السنة الهجرية بتبلش بأي شهر؟','محرم','رمضان','ذو الحجة','صفر'],
+['ترتيب رمضان بين الشهور الهجرية؟','التاسع','الأول','السادس','العاشر'],
+['شهر الحج؟','ذو الحجة','محرم','رجب','شوال'],
+['يوم الجمعة اسمو عند المسلمين؟','العيد الأسبوعي','يوم السوق','يوم الراحة','يوم النور'],
+['أيام التشريق كم؟','٣','٢','٤','٧'],
+['ليلة القدر بتعدل؟','ألف شهر','مئة شهر','ألف سنة','مئة سنة'],
+['ملك الوحي؟','جبريل','ميكائيل','إسرافيل','مالك'],
+['ملك الموكل بالمطر؟','ميكائيل','جبريل','إسرافيل','رضوان'],
+['ملك النفخ بالصورة؟','إسرافيل','جبريل','ميكائيل','منكر'],
+['كم كتاب سماوي كبير ذُكر؟','٤','٣','٥','٦'],
+['كتاب سيدنا موسى؟','التوراة','الإنجيل','الزبور','الفرقان'],
+['كتاب سيدنا عيسى؟','الإنجيل','التوراة','الزبور','الصحف'],
+['كتاب سيدنا داود؟','الزبور','التوراة','الإنجيل','الفرقان'],
+['أول ما بيحاسب عليه العبد؟','الصلاة','الزكاة','الصوم','الحج'],
+['أحب الأعمال إلى الله أدومها ولو؟','قلّ','كثُر','طال','قصر'],
+['الابتسامة بوجه أخوك؟','صدقة','مكروه','واجب','بدعة'],
+['كلمة بتثقّل الميزان؟','سبحان الله','يا سلام','ما شاء','هيك']
+];
+let isc=0,ird=0,RLEN=10;
+function setR(n){RLEN=n;document.querySelectorAll('.rlen button').forEach(b=>b.classList.remove('on'));document.getElementById('r'+n).classList.add('on');iqStart()}
+function iqStart(){isc=0;ird=0;iqNext()}
+function iqNext(){
+ if(ird>=RLEN){document.getElementById('iqq').textContent='';document.getElementById('iqo').innerHTML='';
+  const p=isc/RLEN;
+  document.getElementById('iqs').textContent=p>=0.8?'🌟 عالم صغير! '+isc+'/'+RLEN:p>=0.5?'👍 منيح! '+isc+'/'+RLEN:'📖 ارجع اقرأ المواسم وجرّب! '+isc+'/'+RLEN;return}
+ ird++;
+ const e=IQ[Math.floor(Math.random()*IQ.length)];
+ const opts=[e[1],e[2],e[3],e[4]].sort(()=>Math.random()-.5);
+ document.getElementById('iqs').textContent='سؤال '+ird+'/'+RLEN+' — نقاطك: '+isc;
+ document.getElementById('iqq').textContent=e[0];
+ document.getElementById('iqo').innerHTML=opts.map(o=>`<button class="opt" onclick="ichk(this,'${o}','${e[1]}')">${o}</button>`).join('');
 }
-async function openSurah(n){
- const c=document.getElementById("content");
- c.innerHTML=`<p class="st">⏳ تحميل سورة ${SURN[n-1][0]}...</p>`;
- try{
-  const r=await fetch("https://api.alquran.cloud/v1/surah/"+n+"/quran-uthmani");
-  const j=await r.json();
-  audioQ=j.data.ayahs.map(a=>"https://cdn.islamic.network/quran/audio/128/ar.alafasy/"+a.number+".mp3");
-  c.innerHTML=`<div style="text-align:center"><button class="btn sm" onclick="setSec('full')">🔙 السور</button><button class="btn sm" onclick="playAll()">▶ تلاوة كاملة (العفاسي)</button></div><div class="item"><h3>سورة ${SURN[n-1][0]}</h3>`+j.data.ayahs.map((a,i)=>`<p style="margin-bottom:10px">${a.text} <b style="color:#d4af37">﴿${a.numberInSurah}﴾</b> <button class="btn sm" onclick="playA(${i})">🔊</button></p>`).join("")+`</div>`;
- }catch(e){c.innerHTML=`<p class="st">❌ تحتاج اتصال بالنت 🌐</p><button class="btn" onclick="setSec('full')">🔙 رجوع</button>`}
-}
-function playA(i){const a=new Audio(audioQ[i]);a.play()}
-function playAll(){ai=0;nextA()}
-function nextA(){if(ai>=audioQ.length)return;const a=new Audio(audioQ[ai]);ai++;a.onended=nextA;a.play()}
-async function loadHad(){
- const b=document.getElementById("hb").value,s=parseInt(document.getElementById("hf").value)||1;
- const L=document.getElementById("hadList");
- L.innerHTML=`<p class="st">⏳ تحميل الأحاديث ${s}-${s+4}...</p>`;
- try{
-  const r=await fetch("https://api.hadith.gading.dev/books/"+b+"?range="+s+"-"+(s+4));
-  const j=await r.json();
-  L.innerHTML=j.data.hadiths.map(h=>`<div class="item"><h3>حديث رقم ${h.number}</h3><p style="font-size:16px">${h.arab}</p><button class="btn" onclick="speak(decodeURIComponent('${encodeURIComponent(h.arab)}'))">🔊 استماع</button></div>`).join("");
- }catch(e){L.innerHTML=`<p class="st">❌ تحتاج نت 🌐</p>`}
-}
-renderTabs();render();
+function ichk(b,o,a){if(o===a){b.classList.add('ok');isc++}else{b.classList.add('no')}setTimeout(iqNext,600)}
+const ADH=['سبحان الله','الحمد لله','الله أكبر'];
+let ai=0,cnt=0;
+function tap(){const target=ai<2?33:34;cnt++;if(cnt>=target){ai=(ai+1)%3;cnt=0}draw()}
+function resetSb(){ai=0;cnt=0;draw()}
+function draw(){document.getElementById('sbq').textContent=ADH[ai];document.getElementById('sbc').textContent=cnt;document.getElementById('sbt').textContent='الهدف: '+(ai<2?33:34)}
+draw();
 </script>
 </body>
 </html>
