@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مصحف المملكة 📖</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#f8f4ec;color:#2a1810;padding-bottom:70px}
+header{background:#fff;border-bottom:2px solid #c9a961;padding:14px;text-align:center;position:sticky;top:0;z-index:9}
+header h1{color:#8b6f3f;font-size:22px}
+header small{color:#8a7560;font-size:12px}
+.wrap{max-width:700px;margin:auto;padding:0 10px}
+.tabs{display:flex;gap:6px;justify-content:center;margin:10px;flex-wrap:wrap}
+.tab{border:1px solid #e8dcc4;background:#fff;border-radius:99px;padding:10px 16px;font-weight:900;font-size:14px;cursor:pointer}
+.tab.on{background:#c9a961;color:#fff}
+section{display:none}section.on{display:block}
+input{width:100%;padding:12px;border-radius:12px;border:2px solid #e8dcc4;background:#fff;font-size:16px;font-family:inherit;margin:8px 0}
+.s{background:#fff;border:1px solid #e8dcc4;border-radius:12px;padding:12px;margin:6px 0;display:flex;gap:10px;align-items:center;cursor:pointer}
+.s b{flex:1;font-size:17px}
+.s small{color:#8a7560}
+.n{width:36px;height:36px;background:#c9a961;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0}
+.bism{text-align:center;font-size:26px;color:#8b6f3f;margin:16px 0}
+.ay{background:#fff;border:1px solid #e8dcc4;border-radius:12px;padding:14px;margin:8px 0;line-height:2.2;font-size:22px}
+.ay .no{display:inline-block;background:#c9a961;color:#fff;border-radius:50%;min-width:30px;height:30px;line-height:30px;text-align:center;font-size:12px;font-family:Tahoma;margin:0 6px}
+.ab{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ab button{border:1px solid #e8dcc4;background:#fff;border-radius:99px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.ab button.on{background:#6b8e4e;color:#fff;border:none}
+.bar{position:sticky;bottom:0;background:#fff;border-top:2px solid #c9a961;padding:10px;display:flex;gap:6px;flex-wrap:wrap}
+.bar select{padding:10px;border-radius:10px;border:1px solid #e8dcc4;font-family:inherit;font-size:14px}
+.bar button{padding:10px 14px;border-radius:10px;border:none;background:#c9a961;color:#fff;font-weight:900;cursor:pointer;font-family:inherit}
+.msg{text-align:center;color:#8a7560;padding:30px;font-size:15px;line-height:2}
+</style>
+</head>
+<body>
+<header><h1>📖 مصحف المملكة</h1><small>القرآن كامل — تلاوة وتفسير وعلامات • بلا إعلانات</small></header>
+<div class="wrap">
+<div class="tabs">
+ <button class="tab on" onclick="tb(0)">📑 السور</button>
+ <button class="tab" onclick="tb(1)">🔖 علاماتي</button>
+ <button class="tab" onclick="tb(2)">🔍 بحث</button>
+</div>
+<section id="p0" class="on">
+ <input id="sq" placeholder="ابحث عن سورة..." oninput="fs()">
+ <div id="sl"></div>
+</section>
+<section id="p1"><div id="bl"></div></section>
+<section id="p2">
+ <input id="gq" placeholder="اكتب كلمة من القرآن..." oninput="gs()">
+ <div id="gr"></div>
+</section>
+<section id="rd">
+ <button class="tab" onclick="tb(0)">🏠 القائمة</button>
+ <div id="rc"></div>
+ <div class="bar">
+  <select id="rec"><option value="ar.alafasy">العفاسي</option><option value="ar.husary">الحصري</option><option value="ar.minshawi">المنشاوي</option></select>
+  <button onclick="ps()">▶️ السورة</button>
+  <button onclick="sa()">⏹</button>
+ </div>
+</section>
+</div>
+<script>
+const M=[[1,'الفاتحة',7],[2,'البقرة',286],[3,'آل عمران',200],[4,'النساء',176],[5,'المائدة',120],[6,'الأنعام',165],[7,'الأعراف',206],[8,'الأنفال',75],[9,'التوبة',129],[10,'يونس',109],[11,'هود',123],[12,'يوسف',111],[13,'الرعد',43],[14,'إبراهيم',52],[15,'الحجر',99],[16,'النحل',128],[17,'الإسراء',111],[18,'الكهف',110],[19,'مريم',98],[20,'طه',135],[21,'الأنبياء',112],[22,'الحج',78],[23,'المؤمنون',118],[24,'النور',64],[25,'الفرقان',77],[26,'الشعراء',227],[27,'النمل',93],[28,'القصص',88],[29,'العنكبوت',69],[30,'الروم',60],[31,'لقمان',34],[32,'السجدة',30],[33,'الأحزاب',73],[34,'سبأ',54],[35,'فاطر',45],[36,'يس',83],[37,'الصافات',182],[38,'ص',88],[39,'الزمر',75],[40,'غافر',85],[41,'فصلت',54],[42,'الشورى',53],[43,'الزخرف',89],[44,'الدخان',59],[45,'الجاثية',37],[46,'الأحقاف',35],[47,'محمد',38],[48,'الفتح',29],[49,'الحجرات',18],[50,'ق',45],[51,'الذاريات',60],[52,'الطور',49],[53,'النجم',62],[54,'القمر',55],[55,'الرحمن',78],[56,'الواقعة',96],[57,'الحديد',29],[58,'المجادلة',22],[59,'الحشر',24],[60,'الممتحنة',13],[61,'الصف',14],[62,'الجمعة',11],[63,'المنافقون',11],[64,'التغابن',18],[65,'الطلاق',12],[66,'التحريم',12],[67,'الملك',30],[68,'القلم',52],[69,'الحاقة',52],[70,'المعارج',44],[71,'نوح',28],[72,'الجن',28],[73,'المزمل',20],[74,'المدثر',56],[75,'القيامة',40],[76,'الإنسان',31],[77,'المرسلات',50],[78,'النبأ',40],[79,'النازعات',46],[80,'عبس',42],[81,'التكوير',29],[82,'الانفطار',19],[83,'المطففين',36],[84,'الانشقاق',25],[85,'البروج',22],[86,'الطارق',17],[87,'الأعلى',19],[88,'الغاشية',26],[89,'الفجر',30],[90,'البلد',20],[91,'الشمس',15],[92,'الليل',21],[93,'الضحى',11],[94,'الشرح',8],[95,'التين',8],[96,'العلق',19],[97,'القدر',5],[98,'البينة',8],[99,'الزلزلة',8],[100,'العاديات',11],[101,'القارعة',11],[102,'التكاثر',8],[103,'العصر',3],[104,'الهمزة',9],[105,'الفيل',5],[106,'قريش',4],[107,'الماعون',7],[108,'الكوثر',3],[109,'الكافرون',6],[110,'النصر',3],[111,'المسد',5],[112,'الإخلاص',4],[113,'الفلق',5],[114,'الناس',6]];
+let cache=JSON.parse(localStorage.getItem('mushaf_c')||'{}'),bm=JSON.parse(localStorage.getItem('mushaf_b')||'[]'),cur=null,au=null;
+function tb(i){document.querySelectorAll('.tab').forEach((b,j)=>{if(j<3)b.classList.toggle('on',j===i)});['p0','p1','p2'].forEach((s,j)=>document.getElementById(s).classList.toggle('on',j===i));document.getElementById('rd').classList.remove('on');if(i===1)rb()}
+function rs(L){document.getElementById('sl').innerHTML=L.map(s=>`<div class="s" onclick="os(${s[0]})"><div class="n">${s[0]}</div><b>${s[1]}</b><small>${s[2]} آية</small></div>`).join('')}
+function fs(){const q=document.getElementById('sq').value.trim();rs(M.filter(s=>s[1].includes(q)))}
+async function os(n,sc){
+ cur=n;
+ document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));
+ document.getElementById('rd').classList.add('on');
+ const rc=document.getElementById('rc');
+ rc.innerHTML='<div class="msg">⏳ جاري تحميل سورة '+M[n-1][1]+'...</div>';
+ if(cache[n]){draw(cache[n],sc);return}
+ try{
+  const r=await fetch('https://api.alquran.cloud/v1/surah/'+n+'/quran-uthmani');
+  const d=await r.json();
+  if(d.code===200){cache[n]=d.data;try{localStorage.setItem('mushaf_c',JSON.stringify(cache))}catch(e){}
+   draw(d.data,sc)}
+  else throw 0;
+ }catch(e){rc.innerHTML='<div class="msg">⚠️ ما قدرنا نجيب السورة — النت ضعيف؟<br><button class="tab" style="margin-top:10px" onclick="os('+n+')">🔄 جرّب تاني</button></div>'}
+}
+function draw(d,sc){
+ let h=(d.number!==1&&d.number!==9)?'<div class="bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':'';
+ d.ayahs.forEach(a=>{
+  let t=a.text;
+  if(a.numberInSurah===1&&d.number!==1&&d.number!==9)t=t.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ','');
+  const on=bm.some(b=>b.s===d.number&&b.a===a.numberInSurah);
+  h+=`<div class="ay" id="a${a.numberInSurah}">${t}<span class="no">${a.numberInSurah}</span>
+  <div class="ab"><button onclick="pa(${d.number},${a.numberInSurah})">🔊</button><button onclick="taf(${d.number},${a.numberInSurah},this)">📚 تفسير</button><button class="${on?'on':''}" onclick="tm(${d.number},${a.numberInSurah},this)">${on?'⭐':'☆'}</button></div>
+  <div id="t${a.numberInSurah}" style="display:none;font-size:15px;line-height:2;background:#f8f4ec;border-radius:8px;padding:10px;margin-top:8px"></div></div>`;
+ });
+ document.getElementById('rc').innerHTML=h;
+ if(sc)setTimeout(()=>{const e=document.getElementById('a'+sc);if(e)e.scrollIntoView({block:'center'})},100);
+ window.scrollTo(0,0);
+}
+async function taf(s,a,btn){
+ const el=document.getElementById('t'+a);
+ if(el.style.display==='block'){el.style.display='none';return}
+ el.style.display='block';el.innerHTML='⏳...';
+ try{const r=await fetch('https://api.alquran.cloud/v1/ayah/'+s+':'+a+'/ar.muyassar');const d=await r.json();el.innerHTML='📚 '+d.data.text}
+ catch(e){el.innerHTML='⚠️ ما انجاب التفسير'}
+}
+function tm(s,a,b){
+ const i=bm.findIndex(x=>x.s===s&&x.a===a);
+ if(i>=0){bm.splice(i,1);b.classList.remove('on');b.textContent='☆'}
+ else{bm.push({s:s,a:a});b.classList.add('on');b.textContent='⭐'}
+ localStorage.setItem('mushaf_b',JSON.stringify(bm));
+}
+function rb(){
+ document.getElementById('bl').innerHTML=bm.length?bm.map((b,i)=>`<div class="s"><div class="n">${b.s}</div><b>${M[b.s-1][1]} — آية ${b.a}</b><button class="tab" onclick="os(${b.s},${b.a})">فتح</button><button class="tab" onclick="bm.splice(${i},1);localStorage.setItem('mushaf_b',JSON.stringify(bm));rb()">🗑</button></div>`).join(''):'<div class="msg">🔖 لسا ما في علامات — دوس ☆ ع أي آية تحفظها</div>';
+}
+function abs(s,a){let n=0;for(let i=0;i<s-1;i++)n+=M[i][2];return n+a}
+function pa(s,a){sa();au=new Audio('https://cdn.islamic.network/quran/audio/128/'+document.getElementById('rec').value+'/'+abs(s,a)+'.mp3');au.play().catch(()=>alert('⚠️ الصوت ما اشتغل'))}
+function ps(){if(!cur)return;sa();au=new Audio('https://cdn.islamic.network/quran/audio-surah/128/'+document.getElementById('rec').value+'/'+cur+'.mp3');au.play().catch(()=>alert('⚠️ الصوت ما اشتغل'))}
+function sa(){if(au){au.pause();au=null}}
+let gt=null;
+function gs(){
+ clearTimeout(gt);
+ gt=setTimeout(async()=>{
+  const q=document.getElementById('gq').value.trim();
+  const el=document.getElementById('gr');
+  if(q.length<2){el.innerHTML='';return}
+  el.innerHTML='<div class="msg">⏳...</div>';
+  try{
+   const r=await fetch('https://api.alquran.cloud/v1/search/'+encodeURIComponent(q)+'/all/ar');
+   const d=await r.json();
+   if(d.code===200&&d.data.matches&&d.data.matches.length){
+    el.innerHTML=d.data.matches.slice(0,15).map(x=>`<div class="s" onclick="os(${x.surah.number},${x.numberInSurah})"><div class="n">${x.surah.number}</div><div><b>${M[x.surah.number-1][1]} — ${x.numberInSurah}</b><br><small>${x.text.slice(0,60)}...</small></div></div>`).join('');
+   }else el.innerHTML='<div class="msg">ما في نتائج</div>';
+  }catch(e){el.innerHTML='<div class="msg">⚠️ النت ضعيف للبحث</div>'}
+ },600);
+}
+rs(M);
+</script>
+</body>
+</html>
