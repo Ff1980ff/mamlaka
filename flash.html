@@ -3,105 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>الفلاشات الذكية</title>
+<title>فلاشاتي الذكية 🃏</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
-body{background:linear-gradient(160deg,#065f46,#0c4a6e);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
-.frame{width:100%;max-width:450px;background:#0f172a;border:6px solid #22d3ee;border-radius:24px;padding:16px;min-height:85vh;display:flex;flex-direction:column;gap:10px}
-h2{text-align:center;font-size:19px;color:#67e8f9}
-.welc{text-align:center;font-size:12px;color:#a5f3fc;min-height:16px}
-.decks{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-.decks button{border:none;border-radius:99px;padding:9px 14px;font-size:12px;font-weight:bold;cursor:pointer;background:#1e293b;color:#94a3b8}
-.decks button.on{background:#22d3ee;color:#0f172a}
-.scene{perspective:1000px;flex:1;min-height:300px;cursor:pointer}
-.card{position:relative;width:100%;height:100%;min-height:300px;transform-style:preserve-3d;transition:transform .6s}
-.card.flip{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center}
-.front{background:linear-gradient(160deg,#164e63,#1e293b);border:3px solid #22d3ee}
-.back{background:linear-gradient(160deg,#713f12,#1e293b);border:3px solid #facc15;transform:rotateY(180deg)}
-.face .big{font-size:64px}
-.face .t{font-size:30px;font-weight:bold}
-.hint{font-size:11px;color:#94a3b8}
-.bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-.btn{border:none;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:bold;cursor:pointer;background:#22d3ee;color:#0f172a}
-.btn.y{background:#facc15}.btn.gr{background:#334155;color:#fff}
-.prog{text-align:center;font-size:12px;color:#a5f3fc}
-#addP{background:#1e293b;border-radius:14px;padding:10px;display:none;flex-direction:column;gap:7px}
-#addP input{border:none;border-radius:10px;padding:10px;font-size:14px;background:#0f172a;color:#fff;outline:none;border:1px solid #334155}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#f5a524;font-size:21px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-top:4px}
+.wrap{max-width:600px;margin:auto;padding:0 12px}
+.note{text-align:center;color:#9aa3c0;font-size:14px;margin:12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.chip{border:1px solid #2a3157;background:#141a33;color:#f7ead9;border-radius:99px;padding:12px 18px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit}
+.chip.add{border-color:#4ade80;color:#4ade80}
+.screen{display:none}
+.screen.on{display:block}
+.back{border-radius:12px;border:1px solid #2a3157;background:#141a33;color:#f7ead9;padding:10px 18px;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin:8px 0}
+.card{background:#141a33;border:2px solid #2a3157;border-radius:18px;padding:26px;margin:14px 0;text-align:center}
+.front{font-size:34px;font-weight:900}
+.back2{font-size:28px;font-weight:900;color:#22d3ee;direction:ltr;margin-top:12px}
+.card button{border:none;background:#1a2440;color:#f7ead9;border-radius:10px;padding:9px 14px;cursor:pointer;font-size:17px;margin:4px}
+.big{width:100%;border-radius:14px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:18px;padding:15px;cursor:pointer;font-family:inherit;margin:6px 0}
+.row{display:flex;gap:8px}
+.row button{flex:1;border-radius:12px;border:none;font-weight:900;font-size:17px;padding:14px;cursor:pointer;font-family:inherit;color:#fff}
+.row .no{background:#dc2626}.row .ok{background:#16a34a}
+.opt{width:100%;border-radius:14px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-weight:900;font-size:20px;padding:15px;cursor:pointer;font-family:inherit;margin:6px 0;direction:ltr}
+.opt.ok{background:#16a34a;border:none}
+.opt.no{background:#dc2626;border:none}
+input{width:100%;padding:13px;border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:17px;font-family:inherit;margin:6px 0}
+.st{text-align:center;font-size:16px;font-weight:900;color:#22d3ee;margin:10px}
 </style>
 </head>
 <body>
-<div class="frame">
-<h2>🃏 الفلاشات الذكية</h2>
-<div class="welc" id="welc"></div>
-<div class="decks" id="decks"></div>
-<div class="scene" onclick="flipC()"><div class="card" id="card">
- <div class="face front"><div class="big" id="fBig"></div><div class="t" id="fT"></div><div class="hint">اضغط البطاقة لتقلبها 👆</div></div>
- <div class="face back"><div class="big" id="bBig"></div><div class="t" id="bT"></div><div class="hint">اضغط للرجوع 👆</div></div>
-</div></div>
-<div class="prog" id="prog"></div>
-<div class="bar">
- <button class="btn" onclick="go(-1)">➡️ السابق</button>
- <button class="btn gr" onclick="shuffleD()">🔀 خلط</button>
- <button class="btn" onclick="go(1)">التالي ⬅️</button>
+<header>🃏 فلاشاتي الذكية
+<small>رزم جاهزة + رزمك — تحفظ، تنطق، وتختبر</small></header>
+
+<div class="wrap">
+<div id="hub" class="screen on">
+ <div class="note">🃏 اختار رزمة وابدأ:</div>
+ <div class="chips" id="decks"></div>
 </div>
-<div class="bar"><button class="btn y" onclick="toggleAdd()">➕ بطاقتك الخاصة</button></div>
-<div id="addP">
- <input id="aF" placeholder="وجه البطاقة (مثلا: سيارة)">
- <input id="aB" placeholder="ظهر البطاقة (مثلا: Car 🚗)">
- <button class="btn y" onclick="addCard()">💾 حفظ البطاقة</button>
+
+<div id="study" class="screen">
+ <button class="back" onclick="goHub()">🏠 الرزم</button>
+ <button class="back" onclick="startQuiz()">🎮 اختبرني عليها</button>
+ <div class="st" id="sst"></div>
+ <div class="card" id="card"></div>
+</div>
+
+<div id="quiz" class="screen">
+ <button class="back" onclick="goHub()">🏠 الرزم</button>
+ <div class="st" id="qst"></div>
+ <div id="qbox"></div>
+</div>
+
+<div id="make" class="screen">
+ <button class="back" onclick="goHub()">🏠 الرزم</button>
+ <div class="card" style="text-align:right">
+  <input id="dn" placeholder="اسم الرزمة (مثلاً: كلمات البيت)">
+  <input id="df" placeholder="الوجه (عربي)">
+  <input id="db" placeholder="الظهر (إنكليزي أو تعريف)">
+  <button class="big" onclick="addCard()">➕ ضيف البطاقة</button>
+ </div>
+ <div class="st" id="mst"></div>
+ <div id="mlist"></div>
 </div>
 </div>
+
 <script>
 const DECKS={
- trans:{n:"🌍 ترجمة",items:[["بطة","Duck 🦆"],["شمس","Sun ☀️"],["كتاب","Book 📖"],["قمر","Moon 🌙"],["ماء","Water 💧"],["خبز","Bread 🍞"],["صديق","Friend 🤝"],["مدرسة","School 🏫"]]},
- letters:{n:"🔤 حروف",items:[["ب","B"],["ش","Sh"],["م","M"],["ك","K"],["ت","T"],["ن","N"]]},
- nums:{n:"🔢 أرقام",items:[["٣","Three 3"],["٧","Seven 7"],["١","Ten 10"],["٥","Five 5"]]},
- mine:{n:"⭐ بطاقاتك",items:[]}
+'حيوانات 🐾':[['أسد','lion'],['قطة','cat'],['كلب','dog'],['حصان','horse'],['جمل','camel'],['فيل','elephant'],['أرنب','rabbit'],['بطة','duck'],['نحلة','bee'],['سمكة','fish']],
+'أرقام 🔢':[['واحد','one'],['اثنان','two'],['ثلاثة','three'],['أربعة','four'],['خمسة','five'],['ستة','six'],['سبعة','seven'],['ثمانية','eight'],['تسعة','nine'],['عشرة','ten']],
+'ألوان 🎨':[['أحمر','red'],['أزرق','blue'],['أخضر','green'],['أصفر','yellow'],['أسود','black'],['أبيض','white'],['برتقالي','orange'],['وردي','pink']],
+'طعام 🍎':[['خبز','bread'],['حليب','milk'],['تفاحة','apple'],['موز','banana'],['عسل','honey'],['جبن','cheese'],['بيض','egg'],['ماء','water']],
+'عائلة 👪':[['أب','father'],['أم','mother'],['أخ','brother'],['أخت','sister'],['جد','grandfather'],['جدة','grandmother'],['ابن','son'],['ابنة','daughter']],
+'مهن 🛠️':[['معلم','teacher'],['طبيب','doctor'],['مهندس','engineer'],['نجار','carpenter'],['خباز','baker'],['سائق','driver'],['طباخ','cook'],['فلاح','farmer']]
 };
-let cur="trans",idx=0,flipped=false;
-try{DECKS.mine.items=JSON.parse(localStorage.getItem("flashMine")||"[]")}catch(e){}
-let POS=JSON.parse(localStorage.getItem("flashPos")||"{}");
-function speak(t,l){try{const x=new SpeechSynthesisUtterance(t);x.lang=l||"ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+let custom=JSON.parse(localStorage.getItem('flash_custom')||'{}');
+let cur=[],Q=[],qsc=0,qrd=0;
+function sp(t,l){const u=new SpeechSynthesisUtterance(t);u.lang=l==='ar'?'ar-SA':'en-US';speechSynthesis.cancel();speechSynthesis.speak(u)}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
+function goHub(){show('hub');renderDecks()}
 function renderDecks(){
- document.getElementById("decks").innerHTML=Object.keys(DECKS).map(k=>`<button class="${k===cur?"on":""}" onclick="setDeck('${k}')">${DECKS[k].n}</button>`).join("");
+ const names=[...Object.keys(DECKS),...Object.keys(custom)];
+ document.getElementById('decks').innerHTML=names.map((n,i)=>`<button class="chip" onclick="pick(${i})">🃏 ${n}</button>`).join('')+`<button class="chip add" onclick="show('make');renderMine()">➕ رزمة جديدة</button>`;
+ window._names=names;
 }
-function setDeck(k){cur=k;idx=POS[k]||0;renderDecks();show()}
-function show(){
- const it=DECKS[cur].items;
- if(!it.length){document.getElementById("fBig").textContent="🃏";document.getElementById("fT").textContent="لا بطاقات — ضيف وحدة!";document.getElementById("bBig").textContent="";document.getElementById("bT").textContent="";document.getElementById("prog").textContent="";return}
- idx=(idx+it.length)%it.length;
- POS[cur]=idx;localStorage.setItem("flashPos",JSON.stringify(POS));
- const x=it[idx];flipped=false;
- document.getElementById("card").classList.remove("flip");
- document.getElementById("fBig").textContent=/[\u{1F300}-\u{1FAFF}]/u.test(x[0])?"":x[0].split(" ")[0];
- document.getElementById("fT").textContent=x[0];
- document.getElementById("bBig").textContent="";
- document.getElementById("bT").textContent=x[1];
- document.getElementById("prog").textContent="البطاقة "+(idx+1)+" من "+it.length+" • "+DECKS[cur].n;
- speak(x[0],"ar-SA");
+function pick(i){cur=(DECKS[window._names[i]]||custom[window._names[i]]).slice();startStudy()}
+function startStudy(){show('study');Q=cur.slice().sort(()=>Math.random()-.5);nextCard()}
+function nextCard(){
+ document.getElementById('sst').textContent='باقي '+Q.length+' بطاقة';
+ if(!Q.length){document.getElementById('card').innerHTML='<div class="front">🎉 خلصت الرزمة!</div><div class="back2">كلها انحفطت!</div>';return}
+ const c=Q[0];
+ document.getElementById('card').innerHTML=`<div class="front">${c[0]} <button onclick="sp('${c[0]}','ar')">🔊</button></div>
+ <div class="back2" id="bk" style="display:none">${c[1]} <button onclick="sp('${c[1]}','en')">🔊</button></div>
+ <button class="big" onclick="document.getElementById('bk').style.display='block'">🔄 اقلب البطاقة</button>
+ <div class="row"><button class="no" onclick="wrong()">❌ ما عرفتها</button><button class="ok" onclick="right()">✅ عرفتها</button></div>`;
 }
-function flipC(){
- const it=DECKS[cur].items;if(!it.length)return;
- flipped=!flipped;
- document.getElementById("card").classList.toggle("flip",flipped);
- if(flipped)speak(it[idx][1].replace(/[^\p{L}\p{N}\s]/gu,""),/^[a-zA-Z]/.test(it[idx][1])?"en-US":"ar-SA");
+function wrong(){Q.push(Q.shift());nextCard()}
+function right(){Q.shift();nextCard()}
+function startQuiz(){show('quiz');qsc=0;qrd=0;qNext()}
+function qNext(){
+ if(qrd>=10){document.getElementById('qbox').innerHTML='';
+  document.getElementById('qst').textContent=qsc>=8?'🏆 حافظ ملكي! '+qsc+'/١٠':qsc>=5?'💪 منيح! '+qsc+'/١٠':'🌱 ارجع احفظ وجرّب! '+qsc+'/١٠';return}
+ qrd++;
+ const c=cur[Math.floor(Math.random()*cur.length)];
+ const opts=[c[1]];while(opts.length<Math.min(4,cur.length)){const r=cur[Math.floor(Math.random()*cur.length)][1];if(!opts.includes(r))opts.push(r)}
+ opts.sort(()=>Math.random()-.5);
+ document.getElementById('qst').textContent='شو ترجمة: '+c[0]+' ؟ — '+qrd+'/١٠ نقاط: '+qsc;
+ document.getElementById('qbox').innerHTML=opts.map(o=>`<button class="opt" onclick="qchk(this,'${o}','${c[1]}')">${o}</button>`).join('');
 }
-function go(d){idx+=d;show()}
-function shuffleD(){DECKS[cur].items.sort(()=>Math.random()-.5);idx=0;show()}
-function toggleAdd(){const p=document.getElementById("addP");p.style.display=p.style.display==="flex"?"none":"flex"}
+function qchk(b,o,a){if(o===a){b.classList.add('ok');qsc++}else{b.classList.add('no')}setTimeout(qNext,600)}
 function addCard(){
- const f=document.getElementById("aF").value.trim(),b=document.getElementById("aB").value.trim();
- if(!f||!b){alert("عبّي الوجه والظهر");return}
- DECKS.mine.items.push([f,b]);
- localStorage.setItem("flashMine",JSON.stringify(DECKS.mine.items));
- document.getElementById("aF").value="";document.getElementById("aB").value="";
- setDeck("mine");alert("انحفظت بطاقتك ⭐");
+ const n=document.getElementById('dn').value.trim(),f=document.getElementById('df').value.trim(),b=document.getElementById('db').value.trim();
+ if(!n||!f||!b){document.getElementById('mst').textContent='⚠️ عبّي الخانات الثلاثة!';return}
+ if(!custom[n])custom[n]=[];
+ custom[n].push([f,b]);
+ localStorage.setItem('flash_custom',JSON.stringify(custom));
+ document.getElementById('df').value='';document.getElementById('db').value='';
+ document.getElementById('mst').textContent='✅ انضافت! رزمة "'+n+'" فيها '+custom[n].length+' بطاقة';
+ renderMine();
 }
+function renderMine(){
+ document.getElementById('mlist').innerHTML=Object.keys(custom).map(n=>`<div class="card" style="text-align:right"><b style="font-size:18px">🃏 ${n} (${custom[n].length})</b><br><small style="color:#9aa3c0">${custom[n].slice(0,5).map(c=>c[0]).join('، ')}...</small><br><button class="big" onclick="delDeck('${n}')" style="background:#dc2626;color:#fff">🗑️ حذف الرزمة</button></div>`).join('')||'<div class="note">لسا ما صنعت رزم — ابدأ بالأولى!</div>';
+}
+function delDeck(n){delete custom[n];localStorage.setItem('flash_custom',JSON.stringify(custom));renderMine()}
 renderDecks();
-const last=POS[cur]||0;
-if(last>0)document.getElementById("welc").textContent="👋 رجعت! وقفنا عند البطاقة "+(last+1)+" — كمّل من هون";
-idx=last;show();
 </script>
 </body>
 </html>
