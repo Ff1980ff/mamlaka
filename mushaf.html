@@ -84,7 +84,7 @@ function draw(d,sc){
  let h=(d.number!==1&&d.number!==9)?'<div class="bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>':'';
  d.ayahs.forEach(a=>{
   let t=a.text;
-  if(a.numberInSurah===1&&d.number!==1&&d.number!==9)t=t.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ','');
+  if(a.numberInSurah===1&&d.number!==1&&d.number!==9)t=t.replace(/^بِسْمِ\s+\S+\s+\S+\s+\S+\s*/,'');
   const on=bm.some(b=>b.s===d.number&&b.a===a.numberInSurah);
   h+=`<div class="ay" id="a${a.numberInSurah}">${t}<span class="no">${a.numberInSurah}</span>
   <div class="ab"><button onclick="pa(${d.number},${a.numberInSurah})">🔊</button><button onclick="taf(${d.number},${a.numberInSurah},this)">📚 تفسير</button><button class="${on?'on':''}" onclick="tm(${d.number},${a.numberInSurah},this)">${on?'⭐':'☆'}</button></div>
