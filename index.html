@@ -30,6 +30,9 @@ nav a:hover{color:var(--amber);opacity:1}
 .btn.amber{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#241303;box-shadow:0 6px 22px rgba(245,165,36,.35)}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--cream)}
 .btn:hover{transform:translateY(-2px)}
+.new-banner{text-align:center;padding:20px;background:linear-gradient(135deg,rgba(245,165,36,.15),rgba(34,211,238,.15));border-radius:20px;margin:20px auto;max-width:600px;border:2px solid var(--amber)}
+.new-banner a{color:var(--amber);font-size:20px;font-weight:900;text-decoration:none;display:block;padding:10px}
+.new-banner a:hover{color:var(--cyan)}
 section{padding:70px 20px;max-width:1000px;margin:auto}
 .stitle{text-align:center;margin-bottom:40px}
 .stitle h2{font-size:clamp(22px,5vw,32px);font-weight:900}
@@ -136,6 +139,7 @@ footer b{color:var(--amber)}
 <nav>
  <div class="logo">🏰 مملكة التطبيقات</div>
  <div class="links">
+  <a href="new.html" style="color:var(--cyan)">🆕 جديد</a>
   <a href="#falsafa">الفلسفة</a>
   <a href="#apps">التطبيقات</a>
   <a href="#diwan">الديوان 🍽️</a>
@@ -155,6 +159,10 @@ footer b{color:var(--amber)}
   <button class="btn ghost" onclick="location.hash='#diwan'">مدّ إيدك ع المناسف 🍽️</button>
  </div>
 </header>
+
+<div class="new-banner rev">
+ <a href="new.html">🆕 جديد المملكة — آخر الإضافات والتحديثات</a>
+</div>
 
 <section id="falsafa">
  <div class="stitle rev"><h2>فلسفة المملكة: <span>بيت ← جيران ← عالم</span></h2>
