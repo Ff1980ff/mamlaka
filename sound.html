@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>استوديو المونتاج الملكي 🎚️</title>
+<style>
+body{background:#0d0b1a;color:#eee;font-family:Tahoma,sans-serif;margin:0;padding:16px;text-align:center}
+h1{color:#f5c542}
+.box{background:#1a1730;border:1px solid #2c2850;border-radius:14px;padding:14px;margin:12px auto;max-width:520px;text-align:right}
+button{background:#f5c542;color:#221;border:none;border-radius:10px;padding:12px 16px;font-weight:bold;margin:4px;cursor:pointer;font-size:14px}
+button.red{background:#e05555;color:#fff}
+input[type=number]{width:70px;background:#12102a;border:1px solid #2c2850;color:#eee;border-radius:8px;padding:8px;font-size:14px}
+input[type=range]{width:100%}
+small{color:#888;display:block;line-height:1.8}
+#info{color:#22d3ee;min-height:22px;margin-top:8px;text-align:center}
+label{font-size:13px;color:#aaa}
+</style>
+</head>
+<body>
+<h1>🎚️ استوديو المونتاج الملكي</h1>
+<small>قص، دمج، سرعة، علو — وتصدير WAV، بدون برامج كمبيوتر</small>
+
+<div class="box">
+<button onclick="file1.click()">📂 حمّل صوتك</button>
+<input type="file" id="file1" accept="audio/*" style="display:none" onchange="load(this,1)">
+<button onclick="file2.click()">➕ دمج صوت ثاني</button>
+<input type="file" id="file2" accept="audio/*" style="display:none" onchange="load(this,2)">
+<div id="info">ما في صوت محمل بعد</div>
+</div>
+
+<div class="box">
+<label>✂️ قص من ثانية:</label> <input type="number" id="ts" value="0" step="0.5">
+<label>إلى ثانية:</label> <input type="number" id="te" value="0" step="0.5">
+<button onclick="trim()">✂️ اقصّ</button>
+</div>
+
+<div class="box">
+<label>⚡ السرعة: <span id="rv">1</span>x</label>
+<input type="range" id="rate" min="0.5" max="2" step="0.1" value="1" oninput="rv.textContent=this.value">
+<label>🔉 العلو: <span id="gv">1</span>x</label>
+<input type="range" id="gain" min="0" max="2" step="0.1" value="1" oninput="gv.textContent=this.value">
+</div>
+
+<div class="box" style="text-align:center">
+<button onclick="play()">▶️ اسمع النتيجة</button>
+<button class="red" onclick="stop()">⏸️ إيقاف</button>
+<button onclick="exportWav()">💾 صدّر WAV</button>
+</div>
+
+<script>
+let AC=null,buf=null,src=null;
+function ac(){AC=AC||new (window.AudioContext||window.webkitAudioContext)();return AC}
+function load(inp,n){
+ const f=inp.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{ac().decodeAudioData(r.result,b=>{
+   if(n===2&&buf){buf=concat(buf,b);info('تم الدمج! ✅')}
+   else{buf=b;document.getElementById('te').value=b.duration.toFixed(1)}
+   info('محمل: '+f.name+' ('+buf.duration.toFixed(1)+' ثانية)');
+ },()=>info('تعذر فك الصوت'))};
+ r.readAsArrayBuffer(f);
+}
+function concat(a,b){
+ const len=a.length+b.length,ch=a.numberOfChannels;
+ const c=ac().createBuffer(ch,len,a.sampleRate);
+ for(let i=0;i<ch;i++){const d=c.getChannelData(i);d.set(a.getChannelData(i),0);d.set(b.getChannelData(i),a.length)}
+ return c;
+}
+function trim(){
+ if(!buf)return;
+ const s=Math.max(0,parseFloat(document.getElementById('ts').value)||0);
+ let e=Math.min(buf.duration,parseFloat(document.getElementById('te').value)||buf.duration);
+ if(e<=s){info('النهاية لازم بعد البداية');return}
+ const sr=buf.sampleRate,ch=buf.numberOfChannels;
+ const s1=Math.floor(s*sr),s2=Math.floor(e*sr);
+ const c=ac().createBuffer(ch,s2-s1,sr);
+ for(let i=0;i<ch;i++)c.getChannelData(i).set(buf.getChannelData(i).subarray(s1,s2));
+ buf=c;document.getElementById('ts').value=0;document.getElementById('te').value=buf.duration.toFixed(1);
+ info('انقصّ! المدة الجديدة: '+buf.duration.toFixed(1)+' ثانية');
+}
+function play(){
+ stop();if(!buf)return;
+ src=ac().createBufferSource();src.buffer=buf;
+ const g=ac().createGain();g.gain.value=parseFloat(document.getElementById('gain').value);
+ src.playbackRate.value=parseFloat(document.getElementById('rate').value);
+ src.connect(g);g.connect(ac().destination);src.start();
+}
+function stop(){try{src&&src.stop()}catch(e){}}
+function exportWav(){
+ if(!buf)return;
+ const rate=parseFloat(document.getElementById('rate').value),gain=parseFloat(document.getElementById('gain').value);
+ const off=new OfflineAudioContext(buf.numberOfChannels,Math.ceil(buf.length/rate),buf.sampleRate);
+ const s=off.createBufferSource();s.buffer=buf;s.playbackRate.value=rate;
+ const g=off.createGain();g.gain.value=gain;
+ s.connect(g);g.connect(off.destination);s.start();
+ off.startRendering().then(rb=>{
+   const a=document.createElement('a');a.href=URL.createObjectURL(toWav(rb));a.download='royal-edit.wav';a.click();
+   info('انصدّر الملف! 💾');
+ });
+}
+function toWav(b){
+ const ch=b.numberOfChannels,sr=b.sampleRate,len=b.length*ch*2;
+ const ab=new ArrayBuffer(44+len),v=new DataView(ab);
+ const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+ ws(0,'RIFF');v.setUint32(4,36+len,true);ws(8,'WAVE');ws(12,'fmt ');
+ v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,ch,true);
+ v.setUint32(24,sr,true);v.setUint32(28,sr*ch*2,true);v.setUint16(32,ch*2,true);v.setUint16(34,16,true);
+ ws(36,'data');v.setUint32(40,len,true);
+ let o=44;
+ for(let i=0;i<b.length;i++)for(let c=0;c<ch;c++){
+   let x=Math.max(-1,Math.min(1,b.getChannelData(c)[i]));
+   v.setInt16(o,x<0?x*0x8000:x*0x7FFF,true);o+=2;
+ }
+ return new Blob([ab],{type:'audio/wav'});
+}
+function info(t){document.getElementById('info').textContent=t}
+</script>
+</body>
+</html>
