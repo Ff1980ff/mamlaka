@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>استوديو الأصوات الملكي 🎙️</title>
+<style>
+body{background:#0d0b1a;color:#eee;font-family:Tahoma,sans-serif;margin:0;padding:16px;text-align:center}
+h1{color:#f5c542}
+.box{background:#1a1730;border:1px solid #2c2850;border-radius:14px;padding:14px;margin:12px auto;max-width:520px;text-align:right}
+textarea,select{width:100%;box-sizing:border-box;background:#12102a;border:1px solid #2c2850;color:#eee;border-radius:10px;padding:10px;font-size:16px;font-family:inherit}
+button{background:#f5c542;color:#221;border:none;border-radius:10px;padding:12px 18px;font-weight:bold;margin:4px;cursor:pointer;font-size:15px}
+button.stop{background:#e05555;color:#fff}
+.chars{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.chars button{background:#12102a;color:#eee;border:1px solid #2c2850}
+.chars button.on{background:#f5c542;color:#221}
+small{color:#888;line-height:1.8;display:block}
+#status{color:#22d3ee;min-height:22px;margin-top:8px}
+</style>
+</head>
+<body>
+<h1>🎙️ استوديو الأصوات الملكي</h1>
+<small>حوّل الكتابة لصوت — 4 شخصيات + وضع الحوار</small>
+
+<div class="box">
+<textarea id="txt" rows="5" placeholder="اكتب النص هون..."></textarea>
+</div>
+
+<div class="box">
+<small>اختر الشخصية:</small>
+<div class="chars">
+<button class="on" onclick="setChar(0,this)">🤪 الجاهل</button>
+<button onclick="setChar(1,this)">🎓 المتعلم</button>
+<button onclick="setChar(2,this)">🧒 الطفل</button>
+<button onclick="setChar(3,this)">📖 الراوي</button>
+</div>
+</div>
+
+<div class="box">
+<small>اللغة:</small>
+<select id="lang">
+<option value="ar-SA">العربية</option>
+<option value="en-US">English</option>
+<option value="fr-FR">Français</option>
+<option value="tr-TR">Türkçe</option>
+<option value="es-ES">Español</option>
+</select>
+</div>
+
+<button onclick="speak()">🔊 انطق</button>
+<button onclick="speakDialogue()">🎭 حوار كامل</button>
+<button class="stop" onclick="stop()">⏸️ إيقاف</button>
+<div id="status"></div>
+
+<div class="box">
+<small>💡 وضع الحوار: كل سطر ببدايته:<br>
+"ج:" = الجاهل — "م:" = المتعلم<br>
+مثال:<br>
+ج: مرحبا! كيف حالك؟<br>
+م: أهلا وسهلا يا صديقي!</small>
+</div>
+
+<script>
+const CH=[
+ {r:1.4,p:1.5,n:'الجاهل'},
+ {r:0.85,p:0.8,n:'المتعلم'},
+ {r:1.0,p:1.8,n:'الطفل'},
+ {r:0.9,p:1.0,n:'الراوي'}
+];
+let cur=0;
+function setChar(i,b){cur=i;document.querySelectorAll('.chars button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function say(t,c,lang){return new Promise(res=>{const u=new SpeechSynthesisUtterance(t);u.rate=CH[c].r;u.pitch=CH[c].p;u.lang=lang;u.onend=res;u.onerror=res;speechSynthesis.speak(u)})}
+function speak(){
+ stop();
+ const t=document.getElementById('txt').value.trim();
+ if(!t)return;
+ document.getElementById('status').textContent='🔊 '+CH[cur].n+' عم يحكي...';
+ say(t,cur,document.getElementById('lang').value).then(()=>{document.getElementById('status').textContent='✅ خلص'});
+}
+async function speakDialogue(){
+ stop();
+ const lines=document.getElementById('txt').value.split('\n').map(l=>l.trim()).filter(l=>l);
+ document.getElementById('status').textContent='🎭 الحوار شغال...';
+ for(const l of lines){
+  let c=cur,t=l;
+  if(l.startsWith('ج:')){c=0;t=l.slice(2)}
+  else if(l.startsWith('م:')){c=1;t=l.slice(2)}
+  await say(t.trim(),c,'ar-SA');
+ }
+ document.getElementById('status').textContent='✅ خلص الحوار';
+}
+function stop(){speechSynthesis.cancel();document.getElementById('status').textContent=''}
+</script>
+</body>
+</html>
