@@ -2,128 +2,104 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>العقل الملكي 🧠</title>
 <style>
-:root{--bg:#0d0b1a;--card:#1a1730;--gold:#f5c542}
-*{box-sizing:border-box}
-body{background:var(--bg);color:#eee;font-family:Tahoma,sans-serif;margin:0;padding:10px 10px 70px}
-h1{text-align:center;color:var(--gold);font-size:19px}
-.tab{display:none}.tab.on{display:block}
-nav{position:fixed;bottom:0;right:0;left:0;background:#141126;display:flex;border-top:1px solid #2c2850}
-nav button{flex:1;background:none;border:none;color:#aaa;padding:12px 0;font-size:13px;cursor:pointer}
-nav button.on{color:var(--gold);font-weight:bold}
-.card{background:var(--card);border:1px solid #2c2850;border-radius:14px;padding:12px;margin:10px 0}
-input,select,textarea{width:100%;background:#12102a;color:#fff;border:1px solid #2c2850;border-radius:10px;padding:10px;font-size:16px;margin:4px 0}
-.disp{background:#12102a;border:1px solid #2c2850;border-radius:12px;padding:12px;font-size:24px;text-align:left;direction:ltr;min-height:52px;overflow-x:auto;white-space:nowrap}
+body{background:#0d0b1a;color:#eee;font-family:Tahoma,sans-serif;margin:0;padding:16px;text-align:center}
+h1{color:#f5c542}
+.tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.tabs button{background:#1a1730;border:1px solid #2c2850;color:#eee;border-radius:99px;padding:10px 16px;font-weight:bold;cursor:pointer}
+.tabs button.on{background:#f5c542;color:#221}
+.panel{display:none;max-width:480px;margin:auto}
+.panel.on{display:block}
+.box{background:#1a1730;border:1px solid #2c2850;border-radius:14px;padding:14px;margin:10px 0;text-align:right}
+input,textarea,select{width:100%;box-sizing:border-box;background:#12102a;border:1px solid #2c2850;color:#eee;border-radius:10px;padding:10px;font-size:16px;font-family:inherit}
+button.act{background:#f5c542;color:#221;border:none;border-radius:10px;padding:10px 16px;font-weight:bold;margin:4px;cursor:pointer}
+.out{font-size:22px;color:#f5c542;min-height:30px;margin:8px 0;word-break:break-all}
 .keys{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
-.keys button{background:#2c2850;color:#fff;border:none;border-radius:10px;padding:13px 0;font-size:15px;cursor:pointer}
-.keys .g{background:var(--gold);color:#221;font-weight:bold}
-.keys .r{background:#e55;color:#fff}
-.btn{background:var(--gold);color:#221;border:none;border-radius:10px;padding:9px 14px;font-weight:bold;margin:3px 2px;cursor:pointer}
-.btn.b{background:#48f;color:#fff}
-.item{background:#12102a;border:1px solid #2c2850;border-radius:10px;padding:9px;margin:6px 0;font-size:14px}
-.item b{color:var(--gold)}
+.keys button{background:#12102a;border:1px solid #2c2850;color:#eee;border-radius:10px;padding:12px 0;font-size:16px;cursor:pointer}
 small{color:#888}
 </style>
 </head>
 <body>
-<h1>🧠 العقل الملكي — ٤ عقول بواحد</h1>
-<nav>
-<button class="on" data-t="calc">🧮 حاسبة</button>
-<button data-t="dict">📖 معجم</button>
-<button data-t="trans">🌐 مترجم</button>
-<button data-t="mem">💾 ذاكرة</button>
-</nav>
+<h1>🧠 العقل الملكي</h1>
+<small>4 عقول بواحد: حاسبة + معجم + مترجم + ذاكرة</small>
+<div class="tabs">
+<button class="on" onclick="tab(0,this)">🔢 حاسبة</button>
+<button onclick="tab(1,this)">📖 معجم</button>
+<button onclick="tab(2,this)">🌍 مترجم</button>
+<button onclick="tab(3,this)">🗒️ ذاكرة</button>
+</div>
 
-<div class="tab on" id="calc"><div class="card">
-<div class="disp" id="d">0</div>
-<small id="mi">الذاكرة م: 0 | DEG</small>
+<div class="panel on" id="p0">
+<div class="box">
+<input id="exp" placeholder="اكتب عملية أو استخدم الأزرار..." inputmode="decimal">
+<div class="out" id="res">0</div>
 <div class="keys">
-<button onclick="k('sin(')">sin</button><button onclick="k('cos(')">cos</button><button onclick="k('tan(')">tan</button><button onclick="k('log(')">log</button><button onclick="k('ln(')">ln</button>
-<button onclick="k('√(')">√</button><button onclick="k('^')">xʸ</button><button onclick="k('(')">(</button><button onclick="k(')')">)</button><button onclick="k('π')">π</button>
-<button onclick="k('7')">7</button><button onclick="k('8')">8</button><button onclick="k('9')">9</button><button onclick="k('÷')">÷</button><button class="r" onclick="back()">⌫</button>
-<button onclick="k('4')">4</button><button onclick="k('5')">5</button><button onclick="k('6')">6</button><button onclick="k('×')">×</button><button class="r" onclick="expr='';show()">C</button>
-<button onclick="k('1')">1</button><button onclick="k('2')">2</button><button onclick="k('3')">3</button><button onclick="k('−')">−</button><button onclick="k('E')">E</button>
-<button onclick="k('0')">0</button><button onclick="k('.')">.</button><button onclick="k('%')">%</button><button onclick="k('+')">+</button><button class="g" onclick="eq()">=</button>
-<button onclick="mc()">MC</button><button onclick="mr()">MR</button><button onclick="mp()">M+</button><button onclick="mm()">M−</button><button onclick="tg()">DEG</button>
-</div></div></div>
+<button onclick="k('7')">7</button><button onclick="k('8')">8</button><button onclick="k('9')">9</button><button onclick="k('/')">÷</button><button onclick="k('sqrt(')">√</button>
+<button onclick="k('4')">4</button><button onclick="k('5')">5</button><button onclick="k('6')">6</button><button onclick="k('*')">×</button><button onclick="k('^')">^</button>
+<button onclick="k('1')">1</button><button onclick="k('2')">2</button><button onclick="k('3')">3</button><button onclick="k('-')">-</button><button onclick="k('sin(')">sin</button>
+<button onclick="k('0')">0</button><button onclick="k('.')">.</button><button onclick="k('(')">(</button><button onclick="k(')')">)</button><button onclick="k('+')">+</button>
+<button onclick="k('3.14159')">π</button><button onclick="k('cos(')">cos</button><button onclick="clr()">C</button><button onclick="del()">⌫</button><button style="background:#f5c542;color:#221" onclick="calc()">=</button>
+</div>
+</div>
+</div>
 
-<div class="tab" id="dict"><div class="card">
-<input id="dq" placeholder="دوّر: طاقة، Energy، خلية..." oninput="renderDict(this.value)">
-<div id="dlist"></div>
-</div></div>
+<div class="panel" id="p1">
+<div class="box">
+<input id="term" placeholder="اكتب مصطلح علمي... مثال: طاقة">
+<button class="act" onclick="look()">🔍 ابحث وانطق</button>
+<div class="out" id="tOut" style="font-size:16px"></div>
+</div>
+</div>
 
-<div class="tab" id="trans"><div class="card">
-<select id="from"><option value="en">إنكليزي</option><option value="ar">عربي</option><option value="fr">فرنسي</option><option value="tr">تركي</option></select>
-<select id="to"><option value="ar">عربي</option><option value="en">إنكليزي</option><option value="fr">فرنسي</option><option value="tr">تركي</option></select>
-<textarea id="tin" rows="3" placeholder="اكتب الجملة..."></textarea>
-<button class="btn" onclick="tr()">🌐 ترجم</button>
-<div class="item" id="tout">—</div>
-</div></div>
+<div class="panel" id="p2">
+<div class="box">
+<textarea id="txt" placeholder="اكتب النص للترجمة..."></textarea>
+<select id="dir"><option value="ar|en">عربي ← إنكليزي</option><option value="en|ar">إنكليزي ← عربي</option></select>
+<button class="act" onclick="tr()">🌍 ترجم</button>
+<div class="out" id="trOut" style="font-size:16px"></div>
+</div>
+</div>
 
-<div class="tab" id="mem"><div class="card">
-<b>🧮 سجل الحاسبة</b><button class="btn b" onclick="clr('calc')">مسح</button><div id="mCalc"></div>
-<b>⭐ كلمات محفوظة</b><button class="btn b" onclick="clr('saved')">مسح</button><div id="mSaved"></div>
-<b>🌐 سجل الترجمة</b><button class="btn b" onclick="clr('trans')">مسح</button><div id="mTrans"></div>
-</div></div>
+<div class="panel" id="p3">
+<div class="box">
+<textarea id="note" placeholder="اكتب تذكرتك..."></textarea>
+<button class="act" onclick="saveN()">💾 احفظ</button>
+<div id="notes"></div>
+</div>
+</div>
 
 <script>
-let expr='',mem=0,deg=true;
-const $=id=>document.getElementById(id);
-function show(){$('d').textContent=expr||'0';$('mi').textContent='الذاكرة م: '+mem+' | '+(deg?'DEG':'RAD');}
-function k(t){expr+=t;show();}
-function back(){const T=['sin(','cos(','tan(','log(','ln(','√('];
-for(const x of T)if(expr.endsWith(x)){expr=expr.slice(0,-x.length);show();return;}
-expr=expr.slice(0,-1);show();}
-function eq(){try{
- let t=expr.replace(/sin\(|cos\(|tan\(|log\(|ln\(|√\(/g,'').replace(/[0-9.+\-×÷^()%πE ]/g,'');
- if(t)throw 0;
- let e=expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/\^/g,'**').replace(/%/g,'/100').replace(/π/g,'P').replace(/√\(/g,'q(');
- const D=deg?Math.PI/180:1;
- const f=new Function('sin','cos','tan','log','ln','q','P','E','return('+e+')');
- const r=f(x=>Math.sin(x*D),x=>Math.cos(x*D),x=>Math.tan(x*D),x=>Math.log10(x),x=>Math.log(x),x=>Math.sqrt(x),Math.PI,Math.E);
- if(!isFinite(r))throw 0;
- const res=Math.round(r*1e10)/1e10;
- push('calc',expr+' = '+res);expr=String(res);show();
-}catch(_){alert('تحقق من العملية');}}
-function mc(){mem=0;show();}function mr(){expr+=mem;show();}
-function mp(){mem+=parseFloat(expr)||0;show();}function mm(){mem-=parseFloat(expr)||0;show();}
-function tg(){deg=!deg;show();}
-
-const TERMS=[["طاقة","Energy","فيزياء"],["قوة","Force","فيزياء"],["سرعة","Velocity","فيزياء"],["تسارع","Acceleration","فيزياء"],["جاذبية","Gravity","فيزياء"],["كتلة","Mass","فيزياء"],["شحنة","Charge","فيزياء"],["تيار","Current","فيزياء"],["جهد","Voltage","فيزياء"],["مقاومة","Resistance","فيزياء"],["مغناطيس","Magnet","فيزياء"],["ضوء","Light","فيزياء"],["صوت","Sound","فيزياء"],["حرارة","Heat","فيزياء"],["ضغط","Pressure","فيزياء"],["كثافة","Density","فيزياء"],["ذرة","Atom","فيزياء"],["إلكترون","Electron","فيزياء"],["بروتون","Proton","فيزياء"],["نيوترون","Neutron","فيزياء"],["موجة","Wave","فيزياء"],["تردد","Frequency","فيزياء"],["احتكاك","Friction","فيزياء"],["قدرة","Power","فيزياء"],["شغل","Work","فيزياء"],
-["عنصر","Element","كيمياء"],["مركب","Compound","كيمياء"],["جزيء","Molecule","كيمياء"],["تفاعل","Reaction","كيمياء"],["حمض","Acid","كيمياء"],["قاعدة","Base","كيمياء"],["ملح","Salt","كيمياء"],["محلول","Solution","كيمياء"],["مذيب","Solvent","كيمياء"],["تبخر","Evaporation","كيمياء"],["تكاثف","Condensation","كيمياء"],["انصهار","Melting","كيمياء"],["تجمد","Freezing","كيمياء"],["أكسجين","Oxygen","كيمياء"],["هيدروجين","Hydrogen","كيمياء"],["كربون","Carbon","كيمياء"],["نيتروجين","Nitrogen","كيمياء"],
-["خلية","Cell","أحياء"],["نواة","Nucleus","أحياء"],["غشاء","Membrane","أحياء"],["بناء ضوئي","Photosynthesis","أحياء"],["تنفس","Respiration","أحياء"],["هضم","Digestion","أحياء"],["وراثة","Genetics","أحياء"],["إنزيم","Enzyme","أحياء"],["هرمون","Hormone","أحياء"],["بكتيريا","Bacteria","أحياء"],["فيروس","Virus","أحياء"],["لقاح","Vaccine","أحياء"],["مناعة","Immunity","أحياء"],
-["معادلة","Equation","رياضيات"],["متغير","Variable","رياضيات"],["ثابت","Constant","رياضيات"],["دالة","Function","رياضيات"],["مشتقة","Derivative","رياضيات"],["تكامل","Integral","رياضيات"],["احتمال","Probability","رياضيات"],["إحصاء","Statistics","رياضيات"],["متوسط","Average","رياضيات"],["مساحة","Area","رياضيات"],["محيط","Perimeter","رياضيات"],["حجم","Volume","رياضيات"],["زاوية","Angle","رياضيات"],["مثلث","Triangle","رياضيات"],["دائرة","Circle","رياضيات"],["نصف قطر","Radius","رياضيات"],["جذر","Root","رياضيات"],["أس","Exponent","رياضيات"],["لوغاريتم","Logarithm","رياضيات"],["عدد أولي","Prime Number","رياضيات"],["كسر","Fraction","رياضيات"]];
-
-function renderDict(q){q=(q||'').trim().toLowerCase();
-const L=TERMS.filter(t=>!q||t[0].includes(q)||t[1].toLowerCase().includes(q));
-$('dlist').innerHTML=L.slice(0,60).map(t=>'<div class="item"><b>'+t[0]+'</b> = '+t[1]+' <small>'+t[2]+'</small> <button class="btn b" onclick="say(\''+t[1]+'\')">🔊</button><button class="btn" onclick="saveWord(\''+t[0]+'\',\''+t[1]+'\')">⭐</button></div>').join('')||'<p>لا نتائج</p>';}
-function say(t){const u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u);}
-function saveWord(a,e){const s=JSON.parse(localStorage.getItem('royal_saved')||'[]');
-if(!s.find(x=>x.ar===a)){s.unshift({ar:a,en:e});localStorage.setItem('royal_saved',JSON.stringify(s));alert('⭐ محفوظة بالذاكرة');}}
-
-async function tr(){const q=$('tin').value.trim();if(!q)return;
-$('tout').textContent='⏳...';
-try{const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+$('from').value+'|'+$('to').value);
-const j=await r.json();const o=j.responseData.translatedText;
-$('tout').textContent=o;push('trans',q+' ← '+o);
-}catch(_){$('tout').textContent='⚠️ المترجم بدو نت';}}
-
-function push(key,val){const k='royal_'+key;const a=JSON.parse(localStorage.getItem(k)||'[]');a.unshift(val);if(a.length>50)a.pop();localStorage.setItem(k,JSON.stringify(a));}
-function clr(key){localStorage.removeItem('royal_'+key);renderMem();}
-function renderMem(){
-$('mCalc').innerHTML=(JSON.parse(localStorage.getItem('royal_calc')||'[]')).map(x=>'<div class="item">'+x+'</div>').join('')||'<small>فاضي</small>';
-$('mSaved').innerHTML=(JSON.parse(localStorage.getItem('royal_saved')||'[]')).map(x=>'<div class="item"><b>'+x.ar+'</b> = '+x.en+'</div>').join('')||'<small>فاضي</small>';
-$('mTrans').innerHTML=(JSON.parse(localStorage.getItem('royal_trans')||'[]')).map(x=>'<div class="item">'+x+'</div>').join('')||'<small>فاضي</small>';}
-
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));
-document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
-b.classList.add('on');$(b.dataset.t).classList.add('on');
-if(b.dataset.t==='dict')renderDict('');
-if(b.dataset.t==='mem')renderMem();});
-renderDict('');show();
+function tab(i,b){document.querySelectorAll('.panel').forEach((p,x)=>p.classList.toggle('on',x===i));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function k(v){document.getElementById('exp').value+=v}
+function clr(){document.getElementById('exp').value='';document.getElementById('res').textContent='0'}
+function del(){const e=document.getElementById('exp');e.value=e.value.slice(0,-1)}
+function calc(){
+ let s=document.getElementById('exp').value.replace(/π/g,'(3.141592653589793)').replace(/×/g,'*').replace(/÷/g,'/').replace(/\^/g,'**').replace(/sin\(/g,'Math.sin(').replace(/cos\(/g,'Math.cos(').replace(/sqrt\(/g,'Math.sqrt(');
+ let t=s.replace(/Math\.sin\(|Math\.cos\(|Math\.sqrt\(/g,'');
+ if(!/^[0-9+\-*/().\s]*$/.test(t)){document.getElementById('res').textContent='رمز غير مسموح';return}
+ try{const r=Function('"use strict";return('+s+')')();document.getElementById('res').textContent=isFinite(r)?+r.toFixed(6):'؟'}catch(e){document.getElementById('res').textContent='خطأ بالصياغة'}
+}
+const SCI={"طاقة":"القدرة على إنجاز شغل — Energy","ذرة":"أصغر وحدة بناء للمادة — Atom","جاذبية":"قوة الجذب بين الكتل — Gravity","ضوء":"إشعاع تراه العين — Light","خلية":"الوحدة الأساسية للحياة — Cell","أكسجين":"غاز التنفس — Oxygen","سرعة":"المسافة المقطوعة بالزمن — Speed","كتلة":"كمية المادة بالجسم — Mass"};
+function look(){
+ const q=document.getElementById('term').value.trim();
+ const f=SCI[q]||SCI[Object.keys(SCI).find(x=>q.includes(x))];
+ document.getElementById('tOut').textContent=f||'ما لقيتو — جرّب: طاقة، ذرة، جاذبية، خلية...';
+ try{const u=new SpeechSynthesisUtterance(f||q);u.lang='ar-SA';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+}
+function tr(){
+ const q=document.getElementById('txt').value.trim(),d=document.getElementById('dir').value;
+ if(!q)return;
+ fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+d)
+ .then(r=>r.json()).then(j=>{document.getElementById('trOut').textContent=j.responseData?j.responseData.translatedText:'تعذرت الترجمة'})
+ .catch(()=>{document.getElementById('trOut').textContent='النت ضعيف — جرّب لاحقًا'});
+}
+let N=JSON.parse(localStorage.getItem('brainNotes')||'[]');
+function renderN(){document.getElementById('notes').innerHTML=N.map((n,i)=>'<div class="box" style="display:flex;justify-content:space-between;align-items:center"><span>'+n+'</span><button onclick="delN('+i+')" style="background:none;border:none;color:#f66;font-size:18px">🗑</button></div>').join('')||'<small>لا تذكرات بعد</small>'}
+function saveN(){const v=document.getElementById('note').value.trim();if(!v)return;N.unshift(v);localStorage.setItem('brainNotes',JSON.stringify(N));document.getElementById('note').value='';renderN()}
+function delN(i){N.splice(i,1);localStorage.setItem('brainNotes',JSON.stringify(N));renderN()}
+renderN();
 </script>
 </body>
 </html>
