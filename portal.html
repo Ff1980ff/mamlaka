@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>مملكة التطبيقات 🏰</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e67e22">
 <style>
 body{background:#fdf6ec;color:#2a3d1a;font-family:Tahoma,sans-serif;margin:0;padding:14px;text-align:center}
 h1{color:#e67e22;margin:6px 0}
@@ -19,15 +21,19 @@ h2{color:#e67e22;font-size:17px;margin:18px 0 8px}
 .panel input,.panel select{width:100%;box-sizing:border-box;margin:4px 0;padding:10px;border-radius:10px;border:1px solid #ddd;font-family:inherit}
 button.gold{background:#ffd75e;border:none;border-radius:12px;padding:12px 18px;font-weight:bold;font-size:15px;cursor:pointer;margin:4px}
 button.ghost{background:#fff;border:2px solid #e67e22;color:#e67e22;border-radius:12px;padding:10px 16px;font-weight:bold;cursor:pointer;margin:4px}
+button.green{background:#27ae60;border:none;color:#fff;border-radius:12px;padding:12px 18px;font-weight:bold;font-size:15px;cursor:pointer;margin:4px}
+.hide{display:none}
 </style>
 </head>
 <body>
 <h1>🏰 مملكة التطبيقات</h1>
-<p class="sub">بناها معلم سوري من جوال واحد — أضف، احذف، وعدّل بحرية</p>
+<p class="sub">بناها معلم سوري من جوال واحد — العالم يشاهد، والملك يتحكم</p>
 <input id="q" placeholder="🔍 ابحث عن أي تطبيق…" oninput="render()">
 <div>
-<button class="gold" onclick="togglePanel()">➕ إضافة تطبيق</button>
-<button class="ghost" onclick="resetAll()">♻️ استرجاع الافتراضي</button>
+<button id="kingBtn" class="ghost" onclick="enterKey()">👑 دخول المالك</button>
+<button id="addBtn" class="gold hide" onclick="togglePanel()">➕ إضافة تطبيق</button>
+<button id="resetBtn" class="ghost hide" onclick="resetAll()">♻️ استرجاع الافتراضي</button>
+<button id="installBtn" class="green hide" onclick="doInstall()">📱 تثبيت على الجوال</button>
 </div>
 <div class="panel" id="panel">
 <input id="nN" placeholder="اسم التطبيق">
@@ -38,6 +44,9 @@ button.ghost{background:#fff;border:2px solid #e67e22;color:#e67e22;border-radiu
 </div>
 <div id="wrap"></div>
 <script>
+const KING_KEY='fadi1980';
+let KING=localStorage.getItem('isKing')==='1';
+let deferredPrompt=null;
 const CATS=['🎓 التعلم','🌍 الحياة','🎨 الإبداع','🛠️ الأدوات','🌐 العالم','👑 النظام'];
 const DEF=[
 {n:'الحروف',e:'🔤',l:'huruf.html',c:0},
@@ -80,10 +89,25 @@ function render(){
  CATS.forEach((cat,ci)=>{
   const items=APPS.map((a,i)=>({a:a,i:i})).filter(x=>x.a.c===ci&&(!q||x.a.n.includes(q)));
   if(!items.length)return;
-  html+='<h2>'+cat+'</h2><div class="grid">'+items.map(x=>'<div class="card"><button class="del" onclick="delApp('+x.i+')">🗑</button><span class="e">'+x.a.e+'</span><a href="'+x.a.l+'" target="_blank">'+x.a.n+'</a></div>').join('')+'</div>';
+  html+='<h2>'+cat+'</h2><div class="grid">'+items.map(x=>'<div class="card">'+(KING?'<button class="del" onclick="delApp('+x.i+')">🗑</button>':'')+'<span class="e">'+x.a.e+'</span><a href="'+x.a.l+'" target="_blank">'+x.a.n+'</a></div>').join('')+'</div>';
  });
  document.getElementById('wrap').innerHTML=html||'<p class="sub">ما في نتائج لهالبحث</p>';
 }
+function enterKey(){
+ const k=prompt('كلمة السر الملكية:');
+ if(k===KING_KEY){KING=true;localStorage.setItem('isKing','1');applyKing();render()}
+ else if(k){alert('كلمة السر غلط')}
+}
+function applyKing(){
+ document.getElementById('kingBtn').classList.add('hide');
+ document.getElementById('addBtn').classList.remove('hide');
+ document.getElementById('resetBtn').classList.remove('hide');
+ if(deferredPrompt)document.getElementById('installBtn').classList.remove('hide');
+}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(KING)document.getElementById('installBtn').classList.remove('hide')});
+function doInstall(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt=null;document.getElementById('installBtn').classList.add('hide')}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
+if(KING)applyKing();
 render();
 </script>
 </body>
