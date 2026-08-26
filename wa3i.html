@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>عيادة الوعي 🛡️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+body{background:#0b1026;color:#f7ead9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+.frame{width:100%;max-width:460px;background:#141a33;border:4px solid #f5a524;border-radius:22px;padding:14px;min-height:85vh}
+#st{min-height:78vh;display:flex;flex-direction:column;gap:10px}
+h1{color:#f5a524;text-align:center;font-size:22px}
+.sub{text-align:center;color:#9aa3c0;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#0b1026;border:2px solid #2a3157;border-radius:16px;padding:12px 6px;text-align:center;cursor:pointer;font-size:13px;font-weight:bold}
+.card span{display:block;font-size:30px;margin-bottom:6px}
+.big{text-align:center;font-size:64px}
+.ttl{text-align:center;color:#f5a524;font-size:20px;font-weight:bold}
+.box{background:#0b1026;border:1px solid #2a3157;border-radius:14px;padding:10px;font-size:14px;line-height:1.8}
+.lbl{color:#f5a524;font-size:11px;font-weight:bold;margin-bottom:4px}
+.btn{border:none;border-radius:12px;padding:10px 14px;font-weight:bold;cursor:pointer;font-size:13px;margin:3px}
+.gold{background:#f5a524;color:#241303}
+.gray{background:#2a3157;color:#f7ead9}
+.red{background:#7f1d1d;color:#fecaca}
+.row{display:flex;justify-content:center;flex-wrap:wrap}
+.dots{text-align:center;color:#9aa3c0;font-size:11px}
+</style>
+</head>
+<body>
+<div class="frame"><div id="st"></div></div>
+<script>
+const EX=[
+{i:"📱",t:"تطبيق المهام",s:"صاحبنا نصب التطبيق، عمل «مهام» وربح أرقام ع الشاشة… لما بدو يسحبها قالوا: ادفع رسوم أول. دفع — وراحوا.",h:"الأرباح أرقام مش مصاري، والإيداع باتجاه واحد: لجيبهم.",v:"الشغل الحقيقي بيدفع لك، ما بيأخذ منك."},
+{i:"🔗",t:"رابط مستعجل",s:"وصلتو رسالة: «حسابك رح ينحجب! دوس هون هلأ!» داس عالرابط… فخسر الحساب كله.",h:"العجلة سلاحهم — الخوف بيوقف العقل وبيفتح الجيب.",v:"كل رسالة مستعجلة = فخ محتمل. وقف، تنفس، وتحقق من مصدر ثاني."},
+{i:"💰",t:"الربح المضمون",s:"«استثمر 100 وبكرا بتاخد 200 — مضمون!» ناس باعت ذهبها وسيارتها…",h:"كلمة «مضمون» بالطعام بتسمّم، وبالمال بتنصب.",v:"ما في ربح مضمون — المضمون الوحيد إنك بتخسر."},
+{i:"🎁",t:"الجائزة الوهمية",s:"إشعار لامع: «مبروك! ربحت سيارة!» — وهو أصلًا ما دخل بأي مسابقة.",h:"الطمع بيغطي العيون متل الغبار.",v:"ما ربحت بشي ما دخلت فيه — الجائزة اللي بتدوس عليك، فخ."},
+{i:"🎭",t:"منتحل الهوية",s:"اتصال مهذب: «أنا موظف البنك، أعطيني الكود لنحمي حسابك.»",h:"اللباس الرسمي ما بيثبت الصدق — النصاب بيحب البدلات.",v:"الكود متل مفتاح بيتك — ما بتعطيه لحدا، أبدًا."},
+{i:"🤖",t:"الذكاء الكذاب",s:"إعلان ضخم: «أقوى ذكاء بالعالم!» جربناه: بيبني قشرة، ما بيدخل باللب.",h:"الإعلانات بتبيع الوعد، مو الشغل.",v:"والي مو مصدق… يقيس. جرّب قبل ما تصدق."}
+];
+let ci=0;
+const st=document.getElementById("st");
+function speak(t){try{const x=new SpeechSynthesisUtterance(t);x.lang="ar-SA";speechSynthesis.cancel();speechSynthesis.speak(x)}catch(e){}}
+function home(){
+ st.innerHTML=`<h1>🛡️ عيادة الوعي</h1><div class="sub">منصة فحص الأفكار — والي مو مصدق يقيس 🪏</div><div class="grid">`+EX.map((x,i)=>`<div class="card" onclick="openX(${i})"><span>${x.i}</span>${x.t}</div>`).join("")+`</div><div class="dots">6 معروضات موثقة من وقائع حقيقية</div>`;
+}
+function openX(i){
+ ci=i;const x=EX[i];
+ st.innerHTML=`<div class="big">${x.i}</div><div class="ttl">${x.t}</div>
+ <div class="box"><div class="lbl">📖 القصة</div>${x.s}</div>
+ <button class="btn red" onclick="var d=this.nextElementSibling;if(d.style.display==='block'){d.style.display='none'}else{d.style.display='block'}">🎭 اكشف الحيلة</button>
+ <div class="box" style="display:none;border-color:#7f1d1d"><div class="lbl">🎭 الحيلة</div>${x.h}</div>
+ <button class="btn gold" onclick="var d=this.nextElementSibling;d.style.display='block';speak('${x.v}')">💉 خذ اللقاح</button>
+ <div class="box" style="display:none;border-color:#f5a524"><div class="lbl">💉 اللقاح</div><b>${x.v}</b></div>
+ <div class="row"><button class="btn gray" onclick="home()">🏠 العيادة</button><button class="btn gray" onclick="openX(${(i+1)%EX.length})">التالي ⬅️</button></div>
+ <div class="dots">المعروض ${i+1} / ${EX.length}</div>`;
+}
+home();
+</script>
+</body>
+</html>
