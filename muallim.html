@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>المعلّم الصامت — فرنسي | مملكة التطبيقات</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦅</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Tahoma,sans-serif}
+body{background:#f6f4fb;color:#26203a;padding-bottom:40px}
+body.curs .fr{font-family:'Dancing Script','Segoe Script',cursive;font-size:26px;line-height:1.3;font-weight:700}
+header{background:#372a86;color:#fff;padding:14px;text-align:center;font-size:19px;font-weight:800}
+nav{display:flex;gap:8px;padding:10px;justify-content:center;position:sticky;top:0;background:#f6f4fb;z-index:5}
+nav button{flex:1;max-width:140px;padding:10px;border:none;border-radius:12px;background:#e6e0f7;color:#372a86;font-weight:700;cursor:pointer}
+nav button.on{background:#372a86;color:#fff}
+main{padding:12px;max-width:640px;margin:auto}
+.sig{text-align:center;color:#9a94ad;font-size:12px;margin-top:16px}
+.lhead{color:#fff;border-radius:16px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:17px;font-weight:800;gap:8px}
+.lhead button{border:none;background:rgba(255,255,255,.25);color:#fff;border-radius:10px;padding:8px 10px;font-size:13px;cursor:pointer}
+.hcard{color:#fff;border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;box-shadow:0 2px 6px rgba(30,20,70,.18)}
+.hcard h3{font-size:18px;margin-bottom:4px}
+.wcard{background:#fff;border-radius:16px;padding:12px 14px;margin-bottom:10px;border-right:10px solid;cursor:pointer;box-shadow:0 1px 4px rgba(30,20,70,.12);transition:transform .12s}
+.l1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fr{direction:ltr;font-size:19px;font-weight:800;color:#1d2f63}
+.pr{font-size:16px;color:#6b6480;font-weight:600;transition:opacity .3s}
+.ar{font-size:17px;font-weight:700;margin-top:6px;transition:opacity .3s}
+.hid{opacity:0}
+.tap{font-size:12px;color:#9a94ad;margin-top:6px}
+.spk{border:none;background:#eee8fb;border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer}
+input{width:100%;padding:12px;border:2px solid #d8d0f2;border-radius:12px;font-size:16px;margin-bottom:10px}
+.big{width:100%;padding:14px;border:none;border-radius:14px;background:#372a86;color:#fff;font-size:17px;font-weight:700;cursor:pointer;margin-top:6px}
+.opt{width:100%;padding:13px;border:2px solid #d8d0f2;border-radius:12px;background:#fff;font-size:16px;margin-bottom:8px;cursor:pointer;text-align:right}
+.opt.good{background:#d9f2e3;border-color:#2f9e6e}
+.opt.bad{background:#fde2e2;border-color:#c05656}
+.q{font-size:22px;font-weight:800;text-align:center;direction:ltr;padding:18px;background:#fff;border-radius:14px;margin-bottom:12px;color:#1d2f63}
+body.curs .q{font-family:'Dancing Script','Segoe Script',cursive;font-size:30px}
+.score{text-align:center;color:#6b6480;margin-bottom:8px}
+.cert{background:#fffdf5;border:4px double #b8860b;border-radius:18px;padding:22px;text-align:center;margin-top:10px}
+.cert .seal{font-size:44px}
+.cert h2{color:#b8860b;margin:8px 0}
+.fab{position:fixed;bottom:16px;left:16px;z-index:9;border:none;border-radius:50%;width:54px;height:54px;font-size:22px;background:#b8860b;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer}
+</style>
+</head>
+<body>
+<header>🦅 المعلّم الصامت — فرنسي بالعربي</header>
+<nav>
+<button id="nL" class="on" onclick="view('L')">الدروس</button>
+<button id="nD" onclick="view('D')">المعجم</button>
+<button id="nQ" onclick="view('Q')">الاختبار</button>
+</nav>
+<main id="app"></main>
+<button class="fab" id="fab" onclick="togC()" title="تبديل الخط">✍️</button>
+<script>
+const SIG='<div class="sig">🦅 من مملكة التطبيقات — لوحة الصقر | falcon-board</div>';
+const L=[
+{t:"١. التحيات والتعارف",c:"#2f9e6e",w:[["Bonjour","بونجور","نهارك سعيد"],["Bonsoir","بونسوار","مساء الخير"],["Salut","سالو","أهلاً / سلام"],["Au revoir","أوفوار","إلى اللقاء"],["Merci","ميرسي","شكراً"],["De rien","دو ريَن","عفواً"],["S'il vous plaît","سيل فو بليه","من فضلك"],["Oui","وي","نعم"],["Non","نون","لا"],["Comment ça va ?","كومون سا فا","كيف حالك؟"],["Ça va bien","سا فا بيَن","أنا بخير"],["Je m'appelle","جو مابيل","اسمي"],["Enchanté","أونشانتيه","تشرفت بمعرفتك"]]},
+{t:"٢. الضمائر ويكون وعندي",c:"#2b6cb0",w:[["Je","جو","أنا"],["Tu","تو","أنتَ / أنتِ"],["Il","إيل","هو"],["Elle","إيل","هي"],["Nous","نو","نحن"],["Vous","فو","أنتم / حضرتك"],["Je suis","جو سوي","أنا أكون"],["Tu es","تو إي","أنت تكون"],["Il est","إيل إي","هو يكون"],["Nous sommes","نو سوم","نحن نكون"],["Vous êtes","فو زِت","أنتم تكونون"],["J'ai","جيه","عندي"],["Tu as","تو زا","عندك"],["Il a","إيل يا","عنده"],["Nous avons","نو زافون","عندنا"]]},
+{t:"٣. الأرقام والأيام",c:"#d97706",w:[["zéro","زيرو","صفر"],["un","آن","واحد"],["deux","دو","اثنان"],["trois","توا","ثلاثة"],["quatre","كاتر","أربعة"],["cinq","سانك","خمسة"],["six","سيس","ستة"],["sept","سيت","سبعة"],["huit","ويت","ثمانية"],["neuf","نوف","تسعة"],["dix","ديس","عشرة"],["vingt","فان","عشرون"],["trente","ترانت","ثلاثون"],["cinquante","سانكانت","خمسون"],["cent","سان","مئة"],["mille","ميل","ألف"],["lundi","لاندي","الاثنين"],["mardi","ماردي","الثلاثاء"],["mercredi","ميركردي","الأربعاء"],["jeudi","جودي","الخميس"],["vendredi","فوندريدي","الجمعة"],["samedi","سامدي","السبت"],["dimanche","ديمانش","الأحد"]]},
+{t:"٤. العائلة والبيت",c:"#db2777",w:[["père","بير","أب"],["mère","مير","أم"],["frère","فرير","أخ"],["sœur","سور","أخت"],["fils","فيس","ابن"],["fille","فيي","ابنة"],["mari","ماري","زوج"],["femme","فام","زوجة"],["maison","ميزون","بيت"],["porte","بورت","باب"],["fenêtre","فونيتر","نافذة"],["chambre","شومبر","غرفة"],["cuisine","كويزين","مطبخ"],["table","تابل","طاولة"],["chaise","شيز","كرسي"],["lit","لي","سرير"]]},
+{t:"٥. المدرسة",c:"#0d9488",w:[["école","إيكول","مدرسة"],["classe","كلاس","صف"],["livre","ليفر","كتاب"],["cahier","كاييه","دفتر"],["stylo","ستيلو","قلم حبر"],["crayon","كريون","قلم رصاص"],["tableau","تابلو","سبورة"],["professeur","بروفيسور","معلم"],["élève","إيليف","تلميذ"],["devoir","دوفوار","واجب"],["examen","إكزامان","امتحان"],["note","نوت","علامة"],["réussir","ريوسير","ينجح"],["échouer","إيشويه","يرسب"],["réviser","ريفيزيه","يراجع"]]},
+{t:"٦. السوق والحياة",c:"#7c3aed",w:[["Combien ça coûte ?","كومبيَن سا كوت","كم السعر؟"],["C'est cher","سيه شير","هذا غالي"],["C'est pas cher","سيه پا شير","هذا رخيص"],["Je veux","جو فو","أريد"],["J'ai besoin de","جيه بزوان دو","أحتاج إلى"],["Où est... ?","أو إي","أين...؟"],["Je ne comprends pas","جو نو كومبرون پا","لا أفهم"],["Aidez-moi","إيديه موا","ساعدني"],["parler","بارلي","يتكلم"],["apprendre","أبروند","يتعلم"]]}
+];
+const ALL=[];L.forEach(l=>l.w.forEach(w=>ALL.push([w[0],w[1],w[2],l.c])));
+let QZ=null,HIDE=false;const app=document.getElementById('app');
+function sh(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function sp(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function say(el,t){sp(t);el.style.transform='scale(.97)';setTimeout(()=>el.style.transform='',140)}
+function tapCard(el,t){el.querySelectorAll('.hid').forEach(x=>x.classList.remove('hid'));say(el,t)}
+function togC(){document.body.classList.toggle('curs');const on=document.body.classList.contains('curs');localStorage.setItem('ms_curs',on?'1':'');document.getElementById('fab').textContent=on?'🖨':'️'}
+if(localStorage.getItem('ms_curs')){document.body.classList.add('curs');document.getElementById('fab').textContent='🖨'}
+window.addEventListener('load',()=>{setTimeout(()=>{try{if(document.fonts&&!document.fonts.check('16px "Dancing Script"')){const d=document.createElement('div');d.style.cssText='text-align:center;background:#fff3cd;padding:6px;font-size:13px';d.textContent='⚠️ افتح التطبيق مرة واحدة والإنترنت يعمل، ليُحمَّل الخط الموصول';document.body.prepend(d)}}catch(e){}},1200)});
+function view(v){document.getElementById('nL').className=v=='L'?'on':'';document.getElementById('nD').className=v=='D'?'on':'';document.getElementById('nQ').className=v=='Q'?'on':'';if(v=='L')rL();if(v=='D')rD('');if(v=='Q')rQstart()}
+function rL(){const best=localStorage.getItem('ms_best')||0;
+app.innerHTML='<div class="score">🏆 أفضل نتيجة: '+best+' / 10 — والزر الذهبي ✍️ يبدّل الخط الموصول/المطبعي</div><div class="hcard" style="background:linear-gradient(135deg,#b8860b,#8a6508)" onclick="daily()"><h3>⭐ تحدي اليوم</h3><div>٥ كلمات اختارها لك الصقر لهذا اليوم — تتغير كل شمس</div></div>'+L.map((l,i)=>'<div class="hcard" style="background:'+l.c+'" onclick="rLes('+i+')"><h3>'+l.t+'</h3><div>'+l.w.length+' كلمة — الصفحة الملوّنة</div></div>').join('')+SIG}
+function daily(){const d=new Date();const seed=d.getDate()+(d.getMonth()+1)*31;const set=[];let k=3;while(set.length<5){set.push(ALL[(seed*k)%ALL.length]);k+=7}QZ={o:set,i:0,s:0,lock:false,total:5};rQ()}
+function rLes(i){const l=L[i];app.innerHTML='<div class="lhead" style="background:'+l.c+'"><span>'+l.t+'</span><span><button onclick="HIDE=!HIDE;rLes('+i+')">'+(HIDE?'👁 إظهار':'🙈 وضع الحفظ')+'</button> <button onclick="rL()">← القائمة</button></span></div>'+l.w.map(w=>'<div class="wcard" style="border-color:'+l.c+'" onclick="tapCard(this,\''+w[0].replace(/'/g,"\\'")+'\')"><div class="l1"><span class="fr">'+w[0]+'</span><span class="pr'+(HIDE?' hid':'')+'">← '+w[1]+'</span></div><div class="ar'+(HIDE?' hid':'')+'" style="color:'+l.c+'">'+w[2]+'</div><div class="tap">🔊 اضغط البطاقة للسماع'+(HIDE?' والكشف':'')+'</div></div>').join('')+SIG}
+function rD(q){let rows=ALL;if(q){rows=ALL.filter(w=>w[0].toLowerCase().includes(q.toLowerCase())||w[2].includes(q)||w[1].includes(q))}app.innerHTML='<input placeholder="ابحث بالفرنسي أو العربي..." oninput="rD(this.value)" value="'+q+'">'+rows.slice(0,60).map(w=>'<div class="wcard" style="border-color:'+w[3]+'" onclick="say(this,\''+w[0].replace(/'/g,"\\'")+'\')"><div class="l1"><span class="fr">'+w[0]+'</span><span class="pr">← '+w[1]+'</span></div><div class="ar" style="color:'+w[3]+'">'+w[2]+'</div></div>').join('')+SIG}
+function rQstart(){app.innerHTML='<div class="hcard" style="background:#372a86"><h3>📝 الاختبار الملكي</h3><div>١٠ أسئلة عشوائية: اختر المعنى العربي، والتصحيح فوري. من أحرز ٨ فصاعداً نال الشهادة الملكية.</div><button class="big" style="background:#fff;color:#372a86" onclick="startQ(10)">ابدأ الاختبار</button></div>'+SIG}
+function startQ(n){QZ={o:sh(ALL).slice(0,n),i:0,s:0,lock:false,total:n};rQ()}
+function rQ(){if(QZ.i>=QZ.total){const b=Math.max(QZ.s,+(localStorage.getItem('ms_best')||0));localStorage.setItem('ms_best',b);
+let extra=(QZ.total==10&&QZ.s>=8)?'<input id="cn" placeholder="اكتب اسمك لنقشه على الشهادة..."/><button class="big" style="background:#b8860b" onclick="cert()">🏅 أصدر الشهادة الملكية</button>':'';
+app.innerHTML='<div class="hcard" style="background:#372a86"><h3>🏁 النتيجة: '+QZ.s+' / '+QZ.total+'</h3><div>أفضل نتيجة محفوظة: '+b+'</div>'+extra+'<button class="big" style="background:#fff;color:#372a86" onclick="startQ(10)">إعادة الاختبار</button></div>'+SIG;return}
+const w=QZ.o[QZ.i];const others=sh(ALL.filter(x=>x[2]!=w[2])).slice(0,3).map(x=>x[2]);QZ.opts=sh([w[2]].concat(others));QZ.ans=QZ.opts.indexOf(w[2]);QZ.lock=false;
+app.innerHTML='<div class="score">سؤال '+(QZ.i+1)+' / '+QZ.total+' — النقاط: '+QZ.s+'</div><div class="q" style="border:4px solid '+w[3]+'">'+w[0]+' <button class="spk" onclick="sp(\''+w[0].replace(/'/g,"\\'")+'\')">🔊</button></div>'+QZ.opts.map((o,k)=>'<button class="opt" id="o'+k+'" onclick="pick('+k+')">'+o+'</button>').join('')}
+function pick(k){if(QZ.lock)return;QZ.lock=true;if(k==QZ.ans){QZ.s++;document.getElementById('o'+k).className='opt good'}else{document.getElementById('o'+k).className='opt bad';document.getElementById('o'+QZ.ans).className='opt good'}setTimeout(()=>{QZ.i++;rQ()},900)}
+function cert(){const n=(document.getElementById('cn').value||'متعلم مجهول').trim();const d=new Date().toLocaleDateString('ar-SY');
+app.innerHTML='<div class="cert"><div class="seal">🦅</div><h2>شهادة المعلّم الصامت</h2><div>تشهد مملكة التطبيقات — لوحة الصقر بأن</div><div style="font-size:22px;font-weight:900;color:#372a86;margin:10px 0">'+n+'</div><div>أتمّ الاختبار الملكي بإتقان '+QZ.s+' / 10</div><div style="margin-top:8px;color:#6b6480">بتاريخ '+d+'</div><div style="margin-top:12px;font-size:13px;color:#b8860b">ختم المملكة: لا تُباع ولا تُشترى — تُهدى</div></div><button class="big" onclick="shareC(\''+n.replace(/'/g,"")+'\')">📤 شارك الشهادة</button>'+SIG}
+function shareC(n){const t='🦅 شهادة المعلّم الصامت: '+n+' أتقن '+QZ.s+'/10 في الفرنسية — من مملكة التطبيقات، لوحة الصقر';if(navigator.share){navigator.share({text:t}).catch(()=>{})}else{prompt('انسخ نص شهادتك:',t)}}
+view('L');
+</script>
+</body>
+</html>
