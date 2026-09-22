@@ -1,0 +1,440 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/><title>🚂 قطار الأحرف الملكي — ملتقى اللغات</title><style>
+*{box-sizing:border-box;margin:0;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,Tahoma,sans-serif;background:linear-gradient(180deg,#87CEEB 0%,#B3E5FC 40%,#A5D6A7 70%,#81C784 100%);min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;user-select:none}
+.screen{width:100%;min-height:100vh;display:none;flex-direction:column;align-items:center}
+.screen.active{display:flex}
+
+/* ===== الشاشة الرئيسية (اختيار الممر) ===== */
+#homeScreen{background:linear-gradient(135deg,#1d3557 0%,#457b9d 100%);justify-content:center;padding:24px 16px;color:#fff;text-align:center}
+#homeScreen h1{font-size:30px;color:#ffd700;text-shadow:2px 2px 4px rgba(0,0,0,.3);margin-bottom:4px}
+#homeScreen .sub{font-size:15px;color:#e0f0ff;margin-bottom:6px}
+.train-big{font-size:64px;margin:8px 0;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+#homeScreen input{padding:13px;font-size:19px;border-radius:14px;border:3px solid #ffd700;text-align:center;width:88%;max-width:320px;margin:10px 0 16px;font-family:inherit;background:#fff;color:#1d3557}
+
+.corridors{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:92%;max-width:420px;margin-bottom:14px}
+.corridor-btn{border:none;border-radius:18px;padding:16px 8px;font-family:inherit;font-weight:800;font-size:16px;color:#fff;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.3);position:relative;transition:transform .1s}
+.corridor-btn:active{transform:scale(.94)}
+.corridor-btn .flag{font-size:30px;display:block;margin-bottom:4px}
+.corridor-btn .stamp{position:absolute;top:6px;left:6px;font-size:18px}
+.c-ar{background:linear-gradient(135deg,#b8860b,#daa520)}
+.c-fr{background:linear-gradient(135deg,#1565C0,#42A5F5)}
+.c-en{background:linear-gradient(135deg,#2E7D32,#66BB6A)}
+.c-de{background:linear-gradient(135deg,#B71C1C,#E53935)}
+
+.junction-btn{background:linear-gradient(135deg,#6A1B9A,#AB47BC);color:#fff;border:none;padding:15px 30px;font-size:18px;font-weight:800;border-radius:18px;cursor:pointer;box-shadow:0 6px 16px rgba(106,27,154,.5);font-family:inherit;width:88%;max-width:320px;margin-bottom:10px}
+.junction-btn:active{transform:scale(.96)}
+
+.passport{background:rgba(255,255,255,.12);border-radius:16px;padding:10px 16px;width:88%;max-width:320px;margin-top:6px}
+.passport-title{font-size:13px;color:#ffd700;margin-bottom:6px}
+.passport-stamps{display:flex;justify-content:center;gap:10px;font-size:24px}
+.passport-stamps span{opacity:.25;filter:grayscale(1)}
+.passport-stamps span.earned{opacity:1;filter:none;animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* ===== شاشة اللعب (الممر) ===== */
+#gameScreen{position:relative}
+.header{width:100%;padding:10px 16px;background:rgba(29,53,87,.92);color:#fff;display:flex;justify-content:space-between;align-items:center;z-index:10}
+.header h1{font-size:15px;color:#ffd700}
+.station-info{font-size:13px;opacity:.9}
+.progress-bar{width:100%;height:8px;background:rgba(255,255,255,.3)}
+.progress-fill{height:100%;border-radius:0 4px 4px 0;transition:width .4s ease}
+
+.lang-track{display:flex;justify-content:center;gap:6px;padding:8px;background:rgba(255,255,255,.5)}
+.lang-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;background:#fff;color:#999;box-shadow:0 2px 6px rgba(0,0,0,.15);border:3px solid transparent;transition:all .3s}
+.lang-dot.active{transform:scale(1.15);color:#fff}
+.lang-dot.done{opacity:.55}
+
+.game-area{flex:1;width:100%;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:52vh;padding-bottom:10px}
+.cloud{position:absolute;font-size:32px;opacity:.5;animation:drift linear infinite;z-index:0}
+@keyframes drift{from{transform:translateX(110vw)}to{transform:translateX(-80px)}}
+
+.word-emoji{font-size:64px;margin-bottom:6px;opacity:0;transform:scale(.4);transition:all .5s cubic-bezier(.34,1.56,.64,1)}
+.word-emoji.show{opacity:1;transform:scale(1)}
+
+.speech-bubble{background:#fff;border-radius:20px;padding:14px 22px;margin-bottom:8px;position:relative;box-shadow:0 4px 15px rgba(0,0,0,.15);max-width:90%;text-align:center;animation:pop2 .4s ease}
+.speech-bubble::after{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);border:12px solid transparent;border-top-color:#fff}
+.speech-bubble .tag{font-size:12px;font-weight:800;margin-bottom:4px;padding:2px 10px;border-radius:10px;display:inline-block;color:#fff}
+.speech-bubble .big-word{font-size:38px;font-weight:900;color:#1d3557;display:block;margin:6px 0}
+@keyframes pop2{0%{transform:scale(0);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+.merge-fx{display:flex;justify-content:center;gap:8px;margin:6px 0;flex-wrap:wrap;max-width:320px}
+.merge-chip{background:#fff;border-radius:12px;padding:6px 12px;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:0;transform:translateY(10px)}
+.merge-chip.show{animation:chipIn .4s ease forwards}
+@keyframes chipIn{to{opacity:1;transform:translateY(0)}}
+
+.train-container{position:relative;transition:transform 1s ease}
+.train{font-size:56px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));animation:idle 1.5s ease-in-out infinite}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.tracks{width:100%;height:26px;background:repeating-linear-gradient(90deg,#8B4513 0px,#8B4513 20px,#A0522D 20px,#A0522D 40px)}
+
+.next-btn-container{padding:12px;width:100%;text-align:center;background:rgba(29,53,87,.85)}
+.btn{border:none;padding:14px 34px;font-size:19px;font-weight:800;border-radius:16px;cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.3);font-family:inherit;color:#fff;background:linear-gradient(135deg,#b8860b,#daa520)}
+.btn:active{transform:scale(.94)}
+.star-particle{position:absolute;font-size:22px;animation:starFly 1s ease-out forwards;z-index:20;pointer-events:none}
+@keyframes starFly{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-110px) scale(0);opacity:0}}
+
+/* ===== شاشة النهاية ===== */
+#endScreen{background:linear-gradient(135deg,#1d3557,#457b9d);justify-content:center;color:#fff;text-align:center;padding:20px}
+#endScreen .trophy{font-size:64px;margin-bottom:6px}
+#endScreen h2{font-size:24px;color:#ffd700;margin-bottom:10px}
+#endScreen p{font-size:16px;margin-bottom:14px}
+
+/* ===== مجمع الطرق (المعجم) ===== */
+#junctionScreen{background:linear-gradient(180deg,#fef6e4,#fde8d0);padding:14px;align-items:center}
+.j-header{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:6px 4px;margin-bottom:10px}
+.j-header h2{font-size:19px;color:#7a4a00}
+.back-chip{background:#fff;border:none;border-radius:12px;padding:8px 14px;font-family:inherit;font-weight:700;color:#7a4a00;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.j-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:520px}
+.j-card{background:#fff;border-radius:16px;padding:12px 6px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12);cursor:pointer;transition:transform .1s}
+.j-card:active{transform:scale(.92)}
+.j-card .em{font-size:32px}
+.j-card .lbl{font-size:12px;color:#7a4a00;font-weight:700;margin-top:4px}
+
+.quiz-btn{margin-top:14px;background:linear-gradient(135deg,#6A1B9A,#AB47BC);color:#fff;border:none;padding:12px 26px;border-radius:14px;font-family:inherit;font-weight:800;font-size:15px;box-shadow:0 4px 12px rgba(106,27,154,.4)}
+
+/* تفاصيل الكلمة (نافذة منبثقة) */
+.overlay-detail{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+.overlay-detail.show{display:flex}
+.detail-card{background:#fff;border-radius:24px;padding:24px 18px;width:100%;max-width:360px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.detail-card .em{font-size:60px;margin-bottom:10px}
+.lang-row{display:flex;align-items:center;justify-content:space-between;background:#f7f3ea;border-radius:14px;padding:10px 14px;margin-bottom:8px}
+.lang-row .lname{font-size:12px;color:#888;font-weight:700}
+.lang-row .lword{font-size:20px;font-weight:800;color:#1d3557}
+.lang-row button{background:#ffd700;border:none;width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer}
+.detail-close{margin-top:10px;background:#1d3557;color:#fff;border:none;padding:10px 26px;border-radius:12px;font-family:inherit;font-weight:700}
+
+/* اختبار سريع */
+#quizScreen{background:linear-gradient(135deg,#6A1B9A,#4A148C);justify-content:center;color:#fff;text-align:center;padding:20px}
+#quizScreen h2{font-size:20px;color:#ffd700;margin-bottom:6px}
+#quizScreen .q-prompt{font-size:16px;margin-bottom:18px}
+.q-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:340px}
+.q-opt{background:#fff;border:none;border-radius:16px;padding:20px 8px;font-size:40px;cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.3)}
+.q-opt.correct{background:#A5D6A7}
+.q-opt.wrong{background:#EF9A9A}
+.q-score{margin-top:16px;font-size:15px;color:#ffd700}
+.speak-again{margin-top:14px;background:rgba(255,255,255,.15);border:2px solid #ffd700;color:#fff;border-radius:14px;padding:8px 18px;font-family:inherit;font-weight:700}
+
+@media(max-height:640px){
+.train{font-size:44px}.word-emoji{font-size:50px}.speech-bubble .big-word{font-size:30px}
+}
+</style></head><body>
+
+<!-- ================= الشاشة الرئيسية ================= -->
+<div class="screen active" id="homeScreen">
+<div class="train-big">🚂</div>
+<h1>قطار الأحرف الملكي</h1>
+<div class="sub">اختر الممر يلي بدك تدخل منه — بيوديك بجولة عبر اللغات الأربع كلها</div>
+<input type="text" id="playerName" placeholder="✏️ اكتب اسمك يا بطل..." maxlength="20"/>
+<div class="corridors">
+<button class="corridor-btn c-ar" onclick="startCorridor('ar')"><span class="stamp" id="stampHome-ar"></span><span class="flag">🇸</span>ممر العربي</button>
+<button class="corridor-btn c-fr" onclick="startCorridor('fr')"><span class="stamp" id="stampHome-fr"></span><span class="flag">🇫</span>ممر الفرنسي</button>
+<button class="corridor-btn c-en" onclick="startCorridor('en')"><span class="stamp" id="stampHome-en"></span><span class="flag">🇬</span>ممر الإنجليزي</button>
+<button class="corridor-btn c-de" onclick="startCorridor('de')"><span class="stamp" id="stampHome-de"></span><span class="flag">🇩</span>ممر الألماني</button>
+</div>
+<button class="junction-btn" onclick="openJunction()">🏛️ مجمع الطرق — المعجم الناطق</button>
+<div class="passport">
+<div class="passport-title">🛂 جواز سفر المملكة</div>
+<div class="passport-stamps">
+<span id="ps-ar">🇸</span><span id="ps-fr">🇫</span><span id="ps-en">🇬</span><span id="ps-de">🇩</span>
+</div>
+</div>
+</div>
+
+<!-- ================= شاشة اللعب ================= -->
+<div class="screen" id="gameScreen">
+<div class="header"><h1 id="gameTitle">🚂 ممر</h1><div class="station-info" id="stationInfo">1 / 10</div></div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="lang-track" id="langTrack"></div>
+<div class="game-area" id="scene">
+<div class="word-emoji" id="wordEmoji">🍎</div>
+<div class="speech-bubble" id="speechBubble" style="display:none">
+<span class="tag" id="speechTag">عربي</span>
+<span class="big-word" id="speechWord">تفاحة</span>
+</div>
+<div class="merge-fx" id="mergeFx"></div>
+<div class="train-container" id="trainContainer"><div class="train">🚂</div></div>
+<div class="tracks"></div>
+</div>
+<div class="next-btn-container"><button class="btn" id="actionBtn" onclick="nextStep()">👆 اضغط للمتابعة</button></div>
+</div>
+
+<!-- ================= شاشة النهاية ================= -->
+<div class="screen" id="endScreen">
+<div class="trophy">🏆</div>
+<h2 id="endTitle">أحسنت!</h2>
+<p id="endMsg">خلّصت الممر وأخدت ختمك!</p>
+<button class="btn" onclick="goHome()">🏠 رجوع للمملكة</button><br><br>
+<button class="junction-btn" onclick="openJunction()" style="max-width:280px">🏛️ زور مجمع الطرق</button>
+</div>
+
+<!-- ================= مجمع الطرق ================= -->
+<div class="screen" id="junctionScreen">
+<div class="j-header"><h2>🏛️ مجمع الطرق</h2><button class="back-chip" onclick="goHome()">🏠 رجوع</button></div>
+<div class="j-grid" id="jGrid"></div>
+<button class="quiz-btn" onclick="startQuiz()">🎯 اختبار سريع: اسمع وخمّن</button>
+</div>
+
+<!-- نافذة تفاصيل الكلمة -->
+<div class="overlay-detail" id="detailOverlay">
+<div class="detail-card">
+<div class="em" id="dEm">🍎</div>
+<div id="dRows"></div>
+<button class="detail-close" onclick="closeDetail()">إغلاق ✖️</button>
+</div>
+</div>
+
+<!-- ================= اختبار سريع ================= -->
+<div class="screen" id="quizScreen">
+<h2>🎯 اختبار: شو هاد؟</h2>
+<div class="q-prompt" id="qPrompt">استمع للكلمة واختر الصورة الصح</div>
+<div class="q-options" id="qOptions"></div>
+<button class="speak-again" onclick="repeatQuizWord()">🔊 اسمع تاني</button>
+<div class="q-score" id="qScore">النقاط: 0 / 0</div>
+<button class="btn" style="margin-top:16px" onclick="goHome()">🏠 خلص، رجوع</button>
+</div>
+
+<script>
+/* ============ بيانات المعجم الموحّد ============ */
+const WORDS = [
+  {id:'apple',em:'🍎',ar:'تفاحة',fr:'pomme',en:'apple',de:'Apfel'},
+  {id:'cat',em:'🐱',ar:'قطة',fr:'chat',en:'cat',de:'Katze'},
+  {id:'sun',em:'☀️',ar:'شمس',fr:'soleil',en:'sun',de:'Sonne'},
+  {id:'book',em:'📚',ar:'كتاب',fr:'livre',en:'book',de:'Buch'},
+  {id:'house',em:'🏠',ar:'بيت',fr:'maison',en:'house',de:'Haus'},
+  {id:'water',em:'💧',ar:'ماء',fr:'eau',en:'water',de:'Wasser'},
+  {id:'moon',em:'🌙',ar:'قمر',fr:'lune',en:'moon',de:'Mond'},
+  {id:'fish',em:'🐟',ar:'سمكة',fr:'poisson',en:'fish',de:'Fisch'},
+  {id:'flower',em:'🌸',ar:'وردة',fr:'fleur',en:'flower',de:'Blume'},
+  {id:'star',em:'⭐',ar:'نجمة',fr:'étoile',en:'star',de:'Stern'},
+  {id:'dog',em:'🐶',ar:'كلب',fr:'chien',en:'dog',de:'Hund'},
+  {id:'car',em:'🚗',ar:'سيارة',fr:'voiture',en:'car',de:'Auto'}
+];
+
+/* كل ممر: نفس الكلمات، بس ترتيب كشف اللغات مختلف — كل ممر بيمرق عَ الأربعة */
+const CORRIDORS = {
+  ar:{name:'العربي',flag:'🇸',color:'#daa520',order:['ar','fr','en','de']},
+  fr:{name:'الفرنسي',flag:'🇫',color:'#42A5F5',order:['fr','de','en','ar']},
+  en:{name:'الإنجليزي',flag:'🇬',color:'#66BB6A',order:['en','fr','de','ar']},
+  de:{name:'الألماني',flag:'🇩',color:'#E53935',order:['de','en','fr','ar']}
+};
+const LANG_LABEL = {ar:'عربي',fr:'فرنسي',en:'إنجليزي',de:'ألماني'};
+const LANG_SPEECH = {ar:'ar-SA',fr:'fr-FR',en:'en-US',de:'de-DE'};
+const LANG_COLOR  = {ar:'#daa520',fr:'#1565C0',en:'#2E7D32',de:'#C62828'};
+
+let playerName='بطل', earnedBadges=JSON.parse(localStorage.getItem('mk_badges')||'{}');
+let corridorKey='ar', wordIndex=0, langIndex=0, wordsList=[];
+const speechSynth = window.speechSynthesis;
+
+function speak(text, langCode){
+  try{ speechSynth.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=langCode; u.rate=0.85; u.pitch=1.05;
+    speechSynth.speak(u);
+  }catch(e){}
+}
+function playChime(freqs){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(0.14,ctx.currentTime+i*0.11);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.11+0.3);
+      o.start(ctx.currentTime+i*0.11);o.stop(ctx.currentTime+i*0.11+0.3);
+    });
+  }catch(e){}
+}
+function spawnStars(x,y){
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');s.className='star-particle';
+    s.textContent=['⭐','✨','🌟','💫'][Math.floor(Math.random()*4)];
+    s.style.left=(x+Math.random()*60-30)+'px'; s.style.top=(y+Math.random()*30-15)+'px';
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1100);
+  }
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function saveBadges(){ localStorage.setItem('mk_badges',JSON.stringify(earnedBadges)); }
+function refreshPassport(){
+  Object.keys(CORRIDORS).forEach(k=>{
+    const el=document.getElementById('ps-'+k);
+    if(earnedBadges[k]) el.classList.add('earned'); else el.classList.remove('earned');
+    const homeStamp=document.getElementById('stampHome-'+k);
+    homeStamp.textContent = earnedBadges[k] ? '✅' : '';
+  });
+}
+
+/* ============ منطق الممر (الرحلة) ============ */
+function startCorridor(key){
+  playerName = document.getElementById('playerName').value.trim() || 'بطل';
+  corridorKey = key; wordsList = WORDS.slice(); wordIndex=0; langIndex=0;
+  const c = CORRIDORS[key];
+  document.getElementById('gameTitle').textContent = `${c.flag} ممر ${c.name}`;
+  document.getElementById('progressFill').style.background = c.color;
+  buildLangTrack();
+  showScreen('gameScreen');
+  showWordStation();
+}
+
+function buildLangTrack(){
+  const track=document.getElementById('langTrack'); track.innerHTML='';
+  CORRIDORS[corridorKey].order.forEach((lg,i)=>{
+    const d=document.createElement('div'); d.className='lang-dot'; d.id='dot-'+i;
+    d.style.borderColor=LANG_COLOR[lg]; d.textContent=lg.toUpperCase();
+    track.appendChild(d);
+  });
+}
+function updateLangTrack(){
+  const order=CORRIDORS[corridorKey].order;
+  order.forEach((lg,i)=>{
+    const d=document.getElementById('dot-'+i);
+    d.classList.remove('active','done');
+    if(i<langIndex){ d.classList.add('done'); d.style.background=LANG_COLOR[lg]; d.style.color='#fff'; }
+    else if(i===langIndex){ d.classList.add('active'); d.style.background=LANG_COLOR[lg]; }
+    else { d.style.background='#fff'; d.style.color='#999'; }
+  });
+}
+function updateProgress(){
+  const pct=(wordIndex/wordsList.length)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('stationInfo').textContent = `الكلمة ${wordIndex+1} / ${wordsList.length}`;
+}
+function showWordStation(){
+  langIndex=0; updateProgress();
+  const w = wordsList[wordIndex];
+  const emEl=document.getElementById('wordEmoji');
+  emEl.textContent=w.em; emEl.classList.remove('show');
+  document.getElementById('speechBubble').style.display='none';
+  document.getElementById('mergeFx').innerHTML='';
+  document.getElementById('trainContainer').style.transform='translateX(0)';
+  setTimeout(()=>emEl.classList.add('show'),80);
+  document.getElementById('actionBtn').textContent='👆 اضغط تسمع الكلمة';
+  document.getElementById('actionBtn').disabled=false;
+  buildLangTrack(); updateLangTrack();
+}
+function nextStep(){
+  const order=CORRIDORS[corridorKey].order;
+  const w=wordsList[wordIndex];
+  if(langIndex < order.length){
+    const lg=order[langIndex];
+    const bubble=document.getElementById('speechBubble');
+    const tag=document.getElementById('speechTag'); const wordEl=document.getElementById('speechWord');
+    tag.textContent=LANG_LABEL[lg]; tag.style.background=LANG_COLOR[lg];
+    wordEl.textContent=w[lg];
+    bubble.style.display='block'; bubble.style.animation='none';
+    setTimeout(()=>bubble.style.animation='pop2 .4s ease',10);
+    speak(w[lg], LANG_SPEECH[lg]);
+    const chip=document.createElement('div'); chip.className='merge-chip';
+    chip.style.color=LANG_COLOR[lg]; chip.textContent=`${LANG_LABEL[lg]}: ${w[lg]}`;
+    document.getElementById('mergeFx').appendChild(chip);
+    setTimeout(()=>chip.classList.add('show'),20);
+    updateLangTrack();
+    langIndex++;
+    document.getElementById('actionBtn').textContent = langIndex<order.length ? `👆 كمان لغة (${langIndex}/${order.length})` : '🚂 اصعد بالقطار!';
+  } else {
+    playChime([523,659,784,988]);
+    const rect=document.getElementById('trainContainer').getBoundingClientRect();
+    spawnStars(rect.left+rect.width/2, rect.top);
+    document.getElementById('actionBtn').disabled=true;
+    document.getElementById('actionBtn').textContent='⏳ جاري السفر...';
+    setTimeout(()=>{
+      wordIndex++;
+      if(wordIndex>=wordsList.length){ finishCorridor(); }
+      else {
+        const tc=document.getElementById('trainContainer');
+        tc.style.transform='translateX(-100vw)';
+        setTimeout(()=>{
+          tc.style.transition='none'; tc.style.transform='translateX(100vw)';
+          setTimeout(()=>{ tc.style.transition='transform 1s ease'; tc.style.transform='translateX(0)'; showWordStation(); },80);
+        },900);
+      }
+    },900);
+  }
+}
+function finishCorridor(){
+  earnedBadges[corridorKey]=true; saveBadges();
+  const c=CORRIDORS[corridorKey];
+  document.getElementById('endTitle').textContent = `أحسنت يا ${playerName}! 🎉`;
+  document.getElementById('endMsg').textContent = `خلّصت ممر ${c.name} وصار عندك ختم جديد بجواز سفر المملكة 🛂`;
+  showScreen('endScreen');
+}
+function goHome(){ refreshPassport(); showScreen('homeScreen'); }
+
+/* ============ مجمع الطرق (المعجم الناطق) ============ */
+function openJunction(){
+  const grid=document.getElementById('jGrid'); grid.innerHTML='';
+  WORDS.forEach(w=>{
+    const card=document.createElement('div'); card.className='j-card';
+    card.innerHTML=`<div class="em">${w.em}</div><div class="lbl">${w.ar}</div>`;
+    card.onclick=()=>openDetail(w);
+    grid.appendChild(card);
+  });
+  showScreen('junctionScreen');
+}
+function openDetail(w){
+  document.getElementById('dEm').textContent=w.em;
+  const rows=document.getElementById('dRows'); rows.innerHTML='';
+  ['ar','fr','en','de'].forEach(lg=>{
+    const row=document.createElement('div'); row.className='lang-row';
+    row.innerHTML=`<button onclick="speak('${w[lg].replace(/'/g,"\\'")}','${LANG_SPEECH[lg]}')">🔊</button>
+      <span class="lword">${w[lg]}</span><span class="lname" style="color:${LANG_COLOR[lg]}">${LANG_LABEL[lg]}</span>`;
+    rows.appendChild(row);
+  });
+  document.getElementById('detailOverlay').classList.add('show');
+  setTimeout(()=>{ ['ar','fr','en','de'].forEach((lg,i)=>setTimeout(()=>speak(w[lg],LANG_SPEECH[lg]),i*900)); },300);
+}
+function closeDetail(){ document.getElementById('detailOverlay').classList.remove('show'); speechSynth.cancel(); }
+
+/* ============ اختبار سريع (Quiz) ============ */
+let quizWord=null, quizScore=0, quizTotal=0, quizLang='ar';
+function startQuiz(){
+  quizScore=0; quizTotal=0; showScreen('quizScreen'); nextQuiz();
+}
+function nextQuiz(){
+  const langs=['ar','fr','en','de'];
+  quizLang = langs[Math.floor(Math.random()*langs.length)];
+  quizWord = WORDS[Math.floor(Math.random()*WORDS.length)];
+  document.getElementById('qPrompt').textContent = `استمع (${LANG_LABEL[quizLang]}) واختر الصورة الصح`;
+  const options=[quizWord];
+  while(options.length<4){
+    const cand=WORDS[Math.floor(Math.random()*WORDS.length)];
+    if(!options.find(o=>o.id===cand.id)) options.push(cand);
+  }
+  options.sort(()=>Math.random()-.5);
+  const box=document.getElementById('qOptions'); box.innerHTML='';
+  options.forEach(o=>{
+    const b=document.createElement('button'); b.className='q-opt'; b.textContent=o.em;
+    b.onclick=()=>checkQuiz(o,b);
+    box.appendChild(b);
+  });
+  setTimeout(()=>speak(quizWord[quizLang],LANG_SPEECH[quizLang]),300);
+}
+function repeatQuizWord(){ if(quizWord) speak(quizWord[quizLang],LANG_SPEECH[quizLang]); }
+function checkQuiz(opt,btn){
+  quizTotal++;
+  if(opt.id===quizWord.id){ quizScore++; btn.classList.add('correct'); playChime([659,988]); }
+  else{ btn.classList.add('wrong'); playChime([220,180]); }
+  document.getElementById('qScore').textContent = `النقاط: ${quizScore} / ${quizTotal}`;
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  setTimeout(nextQuiz,1200);
+}
+
+/* ============ تشغيل ديكور الغيوم ============ */
+function addClouds(){
+  const scene=document.getElementById('scene');
+  for(let i=0;i<3;i++){
+    const c=document.createElement('div'); c.className='cloud'; c.textContent='☁️';
+    c.style.top=(4+Math.random()*20)+'%';
+    c.style.animationDuration=(14+Math.random()*14)+'s';
+    c.style.animationDelay=(Math.random()*8)+'s';
+    scene.insertBefore(c,scene.firstChild);
+  }
+}
+addClouds();
+refreshPassport();
+</script>
+</body></html>
