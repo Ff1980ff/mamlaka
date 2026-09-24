@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>عقد إيجار ذكي (إصدار مصحح) | مملكة التطبيقات</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,sans-serif}
+body{background:#f0f2f5;color:#1a1a1a;padding:10px;line-height:1.4;font-size:13px} 
+.container{max-width:900px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.05);overflow:hidden}
+.header{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:10px;text-align:center}
+.header h1{font-size:18px;margin-bottom:2px} 
+.header p{opacity:.9;font-size:11px}
+.section{padding:10px 15px;border-bottom:1px solid #eee} 
+.section:last-child{border-bottom:none}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px} 
+@media(max-width:600px){.grid-2{grid-template-columns:1fr}}
+.form-group{margin-bottom:8px}
+.label{display:block;font-weight:700;margin-bottom:3px;color:#444;font-size:12px}
+.input{width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:4px;font-size:13px;transition:border-color .3s}
+.input:focus{border-color:#2a5298;outline:none}
+.table-container{overflow-x:auto;margin-top:5px}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-size:12px} 
+th{background:#f8f9fa;font-weight:700;color:#555;font-size:11px}
+td input{width:100%;border:none;background:transparent;font-size:12px;text-align:right;padding:2px}
+td input:focus{background:#f0f7ff;outline:1px solid #2a5298}
+.btn-add{background:#28a745;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:600;margin-top:5px;font-size:11px;display:inline-flex;align-items:center;gap:3px}
+.btn-remove{background:#dc3545;color:#fff;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center}
+.total-row{background:#eef2f7;font-weight:800;font-size:13px}
+
+/* --- تنسيق البنود القابلة للتعديل --- */
+.clauses-editable { background:#fffdf0; border-right:3px solid #ffc107; padding:8px; border-radius:4px; margin-top:5px; font-size:11px; line-height:1.3; }
+.clause-textarea { width:100%; min-height:40px; border:1px dashed #ccc; background:#fafafa; padding:5px; font-size:11px; color:#333; resize:vertical; margin-bottom:5px; border-radius:3px; }
+.clause-textarea:focus { border-color:#2a5298; background:#fff; outline:none; }
+
+/* --- تنسيق لوحة التوقيع الإلكترونية (الصغيرة داخل العقد) --- */
+.signatures-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px;text-align:center}
+.sig-card{border:1px dashed #ccc;border-radius:6px;padding:8px;background:#fafafa;position:relative; cursor:pointer;} 
+.sig-title{font-weight:700;color:#2a5298;margin-bottom:5px;font-size:12px}
+.canvas-preview-box{background:#fff;border:1px solid #ddd;border-radius:4px;height:80px;position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+.canvas-preview-box img{max-height:100%; max-width:100%; object-fit:contain;}
+.placeholder-text{color:#aaa; font-size:10px;}
+.sig-hint { position:absolute; bottom:5px; left:50%; transform:translateX(-50%); font-size:9px; color:#999; pointer-events:none; }
+
+.actions{padding:10px;text-align:center;background:#f8f9fa}
+.btn-print{background:#2a5298;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;transition:transform .2s}
+.btn-print:hover{transform:scale(1.02)}
+.btn-save{background:#6c757d;color:#fff;border:none;padding:8px 15px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:8px}
+
+/* === نافذة التوقيع بملء الشاشة (المنفصلة تماماً) === */
+#signatureModal {
+    display: none; /* مخفية افتراضياً */
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.modal-header {
+    font-weight: bold;
+    color: #2a5298;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+#drawingArea {
+    border: 2px solid #2a5298;
+    border-radius: 8px;
+    background: #fff;
+    touch-action: none; /* مهم جداً لمنع تمرير الصفحة أثناء الرسم */
+    cursor: crosshair;
+    width: 100%;
+    height: 300px; /* ارتفاع مناسب للجوال */
+    display: block;
+}
+.modal-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.btn-modal {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+.btn-clear { background: #ffcccc; color: #c00; }
+.btn-save-sig { background: #2a5298; color: #fff; }
+.btn-cancel { background: #eee; color: #333; }
+
+/* === إعدادات الطباعة الصارمة لصفحة واحدة === */
+@media print {
+    @page { size: A4; margin: 5mm; } 
+    body{ background:#fff; padding:0; font-size:10pt; line-height:1.2; }
+    .container{ box-shadow:none; border-radius:0; width:100%; max-width:none; }
+    .header{ padding:5px; background:#eee !important; color:#000 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .header h1{ font-size:14pt; }
+    .header p{ display:none; } 
+    .section{ padding:5px 10px; border-bottom:1px solid #ccc; page-break-inside:avoid; }
+    .input, td input { border:none!important; background:transparent!important; padding:2px!important; font-size:10pt!important; }
+    th, td { padding:4px 6px!important; font-size:9pt!important; }
+    .clauses-editable { padding:5px!important; font-size:9pt!important; border:none!important; background:transparent!important; }
+    .clause-textarea { border:none!important; background:transparent!important; resize:none!important; height:auto!important; overflow:hidden!important; }
+    .sig-card { padding:5px!important; cursor:default!important; border:none!important; }
+    .canvas-preview-box { border:none!important; height:auto!important; }
+    .placeholder-text, .sig-hint, .actions, .btn-add, .btn-remove { display:none!important; }
+    
+    /* ضمان عدم انقسام الصفحات */
+    .signatures-wrapper { break-inside: avoid; }
+    table { break-inside: auto; }
+    tr { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📜 عقد إيجار معدات وأخشاب (بالليرة السورية)</h1>
+        <p>مملكة التطبيقات • نظام العقود الذكي v4.1 (مصحيح)</p>
+    </div>
+
+    <!-- بيانات الأطراف -->
+    <div class="section">
+        <div class="grid-2">
+            <div>
+                <label class="label">اسم المؤجر:</label>
+                <input type="text" class="input" id="lessorName" placeholder="الاسم الكامل">
+                <label class="label" style="margin-top:5px">الهاتف:</label>
+                <input type="tel" class="input" id="lessorPhone" placeholder="09xxxxxxxx">
+            </div>
+            <div>
+                <label class="label">اسم المستأجر:</label>
+                <input type="text" class="input" id="tenantName" placeholder="الاسم الثلاثي">
+                <div class="grid-2" style="gap:5px;margin-top:5px">
+                    <div><label class="label">رقم الهوية:</label><input type="text" class="input" id="tenantID"></div>
+                    <div><label class="label">هاتف المستأجر:</label><input type="tel" class="input" id="tenantPhone"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid-2" style="margin-top:8px">
+             <div>
+                <label class="label">تاريخ البداية:</label>
+                <input type="date" class="input" id="startDate">
+            </div>
+            <div>
+                <label class="label">تاريخ النهاية:</label>
+                <input type="date" class="input" id="endDate">
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول الأصناف -->
+    <div class="section">
+        <h3 style="margin-bottom:5px;color:#2a5298;font-size:14px">📋 قائمة الأصناف المستأجرة (الأسعار بالليرة السورية)</h3>
+        <div class="table-container">
+            <table id="itemsTable">
+                <thead>
+                    <tr>
+                        <th width="30%">وصف الصنف</th>
+                        <th width="10%">العدد</th>
+                        <th width="15%">الطول/المساحة</th>
+                        <th width="15%">سعر الوحدة (ل.س)</th>
+                        <th width="15%">الإجمالي (ل.س)</th>
+                        <th width="10%">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td><input type="text" class="item-desc" placeholder="مثلا: خشب زان"></td>
+                        <td><input type="number" class="item-qty" value="1" min="1"></td>
+                        <td><input type="number" class="item-length" value="0" step="0.1"></td>
+                        <td><input type="number" class="item-price" value="0" step="1000"></td>
+                        <td><span class="row-total">0</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this)">×</button></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align:left;padding-left:10px">الإجمالي الكلي:</td>
+                        <td id="grandTotal" style="color:#2a5298">0 ل.س</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <button class="btn-add" onclick="addRow()">➕ إضافة صنف</button>
+    </div>
+
+    <!-- البنود والشروط (قابلة للتعديل الآن!) -->
+    <div class="section">
+        <h3 style="margin-bottom:5px;color:#2a5298;font-size:14px">⚖️ بنود الاتفاق (يمكنك التعديل عليها)</h3>
+        <div class="clauses-editable">
+            <label class="label" style="font-size:10px; color:#888;">البند 1: التعهد بالإرجاع</label>
+            <textarea class="clause-textarea" id="clause1">يلتزم المستأجر بإرجاع جميع الأصناف المذكورة أعلاه بحالتها الأصلية دون نقصان أو تلف، وفي حال حدوث أي ضرر يلتزم بدفع قيمة الإصلاح أو استبدال القطعة بقيمتها السوقية الحالية.</textarea>
+            
+            <label class="label" style="font-size:10px; color:#888;">البند 2: غرامة التأخير</label>
+            <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                <span>غرامة قدرها</span>
+                <input type="number" id="penaltyRate" value="5000" style="width:60px;padding:2px;text-align:center;border:1px solid #ddd;border-radius:2px;font-size:11px">
+                <span>ل.س / يوم عن كل يوم تأخير.</span>
+            </div>
+
+            <label class="label" style="font-size:10px; color:#888;">البند 3: التأمين وطريقة الدفع</label>
+            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+                <span>مبلغ تأمين وقدره</span>
+                <input type="number" id="depositAmount" value="0" style="width:70px;padding:2px;text-align:center;border:1px solid #ddd;border-radius:2px;font-size:11px">
+                <span>ل.س. طريقة الدفع:</span>
+                <select id="paymentMethod" class="input" style="width:auto;display:inline-block;padding:2px 5px;font-size:11px">
+                    <option value="cash">نقداً</option>
+                    <option value="transfer">تحويل (شام كاش/بنكي)</option>
+                </select>
+            </div>
+            
+            <label class="label" style="font-size:10px; color:#888; margin-top:5px;">بند إضافي (اختياري):</label>
+            <textarea class="clause-textarea" id="clauseExtra" placeholder="اكتب أي شرط إضافي هنا..."></textarea>
+        </div>
+    </div>
+
+    <!-- منطقة التواقيع الإلكترونية (مع زر ملء الشاشة) -->
+    <div class="section">
+        <h3 style="margin-bottom:5px;color:#2a5298;text-align:center;font-size:14px">✍️ التواقيع الإلكترونية (اضغط للتكبير والرسم)</h3>
+        <div class="signatures-wrapper">
+            
+            <!-- توقيع المؤجر -->
+            <div class="sig-card" onclick="openSignatureModal('lessor')">
+                <div class="sig-title">توقيع المؤجر</div>
+                <div class="canvas-preview-box" id="lessorPreviewBox">
+                    <img src="" alt="توقيع المؤجر" style="display:none;" id="lessorImg">
+                    <span class="placeholder-text" id="lessorPlaceholder">اضغط هنا للتوقيع</span>
+                </div>
+                <div class="sig-hint">اضغط لتفعيل وضع ملء الشاشة</div>
+            </div>
+
+            <!-- توقيع المستأجر -->
+            <div class="sig-card" onclick="openSignatureModal('tenant')">
+                <div class="sig-title">توقيع المستأجر</div>
+                <div class="canvas-preview-box" id="tenantPreviewBox">
+                    <img src="" alt="توقيع المستأجر" style="display:none;" id="tenantImg">
+                    <span class="placeholder-text" id="tenantPlaceholder">اضغط هنا للتوقيع</span>
+                </div>
+                <div class="sig-hint">اضغط لتفعيل وضع ملء الشاشة</div>
+            </div>
+
+        </div>
+        <p style="text-align:center;margin-top:5px;font-size:10px;color:#888">
+            حرر بتاريخ: <span id="todayDate"></span>
+        </p>
+    </div>
+
+    <!-- أزرار التحكم -->
+    <div class="actions">
+        <button class="btn-print" onclick="window.print()">🖨️ طباعة / PDF</button>
+        <button class="btn-save" onclick="saveContract()">💾 حفظ نسخة</button>
+    </div>
+</div>
+
+<!-- نافذة التوقيع المنبثقة (Modals) -->
+<div id="signatureModal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">توقيع المؤجر</div>
+        <canvas id="drawingArea"></canvas>
+        <div class="modal-buttons">
+            <button class="btn-modal btn-clear" onclick="clearDrawing()">مسح الكل</button>
+            <button class="btn-modal btn-cancel" onclick="closeSignatureModal(false)">إلغاء</button>
+            <button class="btn-modal btn-save-sig" onclick="closeSignatureModal(true)">حفظ التوقيع</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// === تهيئة عامة ===
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ar-SY');
+document.getElementById('startDate').valueAsDate = new Date();
+
+// === دوال الجدول (كما هي) ===
+function addRow() {
+    const tbody = document.getElementById('tableBody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td><input type="text" class="item-desc" placeholder="وصف"></td>
+        <td><input type="number" class="item-qty" value="1" min="1"></td>
+        <td><input type="number" class="item-length" value="0" step="0.1"></td>
+        <td><input type="number" class="item-price" value="0" step="1000"></td>
+        <td><span class="row-total">0</span></td>
+        <td><button class="btn-remove" onclick="removeRow(this)">×</button></td>
+    `;
+    tbody.appendChild(row);
+    attachListeners(row);
+}
+function removeRow(btn) {
+    if(document.querySelectorAll('#tableBody tr').length > 1) btn.closest('tr').remove();
+    calculateTotals();
+}
+function attachListeners(row) {
+    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calculateTotals));
+}
+document.querySelectorAll('#tableBody tr').forEach(tr => attachListeners(tr));
+
+function calculateTotals() {
+    let grandTotal = 0;
+    document.querySelectorAll('#tableBody tr').forEach(row => {
+        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+        const len = parseFloat(row.querySelector('.item-length').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+        const subtotal = qty * len * price;
+        row.querySelector('.row-total').textContent = Math.round(subtotal).toLocaleString('ar-SY');
+        grandTotal += subtotal;
+    });
+    document.getElementById('grandTotal').textContent = Math.round(grandTotal).toLocaleString('ar-SY') + ' ل.س';
+}
+
+// === منطق التوقيع الجديد (البسيط والفعال) ===
+let currentSignTarget = null; // 'lessor' or 'tenant'
+const modal = document.getElementById('signatureModal');
+const canvas = document.getElementById('drawingArea');
+const ctx = canvas.getContext('2d');
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+// ضبط حجم الكانفس عند فتح النافذة
+function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    // نستخدم devicePixelRatio لجودة عالية على شاشات الرتينا
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = 300 * dpr; // ارتفاع ثابت للنموذج
+    ctx.scale(dpr, dpr);
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `300px`;
+    
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+}
+
+// فتح النافذة
+function openSignatureModal(target) {
+    currentSignTarget = target;
+    document.getElementById('modalTitle').textContent = target === 'lessor' ? 'توقيع المؤجر' : 'توقيع المستأجر';
+    
+    modal.style.display = 'flex';
+    resizeCanvas();
+    
+    // مسح اللوحة القديمة إذا كانت موجودة
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // تحميل الرسم القديم إن وجد
+    loadExistingSignature(target);
+}
+
+// إغلاق النافذة
+function closeSignatureModal(save) {
+    if (save && currentSignTarget) {
+        // تحويل الكانفس إلى صورة Base64
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // تحديث الصورة في المعاينة الصغيرة داخل العقد
+        updatePreview(currentSignTarget, dataURL);
+        
+        // تخزين البيانات مؤقتاً للحفظ النهائي
+        localStorage.setItem(`sig_${currentSignTarget}`, dataURL);
+    }
+    
+    modal.style.display = 'none';
+    currentSignTarget = null;
+}
+
+// تحديث صورة المعاينة الصغيرة
+function updatePreview(target, imageDataUrl) {
+    const imgEl = document.getElementById(`${target}Img`);
+    const placeholderEl = document.getElementById(`${target}Placeholder`);
+    
+    imgEl.src = imageDataUrl;
+    imgEl.style.display = 'block';
+    placeholderEl.style.display = 'none';
+}
+
+// تحميل رسم سابق من LocalStorage
+function loadExistingSignature(target) {
+    const savedSig = localStorage.getItem(`sig_${target}`);
+    if (savedSig) {
+        const img = new Image();
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio||1), canvas.height / (window.devicePixelRatio||1));
+        };
+        img.src = savedSig;
+    }
+}
+
+// أحداث الرسم (Mouse & Touch)
+function startDraw(x, y) {
+    isDrawing = true;
+    lastX = x;
+    lastY = y;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+}
+
+function draw(x, y) {
+    if (!isDrawing) return;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x;
+    lastY = y;
+}
+
+function stopDraw() {
+    isDrawing = false;
+}
+
+// ربط الأحداث بالكانفس
+canvas.addEventListener('mousedown', e => startDraw(e.offsetX, e.offsetY));
+canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
+canvas.addEventListener('mouseup', stopDraw);
+canvas.addEventListener('mouseout', stopDraw);
+
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault(); // منع التمرير
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    startDraw(touch.clientX - rect.left, touch.clientY - rect.top);
+}, {passive: false});
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    draw(touch.clientX - rect.left, touch.clientY - rect.top);
+}, {passive: false});
+
+canvas.addEventListener('touchend', stopDraw);
+
+function clearDrawing() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// === حفظ وتصدير البيانات ===
+function saveContract() {
+    // جمع التواقيع من LocalStorage أو الم<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>عقد إيجار ذكي (إصدار مصحح) | مملكة التطبيقات</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,sans-serif}
+body{background:#f0f2f5;color:#1a1a1a;padding:10px;line-height:1.4;font-size:13px} 
+.container{max-width:900px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.05);overflow:hidden}
+.header{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:10px;text-align:center}
+.header h1{font-size:18px;margin-bottom:2px} 
+.header p{opacity:.9;font-size:11px}
+.section{padding:10px 15px;border-bottom:1px solid #eee} 
+.section:last-child{border-bottom:none}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px} 
+@media(max-width:600px){.grid-2{grid-template-columns:1fr}}
+.form-group{margin-bottom:8px}
+.label{display:block;font-weight:700;margin-bottom:3px;color:#444;font-size:12px}
+.input{width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:4px;font-size:13px;transition:border-color .3s}
+.input:focus{border-color:#2a5298;outline:none}
+.table-container{overflow-x:auto;margin-top:5px}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-size:12px} 
+th{background:#f8f9fa;font-weight:700;color:#555;font-size:11px}
+td input{width:100%;border:none;background:transparent;font-size:12px;text-align:right;padding:2px}
+td input:focus{background:#f0f7ff;outline:1px solid #2a5298}
+.btn-add{background:#28a745;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:600;margin-top:5px;font-size:11px;display:inline-flex;align-items:center;gap:3px}
+.btn-remove{background:#dc3545;color:#fff;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center}
+.total-row{background:#eef2f7;font-weight:800;font-size:13px}
+
+/* --- تنسيق البنود القابلة للتعديل --- */
+.clauses-editable { background:#fffdf0; border-right:3px solid #ffc107; padding:8px; border-radius:4px; margin-top:5px; font-size:11px; line-height:1.3; }
+.clause-textarea { width:100%; min-height:40px; border:1px dashed #ccc; background:#fafafa; padding:5px; font-size:11px; color:#333; resize:vertical; margin-bottom:5px; border-radius:3px; }
+.clause-textarea:focus { border-color:#2a5298; background:#fff; outline:none; }
+
+/* --- تنسيق لوحة التوقيع الإلكترونية (الصغيرة داخل العقد) --- */
+.signatures-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px;text-align:center}
+.sig-card{border:1px dashed #ccc;border-radius:6px;padding:8px;background:#fafafa;position:relative; cursor:pointer;} 
+.sig-title{font-weight:700;color:#2a5298;margin-bottom:5px;font-size:12px}
+.canvas-preview-box{background:#fff;border:1px solid #ddd;border-radius:4px;height:80px;position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+.canvas-preview-box img{max-height:100%; max-width:100%; object-fit:contain;}
+.placeholder-text{color:#aaa; font-size:10px;}
+.sig-hint { position:absolute; bottom:5px; left:50%; transform:translateX(-50%); font-size:9px; color:#999; pointer-events:none; }
+
+.actions{padding:10px;text-align:center;background:#f8f9fa}
+.btn-print{background:#2a5298;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;transition:transform .2s}
+.btn-print:hover{transform:scale(1.02)}
+.btn-save{background:#6c757d;color:#fff;border:none;padding:8px 15px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:8px}
+
+/* === نافذة التوقيع بملء الشاشة (المنفصلة تماماً) === */
+#signatureModal {
+    display: none; /* مخفية افتراضياً */
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.modal-header {
+    font-weight: bold;
+    color: #2a5298;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+#drawingArea {
+    border: 2px solid #2a5298;
+    border-radius: 8px;
+    background: #fff;
+    touch-action: none; /* مهم جداً لمنع تمرير الصفحة أثناء الرسم */
+    cursor: crosshair;
+    width: 100%;
+    height: 300px; /* ارتفاع مناسب للجوال */
+    display: block;
+}
+.modal-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.btn-modal {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+.btn-clear { background: #ffcccc; color: #c00; }
+.btn-save-sig { background: #2a5298; color: #fff; }
+.btn-cancel { background: #eee; color: #333; }
+
+/* === إعدادات الطباعة الصارمة لصفحة واحدة === */
+@media print {
+    @page { size: A4; margin: 5mm; } 
+    body{ background:#fff; padding:0; font-size:10pt; line-height:1.2; }
+    .container{ box-shadow:none; border-radius:0; width:100%; max-width:none; }
+    .header{ padding:5px; background:#eee !important; color:#000 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .header h1{ font-size:14pt; }
+    .header p{ display:none; } 
+    .section{ padding:5px 10px; border-bottom:1px solid #ccc; page-break-inside:avoid; }
+    .input, td input { border:none!important; background:transparent!important; padding:2px!important; font-size:10pt!important; }
+    th, td { padding:4px 6px!important; font-size:9pt!important; }
+    .clauses-editable { padding:5px!important; font-size:9pt!important; border:none!important; background:transparent!important; }
+    .clause-textarea { border:none!important; background:transparent!important; resize:none!important; height:auto!important; overflow:hidden!important; }
+    .sig-card { padding:5px!important; cursor:default!important; border:none!important; }
+    .canvas-preview-box { border:none!important; height:auto!important; }
+    .placeholder-text, .sig-hint, .actions, .btn-add, .btn-remove { display:none!important; }
+    
+    /* ضمان عدم انقسام الصفحات */
+    .signatures-wrapper { break-inside: avoid; }
+    table { break-inside: auto; }
+    tr { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📜 عقد إيجار معدات وأخشاب (بالليرة السورية)</h1>
+        <p>مملكة التطبيقات • نظام العقود الذكي v4.1 (مصحيح)</p>
+    </div>
+
+    <!-- بيانات الأطراف -->
+    <div class="section">
+        <div class="grid-2">
+            <div>
+                <label class="label">اسم المؤجر:</label>
+                <input type="text" class="input" id="lessorName" placeholder="الاسم الكامل">
+                <label class="label" style="margin-top:5px">الهاتف:</label>
+                <input type="tel" class="input" id="lessorPhone" placeholder="09xxxxxxxx">
+            </div>
+            <div>
+                <label class="label">اسم المستأجر:</label>
+                <input type="text" class="input" id="tenantName" placeholder="الاسم الثلاثي">
+                <div class="grid-2" style="gap:5px;margin-top:5px">
+                    <div><label class="label">رقم الهوية:</label><input type="text" class="input" id="tenantID"></div>
+                    <div><label class="label">هاتف المستأجر:</label><input type="tel" class="input" id="tenantPhone"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid-2" style="margin-top:8px">
+             <div>
+                <label class="label">تاريخ البداية:</label>
+                <input type="date" class="input" id="startDate">
+            </div>
+            <div>
+                <label class="label">تاريخ النهاية:</label>
+                <input type="date" class="input" id="endDate">
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول الأصناف -->
+    <div class="section">
+        <h3 style="margin-bottom:5px;color:#2a5298;font-size:14px">📋 قائمة الأصناف المستأجرة (الأسعار بالليرة السورية)</h3>
+        <div class="table-container">
+            <table id="itemsTable">
+                <thead>
+                    <tr>
+                        <th width="30%">وصف الصنف</th>
+                        <th width="10%">العدد</th>
+                        <th width="15%">الطول/المساحة</th>
+                        <th width="15%">سعر الوحدة (ل.س)</th>
+                        <th width="15%">الإجمالي (ل.س)</th>
+                        <th width="10%">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td><input type="text" class="item-desc" placeholder="مثلا: خشب زان"></td>
+                        <td><input type="number" class="item-qty" value="1" min="1"></td>
+                        <td><input type="number" class="item-length" value="0" step="0.1"></td>
+                        <td><input type="number" class="item-price" value="0" step="1000"></td>
+                        <td><span class="row-total">0</span></td>
+                        <td><button class="btn-remove" onclick="removeRow(this)">×</button></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align:left;padding-left:10px">الإجمالي الكلي:</td>
+                        <td id="grandTotal" style="color:#2a5298">0 ل.س</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <button class="btn-add" onclick="addRow()">➕ إضافة صنف</button>
+    </div>
+
+    <!-- البنود والشروط (قابلة للتعديل الآن!) -->
+    <div class="section">
+        <h3 style="margin-bottom:5px;color:#2a5298;font-size:14px">⚖️ بنود الاتفاق (يمكنك التعديل عليها)</h3>
+        <div class="clauses-editable">
+            <label class="label" style="font-size:10px; color:#888;">البند 1: التعهد بالإرجاع</label>
+            <textarea class="clause-textarea" id="clause1">يلتزم المستأجر بإرجاع جميع الأصناف المذكورة أعلاه بحالتها الأصلية دون نقصان أو تلف، وفي حال حدوث أي ضرر يلتزم بدفع قيمة الإصلاح أو استبدال القطعة بقيمتها السوقية الحالية.</textarea>
+            
+            <label class="label" style="font-size:10px; color:#888;">البند 2: غرامة التأخير</label>
+            <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                <span>غرامة قدرها</span>
+                <input type="number" id="penaltyRate" value="5000" style="width:60px;padding:2px;text-align:center;border:1px solid #ddd;border-radius:2px;font-size:11px">
+                <span>ل.س / يوم عن كل يوم تأخير.</span>
+            </div>
+
+            <label class="label" style="font-size:10px; color:#888;">البند 3: التأمين وطريقة الدفع</label>
+            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+                <span>مبلغ تأمين وقدره</span>
+                <input type="number" id="depositAmount" value="0" style="width:70px;padding:2px;text-align:center;border:1px solid #ddd;border-radius:2px;font-size:11px">
+                <span>ل.س. طريقة الدفع:</span>
+                <select id="paymentMethod" class="input" style="width:auto;display:inline-block;padding:2px 5px;font-size:11px">
+                    <option value="cash">نقداً</option>
+                    <option value="transfer">تحويل (شام كاش/بنكي)</option>
+                </select>
+            </div>
+            
+            <label class="label" style="font-size:10px; color:#888; margin-top:5px;">بند إضافي (اختياري):</label>
+            <textarea class="clause-textarea" id="clauseExtra" placeholder="اكتب أي شرط إضافي هنا..."></textarea>
+        </div>
+    </div>
+
+    <!-- منطقة التواقيع الإلكترونية (مع زر ملء الشاشة) -->
+    <div class="section">
+        <h3 style="margin-bottom:5px;color:#2a5298;text-align:center;font-size:14px">✍️ التواقيع الإلكترونية (اضغط للتكبير والرسم)</h3>
+        <div class="signatures-wrapper">
+            
+            <!-- توقيع المؤجر -->
+            <div class="sig-card" onclick="openSignatureModal('lessor')">
+                <div class="sig-title">توقيع المؤجر</div>
+                <div class="canvas-preview-box" id="lessorPreviewBox">
+                    <img src="" alt="توقيع المؤجر" style="display:none;" id="lessorImg">
+                    <span class="placeholder-text" id="lessorPlaceholder">اضغط هنا للتوقيع</span>
+                </div>
+                <div class="sig-hint">اضغط لتفعيل وضع ملء الشاشة</div>
+            </div>
+
+            <!-- توقيع المستأجر -->
+            <div class="sig-card" onclick="openSignatureModal('tenant')">
+                <div class="sig-title">توقيع المستأجر</div>
+                <div class="canvas-preview-box" id="tenantPreviewBox">
+                    <img src="" alt="توقيع المستأجر" style="display:none;" id="tenantImg">
+                    <span class="placeholder-text" id="tenantPlaceholder">اضغط هنا للتوقيع</span>
+                </div>
+                <div class="sig-hint">اضغط لتفعيل وضع ملء الشاشة</div>
+            </div>
+
+        </div>
+        <p style="text-align:center;margin-top:5px;font-size:10px;color:#888">
+            حرر بتاريخ: <span id="todayDate"></span>
+        </p>
+    </div>
+
+    <!-- أزرار التحكم -->
+    <div class="actions">
+        <button class="btn-print" onclick="window.print()">🖨️ طباعة / PDF</button>
+        <button class="btn-save" onclick="saveContract()">💾 حفظ نسخة</button>
+    </div>
+</div>
+
+<!-- نافذة التوقيع المنبثقة (Modals) -->
+<div id="signatureModal">
+    <div class="modal-content">
+        <div class="modal-header" id="modalTitle">توقيع المؤجر</div>
+        <canvas id="drawingArea"></canvas>
+        <div class="modal-buttons">
+            <button class="btn-modal btn-clear" onclick="clearDrawing()">مسح الكل</button>
+            <button class="btn-modal btn-cancel" onclick="closeSignatureModal(false)">إلغاء</button>
+            <button class="btn-modal btn-save-sig" onclick="closeSignatureModal(true)">حفظ التوقيع</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// === تهيئة عامة ===
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ar-SY');
+document.getElementById('startDate').valueAsDate = new Date();
+
+// === دوال الجدول (كما هي) ===
+function addRow() {
+    const tbody = document.getElementById('tableBody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td><input type="text" class="item-desc" placeholder="وصف"></td>
+        <td><input type="number" class="item-qty" value="1" min="1"></td>
+        <td><input type="number" class="item-length" value="0" step="0.1"></td>
+        <td><input type="number" class="item-price" value="0" step="1000"></td>
+        <td><span class="row-total">0</span></td>
+        <td><button class="btn-remove" onclick="removeRow(this)">×</button></td>
+    `;
+    tbody.appendChild(row);
+    attachListeners(row);
+}
+function removeRow(btn) {
+    if(document.querySelectorAll('#tableBody tr').length > 1) btn.closest('tr').remove();
+    calculateTotals();
+}
+function attachListeners(row) {
+    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calculateTotals));
+}
+document.querySelectorAll('#tableBody tr').forEach(tr => attachListeners(tr));
+
+function calculateTotals() {
+    let grandTotal = 0;
+    document.querySelectorAll('#tableBody tr').forEach(row => {
+        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+        const len = parseFloat(row.querySelector('.item-length').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+        const subtotal = qty * len * price;
+        row.querySelector('.row-total').textContent = Math.round(subtotal).toLocaleString('ar-SY');
+        grandTotal += subtotal;
+    });
+    document.getElementById('grandTotal').textContent = Math.round(grandTotal).toLocaleString('ar-SY') + ' ل.س';
+}
+
+// === منطق التوقيع الجديد (البسيط والفعال) ===
+let currentSignTarget = null; // 'lessor' or 'tenant'
+const modal = document.getElementById('signatureModal');
+const canvas = document.getElementById('drawingArea');
+const ctx = canvas.getContext('2d');
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+// ضبط حجم الكانفس عند فتح النافذة
+function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    // نستخدم devicePixelRatio لجودة عالية على شاشات الرتينا
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = 300 * dpr; // ارتفاع ثابت للنموذج
+    ctx.scale(dpr, dpr);
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `300px`;
+    
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+}
+
+// فتح النافذة
+function openSignatureModal(target) {
+    currentSignTarget = target;
+    document.getElementById('modalTitle').textContent = target === 'lessor' ? 'توقيع المؤجر' : 'توقيع المستأجر';
+    
+    modal.style.display = 'flex';
+    resizeCanvas();
+    
+    // مسح اللوحة القديمة إذا كانت موجودة
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // تحميل الرسم القديم إن وجد
+    loadExistingSignature(target);
+}
+
+// إغلاق النافذة
+function closeSignatureModal(save) {
+    if (save && currentSignTarget) {
+        // تحويل الكانفس إلى صورة Base64
+        const dataURL = canvas.toDataURL('image/png');
+        
+        // تحديث الصورة في المعاينة الصغيرة داخل العقد
+        updatePreview(currentSignTarget, dataURL);
+        
+        // تخزين البيانات مؤقتاً للحفظ النهائي
+        localStorage.setItem(`sig_${currentSignTarget}`, dataURL);
+    }
+    
+    modal.style.display = 'none';
+    currentSignTarget = null;
+}
+
+// تحديث صورة المعاينة الصغيرة
+function updatePreview(target, imageDataUrl) {
+    const imgEl = document.getElementById(`${target}Img`);
+    const placeholderEl = document.getElementById(`${target}Placeholder`);
+    
+    imgEl.src = imageDataUrl;
+    imgEl.style.display = 'block';
+    placeholderEl.style.display = 'none';
+}
+
+// تحميل رسم سابق من LocalStorage
+function loadExistingSignature(target) {
+    const savedSig = localStorage.getItem(`sig_${target}`);
+    if (savedSig) {
+        const img = new Image();
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio||1), canvas.height / (window.devicePixelRatio||1));
+        };
+        img.src = savedSig;
+    }
+}
+
+// أحداث الرسم (Mouse & Touch)
+function startDraw(x, y) {
+    isDrawing = true;
+    lastX = x;
+    lastY = y;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+}
+
+function draw(x, y) {
+    if (!isDrawing) return;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x;
+    lastY = y;
+}
+
+function stopDraw() {
+    isDrawing = false;
+}
+
+// ربط الأحداث بالكانفس
+canvas.addEventListener('mousedown', e => startDraw(e.offsetX, e.offsetY));
+canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
+canvas.addEventListener('mouseup', stopDraw);
+canvas.addEventListener('mouseout', stopDraw);
+
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault(); // منع التمرير
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    startDraw(touch.clientX - rect.left, touch.clientY - rect.top);
+}, {passive: false});
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    draw(touch.clientX - rect.left, touch.clientY - rect.top);
+}, {passive: false});
+
+canvas.addEventListener('touchend', stopDraw);
+
+function clearDrawing() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// === حفظ وتصدير البيانات ===
+function saveContract() {
+    // جمع التواقيع من LocalStorage أو الم
