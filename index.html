@@ -105,6 +105,35 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 
 <!-- ✅ القسم المعدل: يشير للملفات المؤكدة وجودها -->
 <div class="categories-grid">
+    <!-- 1. الأدوات المالية: نربطها بالسفارة مؤقتاً لأنها تحتوي على رابط العقد والمحاسب القديم إذا كان موجوداً، أو نتركها كـ placeholder -->
+    <!-- الحل الأفضل: نربطها بملف مؤكد وجوده مثل safara.html الذي يحتوي على كل شيء -->
+    <div class="category-card cat-tools" onclick="navigateTo('safara.html')">
+        <span class="category-icon">💰</span>
+        <div class="category-name">الأدوات المالية</div>
+        <div class="category-desc">تصفح مجموعة أدواتنا المالية والعقودية عبر السفارة.</div>
+    </div>
+
+    <!-- 2. الإبداع والصوت: هذا الملف مؤكد عمله (royalvoicestudio.html) -->
+    <div class="category-card cat-tech" onclick="navigateTo('royalvoicestudio.html')">
+        <span class="category-icon">🎙️</span>
+        <div class="category-name">الإبداع والصوت</div>
+        <div class="category-desc">جرب استوديو الرسم والنطق الذكي المباشر.</div>
+    </div>
+
+    <!-- 3. مركز القيادة: بدلاً من os-hub غير المؤكد، نوجهه للسفارة أيضاً كنقطة وصول شاملة -->
+    <div class="category-card cat-edu" onclick="navigateTo('safara.html')">
+        <span class="category-icon">🏛️</span>
+        <div class="category-name">مركز المملكة</div>
+        <div class="category-desc">الدخول الشامل لجميع خدمات ومنتجات المملكة.</div>
+    </div>
+
+    <!-- 4. سفارة المعرفة: هذا مؤكد عمله -->
+    <div class="category-card cat-lang" onclick="navigateTo('safara.html')">
+        <span class="category-icon">🌍</span>
+        <div class="category-name">سفارة المعرفة</div>
+        <div class="category-desc">روابط تعليمية عالمية مجانية ومحدثة.</div>
+    </div>
+</div>
     <div class="category-card cat-tools" onclick="navigateTo('ledger-mobile-final.html')">
         <span class="category-icon">💰</span>
         <div class="category-name">الأدوات المالية</div>
@@ -131,7 +160,7 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 </div>
 
 <div class="actions-container">
-    <button class="btn-primary" onclick="openOS()">
+    window.location.href = 'safara.html';
         🚀 دخول نظام التشغيل الكامل
     </button>
     
