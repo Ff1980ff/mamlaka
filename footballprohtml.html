@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>⚽ كرة القدم الاحترافية - النسخة الذهبية</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; color: white; }
+.screen { display: none; width: 100%; min-height: 100vh; flex-direction: column; align-items: center; padding: 15px; }
+.screen.active { display: flex; }
+
+/* العنوان */
+.game-title { font-size: 36px; font-weight: 900; color: #ffd700; text-shadow: 3px 3px 6px rgba(0,0,0,0.7), 0 0 20px rgba(255,215,0,0.5); margin: 15px 0; text-align: center; letter-spacing: 2px; }
+.subtitle { font-size: 16px; color: #94a1b2; margin-bottom: 20px; text-align: center; }
+
+/* الأزرار */
+.btn { padding: 14px 35px; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; transition: all 0.3s; margin: 8px; text-align: center; font-family: inherit; }
+.btn-primary { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,215,0,0.6); }
+.btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 2px solid #ffd700; }
+.btn-secondary:hover { background: rgba(255,215,0,0.2); }
+.btn-danger { background: linear-gradient(135deg, #e63946, #c1121f); color: white; }
+
+/* اختيار المستوى */
+.difficulty-selection { display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
+.difficulty-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; min-width: 120px; }
+.difficulty-card:hover { background: rgba(255,215,0,0.2); transform: translateY(-5px); border-color: #ffd700; }
+.difficulty-card.selected { background: rgba(255,215,0,0.3); border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+.difficulty-icon { font-size: 40px; margin-bottom: 10px; }
+.difficulty-name { font-size: 16px; font-weight: bold; }
+
+/* اختيار الفريق */
+.team-selection { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 500px; margin: 20px 0; }
+.team-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; }
+.team-card:hover { background: rgba(255,215,0,0.2); transform: translateY(-5px); border-color: #ffd700; }
+.team-card.selected { background: rgba(255,215,0,0.3); border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+.team-flag { font-size: 50px; margin-bottom: 8px; }
+.team-name { font-size: 18px; font-weight: bold; }
+.team-rating { font-size: 13px; color: #ffd700; margin-top: 5px; }
+
+/* الملعب */
+.field-container { position: relative; width: 100%; max-width: 800px; height: 500px; background: linear-gradient(180deg, #2d8a4e 0%, #1e6b3a 50%, #2d8a4e 100%); border-radius: 10px; border: 4px solid white; overflow: hidden; margin: 15px 0; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.field-lines { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.5); }
+.field-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120px; height: 120px; border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; }
+.penalty-area { position: absolute; width: 100px; height: 200px; border: 2px solid rgba(255,255,255,0.5); top: 50%; transform: translateY(-50%); }
+.penalty-left { left: 0; }
+.penalty-right { right: 0; }
+.goal-area { position: absolute; width: 15px; height: 120px; background: rgba(255,255,255,0.3); }
+.goal-left { left: 0; top: 50%; transform: translateY(-50%); }
+.goal-right { right: 0; top: 50%; transform: translateY(-50%); }
+
+/* اللاعبين */
+.player { position: absolute; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: white; transition: all 0.15s; z-index: 10; box-shadow: 0 3px 8px rgba(0,0,0,0.5); }
+.player-team1 { background: linear-gradient(135deg, #e63946, #c1121f); border: 2px solid white; }
+.player-team2 { background: linear-gradient(135deg, #457b9d, #1d3557); border: 2px solid white; }
+.player-number { font-size: 11px; position: absolute; bottom: -2px; background: rgba(0,0,0,0.7); padding: 1px 4px; border-radius: 8px; }
+
+.ball { position: absolute; width: 20px; height: 20px; background: radial-gradient(circle at 30% 30%, white, #ddd); border-radius: 50%; border: 2px solid #333; z-index: 20; box-shadow: 0 2px 6px rgba(0,0,0,0.5); transition: all 0.08s linear; }
+
+/* لوحة النتائج المتقدمة */
+.scoreboard { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 700px; background: rgba(0,0,0,0.7); padding: 12px 20px; border-radius: 15px; margin-bottom: 15px; border: 2px solid rgba(255,215,0,0.3); }
+.team-score { text-align: center; flex: 1; }
+.team-score .name { font-size: 13px; color: #ffd700; margin-bottom: 3px; font-weight: bold; }
+.team-score .score { font-size: 38px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+.team-score .cards { display: flex; gap: 3px; justify-content: center; margin-top: 5px; font-size: 16px; }
+.timer-section { text-align: center; padding: 0 15px; }
+.timer { font-size: 28px; font-weight: bold; color: #ffd700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+.half-indicator { font-size: 11px; color: #94a1b2; margin-top: 3px; }
+
+/* الإحصائيات */
+.stats-bar { display: flex; justify-content: space-around; width: 100%; max-width: 700px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 12px; }
+.stat-item { text-align: center; }
+.stat-value { font-size: 18px; font-weight: bold; color: #ffd700; }
+.stat-label { color: #94a1b2; font-size: 11px; }
+
+/* أزرار التحكم */
+.controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; max-width: 400px; width: 100%; }
+.control-btn { width: 65px; height: 65px; border-radius: 50%; border: none; background: rgba(255,255,255,0.15); color: white; font-size: 22px; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(5px); }
+.control-btn:active { background: #ffd700; transform: scale(0.9); color: #1a1a2e; }
+.control-btn.center { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; font-weight: bold; }
+.action-buttons { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+.action-btn { padding: 10px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 13px; font-family: inherit; }
+.shoot-btn { background: linear-gradient(135deg, #e63946, #c1121f); color: white; }
+.pass-btn { background: linear-gradient(135deg, #457b9d, #1d3557); color: white; }
+.tackle-btn { background: linear-gradient(135deg, #f77f00, #d62828); color: white; }
+
+/* التعليق */
+.commentary { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); color: #ffd700; padding: 10px 25px; border-radius: 25px; font-weight: bold; font-size: 16px; z-index: 50; display: none; border: 2px solid #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.5); animation: slideIn 0.3s ease; }
+.commentary.show { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* إشعارات اللعبة */
+.notification { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); padding: 30px 50px; border-radius: 20px; z-index: 1000; display: none; text-align: center; border: 3px solid; animation: popIn 0.4s ease; }
+.notification.show { display: block; }
+.notification.goal { border-color: #ffd700; color: #ffd700; font-size: 48px; font-weight: 900; }
+.notification.card { border-color: #ffd700; font-size: 32px; }
+.notification.red-card { border-color: #e63946; background: rgba(230,57,70,0.2); }
+.notification.yellow-card { border-color: #ffd700; background: rgba(255,215,0,0.2); }
+@keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); } 50% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); } 100% { transform: translate(-50%, -50%) scale(1) rotate(0); } }
+
+/* شاشة نهاية المباراة */
+.final-screen { background: rgba(0,0,0,0.95); padding: 30px; border-radius: 20px; max-width: 500px; width: 100%; text-align: center; border: 3px solid #ffd700; }
+.final-title { font-size: 36px; font-weight: 900; color: #ffd700; margin-bottom: 15px; }
+.final-score { font-size: 60px; font-weight: 900; margin: 20px 0; }
+.final-stats { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 20px 0; }
+.stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.stat-row:last-child { border-bottom: none; }
+
+/* اللغة */
+.language-selector { position: fixed; top: 10px; left: 10px; z-index: 100; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 10px; }
+.lang-btn { padding: 6px 12px; border: none; border-radius: 6px; background: transparent; color: white; cursor: pointer; margin: 0 2px; font-size: 12px; }
+.lang-btn.active { background: #ffd700; color: #1a1a2e; font-weight: bold; }
+
+/* الصوت */
+.sound-toggle { position: fixed; top: 10px; right: 10px; z-index: 100; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 10px; border: none; color: white; cursor: pointer; font-size: 20px; }
+
+@media (max-width: 768px) {
+    .game-title { font-size: 24px; }
+    .field-container { height: 400px; }
+    .team-selection { grid-template-columns: 1fr; }
+    .scoreboard { padding: 8px 15px; }
+    .team-score .score { font-size: 28px; }
+    .control-btn { width: 55px; height: 55px; font-size: 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- التحكمات -->
+<div class="language-selector">
+    <button class="lang-btn active" onclick="setLanguage('ar')">🇸🇦</button>
+    <button class="lang-btn" onclick="setLanguage('en')">🇬🇧</button>
+    <button class="lang-btn" onclick="setLanguage('fr')">🇫🇷</button>
+    <button class="lang-btn" onclick="setLanguage('de')">🇩🇪</button>
+    <button class="lang-btn" onclick="setLanguage('es')">🇪🇸</button>
+</div>
+<button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+<!-- الشاشة الرئيسية -->
+<div class="screen active" id="menuScreen">
+    <div class="game-title">⚽ <span data-lang="title">كرة القدم الاحترافية</span></div>
+    <div class="subtitle" data-lang="subtitle">🏆 النسخة الذهبية - كل الميزات</div>
+    
+    <button class="btn btn-primary" onclick="showScreen('difficultySelect')" data-lang="play">🎮 <span>ابدأ المباراة</span></button>
+    <button class="btn btn-secondary" onclick="showInstructions()" data-lang="instructions">📖 <span>التعليمات</span></button>
+    <button class="btn btn-secondary" onclick="showRecords()" data-lang="records">🏆 <span>الأرقام القياسية</span></button>
+</div>
+
+<!-- اختيار المستوى -->
+<div class="screen" id="difficultySelect">
+    <div class="game-title" data-lang="selectDifficulty">🎯 اختر مستوى الصعوبة</div>
+    
+    <div class="difficulty-selection">
+        <div class="difficulty-card" onclick="selectDifficulty('easy')">
+            <div class="difficulty-icon">😊</div>
+            <div class="difficulty-name" data-lang="easy">سهل</div>
+        </div>
+        <div class="difficulty-card" onclick="selectDifficulty('medium')">
+            <div class="difficulty-icon">⚖️</div>
+            <div class="difficulty-name" data-lang="medium">متوسط</div>
+        </div>
+        <div class="difficulty-card" onclick="selectDifficulty('hard')">
+            <div class="difficulty-icon">🔥</div>
+            <div class="difficulty-name" data-lang="hard">صعب</div>
+        </div>
+        <div class="difficulty-card" onclick="selectDifficulty('legendary')">
+            <div class="difficulty-icon">👑</div>
+            <div class="difficulty-name" data-lang="legendary">أسطوري</div>
+        </div>
+    </div>
+    
+    <button class="btn btn-primary" onclick="showScreen('teamSelect')" id="nextBtn1" style="display:none" data-lang="next">التالي ⬅️</button>
+    <button class="btn btn-secondary" onclick="showScreen('menuScreen')" data-lang="back">🔙 <span>رجوع</span></button>
+</div>
+
+<!-- اختيار الفريق -->
+<div class="screen" id="teamSelect">
+    <div class="game-title" data-lang="selectTeam">⚽ اختر فريقك</div>
+    
+    <div class="team-selection">
+        <div class="team-card" onclick="selectTeam(1)">
+            <div class="team-flag">🇧🇷</div>
+            <div class="team-name" data-lang="brazil">البرازيل</div>
+            <div class="team-rating">⭐⭐⭐⭐⭐ (95)</div>
+        </div>
+        <div class="team-card" onclick="selectTeam(2)">
+            <div class="team-flag">🇦🇷</div>
+            <div class="team-name" data-lang="argentina">الأرجنتين</div>
+            <div class="team-rating">⭐⭐⭐⭐⭐ (94)</div>
+        </div>
+        <div class="team-card" onclick="selectTeam(3)">
+            <div class="team-flag">🇫🇷</div>
+            <div class="team-name" data-lang="france">فرنسا</div>
+            <div class="team-rating">⭐⭐⭐⭐⭐ (93)</div>
+        </div>
+        <div class="team-card" onclick="selectTeam(4)">
+            <div class="team-flag">🇩🇪</div>
+            <div class="team-name" data-lang="germany">ألمانيا</div>
+            <div class="team-rating">⭐⭐⭐⭐ (90)</div>
+        </div>
+        <div class="team-card" onclick="selectTeam(5)">
+            <div class="team-flag">🇪🇸</div>
+            <div class="team-name" data-lang="spain">إسبانيا</div>
+            <div class="team-rating">⭐⭐⭐⭐ (89)</div>
+        </div>
+        <div class="team-card" onclick="selectTeam(6)">
+            <div class="team-flag">🇮🇹</div>
+            <div class="team-name" data-lang="italy">إيطاليا</div>
+            <div class="team-rating">⭐⭐⭐⭐ (88)</div>
+        </div>
+    </div>
+    
+    <button class="btn btn-primary" onclick="showScreen('opponentSelect')" id="nextBtn2" style="display:none" data-lang="next">التالي ⬅️</button>
+    <button class="btn btn-secondary" onclick="showScreen('difficultySelect')" data-lang="back">🔙 <span>رجوع</span></button>
+</div>
+
+<!-- اختيار الخصم -->
+<div class="screen" id="opponentSelect">
+    <div class="game-title" data-lang="selectOpponent">🎯 اختر فريق الخصم</div>
+    <div class="team-selection" id="opponentTeams"></div>
+    <button class="btn btn-primary" onclick="startGame()" id="startBtn" style="display:none" data-lang="startGame">⚽ <span>ابدأ المباراة</span></button>
+    <button class="btn btn-secondary" onclick="showScreen('teamSelect')" data-lang="back">🔙 <span>رجوع</span></button>
+</div>
+
+<!-- شاشة اللعبة -->
+<div class="screen" id="gameScreen">
+    <div class="scoreboard">
+        <div class="team-score">
+            <div class="name" id="team1Name">فريقك</div>
+            <div class="score" id="score1">0</div>
+            <div class="cards" id="cards1"></div>
+        </div>
+        <div class="timer-section">
+            <div class="timer" id="timer">45:00</div>
+            <div class="half-indicator" id="halfIndicator" data-lang="firstHalf">الشوط الأول</div>
+        </div>
+        <div class="team-score">
+            <div class="name" id="team2Name">الخصم</div>
+            <div class="score" id="score2">0</div>
+            <div class="cards" id="cards2"></div>
+        </div>
+    </div>
+    
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value" id="possession">50%</div>
+            <div class="stat-label" data-lang="possession">الاستحواذ</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="shots">0</div>
+            <div class="stat-label" data-lang="shots">التسديدات</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="fouls">0</div>
+            <div class="stat-label" data-lang="fouls">الأخطاء</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="corners">0</div>
+            <div class="stat-label" data-lang="corners">الركنيات</div>
+        </div>
+    </div>
+    
+    <div class="field-container" id="field">
+        <div class="field-lines"></div>
+        <div class="field-circle"></div>
+        <div class="penalty-area penalty-left"></div>
+        <div class="penalty-area penalty-right"></div>
+        <div class="goal-area goal-left"></div>
+        <div class="goal-area goal-right"></div>
+        <div class="player player-team1" id="player1" style="left: 100px; top: 250px;"><span class="player-number">10</span></div>
+        <div class="player player-team2" id="player2" style="left: 650px; top: 250px;"><span class="player-number">9</span></div>
+        <div class="ball" id="ball" style="left: 390px; top: 240px;"></div>
+    </div>
+    
+    <div class="controls">
+        <div></div>
+        <button class="control-btn" onclick="movePlayer('up')">⬆️</button>
+        <div></div>
+        <button class="control-btn" onclick="movePlayer('left')">⬅️</button>
+        <button class="control-btn center" onclick="kickBall()">⚽</button>
+        <button class="control-btn" onclick="movePlayer('right')">➡️</button>
+        <div></div>
+        <button class="control-btn" onclick="movePlayer('down')">⬇️</button>
+        <div></div>
+    </div>
+    
+    <div class="action-buttons">
+        <button class="action-btn shoot-btn" onclick="shootBall()" data-lang="shoot">🎯 تسديدة قوية</button>
+        <button class="action-btn pass-btn" onclick="passBall()" data-lang="pass">📤 تمريرة</button>
+        <button class="action-btn tackle-btn" onclick="tackle()" data-lang="tackle">🛡️ تدخل</button>
+    </div>
+    
+    <button class="btn btn-secondary" onclick="endGame()" style="margin-top: 15px" data-lang="endGame">🏁 <span>إنهاء المباراة</span></button>
+</div>
+
+<!-- التعليق -->
+<div class="commentary" id="commentary"></div>
+
+<!-- الإشعارات -->
+<div class="notification" id="notification"></div>
+
+<!-- شاشة النهاية -->
+<div class="screen" id="finalScreen">
+    <div class="final-screen">
+        <div class="final-title" id="finalTitle">🏆 انتهى الشوط</div>
+        <div class="final-score"><span id="finalScore1">0</span> - <span id="finalScore2">0</span></div>
+        <div id="finalResult" style="font-size: 24px; margin: 15px 0; color: #ffd700;"></div>
+        
+        <div class="final-stats">
+            <div class="stat-row">
+                <span data-lang="possession">الاستحواذ:</span>
+                <span id="finalPossession">50% - 50%</span>
+            </div>
+            <div class="stat-row">
+                <span data-lang="shots">التسديدات:</span>
+                <span id="finalShots">0 - 0</span>
+            </div>
+            <div class="stat-row">
+                <span data-lang="fouls">الأخطاء:</span>
+                <span id="finalFouls">0 - 0</span>
+            </div>
+            <div class="stat-row">
+                <span data-lang="yellowCards">البطاقات الصفراء:</span>
+                <span id="finalYellows">0 - 0</span>
+            </div>
+            <div class="stat-row">
+                <span data-lang="redCards">البطاقات الحمراء:</span>
+                <span id="finalReds">0 - 0</span>
+            </div>
+            <div class="stat-row">
+                <span data-lang="manOfMatch">رجل المباراة:</span>
+                <span id="finalMOM">-</span>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="showScreen('menuScreen')" data-lang="playAgain">🎮 <span>مباراة جديدة</span></button>
+        <button class="btn btn-secondary" onclick="saveRecord()" data-lang="saveRecord">💾 <span>حفظ الرقم القياسي</span></button>
+    </div>
+</div>
+
+<script>
+// === البيانات ===
+let currentLanguage = 'ar';
+let selectedTeam = null;
+let opponentTeam = null;
+let selectedDifficulty = null;
+let gameActive = false;
+let score1 = 0, score2 = 0;
+let gameTime = 45 * 60;
+let timerInterval;
+let stats = { possession: 50, shots: 0, fouls: 0, corners: 0, yellowCards1: 0, yellowCards2: 0, redCards1: 0, redCards2: 0, team1Shots: 0, team2Shots: 0 };
+let soundEnabled = true;
+let ballVelocity = { x: 0, y: 0 };
+let ballMoving = false;
+let halfNumber = 1;
+
+// === الفرق ===
+const teams = {
+    1: { name: 'البرازيل', flag: '🇧🇷', rating: 95 },
+    2: { name: 'الأرجنتين', flag: '🇦🇷', rating: 94 },
+    3: { name: 'فرنسا', flag: '🇫🇷', rating: 93 },
+    4: { name: 'ألمانيا', flag: '🇩🇪', rating: 90 },
+    5: { name: 'إسبانيا', flag: '🇪🇸', rating: 89 },
+    6: { name: 'إيطاليا', flag: '🇮🇹', rating: 88 }
+};
+
+// === الترجمات ===
+const translations = {
+    ar: { title: 'كرة القدم الاحترافية', subtitle: '🏆 النسخة الذهبية', play: '🎮 ابدأ المباراة', instructions: '📖 التعليمات', records: '🏆 الأرقام القياسية', selectDifficulty: '🎯 اختر مستوى الصعوبة', easy: 'سهل', medium: 'متوسط', hard: 'صعب', legendary: 'أسطوري', next: 'التالي ⬅️', back: '🔙 رجوع', selectTeam: '⚽ اختر فريقك', brazil: 'البرازيل', argentina: 'الأرجنتين', france: 'فرنسا', germany: 'ألمانيا', spain: 'إسبانيا', italy: 'إيطاليا', selectOpponent: '🎯 اختر فريق الخصم', startGame: '⚽ ابدأ المباراة', endGame: '🏁 إنهاء المباراة', firstHalf: 'الشوط الأول', secondHalf: 'الشوط الثاني', possession: 'الاستحواذ', shots: 'التسديدات', fouls: 'الأخطاء', corners: 'الركنيات', shoot: '🎯 تسديدة قوية', pass: '📤 تمريرة', tackle: '🛡️ تدخل', playAgain: '🎮 مباراة جديدة', saveRecord: '💾 حفظ الرقم القياسي', yellowCards: 'البطاقات الصفراء', redCards: 'البطاقات الحمراء', manOfMatch: 'رجل المباراة', youWin: '🏆 مبروك! لقد فزت!', youLose: '😔 للأسف خسرت', draw: '🤝 تعادل', goal: '⚽ هدف رائع!', yellowCard: '🟡 بطاقة صفراء', redCard: '🟥 بطاقة حمراء!', save: 'تصدي رائع!', miss: 'تسديدة خارج المرمى!', kickoff: '⚽ بدأت المباراة!', halftime: '⏱️ نهاية الشوط الأول', fulltime: '🏁 انتهت المباراة!', commentary: { goal: 'هدف! يا لها من تسديدة رائعة!', miss: 'تسديدة خارج المرمى!', save: 'الحارس يتصدى!', foul: 'خطأ! بطاقة صفراء!', redCard: 'بطاقة حمراء! اللاعب مطرود!', corner: 'ركنية ربحها الفريق!', pass: 'تمريرة رائعة!' } },
+    en: { title: 'Pro Football', subtitle: '🏆 Golden Edition', play: '🎮 Start Match', instructions: '📖 Instructions', records: '🏆 Records', selectDifficulty: '🎯 Select Difficulty', easy: 'Easy', medium: 'Medium', hard: 'Hard', legendary: 'Legendary', next: 'Next ⬅️', back: '🔙 Back', selectTeam: '⚽ Select Your Team', brazil: 'Brazil', argentina: 'Argentina', france: 'France', germany: 'Germany', spain: 'Spain', italy: 'Italy', selectOpponent: '🎯 Select Opponent', startGame: '⚽ Start Match', endGame: '🏁 End Match', firstHalf: 'First Half', secondHalf: 'Second Half', possession: 'Possession', shots: 'Shots', fouls: 'Fouls', corners: 'Corners', shoot: '🎯 Shoot', pass: '📤 Pass', tackle: '🛡️ Tackle', playAgain: '🎮 Play Again', saveRecord: '💾 Save Record', yellowCards: 'Yellow Cards', redCards: 'Red Cards', manOfMatch: 'Man of Match', youWin: '🏆 You Win!', youLose: '😔 You Lose', draw: '🤝 Draw', goal: '⚽ Goal!', yellowCard: '🟡 Yellow Card', redCard: '🟥 Red Card!', save: 'Great Save!', miss: 'Missed Shot!', kickoff: '⚽ Kick Off!', halftime: '⏱️ Half Time', fulltime: '🏁 Full Time!', commentary: { goal: 'Goal! What a shot!', miss: 'Shot missed!', save: 'Keeper saves it!', foul: 'Foul! Yellow card!', redCard: 'Red card! Player sent off!', corner: 'Corner won!', pass: 'Great pass!' } },
+    fr: { title: 'Football Pro', subtitle: '🏆 Édition Or', play: '🎮 Jouer', instructions: '📖 Instructions', records: '🏆 Records', selectDifficulty: '🎯 Choisir Difficulté', easy: 'Facile', medium: 'Moyen', hard: 'Difficile', legendary: 'Légendaire', next: 'Suivant ⬅️', back: '🔙 Retour', selectTeam: '⚽ Choisissez Équipe', brazil: 'Brésil', argentina: 'Argentine', france: 'France', germany: 'Allemagne', spain: 'Espagne', italy: 'Italie', selectOpponent: '🎯 Choisir Adversaire', startGame: '⚽ Commencer', endGame: '🏁 Finir', firstHalf: '1ère Mi-temps', secondHalf: '2ème Mi-temps', possession: 'Possession', shots: 'Tirs', fouls: 'Fautes', corners: 'Corners', shoot: '🎯 Tirer', pass: '📤 Passer', tackle: '🛡️ Tacle', playAgain: '🎮 Rejouer', saveRecord: '💾 Enregistrer', yellowCards: 'Cartons Jaunes', redCards: 'Cartons Rouges', manOfMatch: 'Homme du Match', youWin: '🏆 Victoire!', youLose: '😔 Défaite', draw: '🤝 Match Nul', goal: '⚽ But!', yellowCard: '🟡 Carton Jaune', redCard: '🟥 Carton Rouge!', save: 'Arrêt!', miss: 'Tir manqué!', kickoff: '⚽ Coup d\'envoi!', halftime: '⏱️ Mi-temps', fulltime: '🏁 Fin du match!', commentary: { goal: 'But! Quel tir!', miss: 'Tir manqué!', save: 'Le gardien arrête!', foul: 'Faute! Carton jaune!', redCard: 'Carton rouge! Expulsé!', corner: 'Corner!', pass: 'Belle passe!' } },
+    de: { title: 'Pro Fußball', subtitle: '🏆 Gold Edition', play: '🎮 Spiel Starten', instructions: '📖 Anleitung', records: '🏆 Rekorde', selectDifficulty: '🎯 Schwierigkeit', easy: 'Leicht', medium: 'Mittel', hard: 'Schwer', legendary: 'Legendär', next: 'Weiter ⬅️', back: '🔙 Zurück', selectTeam: '⚽ Team Wählen', brazil: 'Brasilien', argentina: 'Argentinien', france: 'Frankreich', germany: 'Deutschland', spain: 'Spanien', italy: 'Italien', selectOpponent: '🎯 Gegner Wählen', startGame: '⚽ Spiel Starten', endGame: '🏁 Beenden', firstHalf: '1. Halbzeit', secondHalf: '2. Halbzeit', possession: 'Ballbesitz', shots: 'Schüsse', fouls: 'Fouls', corners: 'Ecken', shoot: '🎯 Schießen', pass: '📤 Passen', tackle: '🛡️ Tackling', playAgain: '🎮 Nochmal', saveRecord: '💾 Speichern', yellowCards: 'Gelbe Karten', redCards: 'Rote Karten', manOfMatch: 'Spieler des Spiels', youWin: '🏆 Sieg!', youLose: '😔 Niederlage', draw: '🤝 Unentschieden', goal: '⚽ Tor!', yellowCard: '🟡 Gelbe Karte', redCard: '🟥 Rote Karte!', save: 'Parade!', miss: 'Daneben!', kickoff: '⚽ Anstoß!', halftime: '⏱️ Halbzeit', fulltime: '🏁 Spielende!', commentary: { goal: 'Tor! Was für ein Schuss!', miss: 'Daneben!', save: 'Der Torwart hält!', foul: 'Foul! Gelbe Karte!', redCard: 'Rote Karte! Platzverweis!', corner: 'Ecke!', pass: 'Schöner Pass!' } },
+    es: { title: 'Fútbol Pro', subtitle: '🏆 Edición Oro', play: '🎮 Jugar', instructions: '📖 Instrucciones', records: '🏆 Récords', selectDifficulty: '🎯 Dificultad', easy: 'Fácil', medium: 'Medio', hard: 'Difícil', legendary: 'Legendario', next: 'Siguiente ⬅️', back: '🔙 Volver', selectTeam: '⚽ Elige Equipo', brazil: 'Brasil', argentina: 'Argentina', france: 'Francia', germany: 'Alemania', spain: 'España', italy: 'Italia', selectOpponent: '🎯 Elige Rival', startGame: '⚽ Empezar', endGame: '🏁 Terminar', firstHalf: '1er Tiempo', secondHalf: '2do Tiempo', possession: 'Posesión', shots: 'Tiros', fouls: 'Faltas', corners: 'Córners', shoot: '🎯 Disparar', pass: '📤 Pasar', tackle: '🛡️ Entrada', playAgain: '🎮 Jugar de Nuevo', saveRecord: '💾 Guardar', yellowCards: 'Tarjetas Amarillas', redCards: 'Tarjetas Rojas', manOfMatch: 'Jugador del Partido', youWin: '🏆 ¡Ganaste!', youLose: '😔 Perdiste', draw: '🤝 Empate', goal: '⚽ ¡Gol!', yellowCard: '🟡 Amarilla', redCard: '🟥 ¡Roja!', save: '¡Atajada!', miss: '¡Fuera!', kickoff: '⚽ ¡Inicio!', halftime: '⏱️ Medio Tiempo', fulltime: '🏁 ¡Final!', commentary: { goal: '¡Gol! ¡Qué tiro!', miss: '¡Fuera!', save: '¡El portero ataja!', foul: '¡Falta! ¡Amarilla!', redCard: '¡Roja! ¡Expulsado!', corner: '¡Córner!', pass: '¡Buen pase!' } }
+};
+
+// === الأصوات ===
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+    if (!soundEnabled) return;
+    
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    switch(type) {
+        case 'kick':
+            oscillator.frequency.value = 200;
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1);
+            break;
+        case 'goal':
+            oscillator.frequency.value = 800;
+            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.5);
+            break;
+        case 'whistle':
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.3);
+            break;
+        case 'card':
+            oscillator.type = 'square';
+            oscillator.frequency.value = 300;
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2);
+            break;
+        case 'crowd':
+            // صوت الجمهور (ضوضاء)
+            for (let i = 0; i < 10; i++) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.frequency.value = 100 + Math.random() * 400;
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(audioCtx.currentTime + i * 0.02);
+                osc.stop(audioCtx.currentTime + 0.5 + i * 0.02);
+            }
+            break;
+    }
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+}
+
+// === النطق ===
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        const langMap = { ar: 'ar-SA', en: 'en-US', fr: 'fr-FR', de: 'de-DE', es: 'es-ES' };
+        u.lang = langMap[currentLanguage] || 'ar-SA';
+        u.rate = 0.9;
+        u.pitch = 1.0;
+        speechSynthesis.speak(u);
+    }
+}
+
+// === اللغة ===
+function setLanguage(lang) {
+    currentLanguage = lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    updateTranslations();
+    speak(translations[lang].title);
+}
+
+function updateTranslations() {
+    const t = translations[currentLanguage];
+    document.querySelectorAll('[data-lang]').forEach(el => {
+        const key = el.getAttribute('data-lang');
+        if (t[key]) el.textContent = t[key];
+    });
+}
+
+function T(key) {
+    return translations[currentLanguage][key] || key;
+}
+
+// === إدارة الشاشات ===
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    
+    if (id === 'opponentSelect') renderOpponentTeams();
+}
+
+// === اختيار الصعوبة ===
+function selectDifficulty(diff) {
+    selectedDifficulty = diff;
+    document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    document.getElementById('nextBtn1').style.display = 'block';
+    speak(T(diff));
+}
+
+// === اختيار الفريق ===
+function selectTeam(id) {
+    selectedTeam = id;
+    document.querySelectorAll('#teamSelect .team-card').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    document.getElementById('nextBtn2').style.display = 'block';
+    speak(teams[id].name);
+}
+
+function renderOpponentTeams() {
+    const container = document.getElementById('opponentTeams');
+    container.innerHTML = '';
+    Object.keys(teams).forEach(id => {
+        if (parseInt(id) !== selectedTeam) {
+            const team = teams[id];
+            const card = document.createElement('div');
+            card.className = 'team-card';
+            card.onclick = () => selectOpponent(parseInt(id), card);
+            card.innerHTML = `<div class="team-flag">${team.flag}</div><div class="team-name">${team.name}</div><div class="team-rating">⭐⭐⭐⭐ (${team.rating})</div>`;
+            container.appendChild(card);
+        }
+    });
+}
+
+function selectOpponent(id, card) {
+    opponentTeam = id;
+    document.querySelectorAll('#opponentTeams .team-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    document.getElementById('startBtn').style.display = 'block';
+    speak(teams[id].name);
+}
+
+// === بدء اللعبة ===
+function startGame() {
+    if (!selectedTeam || !opponentTeam || !selectedDifficulty) {
+        alert('اختر كل الخيارات أولاً!');
+        return;
+    }
+    
+    showScreen('gameScreen');
+    gameActive = true;
+    score1 = 0; score2 = 0;
+    gameTime = 45 * 60;
+    halfNumber = 1;
+    stats = { possession: 50, shots: 0, fouls: 0, corners: 0, yellowCards1: 0, yellowCards2: 0, redCards1: 0, redCards2: 0, team1Shots: 0, team2Shots: 0 };
+    
+    document.getElementById('team1Name').textContent = teams[selectedTeam].flag + ' ' + teams[selectedTeam].name;
+    document.getElementById('team2Name').textContent = teams[opponentTeam].flag + ' ' + teams[opponentTeam].name;
+    document.getElementById('halfIndicator').textContent = T('firstHalf');
+    
+    updateScoreboard();
+    updateStats();
+    startTimer();
+    
+    playSound('whistle');
+    showCommentary(T('kickoff'));
+    speak(T('kickoff'));
+    
+    setTimeout(() => moveOpponent(), 1000);
+    setTimeout(() => updateBallPhysics(), 50);
+}
+
+// === المؤقت ===
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (!gameActive) return;
+        
+        gameTime--;
+        const minutes = Math.floor(gameTime / 60);
+        const seconds = gameTime % 60;
+        document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        // تحديث الاستحواذ
+        stats.possession = 50 + Math.floor(Math.random() * 10 - 5);
+        updateStats();
+        
+        if (gameTime <= 0) {
+            if (halfNumber === 1) {
+                halfTime();
+            } else {
+                endGame();
+            }
+        }
+    }, 1000);
+}
+
+function halfTime() {
+    clearInterval(timerInterval);
+    halfNumber = 2;
+    gameTime = 45 * 60;
+    document.getElementById('halfIndicator').textContent = T('secondHalf');
+    
+    showNotification('halftime', T('halftime'));
+    speak(T('halftime'));
+    playSound('whistle');
+    
+    setTimeout(() => {
+        startTimer();
+        showCommentary(T('kickoff'));
+    }, 3000);
+}
+
+// === تحريك اللاعب ===
+function movePlayer(dir) {
+    if (!gameActive) return;
+    
+    const player = document.getElementById('player1');
+    const field = document.getElementById('field');
+    const step = 15;
+    
+    let left = parseInt(player.style.left) || 100;
+    let top = parseInt(player.style.top) || 250;
+    
+    if (dir === 'up') top -= step;
+    if (dir === 'down') top += step;
+    if (dir === 'left') left -= step;
+    if (dir === 'right') left += step;
+    
+    left = Math.max(10, Math.min(left, field.offsetWidth - 40));
+    top = Math.max(10, Math.min(top, field.offsetHeight - 40));
+    
+    player.style.left = left + 'px';
+    player.style.top = top + 'px';
+    
+    checkBallCollision();
+}
+
+// === ركل الكرة ===
+function kickBall() {
+    if (!gameActive) return;
+    
+    const player = document.getElementById('player1');
+    const ball = document.getElementById('ball');
+    
+    const pRect = player.getBoundingClientRect();
+    const bRect = ball.getBoundingClientRect();
+    
+    const dx = (pRect.left + pRect.width/2) - (bRect.left + bRect.width/2);
+    const dy = (pRect.top + pRect.height/2) - (bRect.top + bRect.height/2);
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    
+    if (distance < 50) {
+        playSound('kick');
+        ballVelocity.x = -5 + Math.random() * 2;
+        ballVelocity.y = (Math.random() - 0.5) * 3;
+        ballMoving = true;
+        stats.team1Shots++;
+        updateStats();
+    }
+}
+
+function shootBall() {
+    if (!gameActive) return;
+    
+    const player = document.getElementById('player1');
+    const ball = document.getElementById('ball');
+    
+    const pRect = player.getBoundingClientRect();
+    const bRect = ball.getBoundingClientRect();
+    
+    const dx = (pRect.left + pRect.width/2) - (bRect.left + bRect.width/2);
+    const dy = (pRect.top + pRect.height/2) - (bRect.top + bRect.height/2);
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    
+    if (distance < 60) {
+        playSound('kick');
+        ballVelocity.x = -12;
+        ballVelocity.y = (Math.random() - 0.5) * 4;
+        ballMoving = true;
+        stats.team1Shots++;
+        updateStats();
+        showCommentary(T('commentary').goal);
+    }
+}
+
+function passBall() {
+    if (!gameActive) return;
+    
+    const player = document.getElementById('player1');
+    const ball = document.getElementById('ball');
+    
+    const pRect = player.getBoundingClientRect();
+    const bRect = ball.getBoundingClientRect();
+    const distance = Math.sqrt(Math.pow(pRect.left - bRect.left, 2) + Math.pow(pRect.top - bRect.top, 2));
+    
+    if (distance < 50) {
+        playSound('kick');
+        ballVelocity.x = -3;
+        ballVelocity.y = 2;
+        ballMoving = true;
+        showCommentary(T('commentary').pass);
+    }
+}
+
+function tackle() {
+    if (!gameActive) return;
+    
+    const player = document.getElementById('player1');
+    const opponent = document.getElementById('player2');
+    
+    const pRect = player.getBoundingClientRect();
+    const oRect = opponent.getBoundingClientRect();
+    const distance = Math.sqrt(Math.pow(pRect.left - oRect.left, 2) + Math.pow(pRect.top - oRect.top, 2));
+    
+    if (distance < 60) {
+        if (Math.random() > 0.5) {
+            showCommentary('تدخل ناجح!');
+        } else {
+            stats.fouls++;
+            updateStats();
+            giveYellowCard(1);
+        }
+    }
+}
+
+// === فيزياء الكرة ===
+function updateBallPhysics() {
+    if (!gameActive) return;
+    
+    const ball = document.getElementById('ball');
+    const field = document.getElementById('field');
+    
+    if (ballMoving) {
+        let left = parseInt(ball.style.left) || 390;
+        let top = parseInt(ball.style.top) || 240;
+        
+        left += ballVelocity.x;
+        top += ballVelocity.y;
+        
+        // احتكاك
+        ballVelocity.x *= 0.97;
+        ballVelocity.y *= 0.97;
+        
+        // حدود الملعب
+        if (left <= 15 || left >= field.offsetWidth - 35) {
+            // ركنية أو هدف
+            if (left <= 15) {
+                if (top > field.offsetHeight/2 - 60 && top < field.offsetHeight/2 + 60) {
+                    goalScored(1);
+                } else {
+                    stats.corners++;
+                    showCommentary(T('commentary').corner);
+                    resetBall();
+                }
+            } else if (left >= field.offsetWidth - 35) {
+                if (top > field.offsetHeight/2 - 60 && top < field.offsetHeight/2 + 60) {
+                    goalScored(2);
+                } else {
+                    resetBall();
+                }
+            }
+            ballMoving = false;
+            ballVelocity = { x: 0, y: 0 };
+        } else if (top <= 10 || top >= field.offsetHeight - 30) {
+            ballVelocity.y *= -0.8;
+        }
+        
+        ball.style.left = left + 'px';
+        ball.style.top = top + 'px';
+        
+        if (Math.abs(ballVelocity.x) < 0.1 && Math.abs(ballVelocity.y) < 0.1) {
+            ballMoving = false;
+        }
+    }
+    
+    setTimeout(() => updateBallPhysics(), 30);
+}
+
+// === حركة الخصم ===
+function moveOpponent() {
+    if (!gameActive) return;
+    
+    const opponent = document.getElementById('player2');
+    const ball = document.getElementById('ball');
+    
+    const ballLeft = parseInt(ball.style.left) || 390;
+    const ballTop = parseInt(ball.style.top) || 240;
+    const oppLeft = parseInt(opponent.style.left) || 650;
+    const oppTop = parseInt(opponent.style.top) || 250;
+    
+    const difficultySpeed = { easy: 0.02, medium: 0.04, hard: 0.06, legendary: 0.09 };
+    const speed = difficultySpeed[selectedDifficulty] || 0.04;
+    
+    const dx = ballLeft - oppLeft;
+    const dy = ballTop - oppTop;
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    
+    if (distance > 30) {
+        opponent.style.left = (oppLeft + dx * speed) + 'px';
+        opponent.style.top = (oppTop + dy * speed) + 'px';
+    } else {
+        // الخصم يركل الكرة
+        if (Math.random() > 0.95) {
+            ballVelocity.x = 8 + Math.random() * 4;
+            ballVelocity.y = (Math.random() - 0.5) * 5;
+            ballMoving = true;
+            stats.team2Shots++;
+            updateStats();
+        }
+    }
+    
+    setTimeout(moveOpponent, 50);
+}
+
+// === التحقق من التصادم ===
+function checkBallCollision() {
+    const player = document.getElementById('player1');
+    const ball = document.getElementById('ball');
+    
+    const pRect = player.getBoundingClientRect();
+    const bRect = ball.getBoundingClientRect();
+    const distance = Math.sqrt(Math.pow(pRect.left - bRect.left, 2) + Math.pow(pRect.top - bRect.top, 2));
+    
+    if (distance < 30 && !ballMoving) {
+        ball.style.boxShadow = '0 0 20px #ffd700';
+    } else {
+        ball.style.boxShadow = '0 2px 6px rgba(0,0,0,0.5)';
+    }
+}
+
+// === تسجيل هدف ===
+function goalScored(team) {
+    if (team === 1) {
+        score1++;
+        playSound('goal');
+        playSound('crowd');
+        showNotification('goal', T('goal'));
+        showCommentary(T('commentary').goal);
+        speak(T('goal'));
+    } else {
+        score2++;
+        playSound('goal');
+        showNotification('goal', '⚽ ' + T('goal'));
+        showCommentary('هدف للخصم!');
+    }
+    
+    updateScoreboard();
+    resetBall();
+}
+
+// === البطاقات ===
+function giveYellowCard(team) {
+    playSound('card');
+    if (team === 1) {
+        stats.yellowCards1++;
+        if (stats.yellowCards1 >= 2) {
+            giveRedCard(team);
+            return;
+        }
+    } else {
+        stats.yellowCards2++;
+    }
+    
+    showNotification('yellow-card', T('yellowCard'));
+    showCommentary(T('commentary').foul);
+    speak(T('yellowCard'));
+    updateScoreboard();
+}
+
+function giveRedCard(team) {
+    playSound('card');
+    if (team === 1) stats.redCards1++;
+    else stats.redCards2++;
+    
+    showNotification('red-card', T('redCard'));
+    showCommentary(T('commentary').redCard);
+    speak(T('redCard'));
+    updateScoreboard();
+}
+
+// === إعادة الكرة ===
+function resetBall() {
+    const ball = document.getElementById('ball');
+    ball.style.transition = 'none';
+    ball.style.left = '390px';
+    ball.style.top = '240px';
+    ballMoving = false;
+    ballVelocity = { x: 0, y: 0 };
+}
+
+// === التحديثات ===
+function updateScoreboard() {
+    document.getElementById('score1').textContent = score1;
+    document.getElementById('score2').textContent = score2;
+    document.getElementById('cards1').innerHTML = '🟡'.repeat(stats.yellowCards1) + '🟥'.repeat(stats.redCards1);
+    document.getElementById('cards2').innerHTML = '🟡'.repeat(stats.yellowCards2) + '🟥'.repeat(stats.redCards2);
+}
+
+function updateStats() {
+    document.getElementById('possession').textContent = stats.possession + '%';
+    document.getElementById('shots').textContent = stats.team1Shots + stats.team2Shots;
+    document.getElementById('fouls').textContent = stats.fouls;
+    document.getElementById('corners').textContent = stats.corners;
+}
+
+// === التعليق ===
+function showCommentary(text) {
+    const el = document.getElementById('commentary');
+    el.textContent = text;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// === الإشعارات ===
+function showNotification(type, text) {
+    const el = document.getElementById('notification');
+    el.className = 'notification ' + type + ' show';
+    el.textContent = text;
+    setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// === إنهاء المباراة ===
+function endGame() {
+    gameActive = false;
+    clearInterval(timerInterval);
+    playSound('whistle');
+    
+    showScreen('finalScreen');
+    
+    document.getElementById('finalScore1').textContent = score1;
+    document.getElementById('finalScore2').textContent = score2;
+    
+    let result, title;
+    if (score1 > score2) {
+        result = T('youWin');
+        title = '🏆 ' + T('youWin');
+    } else if (score2 > score1) {
+        result = T('youLose');
+        title = T('youLose');
+    } else {
+        result = T('draw');
+        title = T('draw');
+    }
+    
+    document.getElementById('finalTitle').textContent = title;
+    document.getElementById('finalResult').textContent = result;
+    document.getElementById('finalPossession').textContent = stats.possession + '% - ' + (100-stats.possession) + '%';
+    document.getElementById('finalShots').textContent = stats.team1Shots + ' - ' + stats.team2Shots;
+    document.getElementById('finalFouls').textContent = stats.fouls + ' - ' + Math.floor(stats.fouls * 0.8);
+    document.getElementById('finalYellows').textContent = stats.yellowCards1 + ' - ' + stats.yellowCards2;
+    document.getElementById('finalReds').textContent = stats.redCards1 + ' - ' + stats.redCards2;
+    document.getElementById('finalMOM').textContent = teams[selectedTeam].name + ' #10';
+    
+    speak(result);
+}
+
+// === الأرقام القياسية ===
+function saveRecord() {
+    const records = JSON.parse(localStorage.getItem('footballRecords') || '[]');
+    records.push({
+        team: teams[selectedTeam].name,
+        opponent: teams[opponentTeam].name,
+        score: `${score1}-${score2}`,
+        difficulty: selectedDifficulty,
+        date: new Date().toLocaleDateString('ar-SY'),
+        result: score1 > score2 ? 'فوز' : (score2 > score1 ? 'خسارة' : 'تعادل')
+    });
+    localStorage.setItem('footballRecords', JSON.stringify(records));
+    alert('✅ تم حفظ الرقم القياسي!');
+    speak('تم الحفظ بنجاح');
+}
+
+function showRecords() {
+    const records = JSON.parse(localStorage.getItem('footballRecords') || '[]');
+    if (records.length === 0) {
+        alert('لا توجد أرقام قياسية محفوظة بعد');
+        return;
+    }
+    let text = '🏆 الأرقام القياسية:\n\n';
+    records.slice(-10).forEach((r, i) => {
+        text += `${i+1}. ${r.team} ${r.score} ${r.opponent} (${r.difficulty}) - ${r.result}\n`;
+    });
+    alert(text);
+}
+
+// === التعليمات ===
+function showInstructions() {
+    const instructions = {
+        ar: '📖 التعليمات:\n\n🎮 التحكم:\n• الأسهم لتحريك اللاعب\n• زر ⚽ للركل العادي\n• 🎯 تسديدة قوية نحو المرمى\n• 📤 تمريرة\n• 🛡️ تدخل ضد الخصم\n\n⚽ قواعد اللعبة:\n• المباراة شوطين (45 دقيقة لكل شوط)\n• البطاقة الصفراء الثانية = حمراء\n• اللاعب المطرود يخرج\n• احترم الخصم!\n\n💡 نصائح:\n• اقترب من الكرة قبل الركل\n• استخدم التسديدة القوية من مسافة قريبة\n• راقب الاستحواذ والإحصائيات',
+        en: '📖 Instructions:\n\n🎮 Controls:\n• Arrows to move\n• ⚽ Normal kick\n• 🎯 Powerful shot\n• 📤 Pass\n• 🛡️ Tackle\n\n⚽ Rules:\n• Two halves (45 min each)\n• Second yellow = red\n• Sent off player leaves\n• Respect the opponent!',
+        fr: '📖 Instructions:\n\n🎮 Contrôles:\n• Flèches pour bouger\n• ⚽ Tir normal\n• 🎯 Tir puissant\n• 📤 Passe\n• 🛡️ Tacle',
+        de: '📖 Anleitung:\n\n🎮 Steuerung:\n• Pfeile zum Bewegen\n• ⚽ Normaler Schuss\n• 🎯 Kraftschuss\n• 📤 Pass\n• 🛡️ Tackling',
+        es: '📖 Instrucciones:\n\n🎮 Controles:\n• Flechas para mover\n• ⚽ Tiro normal\n• 🎯 Tiro fuerte\n• 📤 Pase\n• 🛡️ Entrada'
+    };
+    alert(instructions[currentLanguage]);
+    speak(instructions[currentLanguage].substring(0, 100));
+}
+
+// === دعم لوحة المفاتيح ===
+document.addEventListener('keydown', (e) => {
+    if (!gameActive) return;
+    switch(e.key) {
+        case 'ArrowUp': movePlayer('up'); break;
+        case 'ArrowDown': movePlayer('down'); break;
+        case 'ArrowLeft': movePlayer('left'); break;
+        case 'ArrowRight': movePlayer('right'); break;
+        case ' ': e.preventDefault(); kickBall(); break;
+        case 's': shootBall(); break;
+        case 'p': passBall(); break;
+        case 't': tackle(); break;
+    }
+});
+
+// === بدء اللعبة ===
+window.onload = () => {
+    updateTranslations();
+    speak(T('title'));
+};
+</script>
+
+</body>
+</html>
