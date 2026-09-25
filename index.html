@@ -16,6 +16,7 @@
     --gold-dark: #d97706;
     --blue-accent: #38bdf8;
     --green-accent: #4ade80;
+    --purple-accent: #8b5cf6; /* لون جديد للحكمة */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -49,20 +50,23 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
 
 .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px; }
-.category-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; text-decoration: none; color: inherit; display: block; }
+.category-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
 .category-card:hover { transform: translateY(-5px); border-color: var(--gold-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 .category-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
 .category-name { font-weight: 700; font-size: 1rem; color: white; margin-bottom: 5px; }
 .category-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+/* ألوان الأيقونات */
 .cat-edu .category-icon { color: var(--blue-accent); }
 .cat-tech .category-icon { color: var(--green-accent); }
 .cat-lang .category-icon { color: #e879f9; }
 .cat-tools .category-icon { color: var(--gold-primary); }
+.cat-wisdom .category-icon { color: var(--purple-accent); } /* لون البطاقة الجديدة */
 
 .actions-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
-.btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
+.btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .btn-primary:active { transform: scale(0.98); }
-.btn-secondary { background: transparent; border: 1px solid var(--border-glass); color: var(--text-main); padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px;}
+.btn-secondary { background: transparent; border: 1px solid var(--border-glass); color: var(--text-main); padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
 .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
 
 .footer-info { margin-top: 40px; text-align: center; font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; }
@@ -77,6 +81,7 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 
 <div class="hero-section">
     <div class="logo-container">
+        <!-- إزالة الزر من هنا ونقله للشبكة -->
         <div class="main-logo">🏛️</div>
         <span class="badge-version">v2.0 Pro</span>
     </div>
@@ -103,46 +108,52 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
     </div>
 </div>
 
-<!-- ✅ شبكة التصنيفات المحدثة بروابط مضمونة -->
+<!-- ✅ القسم المعدل: إضافة بطاقة الحكمة وتحديث رابط المالية -->
 <div class="categories-grid">
-    <!-- 1. الأدوات المالية -> يفتح السفارة (المحتوية على العقد والمحاسب) -->
-    <a href="safara.html" class="category-card cat-tools">
+    <!-- 1. الأدوات المالية (محدثة لترابط مع الأخشاب) -->
+    <div class="category-card cat-tools" onclick="navigateTo('woodcalculatorhtml.html')">
         <span class="category-icon">💰</span>
         <div class="category-name">الأدوات المالية</div>
-        <div class="category-desc">محاسب جوال وعقود إيجار ذكية.</div>
-    </a>
+        <div class="category-desc">محاسب أخشاب ذكي وعقود إيجار.</div>
+    </div>
 
-    <!-- 2. الإبداع والصوت -> يفتح الاستوديو الصوتي (مؤكد عمله) -->
-    <a href="royalvoicestudio.html" class="category-card cat-tech">
+    <!-- 2. الإبداع والصوت -->
+    <div class="category-card cat-tech" onclick="navigateTo('royalvoicestudio.html')">
         <span class="category-icon">🎙️</span>
         <div class="category-name">الإبداع والصوت</div>
         <div class="category-desc">استوديو رسم ونطق بالذكاء الاصطناعي.</div>
-    </a>
+    </div>
 
-    <!-- 3. مركز المملكة -> يفتح السفارة كنقطة وصول شاملة -->
-    <a href="safara.html" class="category-card cat-edu">
+    <!-- 3. مركز القيادة -->
+    <div class="category-card cat-edu" onclick="navigateTo('os-hub.html')">
         <span class="category-icon">🏛️</span>
-        <div class="category-name">مركز المملكة</div>
-        <div class="category-desc">الدخول الشامل لجميع خدماتنا.</div>
-    </a>
+        <div class="category-name">مركز القيادة</div>
+        <div class="category-desc">الدخول لنظام المملكة الشامل.</div>
+    </div>
 
-    <!-- 4. سفارة المعرفة -> يفتح السفارة مباشرة -->
-    <a href="safara.html" class="category-card cat-lang">
+    <!-- 4. سفارة المعرفة -->
+    <div class="category-card cat-lang" onclick="navigateTo('safara.html')">
         <span class="category-icon">🌍</span>
         <div class="category-name">سفارة المعرفة</div>
         <div class="category-desc">روابط تعليمية عالمية مجانية.</div>
-    </a>
+    </div>
+
+    <!-- 5. زاوية الحكمة (الجديدة) -->
+    <div class="category-card cat-wisdom" onclick="navigateTo('tafsirhtml.html')">
+        <span class="category-icon">🌙</span>
+        <div class="category-name">زاوية الحكمة</div>
+        <div class="category-desc">تفسير الأحلام حسب ابن سيرين.</div>
+    </div>
 </div>
 
-<!-- ✅ أزرار الإجراءات السفلية (نظيفة وبدون دوال معقدة) -->
 <div class="actions-container">
-    <a href="safara.html" class="btn-primary">
-        🚀 دخول نظام المملكة الشامل
-    </a>
+    <button class="btn-primary" onclick="openOS()">
+        🚀 دخول نظام التشغيل الكامل
+    </button>
     
-    <a href="royalvoicestudio.html" class="btn-secondary">
-        🎙️ جرب استوديو الإبداع الآن
-    </a>
+    <button class="btn-secondary" onclick="window.location.href='safara.html'">
+        🌍 زيارة سفارة الروابط العالمية
+    </button>
 </div>
 
 <div class="footer-info">
@@ -151,18 +162,25 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 </div>
 
 <script>
-// كود بسيط لتحريك العداد فقط
+function navigateTo(page) {
+    window.location.href = page;
+}
+
+// ✅ التأكد من أن الزر الرئيسي يقود للمركز الجديد
+function openOS() {
+    window.location.href = 'os-hub.html'; 
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const countEl = document.getElementById('countApps');
-    if(countEl) {
-        let currentCount = 0;
-        const targetCount = 15; 
-        const interval = setInterval(() => {
-            currentCount++;
-            countEl.textContent = currentCount + "+";
-            if(currentCount >= targetCount) clearInterval(interval);
-        }, 50);
-    }
+    let currentCount = 0;
+    const targetCount = 15; 
+    
+    const interval = setInterval(() => {
+        currentCount++;
+        countEl.textContent = currentCount + "+";
+        if(currentCount >= targetCount) clearInterval(interval);
+    }, 50);
 });
 </script>
 
