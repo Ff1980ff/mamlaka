@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>👑 الاستوديو الملكي الصوتي | Royal Voice Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-deep: #030712;
+    --card-glass: rgba(15, 23, 42, 0.6);
+    --border-neon: rgba(245, 165, 36, 0.3);
+    --gold-primary: #fbbf24;
+    --cyan-accent: #22d3ee;
+    --text-light: #f8fafc;
+    --text-muted: #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-light);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    /* خلفية نجوم متحركة خفيفة */
+    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+    background-size: 40px 40px;
+}
+
+/* الحاوية الرئيسية - تأثير الزجاج الفاخر */
+.studio-frame {
+    width: 95%;
+    max-width: 500px;
+    background: var(--card-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-neon);
+    border-radius: 24px;
+    padding: 25px;
+    box-shadow: 0 0 30px rgba(245, 165, 36, 0.1), inset 0 0 20px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 10;
+}
+
+/* الترويسة الملكية */
+.header-section { text-align: center; margin-bottom: 20px; }
+.crown-icon { font-size: 2rem; filter: drop-shadow(0 0 10px var(--gold-primary)); animation: float 3s ease-in-out infinite; }
+.title { 
+    font-size: 1.5rem; 
+    font-weight: 900; 
+    background: linear-gradient(to right, var(--gold-primary), var(--cyan-accent)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    margin-top: 5px;
+    letter-spacing: -0.5px;
+}
+.subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+
+/* حقول الإدخال الذكية */
+.input-group { margin-bottom: 15px; position: relative; }
+.label-float { 
+    position: absolute; top: -8px; right: 12px; 
+    background: var(--bg-deep); padding: 0 5px; 
+    font-size: 0.75rem; color: var(--gold-primary); 
+    font-weight: bold; z-index: 2;
+}
+.custom-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 12px 15px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+.custom-input:focus {
+    border-color: var(--cyan-accent);
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+
+/* أزرار التحكم الفخمة */
+.controls-row { display: flex; gap: 10px; margin-top: 10px; }
+.btn-action {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+}
+.btn-draw { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
+.btn-speak { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: #fff; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
+.btn-download { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+
+.btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.btn-action:active { transform: scale(0.98); }
+
+/* منطقة العرض (Canvas/Image) */
+.display-area {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 15px 0;
+    border: 2px solid #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.placeholder-msg {
+    color: #475569;
+    text-align: center;
+    font-size: 14px;
+    padding: 20px;
+}
+#artImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+#artImage.loaded { opacity: 1; }
+
+/* فقاعة الكلام المتطورة */
+.speech-bubble {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.95);
+    color: #0f172a;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    z-index: 5;
+    max-height: 80px;
+    overflow-y: auto;
+    direction: rtl;
+    text-align: right;
+}
+.speech-bubble.active { transform: translateY(0); opacity: 1; }
+
+/* الموجات الصوتية (Visualizer) */
+.audio-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    padding-bottom: 5px;
+}
+.wave-bar {
+    width: 4px;
+    background: var(--cyan-accent);
+    border-radius: 2px;
+    height: 5px;
+    transition: height 0.1s;
+}
+.is-speaking .audio-waves { opacity: 1; }
+.is-speaking .wave-bar:nth-child(odd) { animation: waveAnim 0.5s infinite alternate; }
+.is-speaking .wave-bar:nth-child(even) { animation: waveAnim 0.6s infinite alternate-reverse; }
+
+@keyframes waveAnim { from { height: 5px; } to { height: 30px; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+/* شريط الحالة */
+.status-bar {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    min-height: 18px;
+    margin-top: 5px;
+}
+.loading-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: var(--gold-primary);
+    animation: spin 1s ease-in-out infinite;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* إعدادات الصوت المخفية داخل القائمة المنسدلة البسيطة */
+.settings-toggle {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+.voice-menu {
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 20;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    min-width: 150px;
+}
+.voice-menu.show { display: flex; }
+.voice-option {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    text-align: right;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+.voice-option:hover, .voice-option.selected {
+    background: rgba(245, 165, 36, 0.2);
+    color: var(--gold-primary);
+}
+
+</style>
+</head>
+<body>
+
+<div class="studio-frame">
+    <button class="settings-toggle" onclick="toggleVoiceMenu()">⚙️</button>
+    <div class="voice-menu" id="voiceMenu">
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:5px;padding-right:5px;">اختر الصوت:</div>
+        <!-- سيتم ملؤها بالجافاسكريبت -->
+    </div>
+
+    <div class="header-section">
+        <div class="crown-icon">👑</div>
+        <h1 class="title">الاستوديو الملكي الصوتي</h1>
+        <p class="subtitle">حوّل خيالك إلى واقع يتكلم ويتحرك</p>
+    </div>
+
+    <div class="input-group">
+        <span class="label-float">🎨 وصف اللوحة</span>
+        <input type="text" id="promptInput" class="custom-input" placeholder="مثلاَ: قطة ترتدي تاجاً وتقرأ كتاباً...">
+    </div>
+
+    <div class="controls-row">
+        <button class="btn-action btn-draw" onclick="generateArt()">
+            ارسم الآن ✨
+        </button>
+    </div>
+
+    <div class="display-area" id="stage">
+        <div class="placeholder-msg" id="placeholder">الصورة ستظهر هنا...</div>
+        <img id="artImage" alt="Generated Art">
+        
+        <!-- فقاعة الكلام -->
+        <div class="speech-bubble" id="bubble"></div>
+        
+        <!-- الموجات الصوتية -->
+        <div class="audio-waves" id="waves">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusMsg">جاهز للإبداع 🚀</div>
+
+    <div class="input-group" style="margin-top:15px;">
+        <span class="label-float">🗣️ ما الذي تريد قوله؟</span>
+        <input type="text" id="speechInput" class="custom-input" placeholder="اكتب الجملة التي ستقولها الصورة...">
+    </div>
+
+    <div class="controls-row">
+        <button class="btn-action btn-speak" onclick="speakNow()" id="speakBtn" disabled>
+            انطق 🎤
+        </button>
+        <button class="btn-action btn-download" onclick="downloadResult()" id="dlBtn" disabled>
+            حفظ 📥
+        </button>
+    </div>
+</div>
+
+<script>
+// === State Management ===
+let currentImageUrl = "";
+let availableVoices = [];
+let selectedVoiceIndex = 0;
+
+const els = {
+    img: document.getElementById('artImage'),
+    stage: document.getElementById('stage'),
+    bubble: document.getElementById('bubble'),
+    status: document.getElementById('statusMsg'),
+    prompt: document.getElementById('promptInput'),
+    speech: document.getElementById('speechInput'),
+    speakBtn: document.getElementById('speakBtn'),
+    dlBtn: document.getElementById('dlBtn'),
+    voiceMenu: document.getElementById('voiceMenu')
+};
+
+// Initialize Voices
+window.speechSynthesis.onvoiceschanged = () => loadVoices();
+loadVoices();
+
+function loadVoices() {
+    availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('ar'));
+    if (availableVoices.length === 0) {
+        // Fallback to any voice if no Arabic found initially
+        availableVoices = window.speechSynthesis.getVoices();
+    }
+    renderVoiceMenu();
+}
+
+function renderVoiceMenu() {
+    els.voiceMenu.innerHTML = '<div style="font-size:11px;color:#94a3b8;margin-bottom:5px;padding-right:5px;">اختر الصوت:</div>';
+    availableVoices.forEach((v, i) => {
+        const btn = document.createElement('button');
+        btn.className = `voice-option ${i === selectedVoiceIndex ? 'selected' : ''}`;
+        btn.textContent = `${v.name.split('-')[0]} (${v.lang})`;
+        btn.onclick = () => selectVoice(i);
+        els.voiceMenu.appendChild(btn);
+    });
+}
+
+function selectVoice(index) {
+    selectedVoiceIndex = index;
+    renderVoiceMenu();
+    toggleVoiceMenu(false);
+}
+
+function toggleVoiceMenu(forceShow) {
+    const isOpen = els.voiceMenu.classList.contains('show');
+    if (forceShow !== undefined && forceShow === false) {
+        els.voiceMenu.classList.remove('show');
+    } else {
+        els.voiceMenu.classList.toggle('show');
+    }
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!els.voiceMenu.contains(e.target) && !e.target.classList.contains('settings-toggle')) {
+        els.voiceMenu.classList.remove('show');
+    }
+});
+
+// === Core Functions ===
+
+async function generateArt() {
+    const prompt = els.prompt.value.trim();
+    if (!prompt) return updateStatus("❌ اكتب وصفاً أولاً!", "error");
+
+    updateStatus("<span class='loading-spinner'></span> جارٍ الرسم بالذكاء الاصطناعي...", "loading");
+    els.img.style.opacity = '0';
+    els.stage.classList.remove('is-speaking');
+    
+    try {
+        // Using Pollinations AI for free generation
+        const encodedPrompt = encodeURIComponent(prompt);
+        const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random()*1000)}`;
+        
+        await new Promise((resolve, reject) => {
+            els.img.onload = resolve;
+            els.img.onerror = reject;
+            els.img.src = url;
+        });
+
+        currentImageUrl = url;
+        els.img.style.opacity = '1';
+        els.speakBtn.disabled = false;
+        els.dlBtn.disabled = false;
+        updateStatus("✅ تحفة فنية جاهزة! اكتب جملة وانطقها.", "success");
+        
+    } catch (err) {
+        updateStatus("❌ فشل الاتصال بالخادم. حاول مرة أخرى.", "error");
+    }
+}
+
+function speakNow() {
+    const text = els.speech.value.trim();
+    if (!text) return updateStatus("❌ اكتب جملة للنطق أولاً!", "error");
+    if (!currentImageUrl) return updateStatus("❌ ارسم صورة أولاً!", "error");
+
+    // Cancel previous speech
+    window.speechSynthesis.cancel();
+
+    // UI Effects
+    els.bubble.textContent = "💬 " + text;
+    els.bubble.classList.add('active');
+    els.stage.classList.add('is-speaking');
+    updateStatus("🗣️ الصورة تتحدث الآن...", "info");
+
+    // Create Utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set Voice
+    if (availableVoices[selectedVoiceIndex]) {
+        utterance.voice = availableVoices[selectedVoiceIndex];
+    }
+    utterance.rate = 1.0; // Normal speed
+    utterance.pitch = 1.0;
+
+    // Events
+    utterance.onend = () => stopSpeaking();
+    utterance.onerror = () => stopSpeaking();
+
+    window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+    els.stage.classList.remove('is-speaking');
+    setTimeout(() => {
+        els.bubble.classList.remove('active');
+    }, 1000);
+    updateStatus("✅ انتهى النطق. يمكنك التعديل أو الحفظ.", "idle");
+}
+
+function downloadResult() {
+    if (!currentImageUrl) return;
+    
+    // Since we can't easily merge audio+video in browser without heavy libs, 
+    // we offer downloading the high-res image and copying the text.
+    
+    const link = document.createElement('a');
+    link.href = currentImageUrl;
+    link.download = `royal-art-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    updateStatus("📥 تم تحميل الصورة بدقة عالية!", "success");
+}
+
+function updateStatus(msg, type) {
+    els.status.innerHTML = msg;
+    els.status.style.color = type === 'error' ? '#ef4444' : 
+                             type === 'success' ? '#22c55e' : 
+                             type === 'loading' ? '#fbbf24' : '#94a3b8';
+}
+
+// Prevent sleep while speaking on mobile
+setInterval(() => {
+    if(window.speechSynthesis.speaking) {
+        // Dummy action to keep screen awake logic could go here if needed
+    }
+}, 10000);
+
+</script>
+</body>
+</html>
