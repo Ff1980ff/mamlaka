@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌙 زاوية الحكمة | تفسير الأحلام</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;padding:20px;text-align:center}
+.container{max-width:500px;margin:auto;background:#1e293b;padding:20px;border-radius:15px;border:1px solid #8b5cf6}
+input{width:100%;padding:10px;margin:10px 0;border-radius:5px;border:none;font-size:1rem}
+.result{background:#0f172a;padding:15px;margin-top:10px;border-right:4px solid #fbbf24;display:none;text-align:right}
+.btn{background:#8b5cf6;color:white;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;margin-top:10px}
+.back{color:#94a3b8;text-decoration:none;display:block;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>🌙 استشر حكمة المملكة</h2>
+<p style="color:#94a3b8;font-size:0.9rem">ابحث عن رمز حلمك (أسد، ماء، مال...)</p>
+<input type="text" id="q" placeholder="اكتب هنا..." onkeyup="search()">
+<div id="res" class="result"></div>
+<button class="btn" onclick="clearSearch()">مسح البحث</button>
+<a href="index.html" class="back">← العودة للمملكة الرئيسية</a>
+</div>
+
+<script>
+const db=[
+{k:["أسد","ليث"],t:"الأسد",d:"سلطان وقوة. ركوبه ولاية، وخوفه عدو قوي.",s:"ابن سيرين"},
+{k:["ماء","نهر"],t:"الماء",d:"الصافي علم ورزق. العكر هموم.",s:"النابلسي"},
+{k:["مال","نقد","فلوس"],t:"المال",d:"الكثير هم وتعب إلا الحلال فهو فرج. التالف ميراث بعد تعب.",s:"ابن سيرين"},
+{k:["بيت","دار"],t:"البيت",d:"اتساعه سعة رزق، وهدمه فقدان جاه.",s:"ابن سيرين"},
+{k:["سن","أسنان"],t:"الأسنان",d:"سقوطها بلا دم سفر، ومع ألم مصيبة في الأقارب.",s:"النابلسي"}
+];
+function search(){
+let q=document.getElementById('q').value.toLowerCase();
+let r=document.getElementById('res');
+if(!q){r.style.display='none';return;}
+let found=false;
+for(let i of db){
+if(i.k.some(w=>w.includes(q))){
+r.innerHTML=`<strong style="color:#fbbf24">${i.t}</strong><br>${i.d}<br><small style="color:#4ade80">المصدر: ${i.s}</small>`;
+r.style.display='block';found=true;break;
+}}
+if(!found)r.innerHTML='<span style="color:#94a3b8">لم نجد تفسيراً لهذا الرمز.</span>';
+r.style.display='block';
+}
+function clearSearch(){document.getElementById('q').value='';document.getElementById('res').style.display='none';}
+</script>
+</body>
+</html>
