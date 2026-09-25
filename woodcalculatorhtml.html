@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🪵 محاسب الأخشاب الذكي | مملكة التطبيقات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --surface: rgba(30, 41, 59, 0.9);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --gold-primary: #fbbf24;
+            --gold-dark: #d97706;
+            --green-accent: #4ade80;
+            --red-accent: #f87171;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { color: var(--gold-primary); font-size: 1.5rem; margin-bottom: 5px; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* حقول الإدخال */
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; }
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-glass);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--gold-primary); box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
+
+        .unit-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; display: block; }
+
+        /* الأزرار */
+        .btn-calc {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        .btn-calc:active { transform: scale(0.98); }
+
+        .btn-reset {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--red-accent);
+            color: var(--red-accent);
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* نتائج الحساب */
+        .results-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            display: none; /* مخفي افتراضياَ حتى يحسب */
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-label { color: var(--text-muted); font-size: 0.9rem; }
+        .result-value { color: var(--green-accent); font-weight: bold; font-size: 1.1rem; direction: ltr; }
+        
+        .total-price-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(217, 119, 6, 0.1));
+            border: 1px solid var(--gold-primary);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .price-title { color: var(--gold-primary); font-size: 0.9rem; margin-bottom: 5px; }
+        .price-final { color: white; font-size: 1.8rem; font-weight: 800; }
+
+        /* قسم المرتجع */
+        .return-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border-glass);
+        }
+        .return-header { color: var(--red-accent); font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;}
+
+        footer { text-align: center; margin-top: auto; padding: 20px; color: var(--text-muted); font-size: 0.8rem; }
+        a { color: var(--blue-accent); text-decoration: none; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🪵 محاسب الأخشاب الذكي</h1>
+        <p class="subtitle">احسب التكعيب والأسعار بدقة متناهية</p>
+    </header>
+
+    <!-- المدخلات الأساسية -->
+    <div class="input-group">
+        <label for="length">الطول (بالأمتار)</label>
+        <input type="number" id="length" placeholder="مثال: 2.5" step="0.01" oninput="calculate()">
+        <span class="unit-hint">* أدخل الطول بالمتر</span>
+    </div>
+
+    <div class="input-group">
+        <label for="thickness">السماكة (بالمليمتر)</label>
+        <input type="number" id="thickness" placeholder="مثال: 25" step="1" oninput="calculate()">
+        <span class="unit-hint">* أدخل السماكة بالملم (mm)</span>
+    </div>
+
+    <div class="input-group">
+        <label for="width">العرض (بالسنتيمتر)</label>
+        <input type="number" id="width" placeholder="مثال: 10" step="0.1" oninput="calculate()">
+        <span class="unit-hint">* أدخل العرض بالسم (cm)</span>
+    </div>
+
+    <div class="input-group">
+        <label for="quantity">عدد القطع</label>
+        <input type="number" id="quantity" value="1" min="1" step="1" oninput="calculate()">
+    </div>
+
+    <div class="input-group">
+        <label for="pricePerCube">سعر المتر المكعب (الكعب الواحد)</label>
+        <input type="number" id="pricePerCube" placeholder="مثال: 50000" step="any" oninput="calculate()">
+        <span class="unit-hint">* السعر المحلي (ليرة/دولار حسب عملتك)</span>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">⚡ احسب فوراً</button>
+    
+    <!-- منطقة النتائج -->
+    <div class="results-area" id="resultsArea">
+        <div class="result-row">
+            <span class="result-label">حجم القطعة الواحدة:</span>
+            <span class="result-value" id="volSingle">0 m³</span>
+        </div>
+        <div class="result-row">
+            <span class="result-label">إجمالي الحجم (كل القطع):</span>
+            <span class="result-value" id="volTotal">0 m³</span>
+        </div>
+        <div class="result-row">
+            <span class="result-label">إجمالي الوزن التقريبي (خشب صنوبر):</span>
+            <span class="result-value" id="weightEstimate">~ 0 kg</span>
+        </div>
+        
+        <div class="total-price-box">
+            <div class="price-title">💰 التكلفة الإجمالية للمشتريات</div>
+            <div class="price-final" id="totalCost">0</div>
+        </div>
+    </div>
+
+    <!-- قسم المرتجع (اختياري) -->
+    <div class="return-section">
+        <div class="return-header">↩️ حساب المرتجع / الخصم</div>
+        <div class="input-group">
+            <label for="returnQty">كم قطعة ترجعها؟</label>
+            <input type="number" id="returnQty" value="0" min="0" step="1" oninput="calculateReturn()">
+        </div>
+        <div class="result-row" style="background: rgba(248, 113, 113, 0.1); padding: 10px; border-radius: 8px;">
+            <span class="result-label" style="color:var(--red-accent)">قيمة المرتجع المخصومة:</span>
+            <span class="result-value" id="refundAmount" style="color:var(--red-accent)">0</span>
+        </div>
+        <div class="total-price-box" style="margin-top: 10px; border-color: var(--red-accent); background: rgba(248, 113, 113, 0.05);">
+            <div class="price-title" style="color: var(--red-accent)">📉 الصافي بعد المرتجع</div>
+            <div class="price-final" id="netPrice">0</div>
+        </div>
+    </div>
+
+    <button class="btn-reset" onclick="resetAll()">🗑️ مسح الكل</button>
+</div>
+
+<footer>
+    © 2026 مملكة التطبيقات | أداة مجانية لأصحاب الورش<br>
+    <a href="index.html">العودة للرئيسية</a>
+</footer>
+
+<script>
+    function calculate() {
+        // جلب القيم
+        const length = parseFloat(document.getElementById('length').value) || 0; // متر
+        const thickness_mm = parseFloat(document.getElementById('thickness').value) || 0; // ملم
+        const width_cm = parseFloat(document.getElementById('width').value) || 0; // سم
+        const qty = parseInt(document.getElementById('quantity').value) || 0;
+        const pricePerCube = parseFloat(document.getElementById('pricePerCube').value) || 0;
+
+        // التحقق من صحة المدخلات
+        if (length <= 0 || thickness_mm <= 0 || width_cm <= 0 || qty <= 0) {
+            hideResults();
+            return;
+        }
+
+        // === المعادلة الرياضية للتكعيب ===
+        // تحويل كل الوحدات إلى أمتار أولاً
+        const thickness_m = thickness_mm / 1000; // ملم -> متر
+        const width_m = width_cm / 100;          // سم -> متر
+        
+        // حجم القطعة الواحدة (متر مكعب) = طول × عرض × سماكة
+        const volumeSingle = length * width_m * thickness_m;
+        
+        // إجمالي الحجم
+        const totalVolume = volumeSingle * qty;
+
+        // تقدير الوزن (كثافة خشب الصنوبر تقريباً 450-500 كغ/م³)
+        const estimatedWeight = totalVolume * 480; 
+
+        // التكلفة الإجمالية
+        const grossCost = totalVolume * pricePerCube;
+
+        // عرض النتائج
+        document.getElementById('volSingle').textContent = volumeSingle.toFixed(4) + " m³";
+        document.getElementById('volTotal').textContent = totalVolume.toFixed(3) + " m³";
+        document.getElementById('weightEstimate').textContent = "~ " + Math.round(estimatedWeight) + " kg";
+        document.getElementById('totalCost').textContent = formatCurrency(grossCost);
+        
+        document.getElementById('resultsArea').style.display = 'block';
+
+        // إعادة حساب المرتجع تلقائياً عند تغيير الأسعار الرئيسية
+        calculateReturn();
+    }
+
+    function calculateReturn() {
+        const returnQty = parseInt(document.getElementById('returnQty').value) || 0;
+        const length = parseFloat(document.getElementById('length').value) || 0;
+        const thickness_mm = parseFloat(document.getElementById('thickness').value) || 0;
+        const width_cm = parseFloat(document.getElementById('width').value) || 0;
+        const pricePerCube = parseFloat(document.getElementById('pricePerCube').value) || 0;
+        const grossCostText = document.getElementById('totalCost').textContent.replace(/[^0-9.-]+/g,"");
+        const grossCost = parseFloat(grossCostText) || 0;
+
+        if (returnQty > 0 && length > 0 && thickness_mm > 0 && width_cm > 0) {
+             const thickness_m = thickness_mm / 1000;
+             const width_m = width_cm / 100;
+             const volSingle = length * width_m * thickness_m;
+             const refundVol = volSingle * returnQty;
+             const refundValue = refundVol * pricePerCube;
+             
+             document.getElementById('refundAmount').textContent = formatCurrency(refundValue);
+             document.getElementById('netPrice').textContent = formatCurrency(grossCost - refundValue);
+        } else {
+             document.getElementById('refundAmount').textContent = "0";
+             document.getElementById('netPrice').textContent = document.getElementById('totalCost').textContent;
+        }
+    }
+
+    function formatCurrency(num) {
+        // تنسيق الأرقام بفواصل آلاف وبدون رموز عملة محددة لتجنب الارتباك
+        return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
+    function hideResults() {
+        document.getElementById('resultsArea').style.display = 'none';
+    }
+
+    function resetAll() {
+        document.querySelectorAll('input').forEach(input => {
+            if(input.id !== 'quantity') input.value = '';
+            else input.value = '1';
+        });
+        document.getElementById('returnQty').value = '0';
+        hideResults();
+    }
+</script>
+
+</body>
+</html>
