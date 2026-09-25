@@ -49,7 +49,7 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
 
 .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px; }
-.category-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+.category-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; text-decoration: none; color: inherit; display: block; }
 .category-card:hover { transform: translateY(-5px); border-color: var(--gold-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 .category-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
 .category-name { font-weight: 700; font-size: 1rem; color: white; margin-bottom: 5px; }
@@ -60,9 +60,9 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 .cat-tools .category-icon { color: var(--gold-primary); }
 
 .actions-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
-.btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
 .btn-primary:active { transform: scale(0.98); }
-.btn-secondary { background: transparent; border: 1px solid var(--border-glass); color: var(--text-main); padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.btn-secondary { background: transparent; border: 1px solid var(--border-glass); color: var(--text-main); padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px;}
 .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
 
 .footer-info { margin-top: 40px; text-align: center; font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; }
@@ -103,70 +103,46 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
     </div>
 </div>
 
-<!-- ✅ القسم المعدل: يشير للملفات المؤكدة وجودها -->
+<!-- ✅ شبكة التصنيفات المحدثة بروابط مضمونة -->
 <div class="categories-grid">
-    <!-- 1. الأدوات المالية: نربطها بالسفارة مؤقتاً لأنها تحتوي على رابط العقد والمحاسب القديم إذا كان موجوداً، أو نتركها كـ placeholder -->
-    <!-- الحل الأفضل: نربطها بملف مؤكد وجوده مثل safara.html الذي يحتوي على كل شيء -->
-    <div class="category-card cat-tools" onclick="navigateTo('safara.html')">
+    <!-- 1. الأدوات المالية -> يفتح السفارة (المحتوية على العقد والمحاسب) -->
+    <a href="safara.html" class="category-card cat-tools">
         <span class="category-icon">💰</span>
         <div class="category-name">الأدوات المالية</div>
-        <div class="category-desc">تصفح مجموعة أدواتنا المالية والعقودية عبر السفارة.</div>
-    </div>
+        <div class="category-desc">محاسب جوال وعقود إيجار ذكية.</div>
+    </a>
 
-    <!-- 2. الإبداع والصوت: هذا الملف مؤكد عمله (royalvoicestudio.html) -->
-    <div class="category-card cat-tech" onclick="navigateTo('royalvoicestudio.html')">
-        <span class="category-icon">🎙️</span>
-        <div class="category-name">الإبداع والصوت</div>
-        <div class="category-desc">جرب استوديو الرسم والنطق الذكي المباشر.</div>
-    </div>
-
-    <!-- 3. مركز القيادة: بدلاً من os-hub غير المؤكد، نوجهه للسفارة أيضاً كنقطة وصول شاملة -->
-    <div class="category-card cat-edu" onclick="navigateTo('safara.html')">
-        <span class="category-icon">🏛️</span>
-        <div class="category-name">مركز المملكة</div>
-        <div class="category-desc">الدخول الشامل لجميع خدمات ومنتجات المملكة.</div>
-    </div>
-
-    <!-- 4. سفارة المعرفة: هذا مؤكد عمله -->
-    <div class="category-card cat-lang" onclick="navigateTo('safara.html')">
-        <span class="category-icon">🌍</span>
-        <div class="category-name">سفارة المعرفة</div>
-        <div class="category-desc">روابط تعليمية عالمية مجانية ومحدثة.</div>
-    </div>
-</div>
-    <div class="category-card cat-tools" onclick="navigateTo('ledger-mobile-final.html')">
-        <span class="category-icon">💰</span>
-        <div class="category-name">الأدوات المالية</div>
-        <div class="category-desc">محاسب جوال ذكي وعقود إيجار.</div>
-    </div>
-
-    <div class="category-card cat-tech" onclick="navigateTo('royalvoicestudio.html')">
+    <!-- 2. الإبداع والصوت -> يفتح الاستوديو الصوتي (مؤكد عمله) -->
+    <a href="royalvoicestudio.html" class="category-card cat-tech">
         <span class="category-icon">🎙️</span>
         <div class="category-name">الإبداع والصوت</div>
         <div class="category-desc">استوديو رسم ونطق بالذكاء الاصطناعي.</div>
-    </div>
+    </a>
 
-    <div class="category-card cat-edu" onclick="navigateTo('os-hub.html')">
+    <!-- 3. مركز المملكة -> يفتح السفارة كنقطة وصول شاملة -->
+    <a href="safara.html" class="category-card cat-edu">
         <span class="category-icon">🏛️</span>
-        <div class="category-name">مركز القيادة</div>
-        <div class="category-desc">الدخول لنظام المملكة الشامل.</div>
-    </div>
+        <div class="category-name">مركز المملكة</div>
+        <div class="category-desc">الدخول الشامل لجميع خدماتنا.</div>
+    </a>
 
-    <div class="category-card cat-lang" onclick="navigateTo('safara.html')">
+    <!-- 4. سفارة المعرفة -> يفتح السفارة مباشرة -->
+    <a href="safara.html" class="category-card cat-lang">
         <span class="category-icon">🌍</span>
         <div class="category-name">سفارة المعرفة</div>
         <div class="category-desc">روابط تعليمية عالمية مجانية.</div>
-    </div>
+    </a>
 </div>
 
+<!-- ✅ أزرار الإجراءات السفلية (نظيفة وبدون دوال معقدة) -->
 <div class="actions-container">
-    window.location.href = 'safara.html';
-        🚀 دخول نظام التشغيل الكامل
-    </button>
+    <a href="safara.html" class="btn-primary">
+        🚀 دخول نظام المملكة الشامل
+    </a>
     
-    <button class="btn-secondary" onclick="window.location.href='safara.html'">
-        🌍 زيارة سفارة الروابط العالمية
-    </button>
+    <a href="royalvoicestudio.html" class="btn-secondary">
+        🎙️ جرب استوديو الإبداع الآن
+    </a>
 </div>
 
 <div class="footer-info">
@@ -175,25 +151,18 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 </div>
 
 <script>
-function navigateTo(page) {
-    window.location.href = page;
-}
-
-// ✅ التأكد من أن الزر الرئيسي يقود للمركز الجديد
-function openOS() {
-    window.location.href = 'os-hub.html'; 
-}
-
+// كود بسيط لتحريك العداد فقط
 document.addEventListener('DOMContentLoaded', () => {
     const countEl = document.getElementById('countApps');
-    let currentCount = 0;
-    const targetCount = 15; 
-    
-    const interval = setInterval(() => {
-        currentCount++;
-        countEl.textContent = currentCount + "+";
-        if(currentCount >= targetCount) clearInterval(interval);
-    }, 50);
+    if(countEl) {
+        let currentCount = 0;
+        const targetCount = 15; 
+        const interval = setInterval(() => {
+            currentCount++;
+            countEl.textContent = currentCount + "+";
+            if(currentCount >= targetCount) clearInterval(interval);
+        }, 50);
+    }
 });
 </script>
 
