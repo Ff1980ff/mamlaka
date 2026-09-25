@@ -183,6 +183,131 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 50);
 });
 </script>
+<!-- ==================== شريط التحكم الملكي (بحث وتبديل) ==================== -->
+<div id="royalToolbar" style="position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 2px solid #fbbf24; padding: 10px; z-index: 9999; display: none; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); font-family: 'Cairo', sans-serif;">
+    <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
+        <!-- حقل البحث -->
+        <input type="text" id="searchInput" placeholder="ابحث عن..." 
+               style="flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white;"
+               onkeyup="handleSearch(event)">
+        
+        <!-- زر التبديل (يظهر عند الكتابة) -->
+        <input type="text" id="replaceInput" placeholder="استبدل بـ..." 
+               style="flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white; display: none;">
+        
+        <!-- الأزرار -->
+        <button onclick="toggleReplaceMode()" id="btnToggleReplace" style="background: #8b5cf6; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">تبديل</button>
+        <button onclick="performReplaceAll()" id="btnReplaceAll" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; display: none;">تنفيذ الكل</button>
+        <button onclick="closeToolbar()" style="background: transparent; color: #94a3b8; border: 1px solid #94a3b8; padding: 8px; border-radius: 5px; cursor: pointer;">✖</button>
+    </div>
+    <div id="searchStatus" style="color: #94a3b8; font-size: 0.75rem; margin-top: 5px; text-align: center;"></div>
+</div>
 
+<!-- زر فتح الشريط (يظهر دائماً في الزاوية السفلية اليسرى) -->
+<button onclick="openToolbar()" style="position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #fbbf24, #d97706); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4); z-index: 9998;">🔍</button>
+
+<script>
+    // دوال التحكم بالشريط
+    function openToolbar() {
+        document.getElementById('royalToolbar').style.display = 'block';
+        document.getElementById('searchInput').focus();
+    }
+
+    function closeToolbar() {
+        document.getElementById('royalToolbar').style.display = 'none';
+        resetInputs();
+    }
+
+    function toggleReplaceMode() {
+        const repInput = document.getElementById('replaceInput');
+        const btnRepAll = document.getElementById('btnReplaceAll');
+        if (repInput.style.display === 'none') {
+            repInput.style.display = 'inline-block';
+            btnRepAll.style.display = 'inline-block';
+            document.getElementById('btnToggleReplace').textContent = 'إلغاء التبديل';
+        } else {
+            resetInputs();
+        }
+    }
+
+    function resetInputs() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('replaceInput').value = '';
+        document.getElementById('replaceInput').style.display = 'none';
+        document.getElementById('btnReplaceAll').style.display = 'none';
+        document.getElementById('btnToggleReplace').textContent = 'تبديل';
+        highlightMatches([]); // إزالة التظليل القديم
+    }
+
+    // منطق البحث والتحديد البصري
+    let matchCount = 0;
+    function handleSearch(e) {
+        if (e.key === 'Enter') return; // منع الإرسال
+        
+        const query = e.target.value.trim();
+        const statusEl = document.getElementById('searchStatus');
+        
+        if (!query) {
+            statusEl.textContent = "";
+            highlightMatches([]);
+            return;
+        }
+
+        // هنا نستخدم window.find() وهي ميزة مدمجة في المتصفحات للبحث النصي
+        // لكنها لا تلون النتائج بشكل جميل، لذا سنكتفي بالإبلاغ عن العدد
+        const found = window.find(query, false, false, true, false, false, false);
+        
+        if (found) {
+            statusEl.textContent = `تم العثور على تطابق! (اضغط Enter للتالي)`;
+            statusEl.style.color = "#4ade80";
+        } else {
+            statusEl.textContent = `لا توجد نتائج لـ "${query}"`;
+            statusEl.style.color = "#ef4444";
+        }
+    }
+
+    // دالة الاستبدال الجماعي (تعمل على مستوى DOM)
+    function performReplaceAll() {
+        const searchVal = document.getElementById('searchInput').value.trim();
+        const replaceVal = document.getElementById('replaceInput').value;
+        
+        if (!searchVal) return alert("أدخل كلمة للبحث أولاً!");
+        
+        // تحذير للمستخدم
+        if(!confirm(`هل تريد استبدال جميع occurrences بكلمة "${searchVal}" بـ "${replaceVal}"؟\nهذا قد يكسر الكود إذا لم تكن حذراً.`)) {
+            return;
+        }
+
+        try {
+            // استخدام innerHTML للاستبدال السريع (مع خطر محتمل إذا كان الكود معقداً جداً)
+            // للأمان، نفضل طريقة NodeWalker لكن للجوال والبساطة، innerHTML أسرع
+            
+            const bodyContent = document.body.innerHTML;
+            const regex = new RegExp(searchVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); // Escape special chars
+            const newContent = bodyContent.replace(regex, replaceVal);
+            
+            document.body.innerHTML = newContent;
+            
+            alert("✅ تم الاستبدال بنجاح!\nملاحظة: قد تحتاج لإعادة تحميل الصفحة لرؤية التغييرات في بعض العناصر.");
+            location.reload(); // تحديث الصفحة لعرض التغييرات
+            
+        } catch (err) {
+            alert("❌ حدث خطأ أثناء الاستبدال: " + err.message);
+        }
+    }
+
+    function highlightMatches(matches) {
+        // دالة فارغة حالياً لأن window.find يركز العنصر تلقائياً
+        // يمكن تطويرها لاحقاً لتلوين الخلفية
+    }
+    
+    // اختصار لوحة المفاتيح (Ctrl+F يفتح الشريط بدلاً من بحث المتصفح الافتراضي)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            openToolbar();
+        }
+    });
+</script>
 </body>
 </html>
