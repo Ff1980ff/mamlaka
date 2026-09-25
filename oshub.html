@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏛️ مركز القيادة | مملكة التطبيقات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-deep: #0f172a;
+    --surface: rgba(30, 41, 59, 0.8);
+    --gold: #fbbf24;
+    --blue: #38bdf8;
+    --green: #4ade80;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 500px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.icon-big {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px var(--gold));
+}
+
+h1 {
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin-bottom: 10px;
+}
+
+p.desc {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+.status-badge {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+/* Product Cards */
+.products-grid {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.product-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.product-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.product-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.product-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.tag-best-seller {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--green);
+    color: #000;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.back-btn {
+    margin-top: 30px;
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-muted);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: white;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="icon-big">🚀</div>
+    <span class="status-badge">النظام الكامل قيد التحديث... يرجى التفضل بالمنتجات الجاهزة!</span>
+    
+    <h1>مركز القيادة الذكي</h1>
+    <p class="desc">
+        أهلاً بك في قلب المملكة. بدلاً من الانتظار، اختر أحد منتجاتنا المتميزة التي تعمل بكفاءة عالية الآن:
+    </p>
+
+    <div class="products-grid">
+        <!-- Product 1: Ledger -->
+        <a href="ledger-mobile-final.html" class="product-card">
+            <span class="tag-best-seller">الأكثر مبيعاً 💎</span>
+            <span class="product-icon">💰</span>
+            <div class="product-title">المحاسب الملكي (Mobile)</div>
+            <div class="product-desc">إدارة مالية دقيقة، رسوم بيانية حية، وتصدير تقارير PDF بضغطة زر. مصمم خصيصاً للجوال.</div>
+        </a>
+
+        <!-- Product 2: Voice Studio -->
+        <a href="royalvoicestudio.html" class="product-card">
+            <span class="product-icon">🎙️</span>
+            <div class="product-title">الاستوديو الصوتي الإبداعي</div>
+            <div class="product-desc">حوّل خيالك إلى واقع يتكلم! رسم بالذكاء الاصطناعي + نطق عربي متقدم للمحتوى التعليمي والترفيهي.</div>
+        </a>
+
+        <!-- Product 3: Library -->
+        <a href="royal-library-pro.html" class="product-card">
+            <span class="product-icon">📚</span>
+            <div class="product-title">المكتبة الملكية الشاملة</div>
+            <div class="product-desc">منظمتك الشخصية للكتب والمقالات والاقتباسات. واجهة فاخرة وحفظ آمن دون إنترنت.</div>
+        </a>
+    </div>
+
+    <button class="back-btn" onclick="history.back()">⬅ العودة للرئيسية</button>
+</div>
+
+<script>
+// Optional: Add sound effect on click if desired later
+document.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('click', () => {
+        // Future enhancement: Play a subtle "whoosh" sound here
+        console.log("Navigating to product hub...");
+    });
+});
+</script>
+
+</body>
+</html>
