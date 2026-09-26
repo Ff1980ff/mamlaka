@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ مركز قيادة المملكة | Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --accent-gold: #fbbf24;
+            --accent-blue: #38bdf8;
+            --accent-purple: #8b5cf6;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #4ade80;
+            --danger: #f87171;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .dashboard-container { width: 100%; max-width: 600px; }
+        
+        header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--accent-gold); padding-bottom: 15px; }
+        h1 { color: var(--accent-gold); font-size: 1.8rem; }
+        p.status { color: var(--success); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+
+        /* شبكة الأدوات */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        
+        .tool-card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-card:hover { transform: translateY(-3px); border-color: var(--accent-gold); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .tool-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+        .tool-name { font-weight: bold; font-size: 0.9rem; color: white; }
+        .tool-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; }
+
+        /* ألوان مميزة لكل أداة */
+        .card-code .tool-icon { color: var(--accent-blue); }
+        .card-media .tool-icon { color: var(--accent-purple); }
+        .card-finance .tool-icon { color: var(--accent-gold); }
+        .card-qr .tool-icon { color: var(--success); }
+
+        /* قسم الإحصائيات السريعة */
+        .stats-section {
+            background: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-right: 4px solid var(--accent-blue);
+        }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-label { color: var(--text-muted); }
+        .stat-value { font-weight: bold; color: white; direction: ltr; }
+
+        /* زر الإجراءات الرئيسية */
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-main {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-publish { background: linear-gradient(135deg, var(--accent-gold), #d97706); color: black; }
+        .btn-backup { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); }
+
+        footer { margin-top: auto; padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+        a.home-link { color: var(--accent-blue); text-decoration: none; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <header>
+        <h1>⚙️ مركز قيادة المملكة</h1>
+        <p class="status"><span class="dot"></span> النظام متصل ومستعد للنشر</p>
+    </header>
+
+    <!-- أدوات التحكم الأساسية -->
+    <div class="tools-grid">
+        <!-- 1. إدارة الأكواد والنشر -->
+        <div class="tool-card card-code" onclick="openModule('code')">
+            <span class="tool-icon">💻</span>
+            <div class="tool-name">إدارة الأكواد</div>
+            <div class="tool-desc">تعديل ونشر التطبيقات</div>
+        </div>
+
+        <!-- 2. مكتبة الوسائط (صور/فيديو) -->
+        <div class="tool-card card-media" onclick="openModule('media')">
+            <span class="tool-icon">🎨</span>
+            <div class="tool-name">استوديو الوسائط</div>
+            <div class="tool-desc">توليد صور وفيديوهات AI</div>
+        </div>
+
+        <!-- 3. المحاسبة والفواتير -->
+        <div class="tool-card card-finance" onclick="openModule('finance')">
+            <span class="tool-icon">💰</span>
+            <div class="tool-name">المحاسبة الذكية</div>
+            <div class="tool-desc">سجل الحسابات والفواتير</div>
+        </div>
+
+        <!-- 4. مولد QR Codes -->
+        <div class="tool-card card-qr" onclick="generateQR()">
+            <span class="tool-icon">📱</span>
+            <div class="tool-name">مولد QR</div>
+            <div class="tool-desc">روابط سريعة للتطبيقات</div>
+        </div>
+    </div>
+
+    <!-- إحصائيات سريعة (Placeholder للمستقبل) -->
+    <div class="stats-section">
+        <h3 style="margin-bottom: 15px; color: var(--accent-blue); font-size: 1rem;">📊 نظرة عامة</h3>
+        <div class="stat-row">
+            <span class="stat-label">عدد التطبيقات المنشورة:</span>
+            <span class="stat-value" id="appCount">5+</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">آخر عملية نشر:</span>
+            <span class="stat-value">اليوم 11:30 AM</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">مساحة التخزين المستخدمة:</span>
+            <span class="stat-value">~2 MB</span>
+        </div>
+    </div>
+
+    <!-- أزرار الإجراءات -->
+    <div class="action-buttons">
+        <button class="btn-main btn-publish" onclick="quickPublish()">🚀 نشر سريع للموقع</button>
+        <button class="btn-main btn-backup" onclick="createBackup()">💾 إنشاء نسخة احتياطية</button>
+    </div>
+
+    <footer>
+        <a href="index.html" class="home-link">← العودة للواجهة العامة</a><br>
+        © 2026 Mamlaka OS | Powered by Fadi & AI Assistant
+    </footer>
+</div>
+
+<script>
+    // دوال تفاعلية بسيطة (يمكن ربطها لاحقاً بـ APIs حقيقية)
+    
+    function openModule(type) {
+        let msg = "";
+        switch(type) {
+            case 'code': msg = "فتح محرر الأكواد المتقدم..."; break;
+            case 'media': msg = "تشغيل استوديو الذكاء الاصطناعي للوسائط..."; break;
+            case 'finance': msg = "فتح دفتر الأستاذ المالي..."; break;
+        }
+        alert(msg + "\n(سيتم تفعيل هذه الميزات الكاملة في التحديث القادم)");
+        
+        // محاكاة فتح نافذة جديدة أو توجيه لصفحة داخلية
+        if(type === 'code') window.location.href = 'index.html'; // مثال مؤقت
+    }
+
+    function generateQR() {
+        const url = prompt("أدخل رابط التطبيق الذي تريد تحويله لـ QR Code:", "https://ff1980ff.github.io/mamlaka/woodcalculatorhtml.html");
+        if(url) {
+            // استخدام خدمة مجانية لتوليد QR
+            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+            window.open(qrApi, '_blank');
+        }
+    }
+
+    function quickPublish() {
+        confirm("هل أنت متأكد من نشر جميع التعديلات الحالية على الموقع الرئيسي؟") 
+        ? alert("✅ تم إرسال طلب النشر بنجاح! سيظهر خلال دقائق.")
+        : null;
+    }
+
+    function createBackup() {
+        alert("💾 جارٍ إنشاء نسخة احتياطية من ملفات المشروع...\n(ستُحفظ في مجلد Downloads بهاتفك تلقائياً عند تفعيل التكامل الكامل)");
+    }
+</script>
+
+</body>
+</html>
