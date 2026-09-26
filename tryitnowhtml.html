@@ -134,50 +134,88 @@
 </div>
 
 <script>
+   <script>
     function generateMagicSite() {
-        const name = document.getElementById('projectName').value || "مشروعي الجديد";
-        const type = document.getElementById('businessType').value;
-        
-        // إعدادات حسب النوع
-        let logo = "🏢", desc = "", urlSlug = "";
-        
-        switch(type) {
-            case 'wood':
-                logo = "🪵";
-                desc = "حلول خشبية متكاملة، حسابات دقيقة للتكعيب، وأسعار تنافسية.";
-                urlSlug = "wood-shop";
-                break;
-            case 'food':
-                logo = "🍽️";
-                desc = "أطباق شهية بمقادير مضبوطة، ووصفات عالمية بين يديك.";
-                urlSlug = "delicious-kitchen";
-                break;
-            case 'edu':
-                logo = "🎓";
-                desc = "منصة تعلم ذاتي عربية، دورات تفاعلية، ومكتبة معرفية شاملة.";
-                urlSlug = "smart-learning";
-                break;
-            case 'services':
-                logo = "🔧";
-                desc = "خدمات سريعة وموثوقة، حجز مواعيد أونلاين، ودعم فني مباشر.";
-                urlSlug = "pro-services";
-                break;
+        try {
+            // 1. جلب البيانات من الحقول
+            const nameInput = document.getElementById('projectName');
+            const typeSelect = document.getElementById('businessType');
+            
+            if (!nameInput || !typeSelect) {
+                alert("خطأ تقني: حقول الإدخال غير موجودة.");
+                return;
+            }
+
+            const name = nameInput.value.trim() || "مشروعي الجديد";
+            const type = typeSelect.value;
+
+            // 2. بناء الرابط الحقيقي للموقع الرئيسي (index.html)
+            const baseUrl = "https://ff1980ff.github.io/mamlaka/index.html"; 
+            const dynamicUrl = `${baseUrl}?name=${encodeURIComponent(name)}&type=${type}`;
+
+            // 3. إظهار منطقة المعاينة وتحديث بياناتها البصرية
+            const demoArea = document.getElementById('demoArea');
+            if(demoArea) {
+                demoArea.style.display = 'block';
+                
+                // تحديث الأيقونة والوصف حسب النوع المختار
+                let logo = "🏢", desc = "";
+                switch(type) {
+                    case 'wood': logo = "🪵"; desc = "حلول خشبية دقيقة."; break;
+                    case 'food': logo = "🍽️"; desc = "أطباق شهية ومقادير مضبوطة."; break;
+                    case 'edu': logo = "🎓"; desc = "تعلم ذاتي عربي شامل."; break;
+                    default: logo = "🔧"; desc = "خدمات سريعة وموثوقة."; break;
+                }
+                
+                const prevLogo = document.getElementById('prevLogo');
+                const prevTitle = document.getElementById('prevTitle');
+                const prevDesc = document.getElementById('prevDesc');
+                const mockUrl = document.getElementById('mockUrl');
+
+                if(prevLogo) prevLogo.textContent = logo;
+                if(prevTitle) prevTitle.textContent = name;
+                if(prevDesc) prevDesc.textContent = desc;
+                if(mockUrl) mockUrl.textContent = "mamlaka.app/" + type;
+
+                // 4. تحويل زر الشراء إلى زر فتح الموقع الحقيقي
+                const buyLink = demoArea.querySelector('.buy-link');
+                if(buyLink) {
+                    buyLink.href = dynamicUrl;       // يضع الرابط الديناميكي هنا
+                    buyLink.target = "_blank";      // يفتح في تاب جديد
+                    buyLink.textContent = "🚀 اضغط هنا لفتح موقعك المخصص فوراً!";
+                    
+                    // تنسيق الزر ليصبح أخضر وبارزاً
+                    buyLink.style.background = "#4ade80"; 
+                    buyLink.style.color = "#000";
+                    buyLink.style.padding = "12px 25px";
+                    buyLink.style.borderRadius = "8px";
+                    buyLink.style.textDecoration = "none";
+                    buyLink.style.fontWeight = "bold";
+                    buyLink.style.display = "inline-block";
+                    buyLink.style.marginTop = "10px";
+                    
+                    // إلغاء حدث الـ onclick القديم إن وجد
+                    buyLink.onclick = null; 
+                }
+
+                // تمرير سلس للأسفل لرؤية الزر الأخضر
+                setTimeout(() => {
+                    demoArea.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else {
+                 // في حال فشل عرض المعاينة، نعرض الرابط مباشرة كحل احتياطي
+                 alert("تم إنشاء رابط موقعك:\n\n" + dynamicUrl);
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("حدث خطأ مفاجئ: " + error.message);
         }
+    }
+</script>
 
-        // تحديث الواجهة
-        document.getElementById('prevLogo').textContent = logo;
-        document.getElementById('prevTitle').textContent = name;
-        document.getElementById('prevDesc').textContent = desc;
-        document.getElementById('mockUrl').textContent = `mamlaka.app/${urlSlug}`;
-
-        // إظهار المنطقة بحركة انسيابية
-        const demoArea = document.getElementById('demoArea');
-        demoArea.style.display = 'block';
-        
-        // تمرير سلس للأسفل
-        setTimeout(() => {
-            demoArea.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+</body>
+</html> );
    <script>
     function generateMagicSite() {
         const name = document.getElementById('projectName').value || "مشروعي الجديد";
