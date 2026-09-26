@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ جرب القوة الآن | مملكة التطبيقات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --accent-gold: #fbbf24;
+            --accent-blue: #38bdf8;
+            --text-light: #f8fafc;
+            --success: #4ade80;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
+        .magic-container { width: 100%; max-width: 500px; text-align: center; }
+        
+        header h1 { color: var(--accent-gold); font-size: 2rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+        header p { color: var(--text-muted); margin-bottom: 30px; }
+
+        /* نموذج الإدخال */
+        .input-card {
+            background: var(--panel-bg);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; color: var(--accent-blue); font-weight: bold; font-size: 0.9rem; }
+        input[type="text"], select {
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569;
+            background: #0f172a; color: white; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
+
+        .btn-magic {
+            width: 100%; padding: 15px; background: linear-gradient(135deg, var(--accent-gold), #d97706);
+            color: black; border: none; border-radius: 10px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
+            transition: transform 0.2s; box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+        }
+        .btn-magic:hover { transform: scale(1.02); }
+        .btn-magic:active { transform: scale(0.98); }
+
+        /* منطقة العرض السحري (المخفية افتراضياً) */
+        #demoArea {
+            margin-top: 30px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .preview-window {
+            background: #fff;
+            color: #333;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border: 4px solid var(--accent-gold);
+        }
+        .browser-bar {
+            background: #eee; padding: 8px 15px; display: flex; gap: 8px; align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        .url-bar { flex: 1; background: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; color: #666; direction: ltr; text-align: left; }
+        
+        .site-preview { padding: 20px; text-align: center; }
+        .site-logo { font-size: 3rem; margin-bottom: 10px; }
+        .site-title { font-size: 1.5rem; font-weight: bold; color: var(--bg-dark); margin-bottom: 10px; }
+        .site-desc { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        .fake-btn { background: var(--accent-blue); color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; display: inline-block; }
+
+        .cta-section { margin-top: 20px; padding: 15px; background: rgba(74, 222, 128, 0.1); border: 1px dashed var(--success); border-radius: 8px; }
+        .cta-text { color: var(--success); font-weight: bold; margin-bottom: 10px; }
+        .buy-link { color: var(--accent-gold); text-decoration: underline; font-weight: bold; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+<div class="magic-container">
+    <header>
+        <h1>🪄 اصنع موقعك في 5 ثوانٍ</h1>
+        <p>اكتب اسم مشروعك واختر نوع النشاط... وشاهد السحر يحدث فوراً!</p>
+    </header>
+
+    <div class="input-card">
+        <div class="input-group">
+            <label for="projectName">اسم المشروع / المتجر</label>
+            <input type="text" id="projectName" placeholder="مثال: ورشة أبو أحمد للأخشاب">
+        </div>
+        
+        <div class="input-group">
+            <label for="businessType">نوع النشاط التجاري</label>
+            <select id="businessType">
+                <option value="wood">🪵 تجارة الأخشاب والنجارة</option>
+                <option value="food">🍳 مطاعم وأطعمة منزلية</option>
+                <option value="edu">📚 تعليم ودورات تدريبية</option>
+                <option value="services">🛠️ خدمات عامة (سباكة، كهرباء...)</option>
+            </select>
+        </div>
+
+        <button class="btn-magic" onclick="generateMagicSite()">⚡ ولّد الموقع الآن مجاناً</button>
+    </div>
+
+    <!-- منطقة المعاينة الحية -->
+    <div id="demoArea">
+        <div class="preview-window">
+            <div class="browser-bar">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <div class="url-bar" id="mockUrl">mamlaka.app/project-name</div>
+            </div>
+            <div class="site-preview">
+                <div class="site-logo" id="prevLogo">🏢</div>
+                <h2 class="site-title" id="prevTitle">عنوان المشروع</h2>
+                <p class="site-desc" id="prevDesc">وصف مختصر يظهر هنا تلقائياً...</p>
+                <div class="fake-btn">تواصل معنا</div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <div class="cta-text">هل أعجبك الشكل؟ يمكنك الحصول على هذا الموقع كاملاً + لوحة تحكم + أدوات محاسبة بضغطة زر.</div>
+            <a href="#" class="buy-link" onclick="alert('أرسل رسالة واتساب للطلب: [رقمك]')">اطلب النسخة الكاملة الآن ($49 فقط!) →</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateMagicSite() {
+        const name = document.getElementById('projectName').value || "مشروعي الجديد";
+        const type = document.getElementById('businessType').value;
+        
+        // إعدادات حسب النوع
+        let logo = "🏢", desc = "", urlSlug = "";
+        
+        switch(type) {
+            case 'wood':
+                logo = "🪵";
+                desc = "حلول خشبية متكاملة، حسابات دقيقة للتكعيب، وأسعار تنافسية.";
+                urlSlug = "wood-shop";
+                break;
+            case 'food':
+                logo = "🍽️";
+                desc = "أطباق شهية بمقادير مضبوطة، ووصفات عالمية بين يديك.";
+                urlSlug = "delicious-kitchen";
+                break;
+            case 'edu':
+                logo = "🎓";
+                desc = "منصة تعلم ذاتي عربية، دورات تفاعلية، ومكتبة معرفية شاملة.";
+                urlSlug = "smart-learning";
+                break;
+            case 'services':
+                logo = "🔧";
+                desc = "خدمات سريعة وموثوقة، حجز مواعيد أونلاين، ودعم فني مباشر.";
+                urlSlug = "pro-services";
+                break;
+        }
+
+        // تحديث الواجهة
+        document.getElementById('prevLogo').textContent = logo;
+        document.getElementById('prevTitle').textContent = name;
+        document.getElementById('prevDesc').textContent = desc;
+        document.getElementById('mockUrl').textContent = `mamlaka.app/${urlSlug}`;
+
+        // إظهار المنطقة بحركة انسيابية
+        const demoArea = document.getElementById('demoArea');
+        demoArea.style.display = 'block';
+        
+        // تمرير سلس للأسفل
+        setTimeout(() => {
+            demoArea.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }
+</script>
+
+</body>
+</html>
