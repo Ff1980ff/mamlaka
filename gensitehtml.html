@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد المواقع السريع | مملكة التطبيقات</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { color: #fbbf24; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 1rem; }
+        button { width: 100%; padding: 15px; background: linear-gradient(to right, #f59e0b, #d97706); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 10px; transition: 0.3s; }
+        button:hover { transform: scale(1.02); opacity: 0.9; }
+        #result { margin-top: 20px; display: none; }
+        .link-box { background: #0f172a; padding: 15px; border-radius: 8px; word-break: break-all; direction: ltr; text-align: left; border: 1px dashed #4ade80; }
+        a.action-btn { display: inline-block; margin-top: 15px; background: #4ade80; color: #000; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🪄 اصنع موقعك الآن</h2>
+    
+    <label>اسم المشروع:</label>
+    <input type="text" id="pname" placeholder="مثال: ورشة الفادي">
+    
+    <label>نوع النشاط:</label>
+    <select id="ptype">
+        <option value="wood">🪵 أخشاب ونجارة</option>
+        <option value="food">🍳 طعام ومطاعم</option>
+        <option value="edu">🎓 تعليم ودورات</option>
+        <option value="services">🔧 خدمات عامة</option>
+    </select>
+
+    <button onclick="makeSite()">⚡ توليد الرابط الحي</button>
+
+    <div id="result">
+        <p style="color:#4ade80; font-weight:bold;">✅ تم الإنشاء بنجاح!</p>
+        <div class="link-box" id="urlDisplay"></div>
+        <a href="#" id="openLink" target="_blank" class="action-btn">🚀 افتح الموقع المخصص</a>
+    </div>
+</div>
+
+<script>
+function makeSite() {
+    const name = document.getElementById('pname').value || "مشروعي";
+    const type = document.getElementById('ptype').value;
+    
+    // بناء الرابط الديناميكي
+    const base = "https://ff1980ff.github.io/mamlaka/index.html";
+    const fullUrl = `${base}?name=${encodeURIComponent(name)}&type=${type}`;
+    
+    // عرض النتيجة
+    const resDiv = document.getElementById('result');
+    const urlBox = document.getElementById('urlDisplay');
+    const linkBtn = document.getElementById('openLink');
+    
+    urlBox.innerText = fullUrl;
+    linkBtn.href = fullUrl;
+    resDiv.style.display = "block";
+}
+</script>
+
+</body>
+</html>
