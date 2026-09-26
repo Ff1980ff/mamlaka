@@ -178,7 +178,53 @@
         setTimeout(() => {
             demoArea.scrollIntoView({ behavior: 'smooth' });
         }, 100);
+   <script>
+    function generateMagicSite() {
+        const name = document.getElementById('projectName').value || "مشروعي الجديد";
+        const type = document.getElementById('businessType').value;
+        
+        // 1. بناء الرابط الحقيقي للموقع الرئيسي مع المعلمات (Parameters)
+        // نستخدم encodeURIComponent لضمان سلامة الحروف العربية والمسافات في الرابط
+        const baseUrl = "https://ff1980ff.github.io/mamlaka/index.html"; 
+        const dynamicUrl = `${baseUrl}?name=${encodeURIComponent(name)}&type=${type}`;
+
+        // 2. إظهار منطقة المعاينة (للإحساس بالسحر البصري أولاً)
+        const demoArea = document.getElementById('demoArea');
+        demoArea.style.display = 'block';
+        
+        // تحديث بيانات المعاينة الوهمية لتطابق الواقع
+        let logo = "🏢", desc = "";
+        switch(type) {
+            case 'wood': logo = "🪵"; desc = "حلول خشبية دقيقة."; break;
+            case 'food': logo = "🍽️"; desc = "أطباق شهية ومقادير مضبوطة."; break;
+            case 'edu': logo = "🎓"; desc = "تعلم ذاتي عربي شامل."; break;
+            default: logo = "🔧"; desc = "خدمات سريعة وموثوقة."; break;
+        }
+        
+        document.getElementById('prevLogo').textContent = logo;
+        document.getElementById('prevTitle').textContent = name;
+        document.getElementById('prevDesc').textContent = desc;
+        document.getElementById('mockUrl').textContent = "mamlaka.app/" + type;
+
+        // 3. تغيير زر "اطلب النسخة الكاملة" ليصبح "افتح موقعك الحقيقي"
+        const buyLink = demoArea.querySelector('.buy-link');
+        if(buyLink) {
+            buyLink.href = dynamicUrl;       // يضع الرابط الحقيقي هنا
+            buyLink.target = "_blank";      // يفتح في تاب جديد
+            buyLink.textContent = "🚀 اضغط هنا لفتح موقعك المخصص فوراً!";
+            buyLink.style.background = "#4ade80"; // لون أخضر للنجاح
+            buyLink.style.color = "#000";
+            buyLink.style.padding = "10px 20px";
+            buyLink.style.borderRadius = "5px";
+            buyLink.style.textDecoration = "none";
+        }
+
+        // تمرير سلس للأسفل لرؤية الزر الأخضر
+        setTimeout(() => {
+            demoArea.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
     }
+</script> }
 </script>
 
 </body>
