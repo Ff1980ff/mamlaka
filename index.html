@@ -309,5 +309,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 </script>
+<!-- سكربت القراءة الديناميكية للموقع المخصص -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const customName = urlParams.get('name'); 
+        const customType = urlParams.get('type'); 
+
+        if (customName) {
+            // تغيير عنوان الصفحة
+            document.title = `${decodeURIComponent(customName)} | مملكة التطبيقات`;
+            
+            // تحديد العناصر المراد تغييرها
+            const mainTitleEl = document.querySelector('.hero-section h1.title');
+            const subtitleEl = document.querySelector('.hero-section p.subtitle');
+            const logoEl = document.querySelector('.main-logo');
+
+            // تحديث الاسم الرئيسي
+            if(mainTitleEl) mainTitleEl.textContent = decodeURIComponent(customName);
+            
+            // تخصيص الوصف والأيقونة حسب النوع
+            let descText = "منصتك الرقمية المتكاملة.";
+            let iconEmoji = "🏛️";
+
+            switch(customType) {
+                case 'wood':
+                    descText = "حلول خشبية دقيقة، حسابات تكعيب، وأسعار تنافسية.";
+                    iconEmoji = "🪵";
+                    break;
+                case 'food':
+                    descText = "أطباق شهية بمقادير مضبوطة، ووصفات عالمية.";
+                    iconEmoji = "🍳";
+                    break;
+                case 'edu':
+                    descText = "تعلم ذاتي عربي، دورات تفاعلية، ومكتبة معرفية.";
+                    iconEmoji = "🎓";
+                    break;
+                default:
+                    descText = "خدمات سريعة وموثوقة لدعم أعمالك.";
+                    iconEmoji = "🔧";
+            }
+
+            if(subtitleEl) subtitleEl.innerHTML = descText;
+            if(logoEl) logoEl.textContent = iconEmoji;
+        }
+    });
+</script>
 </body>
 </html>
