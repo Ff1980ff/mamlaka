@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة عودة | مواد بناء، هدم، وترحيل - جودة وسرعة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d97706; /* لون ترابي/برتقالي قوي يرمز للبناء */
+            --dark-bg: #1e293b;
+            --light-text: #f8fafc;
+            --gray-text: #94a3b8;
+            --accent-green: #10b981; /* للأزرار والتأكيد */
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--dark-bg); color: var(--light-text); line-height: 1.6; }
+        
+        /* الهيدر الرئيسي */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 4px solid var(--primary);
+        }
+        .logo-text { font-size: 2.5rem; font-weight: 900; color: var(--primary); text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .tagline { font-size: 1.2rem; color: white; margin-top: 10px; max-width: 600px; margin-inline: auto; }
+        
+        /* قسم الخدمات السريعة */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .service-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card:hover { transform: translateY(-5px); border-color: var(--primary); background: rgba(217, 119, 6, 0.1); }
+        .icon-big { font-size: 3rem; margin-bottom: 15px; display: block; }
+        h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; }
+        ul { list-style: none; padding-right: 0; }
+        li { margin-bottom: 8px; color: var(--gray-text); display: flex; align-items: start; gap: 8px; }
+        li::before { content: "✔"; color: var(--accent-green); font-weight: bold; }
+
+        /* جدول الأسعار والمواصفات (الجزء الأهم للتاجر) */
+        .pricing-table {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background: var(--primary); color: white; font-weight: 700; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .price-highlight { color: var(--primary); font-weight: bold; font-size: 1.1rem; }
+
+        /* آلية الطلب (متر أو شوال) */
+        .order-method {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px dashed var(--accent-green);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .method-btns { display: flex; justify-content: center; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
+        .btn-method {
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-meter { background: var(--primary); color: white; }
+        .btn-bag { background: #3b82f6; color: white; }
+        .btn-method:hover { opacity: 0.9; transform: scale(1.05); }
+
+        /* الفوتر واتساب */
+        footer {
+            background: #0f172a;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #25D366;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            transition: 0.3s;
+        }
+        .whatsapp-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.6); }
+        .contact-info { margin-top: 15px; color: var(--gray-text); font-size: 0.9rem; }
+
+        @media (max-width: 600px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .logo-text { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-text">🏗️ شركة عودة للمقاولات ومواد البناء</div>
+    <p class="tagline">خيارك الأول للهدم، الترحيل، وتوفير أجود أنواع الإسمنت والحصويات بأسعار الجملة.</p>
+</header>
+
+<!-- قسم المواد والخدمات -->
+<section class="services-grid">
+    
+    <!-- 1. الإسمنت -->
+    <div class="service-card">
+        <span class="icon-big">🧱</span>
+        <h3>الإسمنت (جميع الأنواع)</h3>
+        <ul>
+            <li><strong>إسمنت أردني:</strong> عالي الجودة وقوة تحمل.</li>
+            <li><strong>إسمنت طرطوسي:</strong> الأكثر طلباَ في السوق المحلي.</li>
+            <li><strong>إسمنت أبيض تركي:</strong> للتشطيبات النهائية والدهانات.</li>
+            <li>متوفر بالطن وبالأكياس (50 كغ).</li>
+        </ul>
+    </div>
+
+    <!-- 2. الحصويات والركام -->
+    <div class="service-card">
+        <span class="icon-big">🚜</span>
+        <h3>حصى، رمل، وبلاط</h3>
+        <ul>
+            <li><strong>رمل مغسول:</strong> نظيف وخالي من الشوائب للخرسانة.</li>
+            <li><strong>بحص (حصى):</strong> بمقاسات مختلفة (ناعم وخشن).</li>
+            <li><strong>بلاط أرضيات:</strong> أشكال وألوان متعددة.</li>
+            <li>توصيل مباشر لموقع العمل بتركسات حديثة.</li>
+        </ul>
+    </div>
+
+    <!-- 3. الهدم والترحيل -->
+    <div class="service-card">
+        <span class="icon-big">💥</span>
+        <h3>خدمات الهدم والترحيل</h3>
+        <ul>
+            <li>هدم جدران وأساسات بأمان تام.</li>
+            <li>ترحيل الأنقاض والنفايات الإنشائية.</li>
+            <li>تنظيف الموقع وتسويته قبل البدء بالبناء.</li>
+            <li>أسعار تنافسية حسب حجم العمل.</li>
+        </ul>
+    </div>
+
+</section>
+
+<!-- آلية الطلب الذكية -->
+<div class="order-method">
+    <h2 style="color:white; margin-bottom:10px;">⚙️ كيف تحسب الكميات؟</h2>
+    <p style="color:#cbd5e1;">نحن نبيع المرونة! اختر طريقة الحساب المناسبة لمشروعك:</p>
+    <div class="method-btns">
+        <button class="btn-method btn-meter" onclick="alert('سيتم حساب السعر بناءً على المتر المكعب (m³). يرجى إرسال أبعاد الأرضية.')">
+            📐 البيع بالمتر المكعب (للخرسانة والحشو)
+        </button>
+        <button class="btn-method btn-bag" onclick="alert('سيتم حساب السعر بناءً على عدد الأكياس/الشوال. كل كيس إسمنت = 50 كغ.')">
+            👜 البيع بالشوال/الكيس (للإسمنت والبلاط)
+        </button>
+    </div>
+</div>
+
+<!-- جدول أسعار استرشادي (يمكن تعديله لاحقاَ) -->
+<table class="pricing-table">
+    <thead>
+        <tr>
+            <th>المادة</th>
+            <th>النوع/المصدر</th>
+            <th>وحدة البيع</th>
+            <th>السعر التقريبي*</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>إسمنت أسود</td>
+            <td>أردني / طرطوسي</td>
+            <td>كيس (50kg)</td>
+            <td class="price-highlight">حسب سعر اليوم</td>
+        </tr>
+        <tr>
+            <td>إسمنت أبيض</td>
+            <td>تركي فاخر</td>
+            <td>كيس (25kg/50kg)</td>
+            <td class="price-highlight">عالية الجودة</td>
+        </tr>
+        <tr>
+            <td>رمل مغسول</td>
+            <td>طبيعي</td>
+            <td>متر مكعب (m³)</td>
+            <td class="price-highlight">منافس جداَ</td>
+        </tr>
+        <tr>
+            <td>بحص (حصى)</td>
+            <td>مقاسات متنوعة</td>
+            <td>متر مكعب (m³)</td>
+            <td class="price-highlight">نظافة عالية</td>
+        </tr>
+        <tr>
+            <td>خدمة هدم وترحيل</td>
+            <td>يد عاملة + آلات</td>
+            <td>قطعة / مشروع</td>
+            <td class="price-highlight">بالرضا</td>
+        </tr>
+    </tbody>
+</table>
+<p style="text-align:center; color:#94a3b8; font-size:0.8rem; margin-top:-20px; margin-bottom:30px;">* الأسعار تتغير يومياَ حسب السوق. اتصل بنا للحصول على عرض سعر دقيق.</p>
+
+<footer>
+    <h3 style="margin-bottom:20px; color:white;">جاهزون لخدمتك الآن!</h3>
+    
+    <!-- ⚠️ ضع رقم واتساب شركة عودة هنا بدلاَ من YOUR_PHONE_NUMBER_HERE -->
+    <!-- مثال لسوريا: 9639... بدون علامة + -->
+    <a href="https://wa.me/YOUR_PHONE_NUMBER_HERE?text=مرحباَ%20شركة%20عودة،%20أريد%20عرض%20سعر%20لمواد%20بناء" class="whatsapp-btn">
+        💬 تواصل معنا عبر واتساب فوراَ
+    </a>
+    
+    <div class="contact-info">
+        إدارة الشركة: فريق عمل عودة للمقاولات
+    </div>
+    <p style="margin-top:20px; color:#64748b; font-size:0.9rem;">
+        © 2026 شركة عودة للمقاولات | جميع الحقوق محفوظة
+    </p>
+</footer>
+
+<script>
+    // سكريبت بسيط لتغيير نص الزر عند الضغط (تحسين تجربة المستخدم)
+    const buttons = document.querySelectorAll('.btn-method');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 100);
+        });
+    });
+</script>
+
+</body>
+</html>
