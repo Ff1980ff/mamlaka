@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مصنع الإيميلات الذهبي | رسائل وتوقيع مربح</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma,sans-serif}
+body{background:#0b1026;color:#f7ead9;padding-bottom:40px}
+header{text-align:center;padding:16px;font-weight:900;color:#f5a524;font-size:21px}
+header small{display:block;color:#9aa3c0;font-weight:400;font-size:13px;margin-top:4px}
+.wrap{max-width:560px;margin:auto;padding:0 12px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.chip{border:1px solid #2a3157;background:#141a33;color:#f7ead9;border-radius:99px;padding:11px 16px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.chip.on{background:#f5a524;color:#241303;transform:scale(1.05)}
+input{width:100%;padding:13px;border-radius:12px;border:2px solid #2a3157;background:#141a33;color:#f7ead9;font-size:17px;font-family:inherit;margin:6px 0}
+.go{width:100%;border-radius:12px;border:none;background:#f5a524;color:#241303;font-weight:900;font-size:17px;padding:14px;cursor:pointer;font-family:inherit;margin:8px 0;box-shadow:0 4px 15px rgba(245,165,36,0.3);transition:transform 0.2s}
+.go:active{transform:scale(0.98)}
+.sec{width:100%;border-radius:12px;border:1px solid #2a3157;background:#141a33;color:#f7ead9;font-weight:900;font-size:15px;padding:12px;cursor:pointer;font-family:inherit;margin-top:8px;display:none}
+#out{background:#141a33;border:2px solid #2a3157;border-radius:14px;padding:16px;margin:12px 0;line-height:2.1;font-size:17px;white-space:pre-wrap;display:none;color:#fff}
+.card{background:#141a33;border:1px solid #2a3157;border-radius:14px;padding:14px;margin:10px 0;line-height:2;font-size:15px;color:#9aa3c0}
+.card b{color:#f5a524}
+.loader{display:none;text-align:center;color:#fbbf24;font-size:12px;margin-top:5px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{opacity:0.5}50%{opacity:1}100%{opacity:0.5}}
+.signature-line { color: #38bdf8; font-size: 14px; margin-top: 10px; border-top: 1px dashed #2a3157; padding-top: 8px; }
+</style>
+</head>
+<body>
+<header>📧 مصنع الإيميلات الذهبي
+<small>رسائل بأدب الشوام + توقيع ذكي يجلب الزوار والربح!</small></header>
+
+<div class="wrap">
+ <div class="chips" id="types"></div>
+ <input id="to" placeholder="إلى (اسم المرسل له)...">
+ <input id="from" placeholder="من (اسمك)...">
+ <input id="ext" placeholder="تفصيل اختياري (الموضوع / المناسبة)...">
+ 
+ <button class="go" onclick="generateSmartMessage()">📧 اصنع الرسالة الذكية</button>
+ <div class="loader" id="loader">⏳ جارٍ تجهيز التوقيع المربح...</div>
+ 
+ <div id="out"></div>
+ <button class="sec" id="cp" style="display:none" onclick="copyM()">📋 نسخ الرسالة مع التوقيع</button>
+
+ <div class="card"><b>📜 سر النجاح:</b><br>
+ • كل رسالة تخرج من هنا تحمل بصمتك الرقمية.<br>
+ • التوقيع الذكي يحول كل مستلم إلى زائر محتمل لموقعك.<br>
+ • الأدب يفتح القلوب، والرابط المربح يفتح الحسابات البنكية 😉.</div>
+</div>
+
+<script>
+// ==========================================
+// ⚠️ ضع مفاتيحك الحقيقية هنا
+// ==========================================
+const SHRINK_API_KEY = 'ضع_مفتاح_ShrinkMe_هنا'; 
+const EXE_API_KEY = 'ضع_مفتاح_Exe_io_هنا'; 
+
+// رابط موقعك الأساسي الذي تريد وضعه في التوقيع
+const MY_PORTAL_URL = 'https://ff1980ff.github.io/mamlaka/index.html';
+
+const T=[
+{n:'🎩 رسمي',f:(to,from,x)=>`السلام عليكم ورحمة الله وبركاته،\nالأستاذ/ة ${to} المحترم،\nتحية طيبة وبعد،\nأتقدم إليكم بخصوص ${x||'طلبي هذا'}، راجيًا منكم التكرم بالنظر فيه، وثقتي بكم كبيرة.\nوتفضلوا بقبول فائق الاحترام والتقدير.\nالمخلص: ${from}`},
+{n:'💐 شكر',f:(to,from)=>`غالي ${to}،\nما قصّرت! وقفتك معي ما بتنسى، وكلمتك الطيبة كانت بلسم.\nالله يجزيك الخير ويكثر من أمثالك.\nمع خالص الشكر: ${from}`},
+{n:'🤝 اعتذار',f:(to,from)=>`صديقي/أستاذي ${to}،\nبعتذر منك عن اللي صار، وما كان قصدي أزعلك أبدًا.\nمحبتك غالية عندي، وبتمنى تقبل اعتذاري.\nالمحب: ${from}`},
+{n:'🎉 تهنئة',f:(to,from,x)=>`غالي ${to}،\nألف مبروك ${x||'الخبر الحلو'}! فرحتلك من قلبي.\nالله يديمها عليك نعمة ويزيدك من فضله.\nالمهنئ: ${from}`},
+{n:'🛋️ دعوة',f:(to,from,x)=>`عزيزي ${to}،\nيسعدني أدعوك لـ${x||'عزومة عشا'} عندنا بالبيت.\nحضورك بينوّر الدار، والبيت بيتك.\nبانتظارك: ${from}`},
+{n:'🕊️ طلب بلطف',f:(to,from,x)=>`الأستاذ ${to} المحترم،\nبكل احترام ومحبة، حبيت نوّهك لموضوع ${x||'...'} راجيًا منكم النظر الكريم.\nواثق إنكم ما بتقصّروا.\nشاكرًا لكم: ${from}`}
+];
+
+let cur=0,last='';
+
+document.getElementById('types').innerHTML=T.map((t,i)=>`<button class="chip${i===0?' on':''}" onclick="sel(${i})">${t.n}</button>`).join('');
+function sel(i){cur=i;document.querySelectorAll('.chip').forEach((b,j)=>b.classList.toggle('on',j===i))}
+
+// دالة الربح الذكية
+async function getProfitUrl(longUrl) {
+    try {
+        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl || data.link) return data.shortenedUrl || data.link;
+        }
+    } catch (e) {}
+    try {
+        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(longUrl)}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl) return data.shortenedUrl;
+        }
+    } catch (e) {}
+    return longUrl; // احتياطيا
+}
+
+async function generateSmartMessage() {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block';
+    
+    // 1. توليد الرابط المربح
+    const profitLink = await getProfitUrl(MY_PORTAL_URL);
+    
+    // 2. بناء التوقيع الذكي
+    const smartSignature = `\n\n${'-'.repeat(20)}\n🌐 أدواتي الرقمية المجانية والاحترافية:\n👉 ${profitLink}\n(Powered by Mamlaka Apps)`;
+    
+    // 3. توليد نص الرسالة الأساسي
+    const to=document.getElementById('to').value.trim()||'الأستاذ الفاضل';
+    const from=document.getElementById('from').value.trim()||'المحب';
+    const x=document.getElementById('ext').value.trim();
+    
+    last = T[cur].f(to,from,x) + smartSignature;
+    
+    // 4. العرض
+    document.getElementById('out').textContent = last;
+    document.getElementById('out').style.display='block';
+    document.getElementById('cp').style.display='block';
+    
+    loader.style.display = 'none';
+}
+
+function copyM(){
+    navigator.clipboard.writeText(last).then(()=>{
+        const btn = document.getElementById('cp');
+        const originalText = btn.textContent;
+        btn.textContent = '✅ اننسخت مع التوقيع الذهبي!';
+        setTimeout(() => btn.textContent = originalText, 2000);
+    });
+}
+</script>
+</body>
+</html>
