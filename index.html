@@ -402,4 +402,145 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 </script>
 </body>
+<!-- ==================== آلة الربح الذكية (ShrinkMe & Exe.io) ==================== -->
+<div style="max-width: 600px; width: 100%; margin: 30px auto; padding: 25px; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(10px);">
+    
+    <h3 style="color: var(--gold-primary); text-align: center; font-size: 1.5rem; margin-bottom: 20px;">💸 مولّد الدخل السلبي الذكي</h3>
+    <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 20px;">
+        قص روابطك الطويلة واربح المال تلقائياَ عبر خادمين احتياطيين.
+    </p>
+
+    <!-- حقل الإدخال -->
+    <div style="margin-bottom: 15px;">
+        <input type="url" id="profitLongUrl" placeholder="الصق الرابط الطويل هنا..." 
+               style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-family: monospace; direction: ltr; text-align: left;" dir="ltr">
+    </div>
+
+    <!-- زر التوليد -->
+    <button onclick="generateProfitLink()" 
+            style="width: 100%; padding: 14px; border-radius: 8px; border: none; background: linear-gradient(135deg, #fbbf24, #d97706); color: black; font-weight: bold; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);"
+            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        ⚡ ولّد الرابط المختصر واربح الآن
+    </button>
+
+    <!-- منطقة النتيجة (مخفية افتراضياً) -->
+    <div id="profitResultBox" style="display:none; margin-top: 20px; padding: 15px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.2); position: relative;">
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">الرابط الجديد:</p>
+        <span id="profitFinalUrl" style="display:block; word-break: break-all; color: #fff; font-family: monospace; font-size: 1.1rem; text-decoration: underline dotted #fbbf24; cursor: pointer;" title="اضغط للنسخ"></span>
+        
+        <!-- زر النسخ الديناميكي -->
+        <div id="profitCopyArea" style="margin-top: 10px;"></div>
+    </div>
+</div>
+
+<script>
+    // --- 1. ضع مفاتيحك السرية الحقيقية هنا (استبدل النص بالواقع) ---
+    const SHRINK_API_KEY = 'ضع_مفتاح_ShrinkMe_هنا'; 
+    const EXE_API_KEY = 'ضع_مفتاح_Exe_io_هنا'; 
+    
+    // --- 2. الدالة الرئيسية للتوليد الذكي ---
+    async function generateProfitLink() {
+        const inputEl = document.getElementById('profitLongUrl');
+        const resultBox = document.getElementById('profitResultBox');
+        const finalUrlSpan = document.getElementById('profitFinalUrl');
+        const copyArea = document.getElementById('profitCopyArea');
+        
+        if(!inputEl || !resultBox || !finalUrlSpan) return alert("خطأ تقني في العناصر");
+
+        const longUrl = inputEl.value.trim();
+
+        if(!longUrl || !longUrl.startsWith('http')) {
+            alert("الرجاء إدخال رابط صحيح يبدأ بـ http أو https");
+            return;
+        }
+
+        // حالة التحميل
+        resultBox.style.display = 'block';
+        finalUrlSpan.innerText = "⏳ جارٍ المحاولة عبر الخادم الأول (ShrinkMe)...";
+        resultBox.style.borderColor = "#fbbf24"; // أصفر للتنبيه
+        copyArea.innerHTML = ''; 
+
+        try {
+            // محاولة أولى: ShrinkMe.io
+            let shortLink = await tryShrinkMe(longUrl);
+            
+            if (!shortLink) {
+                // محاولة ثانية: Exe.io (إذا فشلت الأولى)
+                finalUrlSpan.innerText = "⚠️ الخادم الأول مشغول، تجربة الاحتياطي (Exe.io)...";
+                shortLink = await tryExeIo(longUrl);
+            }
+
+            if (shortLink) {
+                // نجاح!
+                finalUrlSpan.innerText = shortLink;
+                resultBox.style.borderColor = "#4ade80"; // أخضر للنجاح
+                
+                // إضافة زر النسخ تلقائياً
+                addProfitCopyButton(shortLink, copyArea);
+                
+                console.log("✅ تم القص بنجاح.");
+            } else {
+                throw new Error("فشلت جميع المحاولات.");
+            }
+
+        } catch (error) {
+            console.error(error);
+            finalUrlSpan.innerText = "❌ تعذر الاتصال بأي خادم. تحقق من الإنترنت.";
+            resultBox.style.borderColor = "#ef4444"; // أحمر للخطأ
+        }
+    }
+
+    // --- 3. دوال المساعدة للاتصال بالخوادم ---
+    
+    // دالة ShrinkMe
+    async function tryShrinkMe(url) {
+        try {
+            const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
+            const response = await fetch(apiUrl);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.shortenedUrl || data.link || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // دالة Exe.io
+    async function tryExeIo(url) {
+        try {
+            // ملاحظة هامة: Exe يستخدم المعامل api= وليس token=
+            const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
+            const response = await fetch(apiUrl);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.shortenedUrl || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // --- 4. دالة زر النسخ التلقائي ---
+    function addProfitCopyButton(url, container) {
+        const oldBtn = container.querySelector('.dynamic-profit-btn');
+        if(oldBtn) oldBtn.remove();
+
+        const btn = document.createElement('button');
+        btn.className = "dynamic-profit-btn mt-3 w-full bg-black text-white text-sm py-2 px-4 rounded hover:bg-gray-800 transition-colors font-bold";
+        btn.innerText = "📋 نسخ الرابط المختصر";
+        
+        btn.onclick = () => {
+            navigator.clipboard.writeText(url).then(() => {
+                btn.innerText = "✅ تم النسخ بنجاح!";
+                btn.classList.replace('bg-black', 'bg-green-600');
+                setTimeout(() => {
+                    btn.innerText = "📋 نسخ الرابط المختصر";
+                    btn.classList.replace('bg-green-600', 'bg-black');
+                }, 2000);
+            });
+        };
+        
+        container.appendChild(btn);
+    }
+</script>
+<!-- ============================================================================ -->
 </html>
