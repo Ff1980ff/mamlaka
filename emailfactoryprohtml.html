@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مصنع الإيميلات الذهبي | إرسال وربح</title><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo', Tahoma, sans-serif}body{background:linear-gradient(160deg,#7f1d1d,#450a0a);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #f87171;border-radius:24px;padding:16px;min-height:85vh;box-shadow:0 10px 30px rgba(0,0,0,0.5)}h2{text-align:center;color:#fca5a5;font-size:20px;margin-bottom:5px}.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 12px;line-height:1.5}select,input,textarea{width:100%;border:0;border-radius:12px;padding:11px;font-size:14px;background:#1e293b;color:#fff;outline:0;border:1px solid #334155;margin-bottom:8px;font-family:inherit}textarea{min-height:150px;line-height:1.8;font-size:13px;resize:none}.btn{border:0;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;width:100%;margin-bottom:6px;transition:transform 0.2s, opacity 0.2s}.btn:active{transform:scale(0.98)}.btn.red{background:#f87171;color:#450a0a}.btn.green{background:#22c55e;color:#fff;box-shadow:0 4px 15px rgba(34, 197, 94, 0.3)}.btn.blue{background:#38bdf8;color:#000}.loader{display:none;text-align:center;color:#fbbf24;font-size:12px;margin-top:5px;animation:pulse 1.5s infinite}@keyframes pulse{0%{opacity:0.5}50%{opacity:1}100%{opacity:0.5}}</style></head><body><div class="frame">
+<h2>📧 مصنع الإيميلات الذهبي</h2><div class="sub">اكتب طلبك بضغطة زر... وأرسله مع توقيع مربح!</div>
+
+<select id="tp"><option value="job">💼 طلب عمل</option><option value="comp">⚖️ شكوى رسمية</option><option value="thx">💐 شكر وتقدير</option><option value="ask">❓ استفسار</option><option value="sry">🙏 اعتذار</option></select>
+<input id="nm" placeholder="اسمك الكامل">
+<input id="rc" placeholder="المرسل إليه (مثلا: مدير الشركة)">
+<input id="sb" placeholder="الموضوع (مثلا: وظيفة معلم)">
+
+<button class="btn red" onclick="make()">⚙️ اصنع الإيميل (معاينة)</button>
+<textarea id="out" placeholder="هون بيطلع الإيميل الجاهز..."></textarea>
+
+<!-- الأزرار الذكية الجديدة -->
+<button class="btn green" onclick="sendWithProfitSignature()">📨 أرسل الآن واربح (Gmail/Outlook)</button>
+<button class="btn blue" onclick="copyOnly()">📋 نسخ النص فقط</button>
+
+<div class="loader" id="loader">⏳ جارٍ تجهيز الرابط المربح...</div>
+</div>
+
+<script>
+// ==========================================
+// ⚠️ ضع مفاتيحك الحقيقية هنا
+// ==========================================
+const SHRINK_API_KEY = 'ضع_مفتاح_ShrinkMe_هنا'; 
+const EXE_API_KEY = 'ضع_مفتاح_Exe_io_هنا'; 
+
+// رابط موقعك الأساسي الذي تريد الترويج له
+const MY_PORTAL_URL = 'https://ff1980ff.github.io/mamlaka/index.html';
+
+const T={
+job:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، أتقدم إليكم بطلب الانضمام لفريقكم بخصوص: ${s}.\nأرفق لكم نبذة عن خبرتي ومهاراتي، وآمل بفرصة للقاء والتعارف.\nمع فائق الاحترام والتقدير،\n${n}`,
+comp:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، أرفع لكم شكواي بخصوص: ${s}.\nراجيًا من سيادتكم النظر بالموضوع ومعالجته بأسرع وقت، وثقتي بكم كبيرة بإنصافي.\nوتفضلوا بقبول فائق الاحترام،\n${n}`,
+thx:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، ويسعدني أن أتقدم لكم بأصدق عبارات الشكر والتقدير على: ${s}.\nجهودكم الطيبة لا تقدر بثمن، ووجودكم نعمة حقيقية.\nدمتم بخير وعافية،\n${n}`,
+ask:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، وأود الاستفسار بخصوص: ${s}.\nسأكون شاكرًا لكم تزويدي بالتفاصيل اللازمة، ولكم مني جزيل الشكر.\nمع الاحترام،\n${n}`,
+sry:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، وأتقدم إليكم باعتذاري الصادق بخصوص: ${s}.\nلم يكن ذلك بقصد مني، وأعدكم بتدارك الأمر بأفضل صورة.\nتقبلوا اعتذاري مع خالص تقديري،\n${n}`
+};
+
+function make(){
+ const n=document.getElementById("nm").value.trim()||"(اسمك)";
+ const r=document.getElementById("rc").value.trim()||"(الجهة المحترمة)";
+ const s=document.getElementById("sb").value.trim()||"(الموضوع)";
+ document.getElementById("out").value=T[document.getElementById("tp").value](n,r,s);
+}
+
+// دالة الربح الذكية
+async function getProfitUrl(longUrl) {
+    try {
+        // محاولة ShrinkMe
+        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl || data.link) return data.shortenedUrl || data.link;
+        }
+    } catch (e) {}
+
+    try {
+        // محاولة Exe.io
+        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(longUrl)}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl) return data.shortenedUrl;
+        }
+    } catch (e) {}
+
+    return longUrl; // احتياطيا
+}
+
+async function sendWithProfitSignature() {
+    const bodyText = document.getElementById("out").value;
+    if(!bodyText){ alert("اصنع الإيميل أولاً"); return; }
+
+    const loader = document.getElementById("loader");
+    loader.style.display = 'block';
+    
+    // 1. توليد الرابط المربح لموقعك
+    const profitLink = await getProfitUrl(MY_PORTAL_URL);
+    
+    // 2. بناء التوقيع الذكي
+    const signature = `\n\n------------------\n🌐 اكتشف أدواتي الرقمية المجانية والاحترافية:\n👉 ${profitLink}\n(Powered by Mamlaka Apps)`;
+    
+    // 3. الدمج النهائي
+    const finalBody = bodyText + signature;
+    
+    // 4. استخراج البيانات للحقول
+    const subject = document.getElementById("sb").value || "استفسار عام";
+    const recipient = ""; // يمكن للمستخدم إضافته لاحقاً
+    
+    // 5. فتح تطبيق البريد (mailto link)
+    // نستخدم encodeURI لضمان سلامة الرموز العربية والمسافات
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(finalBody)}`;
+    
+    window.location.href = mailtoLink;
+    
+    loader.style.display = 'none';
+}
+
+function copyOnly() {
+    const t=document.getElementById("out").value;
+    if(!t){alert("اصنع الإيميل أولًا");return}
+    navigator.clipboard.writeText(t).then(() => {
+        alert("✅ اننسخ النص! الصقه بأي بريد.");
+    }).catch(err => {
+        // طريقة قديمة للنسخ
+        const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+        alert("📋 اننسخت!");
+    });
+}
+</script></body></html>
