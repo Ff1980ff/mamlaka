@@ -16,7 +16,7 @@
     --gold-dark: #d97706;
     --blue-accent: #38bdf8;
     --green-accent: #4ade80;
-    --purple-accent: #8b5cf6; /* لون جديد للحكمة */
+    --purple-accent: #8b5cf6;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -56,12 +56,11 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 .category-name { font-weight: 700; font-size: 1rem; color: white; margin-bottom: 5px; }
 .category-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-/* ألوان الأيقونات */
 .cat-edu .category-icon { color: var(--blue-accent); }
 .cat-tech .category-icon { color: var(--green-accent); }
 .cat-lang .category-icon { color: #e879f9; }
 .cat-tools .category-icon { color: var(--gold-primary); }
-.cat-wisdom .category-icon { color: var(--purple-accent); } /* لون البطاقة الجديدة */
+.cat-wisdom .category-icon { color: var(--purple-accent); }
 
 .actions-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
 .btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -72,6 +71,84 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 .footer-info { margin-top: 40px; text-align: center; font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; }
 .footer-info a { color: var(--blue-accent); text-decoration: none; }
 
+/* تنسيقات آلة الربح الجديدة */
+.profit-machine {
+    max-width: 600px;
+    width: 100%;
+    margin: 30px auto;
+    padding: 25px;
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+.profit-title {
+    color: var(--gold-primary);
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 800;
+}
+.profit-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+    font-family: monospace;
+    direction: ltr;
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+.profit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    font-size: 1.1rem;
+}
+.profit-btn:hover { transform: scale(1.02); }
+.result-box {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: rgba(0,0,0,0.3);
+    position: relative;
+}
+.final-url {
+    display: block;
+    word-break: break-all;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-decoration: underline dotted #fbbf24;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+.copy-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #1e293b;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.copy-btn:hover { background: #334155; }
+
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 480px) { h1.title { font-size: 1.8rem; } .categories-grid { grid-template-columns: 1fr 1fr; } .stats-bar { flex-wrap: wrap; gap: 10px; } .stat-item { flex: 1 1 40%; } }
@@ -81,9 +158,8 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 
 <div class="hero-section">
     <div class="logo-container">
-        <!-- إزالة الزر من هنا ونقله للشبكة -->
         <div class="main-logo">🏛️</div>
-        <span class="badge-version">v2.0 Pro</span>
+        <span class="badge-version">v2.1 Pro</span>
     </div>
     
     <h1 class="title">مملكة التطبيقات التعليمية</h1>
@@ -146,6 +222,32 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
     </div>
 </div>
 
+<!-- ==================== آلة الربح الذكية (ShrinkMe & Exe.io) ==================== -->
+<div class="profit-machine">
+    <h3 class="profit-title">💸 مولّد الدخل السلبي الذكي</h3>
+    <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 20px;">
+        قص روابطك الطويلة واربح المال تلقائياَ عبر خادمين احتياطيين.
+    </p>
+
+    <!-- حقل الإدخال -->
+    <input type="url" id="profitLongUrl" class="profit-input" placeholder="الصق الرابط الطويل هنا..." dir="ltr">
+
+    <!-- زر التوليد -->
+    <button onclick="generateProfitLink()" class="profit-btn">
+        ⚡ ولّد الرابط المختصر واربح الآن
+    </button>
+
+    <!-- منطقة النتيجة (مخفية افتراضياً) -->
+    <div id="profitResultBox" class="result-box">
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">الرابط الجديد:</p>
+        <span id="profitFinalUrl" class="final-url"></span>
+        
+        <!-- زر النسخ الديناميكي -->
+        <button id="profitCopyBtn" class="copy-btn" style="display:none;">📋 نسخ الرابط المختصر</button>
+    </div>
+</div>
+<!-- ============================================================================ -->
+
 <div class="actions-container">
     <button class="btn-primary" onclick="openOS()">
         🚀 دخول نظام التشغيل الكامل
@@ -182,365 +284,96 @@ document.addEventListener('DOMContentLoaded', () => {
         if(currentCount >= targetCount) clearInterval(interval);
     }, 50);
 });
-</script>
-<!-- ==================== شريط التحكم الملكي (بحث وتبديل) ==================== -->
-<div id="royalToolbar" style="position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 2px solid #fbbf24; padding: 10px; z-index: 9999; display: none; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); font-family: 'Cairo', sans-serif;">
-    <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
-        <!-- حقل البحث -->
-        <input type="text" id="searchInput" placeholder="ابحث عن..." 
-               style="flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white;"
-               onkeyup="handleSearch(event)">
-        
-        <!-- زر التبديل (يظهر عند الكتابة) -->
-        <input type="text" id="replaceInput" placeholder="استبدل بـ..." 
-               style="flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white; display: none;">
-        
-        <!-- الأزرار -->
-        <button onclick="toggleReplaceMode()" id="btnToggleReplace" style="background: #8b5cf6; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">تبديل</button>
-        <button onclick="performReplaceAll()" id="btnReplaceAll" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; display: none;">تنفيذ الكل</button>
-        <button onclick="closeToolbar()" style="background: transparent; color: #94a3b8; border: 1px solid #94a3b8; padding: 8px; border-radius: 5px; cursor: pointer;">✖</button>
-    </div>
-    <div id="searchStatus" style="color: #94a3b8; font-size: 0.75rem; margin-top: 5px; text-align: center;"></div>
-</div>
 
-<!-- زر فتح الشريط (يظهر دائماً في الزاوية السفلية اليسرى) -->
-<button onclick="openToolbar()" style="position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #fbbf24, #d97706); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4); z-index: 9998;">🔍</button>
+// --- منطق آلة الربح الذكية ---
 
-<script>
-    // دوال التحكم بالشريط
-    function openToolbar() {
-        document.getElementById('royalToolbar').style.display = 'block';
-        document.getElementById('searchInput').focus();
-    }
+// ⚠️ ضع مفاتيحك الحقيقية هنا بين علامات التنصيص ' '
+const SHRINK_API_KEY = ''; 0fc4e8bc09ec2508d213af0e810bbe1d8f1cf4c3
+const EXE_API_KEY = ''; 8a00e563ec670798e86aeb5560a6f424894f3bd4
 
-    function closeToolbar() {
-        document.getElementById('royalToolbar').style.display = 'none';
-        resetInputs();
-    }
-
-    function toggleReplaceMode() {
-        const repInput = document.getElementById('replaceInput');
-        const btnRepAll = document.getElementById('btnReplaceAll');
-        if (repInput.style.display === 'none') {
-            repInput.style.display = 'inline-block';
-            btnRepAll.style.display = 'inline-block';
-            document.getElementById('btnToggleReplace').textContent = 'إلغاء التبديل';
-        } else {
-            resetInputs();
-        }
-    }
-
-    function resetInputs() {
-        document.getElementById('searchInput').value = '';
-        document.getElementById('replaceInput').value = '';
-        document.getElementById('replaceInput').style.display = 'none';
-        document.getElementById('btnReplaceAll').style.display = 'none';
-        document.getElementById('btnToggleReplace').textContent = 'تبديل';
-        highlightMatches([]); // إزالة التظليل القديم
-    }
-
-    // منطق البحث والتحديد البصري
-    let matchCount = 0;
-    function handleSearch(e) {
-        if (e.key === 'Enter') return; // منع الإرسال
-        
-        const query = e.target.value.trim();
-        const statusEl = document.getElementById('searchStatus');
-        
-        if (!query) {
-            statusEl.textContent = "";
-            highlightMatches([]);
-            return;
-        }
-
-        // هنا نستخدم window.find() وهي ميزة مدمجة في المتصفحات للبحث النصي
-        // لكنها لا تلون النتائج بشكل جميل، لذا سنكتفي بالإبلاغ عن العدد
-        const found = window.find(query, false, false, true, false, false, false);
-        
-        if (found) {
-            statusEl.textContent = `تم العثور على تطابق! (اضغط Enter للتالي)`;
-            statusEl.style.color = "#4ade80";
-        } else {
-            statusEl.textContent = `لا توجد نتائج لـ "${query}"`;
-            statusEl.style.color = "#ef4444";
-        }
-    }
-
-    // دالة الاستبدال الجماعي (تعمل على مستوى DOM)
-    function performReplaceAll() {
-        const searchVal = document.getElementById('searchInput').value.trim();
-        const replaceVal = document.getElementById('replaceInput').value;
-        
-        if (!searchVal) return alert("أدخل كلمة للبحث أولاً!");
-        
-        // تحذير للمستخدم
-        if(!confirm(`هل تريد استبدال جميع occurrences بكلمة "${searchVal}" بـ "${replaceVal}"؟\nهذا قد يكسر الكود إذا لم تكن حذراً.`)) {
-            return;
-        }
-
-        try {
-            // استخدام innerHTML للاستبدال السريع (مع خطر محتمل إذا كان الكود معقداً جداً)
-            // للأمان، نفضل طريقة NodeWalker لكن للجوال والبساطة، innerHTML أسرع
-            
-            const bodyContent = document.body.innerHTML;
-            const regex = new RegExp(searchVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); // Escape special chars
-            const newContent = bodyContent.replace(regex, replaceVal);
-            
-            document.body.innerHTML = newContent;
-            
-            alert("✅ تم الاستبدال بنجاح!\nملاحظة: قد تحتاج لإعادة تحميل الصفحة لرؤية التغييرات في بعض العناصر.");
-            location.reload(); // تحديث الصفحة لعرض التغييرات
-            
-        } catch (err) {
-            alert("❌ حدث خطأ أثناء الاستبدال: " + err.message);
-        }
-    }
-
-    function highlightMatches(matches) {
-        // دالة فارغة حالياً لأن window.find يركز العنصر تلقائياً
-        // يمكن تطويرها لاحقاً لتلوين الخلفية
-    }
+async function generateProfitLink() {
+    const inputEl = document.getElementById('profitLongUrl');
+    const resultBox = document.getElementById('profitResultBox');
+    const finalUrlSpan = document.getElementById('profitFinalUrl');
+    const copyBtn = document.getElementById('profitCopyBtn');
     
-    // اختصار لوحة المفاتيح (Ctrl+F يفتح الشريط بدلاً من بحث المتصفح الافتراضي)
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            e.preventDefault();
-            openToolbar();
+    if(!inputEl || !resultBox || !finalUrlSpan) return alert("خطأ تقني في العناصر");
+
+    const longUrl = inputEl.value.trim();
+
+    if(!longUrl || !longUrl.startsWith('http')) {
+        alert("الرجاء إدخال رابط صحيح يبدأ بـ http أو https");
+        return;
+    }
+
+    // حالة التحميل
+    resultBox.style.display = 'block';
+    finalUrlSpan.innerText = "⏳ جارٍ المحاولة عبر الخادم الأول (ShrinkMe)...";
+    resultBox.style.borderColor = "#fbbf24"; // أصفر للتنبيه
+    copyBtn.style.display = 'none'; 
+
+    try {
+        // محاولة أولى: ShrinkMe.io
+        let shortLink = await tryShrinkMe(longUrl);
+        
+        if (!shortLink) {
+            // محاولة ثانية: Exe.io (إذا فشلت الأولى)
+            finalUrlSpan.innerText = "⚠️ الخادم الأول مشغول، تجربة الاحتياطي (Exe.io)...";
+            shortLink = await tryExeIo(longUrl);
         }
-    });
-</script>
-<!-- سكربت القراءة الديناميكية للموقع المخصص -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const customName = urlParams.get('name'); 
-        const customType = urlParams.get('type'); 
 
-        if (customName) {
-            // تغيير عنوان الصفحة
-            document.title = `${decodeURIComponent(customName)} | مملكة التطبيقات`;
+        if (shortLink) {
+            // نجاح!
+            finalUrlSpan.innerText = shortLink;
+            resultBox.style.borderColor = "#4ade80"; // أخضر للنجاح
             
-            // تحديد العناصر المراد تغييرها
-            const mainTitleEl = document.querySelector('.hero-section h1.title');
-            const subtitleEl = document.querySelector('.hero-section p.subtitle');
-            const logoEl = document.querySelector('.main-logo');
-
-            // تحديث الاسم الرئيسي
-            if(mainTitleEl) mainTitleEl.textContent = decodeURIComponent(customName);
+            // إظهار زر النسخ
+            copyBtn.style.display = 'block';
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(shortLink).then(() => {
+                    copyBtn.innerText = "✅ تم النسخ بنجاح!";
+                    setTimeout(() => copyBtn.innerText = "📋 نسخ الرابط المختصر", 2000);
+                });
+            };
             
-            // تخصيص الوصف والأيقونة حسب النوع
-            let descText = "منصتك الرقمية المتكاملة.";
-            let iconEmoji = "🏛️";
-
-            switch(customType) {
-                case 'wood':
-                    descText = "حلول خشبية دقيقة، حسابات تكعيب، وأسعار تنافسية.";
-                    iconEmoji = "🪵";
-                    break;
-                case 'food':
-                    descText = "أطباق شهية بمقادير مضبوطة، ووصفات عالمية.";
-                    iconEmoji = "🍳";
-                    break;
-                case 'edu':
-                    descText = "تعلم ذاتي عربي، دورات تفاعلية، ومكتبة معرفية.";
-                    iconEmoji = "🎓";
-                    break;
-                default:
-                    descText = "خدمات سريعة وموثوقة لدعم أعمالك.";
-                    iconEmoji = "🔧";
-            }
-
-            if(subtitleEl) subtitleEl.innerHTML = descText;
-            if(logoEl) logoEl.textContent = iconEmoji;
+            console.log("✅ تم القص بنجاح.");
+        } else {
+            throw new Error("فشلت جميع المحاولات.");
         }
-    });
-</script>
-<!-- سكربت القراءة الديناميكية للموقع المخصص -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const customName = urlParams.get('name'); 
-        const customType = urlParams.get('type'); 
 
-        if (customName) {
-            // تغيير عنوان الصفحة
-            document.title = `${decodeURIComponent(customName)} | مملكة التطبيقات`;
-            
-            // تحديد العناصر المراد تغييرها
-            const mainTitleEl = document.querySelector('.hero-section h1.title');
-            const subtitleEl = document.querySelector('.hero-section p.subtitle');
-            const logoEl = document.querySelector('.main-logo');
+    } catch (error) {
+        console.error(error);
+        finalUrlSpan.innerText = "❌ تعذر الاتصال بأي خادم. تحقق من الإنترنت.";
+        resultBox.style.borderColor = "#ef4444"; // أحمر للخطأ
+    }
+}
 
-            // تحديث الاسم الرئيسي
-            if(mainTitleEl) mainTitleEl.textContent = decodeURIComponent(customName);
-            
-            // تخصيص الوصف والأيقونة حسب النوع
-            let descText = "منصتك الرقمية المتكاملة.";
-            let iconEmoji = "🏛️";
+// دالة ShrinkMe
+async function tryShrinkMe(url) {
+    try {
+        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.shortenedUrl || data.link || null;
+    } catch (e) {
+        return null;
+    }
+}
 
-            switch(customType) {
-                case 'wood':
-                    descText = "حلول خشبية دقيقة، حسابات تكعيب، وأسعار تنافسية.";
-                    iconEmoji = "🪵";
-                    break;
-                case 'food':
-                    descText = "أطباق شهية بمقادير مضبوطة، ووصفات عالمية.";
-                    iconEmoji = "🍳";
-                    break;
-                case 'edu':
-                    descText = "تعلم ذاتي عربي، دورات تفاعلية، ومكتبة معرفية.";
-                    iconEmoji = "🎓";
-                    break;
-                default:
-                    descText = "خدمات سريعة وموثوقة لدعم أعمالك.";
-                    iconEmoji = "🔧";
-            }
-
-            if(subtitleEl) subtitleEl.innerHTML = descText;
-            if(logoEl) logoEl.textContent = iconEmoji;
-        }
-    });
+// دالة Exe.io
+async function tryExeIo(url) {
+    try {
+        // ملاحظة هامة: Exe يستخدم المعامل api= وليس token=
+        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.shortenedUrl || null;
+    } catch (e) {
+        return null;
+    }
+}
 </script>
 </body>
-<!-- ==================== آلة الربح الذكية (ShrinkMe & Exe.io) ==================== -->
-<div style="max-width: 600px; width: 100%; margin: 30px auto; padding: 25px; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(10px);">
-    
-    <h3 style="color: var(--gold-primary); text-align: center; font-size: 1.5rem; margin-bottom: 20px;">💸 مولّد الدخل السلبي الذكي</h3>
-    <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 20px;">
-        قص روابطك الطويلة واربح المال تلقائياَ عبر خادمين احتياطيين.
-    </p>
-
-    <!-- حقل الإدخال -->
-    <div style="margin-bottom: 15px;">
-        <input type="url" id="profitLongUrl" placeholder="الصق الرابط الطويل هنا..." 
-               style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; font-family: monospace; direction: ltr; text-align: left;" dir="ltr">
-    </div>
-
-    <!-- زر التوليد -->
-    <button onclick="generateProfitLink()" 
-            style="width: 100%; padding: 14px; border-radius: 8px; border: none; background: linear-gradient(135deg, #fbbf24, #d97706); color: black; font-weight: bold; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);"
-            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-        ⚡ ولّد الرابط المختصر واربح الآن
-    </button>
-
-    <!-- منطقة النتيجة (مخفية افتراضياً) -->
-    <div id="profitResultBox" style="display:none; margin-top: 20px; padding: 15px; border-radius: 8px; border: 2px solid transparent; background: rgba(0,0,0,0.2); position: relative;">
-        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">الرابط الجديد:</p>
-        <span id="profitFinalUrl" style="display:block; word-break: break-all; color: #fff; font-family: monospace; font-size: 1.1rem; text-decoration: underline dotted #fbbf24; cursor: pointer;" title="اضغط للنسخ"></span>
-        
-        <!-- زر النسخ الديناميكي -->
-        <div id="profitCopyArea" style="margin-top: 10px;"></div>
-    </div>
-</div>
-
-<script>
-    // --- 1. ضع مفاتيحك السرية الحقيقية هنا (استبدل النص بالواقع) ---
-    const SHRINK_API_KEY = 'ضع_مفتاح_ShrinkMe_هنا'; 
-    const EXE_API_KEY = 'ضع_مفتاح_Exe_io_هنا'; 
-    
-    // --- 2. الدالة الرئيسية للتوليد الذكي ---
-    async function generateProfitLink() {
-        const inputEl = document.getElementById('profitLongUrl');
-        const resultBox = document.getElementById('profitResultBox');
-        const finalUrlSpan = document.getElementById('profitFinalUrl');
-        const copyArea = document.getElementById('profitCopyArea');
-        
-        if(!inputEl || !resultBox || !finalUrlSpan) return alert("خطأ تقني في العناصر");
-
-        const longUrl = inputEl.value.trim();
-
-        if(!longUrl || !longUrl.startsWith('http')) {
-            alert("الرجاء إدخال رابط صحيح يبدأ بـ http أو https");
-            return;
-        }
-
-        // حالة التحميل
-        resultBox.style.display = 'block';
-        finalUrlSpan.innerText = "⏳ جارٍ المحاولة عبر الخادم الأول (ShrinkMe)...";
-        resultBox.style.borderColor = "#fbbf24"; // أصفر للتنبيه
-        copyArea.innerHTML = ''; 
-
-        try {
-            // محاولة أولى: ShrinkMe.io
-            let shortLink = await tryShrinkMe(longUrl);
-            
-            if (!shortLink) {
-                // محاولة ثانية: Exe.io (إذا فشلت الأولى)
-                finalUrlSpan.innerText = "⚠️ الخادم الأول مشغول، تجربة الاحتياطي (Exe.io)...";
-                shortLink = await tryExeIo(longUrl);
-            }
-
-            if (shortLink) {
-                // نجاح!
-                finalUrlSpan.innerText = shortLink;
-                resultBox.style.borderColor = "#4ade80"; // أخضر للنجاح
-                
-                // إضافة زر النسخ تلقائياً
-                addProfitCopyButton(shortLink, copyArea);
-                
-                console.log("✅ تم القص بنجاح.");
-            } else {
-                throw new Error("فشلت جميع المحاولات.");
-            }
-
-        } catch (error) {
-            console.error(error);
-            finalUrlSpan.innerText = "❌ تعذر الاتصال بأي خادم. تحقق من الإنترنت.";
-            resultBox.style.borderColor = "#ef4444"; // أحمر للخطأ
-        }
-    }
-
-    // --- 3. دوال المساعدة للاتصال بالخوادم ---
-    
-    // دالة ShrinkMe
-    async function tryShrinkMe(url) {
-        try {
-            const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
-            const response = await fetch(apiUrl);
-            if (!response.ok) return null;
-            const data = await response.json();
-            return data.shortenedUrl || data.link || null;
-        } catch (e) {
-            return null;
-        }
-    }
-
-    // دالة Exe.io
-    async function tryExeIo(url) {
-        try {
-            // ملاحظة هامة: Exe يستخدم المعامل api= وليس token=
-            const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
-            const response = await fetch(apiUrl);
-            if (!response.ok) return null;
-            const data = await response.json();
-            return data.shortenedUrl || null;
-        } catch (e) {
-            return null;
-        }
-    }
-
-    // --- 4. دالة زر النسخ التلقائي ---
-    function addProfitCopyButton(url, container) {
-        const oldBtn = container.querySelector('.dynamic-profit-btn');
-        if(oldBtn) oldBtn.remove();
-
-        const btn = document.createElement('button');
-        btn.className = "dynamic-profit-btn mt-3 w-full bg-black text-white text-sm py-2 px-4 rounded hover:bg-gray-800 transition-colors font-bold";
-        btn.innerText = "📋 نسخ الرابط المختصر";
-        
-        btn.onclick = () => {
-            navigator.clipboard.writeText(url).then(() => {
-                btn.innerText = "✅ تم النسخ بنجاح!";
-                btn.classList.replace('bg-black', 'bg-green-600');
-                setTimeout(() => {
-                    btn.innerText = "📋 نسخ الرابط المختصر";
-                    btn.classList.replace('bg-green-600', 'bg-black');
-                }, 2000);
-            });
-        };
-        
-        container.appendChild(btn);
-    }
-</script>
-<!-- ============================================================================ -->
 </html>
