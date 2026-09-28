@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>️ ورشة التدقيق الملكية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-deep: #0b1120;
+    --card-bg: rgba(15, 23, 42, 0.9);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-gold: #fbbf24;
+    --accent-green: #4ade80;
+    --accent-red: #f87171;
+    --accent-blue: #38bdf8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 30px;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 15px;
+    background: rgba(11, 17, 32, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-glass);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+h1 {
+    color: var(--accent-gold);
+    font-size: 1.3rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sub {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* Main Container */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Input Box (Add/Edit) */
+.editor-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    font-family: inherit;
+}
+.input-field:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+}
+
+textarea.code-area {
+    height: 150px;
+    font-family: monospace; /* خط برمجي للكود */
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-primary { background: linear-gradient(135deg, var(--accent-gold), #d97706); color: #000; }
+.btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+.btn-danger { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); border: 1px solid rgba(248, 113, 113, 0.3); }
+
+.btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.btn:active { transform: scale(0.98); }
+
+/* Search & Stats Bar */
+.toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border-glass);
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+}
+
+.stats-badge {
+    background: rgba(56, 189, 248, 0.2);
+    color: var(--accent-blue);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* List Items */
+.item-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.item-id {
+    background: var(--accent-gold);
+    color: #000;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.item-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    flex: 1;
+    margin-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status-indicator {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.st-pending { background: rgba(251, 191, 36, 0.2); color: var(--accent-gold); }
+.st-approved { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
+.st-rejected { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.action-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    padding: 8px 0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.action-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+.action-btn.copy:hover { color: var(--accent-blue); border-color: var(--accent-blue); }
+.action-btn.edit:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
+.action-btn.del:hover { color: var(--accent-red); border-color: var(--accent-red); }
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 4px; }
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🏛️ ورشة التدقيق الملكية</h1>
+    <p class="sub">إدارة ذكية للأكواد • حفظ محلي آمن • بدون إنترنت</p>
+</header>
+
+<div class="container">
+    
+    <!-- Editor Section -->
+    <div class="editor-box" id="editorSection">
+        <input type="text" id="eN" class="input-field" placeholder="اسم المشروع / الكود...">
+        <textarea id="eC" class="input-field code-area" placeholder="الصق الكود هنا (HTML/CSS/JS)..."></textarea>
+        
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveEntry()">💾 حفظ</button>
+            <button class="btn btn-secondary" onclick="cancelEdit()">❌ إلغاء</button>
+        </div>
+        <small id="modeLabel" style="display:block; margin-top:5px; color:var(--text-muted); font-size:0.8rem;">وضع: إضافة جديدة</small>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <span style="font-size:1.2rem">🔍</span>
+        <input type="text" id="q" class="search-input" placeholder="بحث بالاسم..." oninput="render()">
+        <div class="stats-badge" id="statsBadge">0 عناصر</div>
+        <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.8rem;" onclick="saveFile()">📥 تصدير</button>
+    </div>
+
+    <!-- List -->
+    <div id="listContainer"></div>
+
+</div>
+
+<script>
+// State Management
+let DB = [];
+try {
+    const stored = localStorage.getItem('royal_warsha_db');
+    if (stored) DB = JSON.parse(stored);
+} catch(e) { console.error("Load error", e); }
+
+let editIndex = -1; // -1 means adding new
+
+// Helpers
+function getNextId() {
+    return DB.length > 0 ? Math.max(...DB.map(x => x.id)) + 1 : 1;
+}
+
+function saveToStorage() {
+    try {
+        localStorage.setItem('royal_warsha_db', JSON.stringify(DB));
+    } catch(e) { alert("مساحة التخزين ممتلئة!"); }
+}
+
+function escapeHtml(text) {
+    if (!text) return "";
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Actions
+function saveEntry() {
+    const name = document.getElementById('eN').value.trim();
+    const code = document.getElementById('eC').value;
+
+    if (!name || !code) return alert("يرجى إدخال الاسم والكود");
+
+    if (editIndex >= 0) {
+        // Update existing
+        DB[editIndex].name = name;
+        DB[editIndex].code = code;
+        DB[editIndex].updatedAt = Date.now();
+        cancelEdit();
+    } else {
+        // Add new
+        DB.unshift({ // Add to top for visibility
+            id: getNextId(),
+            name: name,
+            code: code,
+            status: 0, // 0=pending, 1=approved, 2=rejected
+            createdAt: Date.now()
+        });
+    }
+    
+    saveToStorage();
+    render();
+    clearForm();
+}
+
+function cancelEdit() {
+    editIndex = -1;
+    clearForm();
+    document.getElementById('modeLabel').textContent = "وضع: إضافة جديدة";
+}
+
+function clearForm() {
+    document.getElementById('eN').value = '';
+    document.getElementById('eC').value = '';
+}
+
+function editItem(index) {
+    const item = DB[index];
+    editIndex = index;
+    document.getElementById('eN').value = item.name;
+    document.getElementById('eC').value = item.code;
+    document.getElementById('modeLabel').textContent = `وضع: تعديل #${item.id}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteItem(index) {
+    if(confirm(`هل أنت متأكد من حذف "${DB[index].name}"؟`)) {
+        DB.splice(index, 1);
+        saveToStorage();
+        render();
+    }
+}
+
+function cycleStatus(index) {
+    DB[index].status = (DB[index].status + 1) % 3;
+    saveToStorage();
+    render();
+}
+
+function copyCode(index) {
+    navigator.clipboard.writeText(DB[index].code).then(() => {
+        alert("✅ تم نسخ الكود للحافظة");
+    }).catch(err => {
+        alert("فشل النسخ: " + err);
+    });
+}
+
+function exportData() {
+    const blob = new Blob([JSON.stringify(DB)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `royal-warsha-backup-${Date.now()}.json`;
+    a.click();
+}
+
+// Render Logic
+function render() {
+    const query = document.getElementById('q').value.toLowerCase();
+    const container = document.getElementById('listContainer');
+    const statsBadge = document.getElementById('statsBadge');
+    
+    let filtered = DB.filter(item => 
+        item.name.toLowerCase().includes(query) || 
+        String(item.id).includes(query)
+    );
+
+    // Update Stats
+    const approvedCount = DB.filter(i => i.status === 1).length;
+    statsBadge.textContent = `${filtered.length} نتائج | ${approvedCount} مثبت`;
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">لا توجد أكواد مطابقة للبحث.<br>ابدأ بإضافة أول مشروع!</div>`;
+        return;
+    }
+
+    let html = '';
+    filtered.forEach((item, idx) => {
+        // Find original index in DB for actions
+        const originalIdx = DB.findIndex(d => d.id === item.id);
+        
+        const statusMap = ['⏳ قيد المراجعة', '✅ مثبّت', '🗑 مرفوض'];
+        const statusClass = ['st-pending', 'st-approved', 'st-rejected'][item.status];
+        
+        html += `
+        <div class="item-card">
+            <div class="item-header">
+                <span class="item-id">#${item.id}</span>
+                <span class="item-name">${escapeHtml(item.name)}</span>
+                <span class="status-indicator ${statusClass}" onclick="cycleStatus(${originalIdx})" title="تغيير الحالة">${statusMap[item.status]}</span>
+            </div>
+            <div class="actions-grid">
+                <div class="action-btn copy" onclick="copyCode(${originalIdx})">📋 نسخ</div>
+                <div class="action-btn edit" onclick="editItem(${originalIdx})">✏️ تعديل</div>
+                <div class="action-btn" onclick="cycleStatus(${originalIdx})">🔄 الحالة</div>
+                <div class="action-btn del" onclick="deleteItem(${originalIdx})">🗑 حذف</div>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+// Initial Load
+render();
+
+// Save File Function (Legacy compatibility)
+function saveFile() {
+    // We can offer both JSON backup and full HTML export if needed
+    // For now, let's stick to simple JSON backup which is safer for data integrity
+    exportData();
+}
+
+</script>
+</body>
+</html>
