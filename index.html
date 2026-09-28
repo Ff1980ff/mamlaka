@@ -159,7 +159,7 @@ p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; marg
 <div class="hero-section">
     <div class="logo-container">
         <div class="main-logo">🏛️</div>
-        <span class="badge-version">v2.1 Pro</span>
+        <span class="badge-version">v2.2 Fixed</span>
     </div>
     
     <h1 class="title">مملكة التطبيقات التعليمية</h1>
@@ -287,9 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- منطق آلة الربح الذكية ---
 
-// ⚠️ ضع مفاتيحك الحقيقية هنا بين علامات التنصيص ' '
-const SHRINK_API_KEY = ''; 0fc4e8bc09ec2508d213af0e810bbe1d8f1cf4c3
-const EXE_API_KEY = ''; 8a00e563ec670798e86aeb5560a6f424894f3bd4
+// ✅ المفاتيح الصحيحة داخل علامات التنصيص ومع الفاصلة المنقوطة
+const SHRINK_API_KEY = '0fc4e8bc09ec2508d213af0e810bbe1d8f1cf4c3'; 
+const EXE_API_KEY = '8a00e563ec670798e86aeb5560a6f424894f3bd4';
 
 async function generateProfitLink() {
     const inputEl = document.getElementById('profitLongUrl');
@@ -348,21 +348,24 @@ async function generateProfitLink() {
     }
 }
 
-// دالة ShrinkMe
+// ✅ دالة ShrinkMe المعدلة لتجاوز الحجب (CORS) باستخدام وسيط آمن
 async function tryShrinkMe(url) {
+    const targetUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+    
     try {
-        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
-        const response = await fetch(apiUrl);
+        const response = await fetch(proxyUrl);
         if (!response.ok) return null;
+        
         const data = await response.json();
-        return data.shortenedUrl || data.link || null;
+        return data.shortenedUrl || data.link || null; 
     } catch (e) {
+        console.error("ShrinkMe Error:", e);
         return null;
     }
 }
 
-// دالة Exe.io
-// دالة Exe.io المعدلة لتجاوز الحجب
+// ✅ دالة Exe.io المعدلة لتجاوز الحجب (CORS)
 async function tryExeIo(url) {
     const targetUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
