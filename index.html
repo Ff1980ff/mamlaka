@@ -362,15 +362,19 @@ async function tryShrinkMe(url) {
 }
 
 // دالة Exe.io
+// دالة Exe.io المعدلة لتجاوز الحجب
 async function tryExeIo(url) {
+    const targetUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+    
     try {
-        // ملاحظة هامة: Exe يستخدم المعامل api= وليس token=
-        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
-        const response = await fetch(apiUrl);
+        const response = await fetch(proxyUrl);
         if (!response.ok) return null;
+        
         const data = await response.json();
         return data.shortenedUrl || null;
     } catch (e) {
+        console.error("Exe.io Error:", e);
         return null;
     }
 }
