@@ -237,9 +237,9 @@ async function quickGenerate() {
 
     try {
         // محاولة ShrinkMe
-        let shortLink = await tryShrinkMe(url);
-        if (!shortLink) shortLink = await tryExeIo(url); // محاولة Exe
-        
+       // نجرب Exe.io أولاٌ لأنه أسرع حالياً
+    let shortLink = await tryExeIo(url); 
+    if (!shortLink) shortLink = await tryShrinkMe(url); 
         if (shortLink) {
             resultDiv.innerText = shortLink;
             resultDiv.style.color = "#4ade80";
