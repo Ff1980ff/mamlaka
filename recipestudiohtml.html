@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>‍🍳 استوديو الطهاة | أنشئ وصفتك الاحترافية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-deep: #0f172a;
+    --surface: rgba(30, 41, 59, 0.9);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --gold-primary: #fbbf24;
+    --green-accent: #4ade80;
+    --red-accent: #ef4444;
+    --purple-accent: #8b5cf6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+}
+
+.container { width: 100%; max-width: 600px; }
+
+header { text-align: center; margin-bottom: 30px; }
+h1 { color: var(--gold-primary); font-size: 1.8rem; margin-bottom: 5px; }
+.subtitle { color: var(--text-muted); font-size: 0.9rem; }
+
+.form-section {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(10px);
+}
+
+.section-title {
+    color: var(--gold-primary);
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+textarea { min-height: 100px; resize: vertical; }
+
+.media-upload-area {
+    border: 2px dashed #475569;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+}
+.media-upload-area:hover { border-color: var(--gold-primary); background: rgba(251, 191, 36, 0.05); }
+.media-preview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.preview-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid var(--border-glass);
+}
+.preview-item img, .preview-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.remove-btn {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: var(--red-accent);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.recorder-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.btn-record {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: 0.3s;
+}
+.btn-rec-audio { background: var(--purple-accent); color: white; }
+.btn-rec-video { background: var(--red-accent); color: white; }
+.btn-stop { background: #64748b; color: white; }
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+.btn-save {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--gold-primary), #d97706);
+    color: black;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+}
+.btn-share-profit {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--green-accent);
+    color: black;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+}
+
+.loader { display: none; text-align: center; color: var(--gold-primary); margin-top: 10px; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: 1px solid var(--gold-primary);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: none;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>👨‍🍳 استوديو الطهاة الملكي</h1>
+        <div class="subtitle">أنشئ، سجّل، وانشر وصفتك باحترافية مطلقة</div>
+    </header>
+
+    <!-- قسم المعلومات الأساسية -->
+    <div class="form-section">
+        <div class="section-title">📝 معلومات الوصفة</div>
+        <select id="category">
+            <option value="dessert">🍰 الحلويات</option>
+            <option value="main">🍲 الطبخ الرئيسي</option>
+            <option value="drink">🥤 العصائر والمشروبات</option>
+            <option value="herbal">🌿 العطارة والأعشاب</option>
+        </select>
+        <input type="text" id="recipeTitle" placeholder="عنوان الوصفة (مثلا: كيكة الشوكولاتة الفاخرة)">
+        <textarea id="ingredients" placeholder="المكونات (سطر لكل مكون)...&#10;- 2 كوب دقيق&#10;- 1 كوب سكر&#10;- ..."></textarea>
+        <textarea id="steps" placeholder="خطوات التحضير (رقم لكل خطوة)...&#10;1. اخلطي المكونات الجافة...&#10;2. أضيفي السوائل...&#10;3. اخبزي على حرارة 180..."></textarea>
+    </div>
+
+    <!-- قسم الوسائط (صور وفيديو وصوت) -->
+    <div class="form-section">
+        <div class="section-title">📸 الوسائط والإبداع</div>
+        
+        <!-- رفع الصور -->
+        <label style="display:block;margin-bottom:5px;color:#cbd5e1;">صور الوصفة:</label>
+        <div class="media-upload-area" onclick="document.getElementById('imageInput').click()">
+            <span>➕ اضغط لإضافة صور</span>
+            <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="handleImages(this)">
+        </div>
+        <div class="media-preview" id="imagesPreview"></div>
+
+        <!-- تسجيل الصوت والفيديو -->
+        <label style="display:block;margin:15px 0 5px;color:#cbd5e1;">سجل شرحاَ صوتياَ أو مرئياَ:</label>
+        <div class="recorder-controls">
+            <button class="btn-record btn-rec-audio" id="audioRecBtn" onclick="startRecording('audio')">🎙️ سجل صوت</button>
+            <button class="btn-record btn-rec-video" id="videoRecBtn" onclick="startRecording('video')">📹 سجل فيديو</button>
+        </div>
+        <div class="media-preview" id="recordingsPreview"></div>
+        <p style="font-size:0.8rem;color:#94a3b8;margin-top:5px;">* سيظهر التسجيل هنا بعد التوقف.</p>
+    </div>
+
+    <!-- أزرار الإجراءات -->
+    <div class="action-buttons">
+        <button class="btn-save" onclick="saveRecipeLocally()">💾 حفظ محلياً</button>
+        <button class="btn-share-profit" onclick="generateAndShareProfitLink()">💸 ولّد رابطاً مربحاً وشارك</button>
+    </div>
+    
+    <div class="loader" id="loader">⏳ جارٍ المعالجة...</div>
+</div>
+
+<div class="toast" id="toastMsg"></div>
+
+<script>
+// ==========================================
+// ⚠️ ضع مفاتيحك الحقيقية هنا
+// ==========================================
+const SHRINK_API_KEY = '0fc4e8bc09ec2508d213af0e810bbe1d8f1cf4c3'; 
+const EXE_API_KEY = '8a00e563ec670798e86aeb5560a6f424894f3bd4'; 
+
+let mediaItems = []; // لتخزين الملفات المؤقتة قبل الحفظ
+let currentStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+
+// --- إدارة الصور ---
+function handleImages(input) {
+    const files = Array.from(input.files);
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            addMediaItem({ type: 'image', src: e.target.result, name: file.name });
+        };
+        reader.readAsDataURL(file);
+    });
+    input.value = ''; // مسح الاختيار للسماح بإعادة اختيار نفس الملف
+}
+
+function addMediaItem(item) {
+    mediaItems.push(item);
+    renderPreviews();
+}
+
+function removeMedia(index) {
+    mediaItems.splice(index, 1);
+    renderPreviews();
+}
+
+function renderPreviews() {
+    const imagesContainer = document.getElementById('imagesPreview');
+    const recordingsContainer = document.getElementById('recordingsPreview');
+    
+    imagesContainer.innerHTML = '';
+    recordingsContainer.innerHTML = '';
+
+    mediaItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        
+        if (item.type === 'image') {
+            div.innerHTML = `<img src="${item.src}" alt="صورة"><button class="remove-btn" onclick="removeMedia(${index})">×</button>`;
+            imagesContainer.appendChild(div);
+        } else if (item.type === 'audio' || item.type === 'video') {
+            let elementHtml = '';
+            if (item.type === 'audio') {
+                elementHtml = `<audio controls style="width:100%;height:100%"><source src="${item.src}"></audio>`;
+            } else {
+                elementHtml = `<video controls style="width:100%;height:100%" muted><source src="${item.src}"></video>`;
+            }
+            div.innerHTML = `${elementHtml}<button class="remove-btn" onclick="removeMedia(${index})">×</button>`;
+            recordingsContainer.appendChild(div);
+        }
+    });
+}
+
+// --- تسجيل الصوت والفيديو ---
+async function startRecording(type) {
+    try {
+        const constraints = type === 'video' ? { video: true, audio: true } : { audio: true };
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        mediaRecorder = new MediaRecorder(currentStream);
+        recordedChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) recordedChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, { type: type === 'video' ? 'video/webm' : 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            addMediaItem({ type: type, src: url, name: `recording_${Date.now()}.${type==='video'?'webm':'wav'}` });
+            
+            // إيقاف المسارات لتحرير الموارد
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+            mediaRecorder = null;
+            
+            showToast("✅ تم التسجيل بنجاح!");
+        };
+
+        mediaRecorder.start();
+        
+        // تغيير نص الزر إلى "إيقاف"
+        const btnId = type === 'video' ? 'videoRecBtn' : 'audioRecBtn';
+        const btn = document.getElementById(btnId);
+        const originalText = btn.innerText;
+        btn.innerText = "⏹️ إيقاف";
+        btn.classList.add('btn-stop');
+        
+        // إعداد مؤقت للإيقاف التلقائي بعد 60 ثانية (اختياري للأمان)
+        setTimeout(() => {
+            if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+                stopRecording(type, btn, originalText);
+            }
+        }, 60000);
+
+        // تخزين المرجع للزر لإيقافه يدوياً
+        window._currentRecordBtn = { btn, originalText, type };
+
+    } catch (err) {
+        console.error(err);
+        showToast("❌ تعذر الوصول للكاميرا/الميكروفون. تحقق من الصلاحيات.");
+    }
+}
+
+function stopRecording(type, btn, originalText) {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        btn.innerText = originalText;
+        btn.classList.remove('btn-stop');
+    }
+}
+
+// تعديل دالة startRecording لتسمح بالإيقاف اليدوي
+const _originalStart = startRecording;
+window.startRecording = async function(type) {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        // إذا كان يسجل حالياً، أوقفه
+        const { btn, originalText } = window._currentRecordBtn || {};
+        if(btn) stopRecording(type, btn, originalText);
+        return;
+    }
+    await _originalStart(type);
+};
+
+
+// --- الحفظ المحلي (Simulation for now) ---
+function saveRecipeLocally() {
+    const recipeData = {
+        title: document.getElementById('recipeTitle').value,
+        category: document.getElementById('category').value,
+        ingredients: document.getElementById('ingredients').value,
+        steps: document.getElementById('steps').value,
+        mediaCount: mediaItems.length,
+        timestamp: Date.now()
+    };
+    
+    if(!recipeData.title) {
+        showToast("⚠️ أدخل عنوان الوصفة أولاً");
+        return;
+    }
+
+    // في نسخة حقيقية، سنرسل هذه البيانات لقاعدة بيانات أو GitHub API
+    // هنا سنكتفي بالتنبيه والتخزين المؤقت في الذاكرة
+    localStorage.setItem('lastDraftRecipe', JSON.stringify(recipeData));
+    showToast("💾 تم حفظ المسودة محلياً! (جاهز للنشر عبر GitHub لاحقاً)");
+}
+
+// --- توليد الرابط المربح والمشاركة ---
+async function generateAndShareProfitLink() {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    // 1. تجهيز رابط وهمي للوصفة (في الواقع سيكون رابطاً لصفحة العرض stories.html#recipe-ID)
+    // للتبسيط الآن، سنستخدم رابط الموقع الرئيسي كمثال
+    const baseUrl = window.location.origin + '/chef-hub.html'; 
+    
+    // 2. توليد الرابط المختصر المربح
+    const profitLink = await getProfitUrl(baseUrl);
+    
+    loader.style.display = 'none';
+
+    if (!profitLink || profitLink === baseUrl) {
+        showToast("❌ فشل توليد الرابط. تحقق من الإنترنت.");
+        return;
+    }
+
+    // 3. بناء نص المشاركة الجذاب
+    const title = document.getElementById('recipeTitle').value || "وصفة جديدة شهية";
+    const shareText = `👨‍ شاهدوا وصفتي الجديدة: "${title}"\n\n📸 تتضمن صوراً وفيديوهات حصرية!\n\n👇 اطّلع عليها الآن عبر الرابط المختصر:\n${profitLink}\n\n#طبخ #وصفات #مملكة_الطهاة`;
+
+    // 4. محاولة النشر
+    if(navigator.share) {
+        navigator.share({
+            title: title,
+            text: shareText
+        }).then(() => {
+            showToast("✅ تم النشر! أرباحك تتراكم.");
+        }).catch(err => {
+            copyToClipboard(shareText);
+        });
+    } else {
+        copyToClipboard(shareText);
+    }
+}
+
+// --- دوال مساعدة ---
+async function getProfitUrl(longUrl) {
+    try {
+        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl || data.link) return data.shortenedUrl || data.link;
+        }
+    } catch (e) {}
+    try {
+        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(longUrl)}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl) return data.shortenedUrl;
+        }
+    } catch (e) {}
+    return longUrl;
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast("📋 اننسخت الرسالة! الصقها في واتساب أو فيسبوك.");
+    }).catch(err => {
+        const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+        showToast("📋 اننسخت!");
+    });
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+</script>
+</body>
+</html>
