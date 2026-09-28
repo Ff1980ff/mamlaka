@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔍 محرك التعديل الذكي | بحث واستبدال</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',Tahoma,sans-serif}
+body{background:#0f172a;color:#f8fafc;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{color:#fbbf24;margin-bottom:20px;text-align:center;font-size:1.5rem}
+.container{width:100%;max-width:800px;background:#1e293b;border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+textarea{width:100%;height:200px;background:#0f172a;color:#e2e8f0;border:1px solid #475569;border-radius:8px;padding:10px;font-family:monospace;font-size:14px;direction:ltr;text-align:left;margin-bottom:15px;resize:vertical}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.input-group{flex:1;min-width:200px}
+label{display:block;color:#94a3b8;font-size:12px;margin-bottom:5px}
+input[type=text]{width:100%;padding:10px;background:#0f172a;border:1px solid #475569;color:white;border-radius:8px;font-family:monospace}
+.btn{padding:12px 20px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;transition:0.2s;font-size:14px}
+.btn-primary{background:#fbbf24;color:#000;width:100%;margin-top:10px}
+.btn-secondary{background:#38bdf8;color:#000}
+.btn-danger{background:#ef4444;color:#fff}
+.status{margin-top:15px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.3);text-align:center;font-size:14px;color:#4ade80;display:none}
+.help{font-size:12px;color:#94a3b8;margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<h1>🔍 محرك التعديل الذكي</h1>
+
+<div class="container">
+    <div class="help">
+        1. الصق الكود الكامل في المربع الكبير.<br>
+        2. اكتب كلمة البحث وكلمة الاستبدال.<br>
+        3. اضغط "استبدال الكل".<br>
+        4. انسخ النتيجة والصقها في تطبيق الدفتر.
+    </div>
+
+    <!-- مربع إدخال الكود -->
+    <label>الكود الأصلي (الصقه هنا):</label>
+    <textarea id="originalCode" placeholder="ضع الكود هنا..."></textarea>
+
+    <!-- أدوات البحث والاستبدال -->
+    <div class="controls">
+        <div class="input-group">
+            <label>ابحث عن:</label>
+            <input type="text" id="searchTerm" placeholder="مثال: tryShrinkMe">
+        </div>
+        <div class="input-group">
+            <label>استبدل بـ:</label>
+            <input type="text" id="replaceTerm" placeholder="مثال: tryExeIo">
+        </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="performReplace()">⚡ استبدال الكل ونسخ النتيجة</button>
+    
+    <div id="statusMsg" class="status"></div>
+
+    <!-- مربع النتيجة -->
+    <label style="margin-top:15px;">الكود بعد التعديل (جاهز للنسخ):</label>
+    <textarea id="resultCode" readonly></textarea>
+</div>
+
+<script>
+function performReplace() {
+    const code = document.getElementById('originalCode').value;
+    const search = document.getElementById('searchTerm').value;
+    const replace = document.getElementById('replaceTerm').value;
+    const status = document.getElementById('statusMsg');
+    const resultBox = document.getElementById('resultCode');
+
+    if (!code) return alert("الرجاء لصق الكود أولاً!");
+    if (!search) return alert("الرجاء كتابة كلمة البحث!");
+
+    // تنفيذ الاستبدال باستخدام Regex لضمان دقة عالية
+    // g = global (كل occurrences), i = case insensitive (اختياري، يمكن إزالته إذا أردت حساسية الأحرف)
+    try {
+        const regex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const newCode = code.replace(regex, replace);
+        
+        // عرض النتيجة
+        resultBox.value = newCode;
+        
+        // نسخ تلقائي للنتيجة
+        navigator.clipboard.writeText(newCode).then(() => {
+            status.innerText = "✅ تم الاستبدال والنسخ بنجاح! الصقه في الدفتر الآن.";
+            status.style.display = 'block';
+            status.style.color = '#4ade80';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }).catch(err => {
+            status.innerText = "❌ فشل النسخ التلقائي. انسخ يدوياً من المربع السفلي.";
+            status.style.display = 'block';
+            status.style.color = '#ef4444';
+        });
+
+    } catch (e) {
+        status.innerText = "❌ خطأ في صيغة البحث: " + e.message;
+        status.style.display = 'block';
+        status.style.color = '#ef4444';
+    }
+}
+</script>
+</body>
+</html>
