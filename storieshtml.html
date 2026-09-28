@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📖 مكتبة القصص الملكية | تعلم واستمتع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
+body{background:#f8fafc;color:#1e293b;line-height:1.8}
+header{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px;text-align:center;border-bottom:4px solid #fbbf24}
+h1{font-size:1.5rem;margin-bottom:5px}
+.sub{font-size:0.9rem;color:#cbd5e1}
+.container{max-width:600px;margin:20px auto;padding:0 15px}
+.story-card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 4px 6px rgba(0,0,0,0.05);border:1px solid #e2e8f0;transition:transform 0.2s}
+.story-card:hover{transform:translateY(-2px);box-shadow:0 10px 15px rgba(0,0,0,0.1)}
+.tag{display:inline-block;background:#fef3c7;color:#d97706;font-size:0.75rem;padding:4px 8px;border-radius:99px;font-weight:bold;margin-bottom:10px}
+.tag.hist{background:#dbeafe;color:#1d4ed8}
+.tag.edu{background:#dcfce7;color:#15803d}
+.tag.fun{background:#fce7f3;color:#be185d}
+.story-title{font-size:1.2rem;font-weight:800;color:#0f172a;margin-bottom:10px}
+.story-content{font-size:1rem;color:#334155;margin-bottom:15px;white-space:pre-wrap}
+.share-btn{width:100%;background:#22c55e;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.3s}
+.share-btn:hover{background:#16a34a}
+.loader{display:none;text-align:center;color:#fbbf24;font-size:12px;margin-top:5px}
+footer{text-align:center;padding:20px;color:#64748b;font-size:0.8rem;border-top:1px solid #e2e8f0;margin-top:40px}
+.back-home{display:block;text-align:center;margin:20px;color:#38bdf8;text-decoration:none;font-weight:bold}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>📖 مكتبة القصص الملكية</h1>
+    <div class="sub">قصص تُلهم العقل، وتُغذي الروح... وتدعم المشروع!</div>
+</header>
+
+<a href="index.html" class="back-home">⬅️ العودة للمملكة الرئيسية</a>
+
+<div class="container" id="storiesContainer">
+    <!-- سيتم حقن القصص هنا بواسطة JavaScript -->
+</div>
+
+<footer>
+    © 2026 مملكة التطبيقات | محتوى هادف لخدمة المجتمع 🇸
+</footer>
+
+<script>
+// ==========================================
+// ⚠️ ضع مفاتيحك الحقيقية هنا
+// ==========================================
+const SHRINK_API_KEY = 'ضع_مفتاح_ShrinkMe_هنا'; 
+const EXE_API_KEY = 'ضع_مفتاح_Exe_io_هنا'; 
+
+// رابط هذه الصفحة الحالي (لتوليد روابط فرعية لكل قصة)
+const CURRENT_PAGE_URL = window.location.href.split('#')[0];
+
+// قاعدة بيانات القصص (يمكنك إضافة المزيد لاحقاً بسهولة)
+const STORIES = [
+    {
+        id: 1,
+        type: "hist", // تاريخي
+        label: "تاريخ",
+        title: "سر الصمود في معركة اليرموك",
+        content: "في عام 636 ميلادية، وقف خالد بن الوليد أمام جيش الروم الضخم.\nلم يكن العدد لصالح المسلمين، لكن الإيمان والاستراتيجية كانت السلاح الأقوى.\n\nهل تعلم أن خالداً استخدم تكتيك 'الهجوم الخاطف' الذي أربك صفوف العدو؟\nالقصة الكاملة تكشف تفاصيل لم يذكرها التاريخ المدرسي...",
+        hook: "اقرأ التفاصيل المروية لأول مرة عن خطط خالد بن الوليد الذكية."
+    },
+    {
+        id: 2,
+        type: "edu", // تعليمي
+        label: "تعليمي",
+        title: "خطأ لغوي يقع فيه 90% من المتحدثين",
+        content: "كثيراً ما نسمع عبارة: 'إن شاء الله'.\nلكن هل تعرف الفرق بين كتابتها 'إن شاء الله' و 'انشاء الله'؟\n\nالأولى فعل مضارع (يشاء)، والثانية اسم مصدر (إنشاء).\nالفرق دقيق لكنه يعكس ثقافتك اللغوية.\n\nتعلم القاعدة الذهبية لتجنب هذا الخطأ الشائع.",
+        hook: "اكتشف السر البسيط الذي يجعلك تتحدث بفصحى سليمة دائماً."
+    },
+    {
+        id: 3,
+        type: "fun", // ترفيهي
+        label: "غامض",
+        title: "اللغز الذي حير العلماء: لماذا لا نتذكر طفولتنا؟",
+        content: "هل سبق لك أن حاولت تذكر يومك الأول في المدرسة؟\nمعظم البالغين يفشلون في استرجاع ذكريات قبل سن الثالثة أو الرابعة.\n\nعلم النفس يسميها 'فقدان الذاكرة الرضيعي'.\nالسبب ليس ضياع الذكريات، بل أن الدماغ لم يكن قد طور بعد المناطق المسؤولة عن تخزينها بشكل دائم.\n\nاكتشف كيف يعمل دماغك ولماذا تنسى أشياء مهمة جداً.",
+        hook: "حل اللغز العلمي وراء نسيان أجمل أيام حياتك."
+    }
+];
+
+function renderStories() {
+    const container = document.getElementById('storiesContainer');
+    container.innerHTML = STORIES.map(story => `
+        <div class="story-card" id="story-${story.id}">
+            <span class="tag ${story.type}">${story.label}</span>
+            <h2 class="story-title">${story.title}</h2>
+            <div class="story-content">${story.content}</div>
+            <button class="share-btn" onclick="shareStory(${story.id})">
+                📢 شارك هذه القصة واربح زواراً
+            </button>
+            <div class="loader" id="loader-${story.id}">⏳ جارٍ تجهيز الرابط...</div>
+        </div>
+    `).join('');
+}
+
+// دالة الربح الذكية
+async function getProfitUrl(longUrl) {
+    try {
+        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl || data.link) return data.shortenedUrl || data.link;
+        }
+    } catch (e) {}
+    try {
+        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(longUrl)}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.shortenedUrl) return data.shortenedUrl;
+        }
+    } catch (e) {}
+    return longUrl; // احتياطيا
+}
+
+async function shareStory(id) {
+    const story = STORIES.find(s => s.id === id);
+    if(!story) return;
+
+    const loader = document.getElementById(`loader-${id}`);
+    loader.style.display = 'block';
+
+    // 1. إنشاء رابط فريد لهذه القصة (باستخدام الهاشتاج #story-ID)
+    const uniqueUrl = `${CURRENT_PAGE_URL}#story-${id}`;
+    
+    // 2. توليد الرابط المختصر المربح
+    const profitLink = await getProfitUrl(uniqueUrl);
+    
+    loader.style.display = 'none';
+
+    // 3. بناء نص المنشور الجذاب
+    const postText = `📖 قصة جديدة من مكتبة المملكة:\n\n"${story.title}"\n\n${story.hook}\n\n👇 اقرأ الآن عبر هذا الرابط:\n${profitLink}\n\n#قصص #ثقافة #مملكة_التطبيقات`;
+
+    // 4. محاولة النشر التلقائي أو النسخ
+    if(navigator.share) {
+        navigator.share({
+            title: story.title,
+            text: postText
+        }).then(() => {
+            alert("✅ تم النشر! شكراً لدعمك.");
+        }).catch(err => {
+            console.log("Cancelled");
+            copyToClipboard(postText);
+        });
+    } else {
+        copyToClipboard(postText);
+    }
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("📋 اننسخت الرسالة! الصقها في واتساب أو فيسبوك.");
+    }).catch(err => {
+        // طريقة قديمة
+        const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+        alert("📋 اننسخت!");
+    });
+}
+
+// تشغيل العرض عند تحميل الصفحة
+renderStories();
+
+// التمرير التلقائي للقصة إذا كان هناك هاشتاج في الرابط
+window.onload = () => {
+    if(window.location.hash) {
+        const element = document.querySelector(window.location.hash);
+        if(element) {
+            setTimeout(() => {
+                element.scrollIntoView({behavior: 'smooth'});
+                element.style.border = "2px solid #fbbf24"; // تمييز بصري
+                setTimeout(() => element.style.border = "1px solid #e2e8f0", 2000);
+            }, 500);
+        }
+    }
+};
+</script>
+</body>
+</html>
