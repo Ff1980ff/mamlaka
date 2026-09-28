@@ -98,13 +98,37 @@ function renderStories() {
 }
 
 // دالة الربح الذكية
+) // دالة الربح الذكية (نسخة محسنة لـ Exe.io + WAF)
 async function getProfitUrl(longUrl) {
+    // 1. المحاولة الأولى والأفضل: Exe.io عبر وسيط آمن
     try {
-        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
-        const response = await fetch(apiUrl);
+        const targetUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(longUrl)}`;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        
+        const response = await fetch(proxyUrl);
         if (response.ok) {
             const data = await response.json();
-            if (data.shortenedUrl || data.link) return data.shortenedUrl || data.link;
+            if (data.shortenedUrl) return data.shortenedUrl;
+        }
+    } catch (e) {
+        console.warn("Exe.io failed, trying ShrinkMe...");
+    }
+
+    // 2. المحاولة الاحتياطية: ShrinkMe.io عبر وسيط آمن
+    try {
+        const targetUrlS = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
+        const proxyUrlS = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrlS)}`;
+        
+        const responseS = await fetch(proxyUrlS);
+        if (responseS.ok) {
+            const dataS = await responseS.json();
+            if (dataS.shortenedUrl || dataS.link) return dataS.shortenedUrl || dataS.link;
+        }
+    } catch (e) {}
+
+    // 3. في حال الفشل التام، نعيد الرابط الأصلي (حتى لا يتوقف النشر)
+    return longUrl; 
+}
         }
     } catch (e) {}
     try {
