@@ -433,12 +433,78 @@ function render() {
 
 // Initial Load
 render();
+// Render Logic مع ميزة البحث الذكي داخل الكود
+function render() {
+    const query = document.getElementById('q').value.toLowerCase().trim();
+    const container = document.getElementById('listContainer');
+    const statsBadge = document.getElementById('statsBadge');
+    
+    // 1. تصفية النتائج بناءً على الاسم أو المحتوى الداخلي للكود
+    let filtered = DB.filter(item => {
+        if (!query) return true; 
+        
+        const nameMatch = item.name.toLowerCase().includes(query);
+        const codeMatch = item.code && item.code.toLowerCase().includes(query);
+        
+        return nameMatch || codeMatch;
+    });
 
-// Save File Function (Legacy compatibility)
-function saveFile() {
-    // We can offer both JSON backup and full HTML export if needed
-    // For now, let's stick to simple JSON backup which is safer for data integrity
-    exportData();
+    // Update Stats
+    const approvedCount = DB.filter(i => i.status === 1).length;
+    statsBadge.textContent = `${filtered.length} نتائج | ${approvedCount} مثبت`;
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">لا توجد أكواد مطابقة للبحث.<br>جرّب كلمات مثل: exe.io, getProfitUrl, API_KEY</div>`;
+        return;
+    }
+
+    let html = '';
+    filtered.forEach((item, idx) => {
+        const originalIdx = DB.findIndex(d => d.id === item.id);
+        
+        const statusMap = ['⏳ قيد المراجعة', '✅ مثبّت', '🗑 مرفوض'];
+        const statusClass = ['st-pending', 'st-approved', 'st-rejected'][item.status];
+        
+        // إبراز الكلمات المطابقة داخل المعاينة
+        let previewCode = item.code.substring(0, 80) + "..."; 
+        if (query && item.code.includes(query)) {
+             const pos = item.code.indexOf(query);
+             const start = Math.max(0, pos - 30);
+             const end = Math.min(item.code.length, pos + query.length + 30);
+             previewCode = "..." + item.code.substring(start, end) + "...";
+             
+             // تلوين الكلمة المفتاحية بالأصفر الذهبي
+             const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+             previewCode = escapeHtml(previewCode).replace(regex, '<span style="background:#fbbf24;color:#000;padding:0 2px;border-radius:2px;font-weight:bold;">$1</span>');
+        } else {
+            previewCode = escapeHtml(previewCode);
+        }
+
+        html += `
+        <div class="item-card">
+            <div class="item-header">
+                <span class="item-id">#${item.id}</span>
+                <span class="item-name">${escapeHtml(item.name)}</span>
+                <span class="status-indicator ${statusClass}" onclick="cycleStatus(${originalIdx})" title="تغيير الحالة">${statusMap[item.status]}</span>
+            </div>
+            
+            <!-- معاينة ذكية للكود -->
+            <div style="font-family:monospace;font-size:0.7rem;color:#94a3b8;background:rgba(0,0,0,0.3);padding:6px;border-radius:4px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" dir="ltr">
+                🔍 ${previewCode}
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-btn copy" onclick="copyCode(${originalIdx})">📋 نسخ</div>
+                <div class="action-btn edit" onclick="editItem(${originalIdx})">✏️ تعديل</div>
+                <div class="action-btn" onclick="cycleStatus(${originalIdx})">🔄 الحالة</div>
+                <div class="action-btn del" onclick="deleteItem(${originalIdx})">🗑 حذف</div>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+();
 }
 
 </script>
