@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>⚖️ توازن | منظومتك الرقمية المتكاملة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-deep: #0f172a;
+    --surface: rgba(30, 41, 59, 0.8);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    
+    /* ألوان المحاور */
+    --color-knowledge: #38bdf8; /* أزرق سماوي */
+    --color-creative: #e879f9;  /* وردي/بنفسجي */
+    --color-profit: #fbbf24;    /* ذهبي */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(251, 191, 36, 0.05) 0%, transparent 25%);
+}
+
+/* --- الهيدر الملكي --- */
+.hero-section { text-align: center; max-width: 600px; width: 100%; animation: fadeInUp 0.8s ease-out; margin-bottom: 30px;}
+.logo-container { position: relative; display: inline-block; margin-bottom: 15px; }
+.main-logo { font-size: 4rem; filter: drop-shadow(0 0 15px var(--color-profit)); animation: float 3s infinite ease-in-out; }
+h1.title { font-size: 2.2rem; font-weight: 800; background: linear-gradient(to right, var(--color-profit), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; line-height: 1.3; }
+p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; font-family: 'Tajawal', sans-serif; }
+
+/* --- شبكة المحاور الثلاثة --- */
+.balance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 40px;
+}
+
+.pillar-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border-top: 4px solid transparent;
+    cursor: pointer;
+}
+
+.pillar-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+/* تلوين الحواف العلوية حسب المحور */
+.pillar-knowledge { border-top-color: var(--color-knowledge); }
+.pillar-creative { border-top-color: var(--color-creative); }
+.pillar-profit { border-top-color: var(--color-profit); }
+
+.pillar-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+.pillar-title { font-size: 1.4rem; font-weight: bold; color: white; margin-bottom: 10px; }
+.pillar-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+.tools-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border-glass);
+    padding-top: 15px;
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    transition: color 0.2s;
+}
+
+.tool-item:hover { color: white; }
+.tool-item span:first-child { font-size: 1.2rem; }
+
+/* زر الدخول السريع داخل البطاقة */
+.enter-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.btn-know { background: rgba(56, 189, 248, 0.2); color: var(--color-knowledge); border: 1px solid var(--color-knowledge); }
+.btn-know:hover { background: var(--color-knowledge); color: #000; }
+
+.btn-crea { background: rgba(232, 121, 249, 0.2); color: var(--color-creative); border: 1px solid var(--color-creative); }
+.btn-crea:hover { background: var(--color-creative); color: #000; }
+
+.btn-prof { background: rgba(251, 191, 36, 0.2); color: var(--color-profit); border: 1px solid var(--color-profit); }
+.btn-prof:hover { background: var(--color-profit); color: #000; }
+
+.footer-info { margin-top: auto; text-align: center; font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; padding-top: 20px; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 600px) {
+    h1.title { font-size: 1.8rem; }
+    .balance-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero-section">
+    <div class="logo-container">
+        <div class="main-logo">⚖️</div>
+    </div>
+    
+    <h1 class="title">منظومة توازن</h1>
+    <p class="subtitle">
+        حيث تلتقي المعرفة بالإبداع والربح.<br>
+        منصتك الشاملة لإدارة حياتك الرقمية بذكاء واحترافية.
+    </p>
+</div>
+
+<!-- ✅ المحاور الثلاثة للتوازن -->
+<div class="balance-grid">
+
+    <!-- 1. محور المعرفة -->
+    <div class="pillar-card pillar-knowledge" onclick="window.location.href='stories.html'">
+        <span class="pillar-icon">📚</span>
+        <h2 class="pillar-title">محور المعرفة</h2>
+        <p class="pillar-desc">اكتشف عالماً من القصص التاريخية، الدروس التعليمية، والكتب المنشورة مجاناً.</p>
+        
+        <ul class="tools-list">
+            <li class="tool-item"><span>📖</span> مكتبة القصص الملكية</li>
+            <li class="tool-item"><span>📄</span> ناشر الكتب الذهبي</li>
+            <li class="tool-item"><span>🌍</span> سفارة الروابط العالمية</li>
+        </ul>
+        
+        <a href="stories.html" class="enter-btn btn-know">ابدأ القراءة الآن ➡️</a>
+    </div>
+
+    <!-- 2. محور الإبداع -->
+    <div class="pillar-card pillar-creative" onclick="window.location.href='video-maker-pro.html'">
+        <span class="pillar-icon">🎨</span>
+        <h2 class="pillar-title">محور الإبداع</h2>
+        <p class="pillar-desc">حوّل أفكارك إلى واقع بصري وصوتي باستخدام أدواتنا الاحترافية بدون خبرة تقنية.</p>
+        
+        <ul class="tools-list">
+            <li class="tool-item"><span>🎬</span> استوديو الفيديو السينمائي</li>
+            <li class="tool-item"><span>🎙️</span> مونتاج الصوت الملكي</li>
+            <li class="tool-item"><span>✉️</span> مصنع الإيميلات الذكي</li>
+        </ul>
+        
+        <a href="video-maker-pro.html" class="enter-btn btn-crea">اصنع محتواك الآن ➡️</a>
+    </div>
+
+    <!-- 3. محور الربح والأدوات -->
+    <div class="pillar-card pillar-profit" onclick="window.location.href='#profit-machine'">
+        <span class="pillar-icon">💰</span>
+        <h2 class="pillar-title">محور الربح</h2>
+        <p class="pillar-desc">أدوات مالية ذكية لتحويل الروابط إلى دخل سلبي وإدارة هويتك الرقمية بكفاءة.</p>
+        
+        <ul class="tools-list">
+            <li class="tool-item"><span>⚡</span> مولّد الدخل السلبي (ShrinkMe+Exe)</li>
+            <li class="tool-item"><span>🔗</span> إدارة الروابط الاجتماعية</li>
+            <li class="tool-item"><span>🛡️</span> عيادة الوعي والحماية</li>
+        </ul>
+        
+        <a href="#profit-machine" class="enter-btn btn-prof">ولّد رابطك المربح ➡️</a>
+    </div>
+
+</div>
+
+<!-- ✅ آلة الربح السريعة (مثبتة أسفل الصفحة للوصول السريع) -->
+<div id="profit-machine" style="width: 100%; max-width: 600px; margin: 0 auto 40px;">
+    <div style="background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 20px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px);">
+        <h3 style="color: var(--color-profit); text-align: center; font-size: 1.4rem; margin-bottom: 15px;">⚡ ولّد رابطاً مربحاً فوراً</h3>
+        <input type="url" id="quickUrl" placeholder="الصق الرابط الطويل هنا..." style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: white; margin-bottom: 10px; direction: ltr; text-align: left;">
+        <button onclick="quickGenerate()" style="width: 100%; padding: 12px; border-radius: 10px; border: none; background: linear-gradient(135deg, #fbbf24, #d97706); color: black; font-weight: bold; cursor: pointer;">توليد ونسخ 📋</button>
+        <div id="quickResult" style="margin-top: 10px; text-align: center; color: #4ade80; font-family: monospace; word-break: break-all; display: none;"></div>
+    </div>
+</div>
+
+<div class="footer-info">
+    © 2026 منظومة توازن | بُنيت بشغف من سوريا 🇸<br>
+    جميع الحقوق محفوظة • <a href="#" style="color:var(--color-knowledge)">سياسة الخصوصية</a>
+</div>
+
+<script>
+// ==========================================
+// ⚠️ ضع مفاتيحك الحقيقية هنا
+// ==========================================
+const SHRINK_API_KEY = '0fc4e8bc09ec2508d213af0e810bbe1d8f1cf4c3'; 
+const EXE_API_KEY = '8a00e563ec670798e86aeb5560a6f424894f3bd4'; 
+
+async function quickGenerate() {
+    const input = document.getElementById('quickUrl');
+    const resultDiv = document.getElementById('quickResult');
+    const url = input.value.trim();
+
+    if(!url || !url.startsWith('http')) {
+        alert("الرجاء إدخال رابط صحيح");
+        return;
+    }
+
+    resultDiv.style.display = 'block';
+    resultDiv.innerText = "⏳ جارٍ المعالجة...";
+    resultDiv.style.color = "#fbbf24";
+
+    try {
+        // محاولة ShrinkMe
+        let shortLink = await tryShrinkMe(url);
+        if (!shortLink) shortLink = await tryExeIo(url); // محاولة Exe
+        
+        if (shortLink) {
+            resultDiv.innerText = shortLink;
+            resultDiv.style.color = "#4ade80";
+            
+            // نسخ تلقائي
+            navigator.clipboard.writeText(shortLink).then(() => {
+                resultDiv.innerText += " ✅ (تم النسخ!)";
+            });
+        } else {
+            throw new Error("Failed");
+        }
+    } catch (e) {
+        resultDiv.innerText = "❌ فشل التوليد. تحقق من الإنترنت.";
+        resultDiv.style.color = "#ef4444";
+    }
+}
+
+async function tryShrinkMe(url) {
+    try {
+        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.shortenedUrl || data.link || null;
+    } catch (e) { return null; }
+}
+
+async function tryExeIo(url) {
+    try {
+        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.shortenedUrl || null;
+    } catch (e) { return null; }
+}
+</script>
+</body>
+</html>
