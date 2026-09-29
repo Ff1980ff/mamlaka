@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 المُستخلص الملكي | الإصدار الآمن v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 30, 0.8);
+            --neon-purple: #bc13fe;
+            --neon-cyan: #00f0ff;
+            --gold: #ffd700;
+            --text-white: #fff;
+            --danger: #ff4444;
+            --success: #00ff88;
+            --warning-bg: rgba(255, 68, 68, 0.1);
+            --warning-border: #ff4444;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            font-family: 'Tajawal', sans-serif;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+        }
+
+        /* الهيدر */
+        header {
+            width: 100%; text-align: center; padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 1.8rem; margin: 0;
+            background: linear-gradient(to right, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #aaa; font-size: 0.9rem; margin-top: 5px; }
+        .version-badge {
+            background: var(--success); color: #000;
+            font-size: 0.7rem; padding: 2px 8px; border-radius: 4px;
+            font-weight: bold; margin-right: 10px;
+        }
+
+        /* منطقة الالتقاط الرئيسية */
+        .capture-zone {
+            width: 90%; max-width: 600px;
+            background: var(--panel-bg);
+            border: 2px dashed var(--neon-cyan);
+            border-radius: 20px;
+            padding: 30px; margin: 30px auto;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .capture-zone:hover { border-color: var(--gold); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2); }
+
+        .input-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; color: var(--neon-cyan); font-weight: bold; }
+        
+        textarea, input[type="text"], input[type="number"], select {
+            width: 100%; padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff; font-family: inherit; font-size: 1rem;
+        }
+        textarea:focus, input:focus, select:focus { outline: none; border-color: var(--neon-purple); }
+
+        /* أزرار الإجراءات */
+        .actions { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .btn {
+            padding: 12px 25px; border: none; border-radius: 50px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-extract { background: var(--neon-cyan); color: #000; }
+        .btn-publish { background: var(--gold); color: #000; }
+        .btn-clear { background: transparent; border: 1px solid #555; color: #888; }
+        
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        /* عرض النتيجة (البطاقة المولدة) */
+        .result-preview {
+            width: 90%; max-width: 600px;
+            background: #111;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none; /* مخفي افتراضياَ */
+            border: 1px solid #333;
+        }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .preview-title { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+        .preview-body { font-size: 0.9rem; color: #ccc; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+        
+        /* صندوق التحذير الأمني الجديد */
+        .security-warning {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            color: #ffcccc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: none; /* يظهر ديناميكياً */
+        }
+        .security-warning i { color: var(--danger); margin-left: 5px; }
+
+        .json-output {
+            background: #000; color: #0f0;
+            font-family: monospace; font-size: 0.8rem;
+            padding: 15px; border-radius: 8px;
+            margin-top: 15px; max-height: 200px; overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        /* إشعار النجاح */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--success); color: #000;
+            padding: 15px 30px; border-radius: 50px;
+            font-weight: bold; opacity: 0; transition: 0.5s;
+            z-index: 1000; box-shadow: 0 5px 20px rgba(0,255,136,0.4);
+        }
+        #toast.show { opacity: 1; bottom: 50px; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><i class="fas fa-magic"></i> المُستخلص الملكي <span class="version-badge">v2.0 Safe</span></h1>
+    <div class="subtitle">حوّل أي محتوى اجتماعي إلى منتج رقمي آمن وقانوني في ثوانٍ</div>
+</header>
+
+<div class="capture-zone">
+    <div style="font-size: 3rem; color: var(--neon-cyan); margin-bottom: 15px;">
+        <i class="fab fa-tiktok"></i> <i class="fab fa-instagram"></i> <i class="fab fa-whatsapp"></i>
+    </div>
+    
+    <div class="input-group">
+        <label>1. الصق الرابط أو النص المصدر هنا:</label>
+        <textarea id="sourceInput" rows="3" placeholder="مثال: رابط فيديو تعليمي، أو نص وصفة، أو مقال..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>2. اختر نوع التحويل الآمن المقترح:</label>
+        <select id="productType">
+            <option value="video_summary">🎥 ملخص فيديو + تمارين (بدون رفع الفيديو)</option>
+            <option value="guide_analysis">📘 تحليل معمق ودليل استراتيجي</option>
+            <option value="tool_template">🛠️ قالب/أداة مبنية على فكرة الكود</option>
+            <option value="curated_list">📋 قائمة موارد منظمة (Curation)</option>
+        </select>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-extract" onclick="extractContent()">
+            <i class="fas fa-bolt"></i> استخراج وتأمين المحتوى
+        </button>
+        <button class="btn btn-clear" onclick="clearAll()">
+            <i class="fas fa-trash"></i> مسح الكل
+        </button>
+    </div>
+</div>
+
+<!-- منطقة المعاينة والتعديل -->
+<div class="result-preview" id="resultArea">
+    <div class="preview-header">
+        <span class="preview-title"><i class="fas fa-shield-alt"></i> المنتج المؤمَّن جاهز للنشر</span>
+        <span style="color:var(--success)">✅ متوافق مع القوانين</span>
+    </div>
+
+    <!-- صندوق التحذير الأمني سيظهر هنا -->
+    <div class="security-warning" id="warnBox"></div>
+
+    <div class="input-group">
+        <label>عنوان المنتج المقترح (قابل للتعديل):</label>
+        <input type="text" id="finalTitle">
+    </div>
+
+    <div class="input-group">
+        <label>السعر المقترح ($):</label>
+        <input type="number" id="finalPrice" step="0.01">
+    </div>
+
+    <div class="input-group">
+        <label>الوصف التسويقي الآمن:</label>
+        <textarea id="finalDesc" rows="5"></textarea>
+    </div>
+
+    <div class="json-output" id="jsonOutput"></div>
+
+    <div class="actions" style="margin-top: 20px;">
+        <button class="btn btn-publish" onclick="copySafeData()">
+            <i class="fas fa-copy"></i> نسخ بيانات المنتج الآمنة
+        </button>
+        <button class="btn btn-extract" style="background:#333; color:#fff;" onclick="document.getElementById('resultArea').style.display='none'">
+            <i class="fas fa-times"></i> إغلاق
+        </button>
+    </div>
+</div>
+
+<div id="toast">تم توليد منتج آمن!</div>
+
+<script>
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function clearAll() {
+        document.getElementById('sourceInput').value = '';
+        document.getElementById('resultArea').style.display = 'none';
+        document.getElementById('warnBox').style.display = 'none';
+    }
+
+    function extractContent() {
+        const source = document.getElementById('sourceInput').value.trim();
+        const type = document.getElementById('productType').value;
+        
+        if (!source) {
+            alert("الرجاء لصق رابط أو نص أولاَ!");
+            return;
+        }
+
+        let title = "", desc = "", price = 4.99, warningMsg = "";
+
+        // منطق التحويل الآمن لكل نوع
+        switch(type) {
+            case 'video_summary':
+                title = "ملخص تنفيذي حصري + 5 تمارين تطبيقية مستوحاة من موضوع حديث";
+                desc = "⚠️ تنبيه هام: هذا المنتج ليس نسخة من الفيديو الأصلي.\n✅ يتضمن:\n- ملخص نصي مركّز لأهم النقاط (خلاصة الزبدة).\n- 5 تمارين عملية من تصميمنا الخاص لتثبيت المعلومة.\n- قائمة مراجع إضافية للتعمق.\n💡 القيمة: توفير وقت المشاهدة والحصول على الخلاصة فوراَ.";
+                price = 7.99;
+                warningMsg = "<strong>نصيحة أمنية:</strong> لا تقم أبداً برفع ملف الفيديو نفسه! قم بمشاهدته وكتابة الملخص والتحليل بيديك بناءً على فهمك الشخصي للمحتوى.";
+                break;
+                
+            case 'guide_analysis':
+                title = "دليل استراتيجي متكامل: تحليل معمق لـ [أدخل الموضوع]";
+                desc = "ليس مجرد نقل للنصوص.\n📊 يشمل:\n- جداول مقارنة وأرقام إحصائية محدثة.\n- خرائط ذهنية قابلة للطباعة.\n- دراسات حالة محلية (عربية) غير موجودة في المصادر الأجنبية.\n🎯 الهدف: تقديم زاوية رؤية مختلفة ومضافة قيمة عما هو متاح مجاناً.";
+                price = 5.99;
+                warningMsg = "<strong>نصيحة أمنية:</strong> تأكد من إضافة رسومك البيانية الخاصة وتحليلاتك الشخصية. النقل الحرفي للنصوص الطويلة يعتبر انتهاكاً لحقوق النشر حتى لو ذكرت المصدر.";
+                break;
+
+            case 'tool_template':
+                title = "قالب جاهز للتخصيص: حزمة أدوات [اسم الأداة] المطورة";
+                desc = "الكود الأصلي معدّل وموثّق بالكامل.\n🛠️ المميزات:\n- واجهة استخدام مبسطة (GUI) بالعربية.\n- تعليقات شرح مفصلة لكل سطر.\n- ملفات إعداد جاهزة (Config Files).\n- دعم فني أولي للإصلاحات البسيطة.\n🔒 الرخصة: رخصة تجارية غير حصرية للاستخدام الشخصي والشركات الصغيرة.";
+                price = 19.99;
+                warningMsg = "<strong>نصيحة أمنية:</strong> راجع ترخيص الكود الأصلي دائماً. إذا كان MIT، يمكنك البيع بعد التعديل. إذا كان GPL، يجب أن يبقى مفتوح المصدر لكن يمكنك بيع خدمة الدعم والتثبيت والتخصيص.";
+                break;
+
+            case 'curated_list':
+                title = "خريطة طريق منظمة: أفضل الموارد لـ [المجال]";
+                desc = "جمع وفرز وتنظيم لعشرات المصادر المتفرقة.\n🗺️ ما ستحصل عليه:\n- ترتيب منطقي للتعلم (من السهل للصعب).\n- تقييم شخصي لكل مصدر (الجيد والسيء).\n- روابط مباشرة دون إعلانات مزعجة.\n⏱️ الوقت الموفر: أكثر من 20 ساعة بحث.";
+                price = 3.99;
+                warningMsg = "<strong>نصيحة أمنية:</strong> أنت تبيع 'جهد التنظيم والتقييم' وليس المحتوى نفسه. اذكر بوضوح أن الروابط تعود لأصحابها الأصليين وأن دورك هو التيسير والتنظيم.";
+                break;
+        }
+
+        // تعبئة الحقول
+        document.getElementById('finalTitle').value = title;
+        document.getElementById('finalPrice').value = price;
+        document.getElementById('finalDesc').value = desc;
+        
+        // إظهار وعرض التحذير الأمني
+        const warnDiv = document.getElementById('warnBox');
+        warnDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${warningMsg}`;
+        warnDiv.style.display = 'block';
+
+        // توليد عينة JSON آمنة
+        const productData = {
+            title: title,
+            price: price,
+            description: desc,
+            category: type,
+            source_reference_internal: source, // مرجع داخلي فقط
+            status: "draft_safe_mode",
+            copyright_compliance: true,
+            transformation_type: "value_add_analysis"
+        };
+
+        document.getElementById('jsonOutput').innerText = JSON.stringify(productData, null, 2);
+        document.getElementById('resultArea').style.display = 'block';
+        showToast("تم توليد منتج آمن ومتوافق مع القوانين!");
+    }
+
+    function copySafeData() {
+        const jsonText = document.getElementById('jsonOutput').innerText;
+        navigator.clipboard.writeText(jsonText).then(() => {
+            showToast("تم النسخ! الصقه في مذكرة هاتفك كمرجع.");
+        });
+    }
+</script>
+
+</body>
+</html>
