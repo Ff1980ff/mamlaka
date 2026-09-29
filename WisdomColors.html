@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>🎨 مملكة التلوين التعليمية</title>
+<title>🎨 ألوان الحكمة - تلوّن وتعلّم 4 لغات</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
 body{background:linear-gradient(160deg,#fef9c3 0%,#bbf7d0 50%,#bfdbfe 100%);min-height:100vh;color:#1e293b;padding-bottom:30px}
@@ -22,9 +22,8 @@ header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0
 .card svg{width:100%;height:auto}
 .card .nm{font-size:12px;font-weight:bold;color:#334155;margin-top:4px}
 .card .done{position:absolute;top:4px;left:4px;font-size:16px}
-/* شاشة التلوين */
 #paintScr{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#fef9c3,#bbf7d0);z-index:60;overflow-y:auto;padding-bottom:30px}
-.topbar{display:flex;gap:8px;padding:10px;align-items:center;position:sticky;top:0;background:rgba(255,255,255,.9);z-index:5}
+.topbar{display:flex;gap:8px;padding:10px;align-items:center;position:sticky;top:0;background:rgba(255,255,255,.9);z-index:5;flex-wrap:wrap}
 .topbar button{border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:bold;cursor:pointer}
 .backB{background:#e63946;color:#fff}
 .toolB{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1)}
@@ -34,7 +33,6 @@ header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0
 .palette{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px}
 .pal{width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;transition:.15s}
 .pal.on{transform:scale(1.25);border-color:#1e293b}
-/* السبورة */
 .board{background:#14532d;border:6px solid #92400e;border-radius:16px;margin:10px 14px;padding:14px;box-shadow:inset 0 0 20px rgba(0,0,0,.4)}
 .board h3{color:#fde047;text-align:center;font-size:14px;margin-bottom:10px}
 .brow{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px dashed rgba(255,255,255,.2)}
@@ -42,7 +40,6 @@ header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0
 .brow .fl{font-size:20px}
 .brow .wd{flex:1;color:#fff;font-size:19px;font-weight:bold;text-align:left;direction:ltr;font-family:'Comic Sans MS',cursive}
 .brow .sp{border:none;background:#fde047;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer}
-/* الكراس التعليمي */
 #quizScr{display:none;max-width:600px;margin:auto;padding:12px}
 .qbox{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,.12);text-align:center}
 .qbox h2{font-size:18px;color:#8338ec;margin-bottom:6px}
@@ -57,8 +54,8 @@ header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0
 .langPick{display:flex;justify-content:center;gap:8px;margin:10px 0}
 .langPick button{border:none;border-radius:99px;padding:8px 14px;font-size:16px;cursor:pointer;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.1)}
 .langPick button.on{background:#3a86ff;color:#fff}
-/* احتفال */
 #celeb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;align-items:center;justify-content:center}
+#celeb.show{display:flex}
 #celeb .box{background:#fff;border-radius:24px;padding:30px;text-align:center;animation:pop .5s;max-width:300px}
 #celeb .big{font-size:60px}
 #celeb h2{color:#8338ec;margin:10px 0}
@@ -68,7 +65,7 @@ header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0
 </style>
 </head>
 <body>
-<header><h1>🎨 مملكة التلوين التعليمية</h1><p>50 صورة • 4 لغات • نطق صوتي • كراس تعليمي</p></header>
+<header><h1>🎨 ألوان الحكمة</h1><p>50 صورة • 4 لغات • نطق صوتي • كراس تعليمي</p></header>
 
 <div class="tabs">
  <button class="tab on" onclick="goHome()">🖼️ لوّن وتعلّم</button>
@@ -105,8 +102,6 @@ header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0
 <div id="celeb"><div class="box"><div class="big">🏆</div><h2>أحسنت! لوّنت الصورة كاملة!</h2><div id="celebWord" style="font-size:18px;font-weight:bold;color:#0f766e"></div><button onclick="closeCeleb()">🎨 صورة جديدة</button></div></div>
 
 <script>
-// ===== مكتبة الصور (50 صورة) =====
-// c=دائرة e=بيضوي r=مستطيل g=مضلع p=مسار l=خط(تفاصيل)
 const IMGS=[
 {n:['سمكة','Fish','Poisson','Fisch'],c:0,s:[['e',90,100,55,35],['g','145,100 182,72 182,128'],['g','85,68 110,45 118,72'],['c',62,92,6],['l','M40,60 q8,-8 0,-16'],['l','M55,45 q8,-8 0,-16']]},
 {n:['فراشة','Butterfly','Papillon','Schmetterling'],c:0,s:[['e',100,105,11,42],['e',63,75,32,26],['e',137,75,32,26],['e',68,132,26,20],['e',132,132,26,20],['l','M92,60 q-8,-18 -18,-22'],['l','M108,60 q8,-18 18,-22']]},
@@ -125,7 +120,7 @@ const IMGS=[
 {n:['فراولة','Strawberry','Fraise','Erdbeere'],c:1,s:[['p','M100,165 Q52,122 58,88 Q80,72 100,78 Q120,72 142,88 Q148,122 100,165 Z'],['g','78,80 100,60 122,80 100,90'],['c',85,110,4],['c',115,110,4],['c',100,135,4]]},
 {n:['بطيخة','Watermelon','Pastèque','Wassermelone'],c:1,s:[['g','38,68 162,68 100,162'],['p','M38,68 Q100,52 162,68 L152,84 Q100,70 48,84 Z'],['c',85,95,4],['c',115,95,4],['c',100,120,4]]},
 {n:['إجاصة','Pear','Poire','Birne'],c:1,s:[['p','M100,52 Q114,80 130,106 Q146,142 100,152 Q54,142 70,106 Q86,80 100,52 Z'],['r',96,38,8,20,4],['e',122,50,16,9,25]]},
-{n:'كرز',c:1,s:[['c',78,132,24],['c',126,138,24],['l','M78,108 Q88,60 112,48'],['l','M126,114 Q120,70 112,48'],['e',124,46,16,9,20]]},
+{n:['كرز','Cherries','Cerises','Kirschen'],c:1,s:[['c',78,132,24],['c',126,138,24],['l','M78,108 Q88,60 112,48'],['l','M126,114 Q120,70 112,48'],['e',124,46,16,9,20]]},
 {n:['ليمونة','Lemon','Citron','Zitrone'],c:1,s:[['e',100,110,48,36],['c',50,110,9],['c',150,110,9],['e',120,66,16,9,25]]},
 {n:['أناناس','Pineapple','Ananas','Ananas'],c:1,s:[['e',100,125,38,46],['g','100,78 84,38 100,55 116,38'],['g','82,84 58,56 86,68'],['g','118,84 142,56 114,68'],['l','M70,105 l60,40'],['l','M130,105 l-60,40']]},
 {n:['سيارة','Car','Voiture','Auto'],c:2,s:[['r',38,100,124,42,16],['r',68,68,64,38,14],['r',76,76,48,24,8],['c',70,146,17],['c',130,146,17],['c',70,146,7],['c',130,146,7]]},
@@ -159,8 +154,6 @@ const IMGS=[
 {n:['تاج','Crown','Couronne','Krone'],c:4,s:[['r',50,118,100,34,7],['g','50,118 64,66 84,118'],['g','84,118 100,56 116,118'],['g','116,118 136,66 150,118'],['c',66,135,8],['c',100,135,8],['c',134,135,8]]},
 {n:['ساعة','Clock','Horloge','Uhr'],c:4,s:[['c',100,100,56],['c',100,100,44],['r',97,64,6,40,3],['r',100,97,28,6,3],['c',100,100,6]]}
 ];
-// إصلاح عنصر 18 (كرز) ليكون مصفوفة أسماء
-IMGS[17].n=['كرز','Cherries','Cerises','Kirschen'];
 
 const CATS=['🐾 حيوانات','🍎 فواكه','🚗 مركبات','🌈 طبيعة','🎁 أشياء'];
 const LANGS=[['🇸🇦','ar-SA'],['🇬🇧','en-US'],['🇫🇷','fr-FR'],['🇩🇪','de-DE']];
@@ -169,7 +162,6 @@ const COLORS=['#e63946','#f77f00','#ffd60a','#2dc653','#06d6a0','#118ab2','#3a86
 let curCat=-1,curImg=null,curFill=[],selColor=COLORS[0],quizLang=1,stars=+(localStorage.getItem('qStars')||0);
 let fills=JSON.parse(localStorage.getItem('colorFills')||'{}');
 
-// ===== النطق =====
 function speak(txt,langIdx){
  if(!('speechSynthesis' in window))return;
  speechSynthesis.cancel();
@@ -181,7 +173,6 @@ function speak(txt,langIdx){
 }
 speechSynthesis&&speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
 
-// ===== رسم الأشكال =====
 function shp(s,fill,i,tap){
  const f=fill||'#ffffff';
  const cm=`fill="${f}" stroke="#3a2b20" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"${tap?` data-i="${i}" class="tap"`:''}`;
@@ -198,7 +189,6 @@ function svgOf(img,arr,tap){
  return `<svg viewBox="0 0 200 200">${img.s.map((s,i)=>shp(s,arr?arr[i]:null,i,tap)).join('')}</svg>`;
 }
 
-// ===== الرئيسية =====
 function renderCats(){
  document.getElementById('cats').innerHTML=`<button class="cat${curCat==-1?' on':''}" onclick="setCat(-1)">✨ الكل</button>`+CATS.map((c,i)=>`<button class="cat${curCat==i?' on':''}" onclick="setCat(${i})">${c}</button>`).join('');
 }
@@ -219,7 +209,6 @@ function goHome(){
  renderGrid();
 }
 
-// ===== التلوين =====
 function openPaint(i){
  curImg=i;curFill=fills[i]||IMGS[i].s.map(()=>null);
  document.getElementById('homeScr').style.display='none';
@@ -251,13 +240,13 @@ function speakCur(){speak(IMGS[curImg].n[0],0)}
 function checkDone(){
  const colorable=curFill.filter((f,i)=>IMGS[curImg].s[i][0]!='l');
  if(colorable.length&&colorable.every(f=>f&&f!='#ffffff')){
-  document.getElementById('celeb').style.display='flex';
+  document.getElementById('celeb').classList.add('show');
   document.getElementById('celebWord').textContent=IMGS[curImg].n.join(' • ');
   confetti();speak('أحسنت! عمل رائع!',0);
   setTimeout(()=>IMGS[curImg].n.forEach((w,i)=>setTimeout(()=>speak(w,i),1200*(i+1))),500);
  }
 }
-function closeCeleb(){document.getElementById('celeb').style.display='none';closePaint()}
+function closeCeleb(){document.getElementById('celeb').classList.remove('show');closePaint()}
 function closePaint(){document.getElementById('paintScr').style.display='none';goHome()}
 function confetti(){
  const em=['🎉','⭐','🎈','💛','💚','','❤️'];
@@ -269,7 +258,6 @@ function confetti(){
  }
 }
 
-// ===== الكراس التعليمي =====
 let quizAns=null;
 function goQuiz(){
  document.getElementById('homeScr').style.display='none';
