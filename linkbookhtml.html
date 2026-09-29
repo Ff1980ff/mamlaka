@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📒 دفتر الروابط الذهبي - مملكة التطبيقات</title>
+    <!-- استيراد خط عربي جميل -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a; /* خلفية داكنة فاخرة */
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --accent-green: #10b981; /* جاهز للنشر */
+            --accent-yellow: #f59e0b; /* يحتاج عمل */
+            --accent-red: #ef4444;   /* منشور/راقب */
+            --accent-blue: #3b82f6;  /* علامة تجارية */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(to left, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* شبكة البطاقات */
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        @media (min-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+        }
+
+        /* تصميم البطاقة الواحدة */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, border-color 0.2s;
+            position: relative;
+            overflow: hidden;
+            border-right: 5px solid transparent; /* شريط اللون الجانبي */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ألوان الحالات */
+        .status-ready { border-right-color: var(--accent-green); }
+        .status-work { border-right-color: var(--accent-yellow); }
+        .status-monitor { border-right-color: var(--accent-red); }
+        .status-brand { border-right-color: var(--accent-blue); }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge.ready { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .badge.work { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); }
+        .badge.monitor { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .badge.brand { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .platform-tag {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .notes-section {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            margin-bottom: 15px;
+            min-height: 60px;
+        }
+
+        .note-title {
+            color: #94a3b8;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+
+        /* أزرار النسخ */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        button.copy-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        button.copy-short { background-color: var(--accent-green); color: white; }
+        button.copy-original { background-color: #475569; color: white; }
+        
+        button:hover { opacity: 0.9; }
+        button:active { transform: scale(0.98); }
+
+        /* رسالة النجاح العائمة */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            bottom: 30px;
+            right: 30px;
+            font-size: 17px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-left: 5px solid var(--accent-green);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📒 دفتر الروابط الذهبي</h1>
+        <p class="subtitle">مملكة التطبيقات | نظام إدارة المنتجات والتسويق الذكي</p>
+    </header>
+
+    <div class="grid">
+        
+        <!-- بطاقة 1: المتجر الرئيسي (جاهز) -->
+        <div class="card status-ready">
+            <span class="badge ready">🟢 جاهز للنشر</span>
+            <div class="product-name">متجر Sellix الرئيسي</div>
+            <div class="platform-tag">ShrinkMe.io</div>
+            
+            <div class="notes-section">
+                <span class="note-title">💡 التعليمات:</span>
+                ابدأ به أولاً لجذب الزوار للتصفح.
+                <br><strong>النص المقترح:</strong> "شاهد الكتالوج الكامل بخصم الإطلاق!"
+            </div>
+
+            <div class="actions">
+                <button class="copy-btn copy-short" onclick="copyText('https://shrinkme.click/xBRYF')">نسخ المختصر 🔗</button>
+                <button class="copy-btn copy-original" onclick="copyText('https://falcon-apps-1.sellix.cx')">نسخ الأصلي 📄</button>
+            </div>
+        </div>
+
+        <!-- بطاقة 2: استوديو الطهاة (يحتاج عمل) -->
+        <div class="card status-work">
+            <span class="badge work">🟡 يحتاج اختصار</span>
+            <div class="product-name">استوديو الطهاة الملكي</div>
+            <div class="platform-tag">Exe / ShrinkMe</div>
+            
+            <div class="notes-section">
+                <span class="note-title">⚠️ ملاحظة هامة:</span>
+                السعر $4.99. الميزة: تسجيل صوت/فيديو.
+                <br>يجب توليد رابط مختصر لهذا المنتج تحديداً اليوم.
+            </div>
+
+            <div class="actions">
+                <button class="copy-btn copy-short" style="background:#475569;" disabled>الرابط غير متاح بعد</button>
+                <button class="copy-btn copy-original" onclick="copyText('https://ff1980ff.github.io/mamlaka/recipestudiohtml.html')">نسخ الرابط الخام 📄</button>
+            </div>
+        </div>
+
+        <!-- بطاقة 3: Swagbucks (مراقبة) -->
+        <div class="card status-monitor">
+            <span class="badge monitor">🔴 راقب الأداء</span>
+            <div class="product-name">Swagbucks (ربح سريع)</div>
+            <div class="platform-tag">Exe.io</div>
+            
+            <div class="notes-section">
+                <span class="note-title">🛑 تنبيه:</span>
+                لا تضغط عليه بنفسك كثيراً لتجنب الحظر.
+                <br>راقب الإحصائيات مساءً فقط.
+            </div>
+
+            <div class="actions">
+                <button class="copy-btn copy-short" onclick="copyText('https://exe.io/V9nt2bNG')">نسخ المختصر 🔗</button>
+                <button class="copy-btn copy-original" onclick="copyText('www.swagbucks.com/register?...')">نسخ الأصلي 📄</button>
+            </div>
+        </div>
+
+        <!-- بطاقة 4: منظومة توازن (علامة تجارية) -->
+        <div class="card status-brand">
+            <span class="badge brand">🔵 بناء الثقة</span>
+            <div class="product-name">منظومة توازن (GitHub)</div>
+            <div class="platform-tag">Exe.io</div>
+            
+            <div class="notes-section">
+                <span class="note-title">👨‍💻 الجمهور المستهدف:</span>
+                المطورين ومصممي الويب.
+                <br>الغرض: إثبات الخبرة وليس البيع المباشر.
+            </div>
+
+            <div class="actions">
+                <button class="copy-btn copy-short" onclick="copyText('(ضع رابط الاختصار هنا إذا وجدته)')">نسخ المختصر 🔗</button>
+                <button class="copy-btn copy-original" onclick="copyText('https://ff1980ff.github.io/mamlaka/index.html')">نسخ الأصلي 📄</button>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        &copy; 2026 مملكة التطبيقات | جميع الحقوق محفوظة
+    </footer>
+</div>
+
+<!-- عنصر الإشعار عند النسخ -->
+<div id="toast">تم نسخ الرابط بنجاح! ✅</div>
+
+<script>
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast();
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            alert("حدث خطأ في النسخ، حاول يدوياً.");
+        });
+    }
+
+    function showToast() {
+        var x = document.getElementById("toast");
+        x.className = "show";
+        setTimeout(function(){ 
+            x.className = x.className.replace("show", ""); 
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
