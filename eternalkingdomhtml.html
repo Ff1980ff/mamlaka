@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 المملكة الخالدة | نظام الإدارة الرقمي</title>
+    
+    <!-- خطوط احترافية -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة الأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-primary: #050505;
+            --bg-secondary: #0a0a12;
+            --glass-bg: rgba(20, 20, 35, 0.6);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --neon-gold: #ffd700;
+            --neon-cyan: #00ffff;
+            --neon-purple: #bc13fe;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --success: #00ff88;
+            --danger: #ff4444;
+            --font-tech: 'Orbitron', sans-serif;
+            --font-body: 'Tajawal', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* خلفية متحركة ذكية (Particles & Gradients) */
+        .cyber-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+        }
+        .grid-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(0deg); } 100% { transform: perspective(500px) rotateX(0deg) translateY(-50px); } }
+
+        /* الهيدر الرئيسي */
+        header {
+            padding: 20px; text-align: center; backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-area h1 {
+            font-family: var(--font-tech);
+            font-size: 1.5rem;
+            background: linear-gradient(to right, var(--neon-gold), var(--neon-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .controls button {
+            background: transparent; border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan); padding: 8px 15px; border-radius: 5px;
+            cursor: pointer; transition: all 0.3s; font-family: var(--font-tech);
+            margin-left: 10px;
+        }
+        .controls button:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+
+        /* شبكة البطاقات (Glassmorphism + 3D) */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px; padding: 30px; max-width: 1400px; margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.3s;
+            overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+            transform: translateX(-100%); transition: transform 0.5s;
+        }
+        .card:hover::before { transform: translateX(100%); }
+        .card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px var(--card-accent); border-color: var(--card-accent); }
+
+        /* ألوان الحالات الديناميكية */
+        .status-ready { --card-accent: var(--success); }
+        .status-work { --card-accent: var(--neon-gold); }
+        .status-monitor { --card-accent: var(--danger); }
+        .status-brand { --card-accent: var(--neon-purple); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .icon-badge {
+            width: 50px; height: 50px; border-radius: 12px;
+            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: var(--card-accent); border: 1px solid var(--card-accent);
+            box-shadow: 0 0 10px var(--card-accent);
+        }
+        .product-title { font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 5px; }
+        .platform-tag { font-size: 0.8rem; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px; }
+
+        .notes-box {
+            background: rgba(0,0,0,0.2); border-right: 3px solid var(--card-accent);
+            padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0;
+            font-size: 0.9rem; line-height: 1.6; color: #ddd;
+        }
+
+        .action-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-action {
+            flex: 1; padding: 12px; border: none; border-radius: 8px;
+            font-family: var(--font-body); font-weight: bold; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-copy-short { background: var(--card-accent); color: #000; }
+        .btn-open-link { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); }
+        .btn-edit { background: rgba(255,255,255,0.1); color: #fff; }
+        
+        .btn-action:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .btn-action:active { transform: scale(0.98); }
+
+        /* نافذة التعديل (Modal) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: var(--bg-secondary); border: 1px solid var(--neon-cyan);
+            padding: 30px; border-radius: 15px; width: 90%; max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; color: var(--neon-cyan); font-size: 0.9rem; }
+        .form-input {
+            width: 100%; padding: 10px; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color); color: #fff; border-radius: 5px;
+            font-family: var(--font-body);
+        }
+        .form-input:focus { outline: none; border-color: var(--neon-cyan); }
+
+        /* إشعار النجاح (Toast) */
+        #toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 2000; }
+        .toast-msg {
+            background: var(--bg-secondary); border-left: 4px solid var(--success);
+            color: #fff; padding: 15px 25px; margin-top: 10px; border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+            display: flex; align-items: center; gap: 10px;
+        }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        /* وضع العرض التقديمي */
+        body.presentation-mode .header, body.presentation-mode .controls, body.presentation-mode .notes-box, body.presentation-mode .btn-edit { display: none !important; }
+        body.presentation-mode .dashboard-grid { grid-template-columns: 1fr; }
+        body.presentation-mode .card { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        body.presentation-mode .product-title { font-size: 3rem; }
+        body.presentation-mode .icon-badge { width: 100px; height: 100px; font-size: 3rem; }
+
+    </style>
+</head>
+<body>
+
+<div class="cyber-bg"><div class="grid-overlay"></div></div>
+
+<header>
+    <div class="logo-area">
+        <h1><i class="fas fa-crown"></i> المملكة الخالدة</h1>
+        <small style="color:var(--text-muted)">Eternal Kingdom OS v1.0</small>
+    </div>
+    <div class="controls">
+        <button onclick="togglePresentation()"><i class="fas fa-desktop"></i> عرض تقديمي</button>
+        <button onclick="openAddModal()" style="border-color:var(--neon-gold); color:var(--neon-gold)"><i class="fas fa-plus"></i> إضافة رابط</button>
+    </div>
+</header>
+
+<main class="dashboard-grid" id="linksContainer">
+    <!-- سيتم حقن البطاقات هنا بواسطة JavaScript -->
+</main>
+
+<!-- Modal لإضافة/تعديل رابط -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:20px; color:var(--neon-cyan)"><i class="fas fa-edit"></i> إدارة الرابط</h2>
+        <input type="hidden" id="editId">
+        <div class="form-group">
+            <label class="form-label">اسم المنتج / الغرض</label>
+            <input type="text" id="inpName" class="form-input" placeholder="مثال: استوديو الطهاة">
+        </div>
+        <div class="form-group">
+            <label class="form-label">الرابط الأصلي (Target URL)</label>
+            <input type="url" id="inpOriginal" class="form-input" placeholder="https://...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">الرابط المختصر (Shortened URL)</label>
+            <input type="url" id="inpShort" class="form-input" placeholder="https://shrinkme...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">الحالة / اللون</label>
+            <select id="inpStatus" class="form-input">
+                <option value="ready">🟢 جاهز للنشر</option>
+                <option value="work">🟡 يحتاج عمل</option>
+                <option value="monitor">🔴 مراقبة</option>
+                <option value="brand">🔵 علامة تجارية</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">ملاحظات وتعليمات</label>
+            <textarea id="inpNotes" class="form-input" rows="3" placeholder="اكتب النص التسويقي هنا..."></textarea>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn-action btn-copy-short" style="flex:2" onclick="saveLink()">حفظ التغييرات</button>
+            <button class="btn-action btn-open-link" style="flex:1" onclick="closeModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+    // البيانات الافتراضية (يمكن تعديلها أو حذفها لاحقاً عبر الواجهة)
+    let linksData = [
+        {
+            id: 1,
+            name: "متجر Sellix الرئيسي",
+            originalUrl: "https://falcon-apps-1.sellix.cx",
+            shortUrl: "https://shrinkme.click/xBRYF",
+            status: "ready",
+            notes: "ابدأ به أولاً لجذب الزوار للتصفح.\nالنص المقترح: \"شاهد الكتالوج الكامل بخصم الإطلاق!\"",
+            icon: "fa-store"
+        },
+        {
+            id: 2,
+            name: "استوديو الطهاة الملكي",
+            originalUrl: "https://ff1980ff.github.io/mamlaka/recipestudiohtml.html",
+            shortUrl: "", // فارغ لأننا لم نختصره بعد
+            status: "work",
+            notes: "السعر $4.99. الميزة: تسجيل صوت/فيديو.\nيجب توليد رابط مختصر لهذا المنتج تحديداً اليوم.",
+            icon: "fa-utensils"
+        },
+        {
+            id: 3,
+            name: "Swagbucks (ربح سريع)",
+            originalUrl: "www.swagbucks.com/register?...",
+            shortUrl: "https://exe.io/V9nt2bNG",
+            status: "monitor",
+            notes: "لا تضغط عليه بنفسك كثيراً لتجنب الحظر.\nراقب الإحصائيات مساءً فقط.",
+            icon: "fa-coins"
+        },
+        {
+            id: 4,
+            name: "منظومة توازن (GitHub)",
+            originalUrl: "https://ff1980ff.github.io/mamlaka/index.html",
+            shortUrl: "(ضع رابط الاختصار هنا)",
+            status: "brand",
+            notes: "الجمهور المستهدف: المطورين ومصممي الويب.\nالغرض: إثبات الخبرة وليس البيع المباشر.",
+            icon: "fa-code"
+        }
+    ];
+
+    const container = document.getElementById('linksContainer');
+    const modal = document.getElementById('editModal');
+
+    // تحميل البيانات من LocalStorage إن وجدت
+    const savedData = localStorage.getItem('kingdomLinks');
+    if(savedData) {
+        try { linksData = JSON.parse(savedData); } catch(e){}
+    }
+
+    function renderCards() {
+        container.innerHTML = '';
+        linksData.forEach(link => {
+            const card = document.createElement('div');
+            card.className = `card status-${link.status}`;
+            card.setAttribute('data-id', link.id);
+            
+            // تأثير الميلان 3D عند حركة الماوس
+            card.addEventListener('mousemove', handleTilt);
+            card.addEventListener('mouseleave', resetTilt);
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <div class="product-title">${link.name}</div>
+                        <span class="platform-tag">${getStatusText(link.status)}</span>
+                    </div>
+                    <div class="icon-badge"><i class="fas ${link.icon || 'fa-link'}"></i></div>
+                </div>
+                
+                <div class="notes-box">
+                    ${link.notes.replace(/\n/g, '<br>')}
+                </div>
+
+                <div class="action-row">
+                    <button class="btn-action btn-copy-short" onclick="copyToClipboard('${link.shortUrl}', 'الرابط المختصر')">
+                        <i class="fas fa-bolt"></i> نسخ المختصر
+                    </button>
+                    <button class="btn-action btn-open-link" onclick="window.open('${link.originalUrl}', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> فتح الأصلي
+                    </button>
+                    <button class="btn-action btn-edit" onclick="editLink(${link.id})">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function getStatusText(status) {
+        switch(status) {
+            case 'ready': return '🟢 جاهز';
+            case 'work': return '🟡 قيد العمل';
+            case 'monitor': return '🔴 مراقبة';
+            case 'brand': return '🔵 براند';
+            default: return '⚪ غير معروف';
+        }
+    }
+
+    // دوال النسخ والإشعارات
+    function copyToClipboard(text, label) {
+        if(!text || text.includes("ضع")) {
+            showToast("الرابط غير متاح حالياً!", "error");
+            return;
+        }
+        navigator.clipboard.writeText(text).then(() => {
+            playSound(); // صوت نجاح
+            showToast(`تم نسخ ${label} بنجاح! ✅`, "success");
+        }).catch(err => {
+            showToast("فشل النسخ، حاول يدوياً.", "error");
+        });
+    }
+
+    function showToast(msg, type) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.style.borderLeftColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+        toast.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-triangle'}"></i> ${msg}`;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // أصوات بسيطة (Web Audio API) لعدم الاعتماد على ملفات خارجية
+    function playSound() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+    }
+
+    // إدارة النوافذ (CRUD)
+    function openAddModal() {
+        document.getElementById('editId').value = "";
+        document.getElementById('inpName').value = "";
+        document.getElementById('inpOriginal').value = "";
+        document.getElementById('inpShort').value = "";
+        document.getElementById('inpStatus').value = "ready";
+        document.getElementById('inpNotes').value = "";
+        modal.style.display = 'flex';
+    }
+
+    function editLink(id) {
+        const link = linksData.find(l => l.id == id);
+        if(link) {
+            document.getElementById('editId').value = link.id;
+            document.getElementById('inpName').value = link.name;
+            document.getElementById('inpOriginal').value = link.originalUrl;
+            document.getElementById('inpShort').value = link.shortUrl;
+            document.getElementById('inpStatus').value = link.status;
+            document.getElementById('inpNotes').value = link.notes;
+            modal.style.display = 'flex';
+        }
+    }
+
+    function saveLink() {
+        const id = document.getElementById('editId').value;
+        const newName = document.getElementById('inpName').value;
+        const newOrig = document.getElementById('inpOriginal').value;
+        const newShort = document.getElementById('inpShort').value;
+        const newStat = document.getElementById('inpStatus').value;
+        const newNotes = document.getElementById('inpNotes').value;
+
+        if(!newName || !newOrig) {
+            alert("الرجاء إدخال الاسم والرابط الأصلي!");
+            return;
+        }
+
+        if(id) {
+            // Update existing
+            const index = linksData.findIndex(l => l.id == id);
+            linksData[index] = { ...linksData[index], name: newName, originalUrl: newOrig, shortUrl: newShort, status: newStat, notes: newNotes };
+        } else {
+            // Add new
+            const newId = Date.now();
+            linksData.push({ id: newId, name: newName, originalUrl: newOrig, shortUrl: newShort, status: newStat, notes: newNotes, icon: 'fa-star' });
+        }
+
+        localStorage.setItem('kingdomLinks', JSON.stringify(linksData));
+        closeModal();
+        renderCards();
+        showToast("تم حفظ التحديثات في ذاكرة المملكة!", "success");
+    }
+
+    function closeModal() { modal.style.display = 'none'; }
+
+    // تأثيرات 3D
+    function handleTilt(e) {
+        const card = e.currentTarget;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -5; // Max rotation deg
+        const rotateY = ((x - centerX) / centerX) * 5;
+        card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+    function resetTilt(e) {
+        e.currentTarget.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    }
+
+    // وضع العرض التقديمي
+    function togglePresentation() {
+        document.body.classList.toggle('presentation-mode');
+        if(document.body.classList.contains('presentation-mode')) {
+            showToast("وضع العرض التقديمي مفعل. اضغط ESC للخروج.", "info");
+            document.addEventListener('keydown', escHandler);
+        } else {
+            document.removeEventListener('keydown', escHandler);
+        }
+    }
+    function escHandler(e) {
+        if(e.key === 'Escape') togglePresentation();
+    }
+
+    // التشغيل الأولي
+    renderCards();
+
+</script>
+</body>
+</html>
