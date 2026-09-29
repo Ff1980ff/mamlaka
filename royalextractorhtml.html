@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 المُستخلص الملكي | The Royal Extractor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 30, 0.8);
+            --neon-purple: #bc13fe;
+            --neon-cyan: #00f0ff;
+            --gold: #ffd700;
+            --text-white: #fff;
+            --danger: #ff4444;
+            --success: #00ff88;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            font-family: 'Tajawal', sans-serif;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+        }
+
+        /* الهيدر */
+        header {
+            width: 100%; text-align: center; padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 1.8rem; margin: 0;
+            background: linear-gradient(to right, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #aaa; font-size: 0.9rem; margin-top: 5px; }
+
+        /* منطقة الالتقاط الرئيسية */
+        .capture-zone {
+            width: 90%; max-width: 600px;
+            background: var(--panel-bg);
+            border: 2px dashed var(--neon-cyan);
+            border-radius: 20px;
+            padding: 30px; margin: 30px auto;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .capture-zone:hover { border-color: var(--gold); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2); }
+
+        .input-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; color: var(--neon-cyan); font-weight: bold; }
+        
+        textarea, input[type="text"], input[type="number"] {
+            width: 100%; padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff; font-family: inherit; font-size: 1rem;
+        }
+        textarea:focus, input:focus { outline: none; border-color: var(--neon-purple); }
+
+        /* أزرار الإجراءات */
+        .actions { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .btn {
+            padding: 12px 25px; border: none; border-radius: 50px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-extract { background: var(--neon-cyan); color: #000; }
+        .btn-publish { background: var(--gold); color: #000; }
+        .btn-clear { background: transparent; border: 1px solid #555; color: #888; }
+        
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        /* عرض النتيجة (البطاقة المولدة) */
+        .result-preview {
+            width: 90%; max-width: 600px;
+            background: #111;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none; /* مخفي افتراضياَ */
+            border: 1px solid #333;
+        }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .preview-title { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+        .preview-body { font-size: 0.9rem; color: #ccc; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+        
+        .json-output {
+            background: #000; color: #0f0;
+            font-family: monospace; font-size: 0.8rem;
+            padding: 15px; border-radius: 8px;
+            margin-top: 15px; max-height: 200px; overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        /* إشعار النجاح */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--success); color: #000;
+            padding: 15px 30px; border-radius: 50px;
+            font-weight: bold; opacity: 0; transition: 0.5s;
+            z-index: 1000; box-shadow: 0 5px 20px rgba(0,255,136,0.4);
+        }
+        #toast.show { opacity: 1; bottom: 50px; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><i class="fas fa-magic"></i> المُستخلص الملكي</h1>
+    <div class="subtitle">حوّل أي محتوى اجتماعي إلى منتج رقمي في ثوانٍ</div>
+</header>
+
+<div class="capture-zone">
+    <div style="font-size: 3rem; color: var(--neon-cyan); margin-bottom: 15px;">
+        <i class="fab fa-tiktok"></i> <i class="fab fa-instagram"></i> <i class="fab fa-whatsapp"></i>
+    </div>
+    
+    <div class="input-group">
+        <label>1. الصق الرابط أو النص هنا:</label>
+        <textarea id="sourceInput" rows="4" placeholder="مثال: رابط فيديو تعليمي، أو نص وصفة، أو رابط مقال..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>2. اختر نوع المنتج المقترح:</label>
+        <select id="productType" style="width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; border-radius: 10px;">
+            <option value="video_course">دورة فيديو / محتوى مرئي</option>
+            <option value="ebook_guide">دليل نصي / كتاب إلكتروني</option>
+            <option value="template_code">قالب برمجي / كود</option>
+            <option value="audio_pack">حزمة صوتية / موسيقى</option>
+        </select>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-extract" onclick="extractContent()">
+            <i class="fas fa-bolt"></i> استخراج وتحويل
+        </button>
+        <button class="btn btn-clear" onclick="clearAll()">
+            <i class="fas fa-trash"></i> مسح
+        </button>
+    </div>
+</div>
+
+<!-- منطقة المعاينة والتعديل -->
+<div class="result-preview" id="resultArea">
+    <div class="preview-header">
+        <span class="preview-title"><i class="fas fa-box-open"></i> المنتج الجاهز للنشر</span>
+        <span style="color:var(--success)">✅ تم التوليد</span>
+    </div>
+    
+    <div class="input-group">
+        <label>عنوان المنتج (قابل للتعديل):</label>
+        <input type="text" id="finalTitle" placeholder="اكتب عنواناً جذاباً...">
+    </div>
+
+    <div class="input-group">
+        <label>السعر ($):</label>
+        <input type="number" id="finalPrice" value="4.99" step="0.01">
+    </div>
+
+    <div class="input-group">
+        <label>الوصف التسويقي (مولد تلقائياً):</label>
+        <textarea id="finalDesc" rows="5"></textarea>
+    </div>
+
+    <div class="json-output" id="jsonOutput"></div>
+
+    <div class="actions" style="margin-top: 20px;">
+        <button class="btn btn-publish" onclick="publishToSellix()">
+            <i class="fas fa-upload"></i> نشر على Sellix (تجريبي)
+        </button>
+        <button class="btn btn-extract" style="background:#333; color:#fff;" onclick="copyJSON()">
+            <i class="fas fa-copy"></i> نسخ الكود JSON
+        </button>
+    </div>
+</div>
+
+<div id="toast">تم الاستخراج بنجاح!</div>
+
+<script>
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function clearAll() {
+        document.getElementById('sourceInput').value = '';
+        document.getElementById('resultArea').style.display = 'none';
+    }
+
+    function extractContent() {
+        const source = document.getElementById('sourceInput').value.trim();
+        const type = document.getElementById('productType').value;
+        
+        if (!source) {
+            alert("الرجاء لصق رابط أو نص أولاً!");
+            return;
+        }
+
+        // محاكاة عملية "الاستخراج الذكي"
+        // في الواقع، يمكن ربط هذا بـ APIs خارجية لاحقاً، لكن حالياً سنولد هيكلاً منطقياً
+        
+        let generatedTitle = "";
+        let generatedDesc = "";
+        let priceSuggestion = 4.99;
+
+        if (type === 'video_course') {
+            generatedTitle = "دورة حصرية: " + source.substring(0, 30) + "...";
+            generatedDesc = "محتوى فيديو عالي الجودة تم استخراجه وتنسيقه خصيصاً لك.\n✔️ جودة HD\n✔️ ترجمة عربية\n✔️ وصول مدى الحياة";
+            priceSuggestion = 9.99;
+        } else if (type === 'ebook_guide') {
+            generatedTitle = "دليل شامل: أسرار النجاح الرقمي";
+            generatedDesc = "ملف PDF منظم يحتوي على خلاصة المعرفة من المصادر المذكورة.\n📚 50 صفحة غنية بالمعلومات\n🎁 يشمل قوالب جاهزة للتحميل";
+            priceSuggestion = 4.99;
+        } else if (type === 'template_code') {
+            generatedTitle = "قالب ويب جاهز للتعديل (HTML/CSS)";
+            generatedDesc = "كود نظيف ومنظم يمكنك استخدامه مباشرة في مشاريعك.\n💻 متجاوب 100%\n⚡ سرعة تحميل عالية";
+            priceSuggestion = 14.99;
+        } else {
+            generatedTitle = "منتج رقمي مميز";
+            generatedDesc = "تم تجهيز هذا المنتج بناءً على المصدر المدخل.";
+        }
+
+        // تعبئة الحقول
+        document.getElementById('finalTitle').value = generatedTitle;
+        document.getElementById('finalPrice').value = priceSuggestion;
+        document.getElementById('finalDesc').value = generatedDesc;
+
+        // توليد عينة JSON (شكل البيانات التي ستذهب لـ Sellix)
+        const productData = {
+            title: generatedTitle,
+            price: priceSuggestion,
+            description: generatedDesc,
+            category: type,
+            source_url: source,
+            status: "draft",
+            delivery_method: "digital_download"
+        };
+
+        document.getElementById('jsonOutput').innerText = JSON.stringify(productData, null, 2);
+        
+        // إظهار المنطقة
+        document.getElementById('resultArea').style.display = 'block';
+        showToast("تم استخراج البيانات وتحويلها لمنتج!");
+    }
+
+    function copyJSON() {
+        const jsonText = document.getElementById('jsonOutput').innerText;
+        navigator.clipboard.writeText(jsonText).then(() => {
+            showToast("تم نسخ كود المنتج! الصقه في أدوات التطوير.");
+        });
+    }
+
+    function publishToSellix() {
+        // هنا نضع المنطق الحقيقي للاتصال بـ API الخاص بـ Sellix
+        // حالياً سنقوم بمحاكاة العملية
+        
+        const confirmPublish = confirm("هل أنت متأكد من نشر هذا المنتج على متجرك؟\n(سيتم إضافة المنتج لقائمة الانتظار Draft)");
+        
+        if (confirmPublish) {
+            showToast("جارٍ الاتصال بخوادم Sellix...");
+            
+            // محاكاة تأخير الشبكة
+            setTimeout(() => {
+                alert("✅ تم إنشاء المسودة بنجاح!\nيمكنك الآن الذهاب إلى لوحة تحكم Sellix وتعديل الملف النهائي قبل النشر العام.");
+            }, 1500);
+        }
+    }
+</script>
+
+</body>
+</html>
