@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🎨 مملكة التلوين التعليمية</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(160deg,#fef9c3 0%,#bbf7d0 50%,#bfdbfe 100%);min-height:100vh;color:#1e293b;padding-bottom:30px}
+header{background:linear-gradient(135deg,#ff6b6b,#feca57,#48dbfb);padding:16px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,.15);position:sticky;top:0;z-index:50}
+header h1{color:#fff;font-size:22px;text-shadow:2px 2px 4px rgba(0,0,0,.3)}
+header p{color:#fff;font-size:12px;margin-top:4px;text-shadow:1px 1px 2px rgba(0,0,0,.3)}
+.tabs{display:flex;justify-content:center;gap:10px;margin:15px 10px}
+.tab{border:none;border-radius:99px;padding:12px 22px;font-size:15px;font-weight:bold;cursor:pointer;background:#fff;color:#475569;box-shadow:0 3px 8px rgba(0,0,0,.1);transition:.2s}
+.tab.on{background:#8338ec;color:#fff;transform:scale(1.05)}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:5px 12px;justify-content:flex-start}
+.cat{border:none;border-radius:99px;padding:8px 16px;font-size:13px;font-weight:bold;cursor:pointer;background:#fff;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.08)}
+.cat.on{background:#06d6a0;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;max-width:600px;margin:auto}
+.card{background:#fff;border-radius:16px;padding:8px;box-shadow:0 4px 10px rgba(0,0,0,.1);cursor:pointer;transition:.2s;text-align:center;position:relative}
+.card:active{transform:scale(.95)}
+.card svg{width:100%;height:auto}
+.card .nm{font-size:12px;font-weight:bold;color:#334155;margin-top:4px}
+.card .done{position:absolute;top:4px;left:4px;font-size:16px}
+/* شاشة التلوين */
+#paintScr{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#fef9c3,#bbf7d0);z-index:60;overflow-y:auto;padding-bottom:30px}
+.topbar{display:flex;gap:8px;padding:10px;align-items:center;position:sticky;top:0;background:rgba(255,255,255,.9);z-index:5}
+.topbar button{border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:bold;cursor:pointer}
+.backB{background:#e63946;color:#fff}
+.toolB{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+#paintSvgWrap{background:#fff;border-radius:20px;margin:8px 12px;box-shadow:0 6px 20px rgba(0,0,0,.12);padding:6px}
+#paintSvgWrap svg{width:100%;height:auto;display:block}
+#paintSvgWrap .tap{cursor:pointer}
+.palette{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px}
+.pal{width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;transition:.15s}
+.pal.on{transform:scale(1.25);border-color:#1e293b}
+/* السبورة */
+.board{background:#14532d;border:6px solid #92400e;border-radius:16px;margin:10px 14px;padding:14px;box-shadow:inset 0 0 20px rgba(0,0,0,.4)}
+.board h3{color:#fde047;text-align:center;font-size:14px;margin-bottom:10px}
+.brow{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px dashed rgba(255,255,255,.2)}
+.brow:last-child{border:none}
+.brow .fl{font-size:20px}
+.brow .wd{flex:1;color:#fff;font-size:19px;font-weight:bold;text-align:left;direction:ltr;font-family:'Comic Sans MS',cursive}
+.brow .sp{border:none;background:#fde047;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer}
+/* الكراس التعليمي */
+#quizScr{display:none;max-width:600px;margin:auto;padding:12px}
+.qbox{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,.12);text-align:center}
+.qbox h2{font-size:18px;color:#8338ec;margin-bottom:6px}
+.qbox .stars{font-size:22px;margin:6px 0}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.qopt{background:#f8fafc;border:3px solid #e2e8f0;border-radius:16px;padding:8px;cursor:pointer;transition:.15s}
+.qopt:active{transform:scale(.95)}
+.qopt.right{border-color:#2dc653;background:#d1fae5;animation:pop .4s}
+.qopt.wrong{border-color:#e63946;background:#fee2e2;animation:shake .4s}
+@keyframes pop{50%{transform:scale(1.08)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.langPick{display:flex;justify-content:center;gap:8px;margin:10px 0}
+.langPick button{border:none;border-radius:99px;padding:8px 14px;font-size:16px;cursor:pointer;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+.langPick button.on{background:#3a86ff;color:#fff}
+/* احتفال */
+#celeb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;align-items:center;justify-content:center}
+#celeb .box{background:#fff;border-radius:24px;padding:30px;text-align:center;animation:pop .5s;max-width:300px}
+#celeb .big{font-size:60px}
+#celeb h2{color:#8338ec;margin:10px 0}
+#celeb button{border:none;border-radius:99px;padding:12px 30px;background:#2dc653;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
+.confetti{position:fixed;top:-20px;font-size:22px;z-index:100;animation:fall linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+</style>
+</head>
+<body>
+<header><h1>🎨 مملكة التلوين التعليمية</h1><p>50 صورة • 4 لغات • نطق صوتي • كراس تعليمي</p></header>
+
+<div class="tabs">
+ <button class="tab on" onclick="goHome()">🖼️ لوّن وتعلّم</button>
+ <button class="tab" onclick="goQuiz()">📚 الكراس التعليمي</button>
+</div>
+
+<div id="homeScr">
+ <div class="cats" id="cats"></div>
+ <div class="grid" id="grid"></div>
+</div>
+
+<div id="quizScr">
+ <div class="qbox">
+  <h2>📚 الكراس التعليمي - اختر الصورة الصحيحة!</h2>
+  <div class="langPick" id="langPick"></div>
+  <button class="toolB" style="border:none;border-radius:12px;padding:12px 24px;font-size:16px;font-weight:bold;cursor:pointer;background:#fde047" onclick="playQuizWord()">🔊 اسمع الكلمة</button>
+  <div class="stars" id="qStars">⭐ 0</div>
+  <div class="qopts" id="qOpts"></div>
+ </div>
+</div>
+
+<div id="paintScr">
+ <div class="topbar">
+  <button class="backB" onclick="closePaint()">🔙 رجوع</button>
+  <button class="toolB" onclick="resetPaint()">🧽 مسح</button>
+  <button class="toolB" onclick="autoFill()">🎲 لوّن لي</button>
+  <button class="toolB" onclick="speakCur()">🔊 انطق</button>
+ </div>
+ <div id="paintSvgWrap"></div>
+ <div class="palette" id="palette"></div>
+ <div class="board" id="board"></div>
+</div>
+
+<div id="celeb"><div class="box"><div class="big">🏆</div><h2>أحسنت! لوّنت الصورة كاملة!</h2><div id="celebWord" style="font-size:18px;font-weight:bold;color:#0f766e"></div><button onclick="closeCeleb()">🎨 صورة جديدة</button></div></div>
+
+<script>
+// ===== مكتبة الصور (50 صورة) =====
+// c=دائرة e=بيضوي r=مستطيل g=مضلع p=مسار l=خط(تفاصيل)
+const IMGS=[
+{n:['سمكة','Fish','Poisson','Fisch'],c:0,s:[['e',90,100,55,35],['g','145,100 182,72 182,128'],['g','85,68 110,45 118,72'],['c',62,92,6],['l','M40,60 q8,-8 0,-16'],['l','M55,45 q8,-8 0,-16']]},
+{n:['فراشة','Butterfly','Papillon','Schmetterling'],c:0,s:[['e',100,105,11,42],['e',63,75,32,26],['e',137,75,32,26],['e',68,132,26,20],['e',132,132,26,20],['l','M92,60 q-8,-18 -18,-22'],['l','M108,60 q8,-18 18,-22']]},
+{n:['قطة','Cat','Chat','Katze'],c:0,s:[['c',100,115,50],['g','58,82 70,38 92,70'],['g','108,70 130,38 142,82'],['c',83,105,6],['c',117,105,6],['e',100,125,8,5],['l','M60,120 l-25,-4'],['l','M60,130 l-25,6'],['l','M140,120 l25,-4'],['l','M140,130 l25,6']]},
+{n:['طائر','Bird','Oiseau','Vogel'],c:0,s:[['e',95,115,42,30],['c',140,78,24],['g','162,72 186,82 162,92'],['e',88,110,24,15],['c',146,72,4],['l','M60,140 l-20,10'],['l','M65,148 l-18,12']]},
+{n:['سلحفاة','Turtle','Tortue','Schildkröte'],c:0,s:[['e',100,100,52,36],['c',162,102,18],['r',68,130,20,16,8],['r',112,130,20,16,8],['c',100,95,13],['c',78,105,9],['c',122,105,9]]},
+{n:['أرنب','Rabbit','Lapin','Hase'],c:0,s:[['c',100,125,42],['e',78,62,13,38],['e',122,62,13,38],['e',78,65,6,26],['e',122,65,6,26],['c',86,118,5],['c',114,118,5],['e',100,132,7,5]]},
+{n:['نحلة','Bee','Abeille','Biene'],c:0,s:[['e',100,112,42,30],['e',78,70,22,14,-20],['e',122,70,22,14,20],['r',88,84,12,56,6],['r',110,86,12,52,6],['c',68,105,5],['l','M140,105 l18,-6'],['l','M140,118 l18,6']]},
+{n:['دعسوقة','Ladybug','Coccinelle','Marienkäfer'],c:0,s:[['c',100,115,46],['c',100,62,20],['c',84,105,9],['c',116,105,9],['c',100,135,9],['l','M100,70 l0,90'],['c',93,58,3],['c',107,58,3]]},
+{n:['حلزون','Snail','Escargot','Schnecke'],c:0,s:[['c',122,100,36],['c',122,100,18],['e',85,142,58,13],['c',42,118,15],['l','M36,105 l-6,-18'],['l','M48,105 l4,-18']]},
+{n:['سلطعون','Crab','Crabe','Krebs'],c:0,s:[['e',100,112,46,30],['c',52,68,16],['c',148,68,16],['c',87,98,6],['c',113,98,6],['l','M58,130 l-22,12'],['l','M70,138 l-16,16'],['l','M142,130 l22,12'],['l','M130,138 l16,16']]},
+{n:['تفاحة','Apple','Pomme','Apfel'],c:1,s:[['c',100,118,46],['r',96,52,8,22,4],['e',126,62,18,10,30],['e',84,102,9,14]]},
+{n:['موزة','Banana','Banane','Banane'],c:1,s:[['p','M58,50 Q42,140 122,155 Q152,158 162,144 Q142,150 118,142 Q66,124 70,52 Q70,44 58,50 Z'],['r',54,42,14,14,4]]},
+{n:['برتقالة','Orange','Orange','Orange'],c:1,s:[['c',100,112,46],['e',118,64,16,9,25],['l','M100,66 l0,10'],['e',84,98,8,12]]},
+{n:['عنب','Grapes','Raisin','Trauben'],c:1,s:[['c',80,92,17],['c',120,92,17],['c',100,112,17],['c',80,132,17],['c',120,132,17],['c',100,152,17],['r',97,42,7,26,3],['e',122,55,16,9,25]]},
+{n:['فراولة','Strawberry','Fraise','Erdbeere'],c:1,s:[['p','M100,165 Q52,122 58,88 Q80,72 100,78 Q120,72 142,88 Q148,122 100,165 Z'],['g','78,80 100,60 122,80 100,90'],['c',85,110,4],['c',115,110,4],['c',100,135,4]]},
+{n:['بطيخة','Watermelon','Pastèque','Wassermelone'],c:1,s:[['g','38,68 162,68 100,162'],['p','M38,68 Q100,52 162,68 L152,84 Q100,70 48,84 Z'],['c',85,95,4],['c',115,95,4],['c',100,120,4]]},
+{n:['إجاصة','Pear','Poire','Birne'],c:1,s:[['p','M100,52 Q114,80 130,106 Q146,142 100,152 Q54,142 70,106 Q86,80 100,52 Z'],['r',96,38,8,20,4],['e',122,50,16,9,25]]},
+{n:'كرز',c:1,s:[['c',78,132,24],['c',126,138,24],['l','M78,108 Q88,60 112,48'],['l','M126,114 Q120,70 112,48'],['e',124,46,16,9,20]]},
+{n:['ليمونة','Lemon','Citron','Zitrone'],c:1,s:[['e',100,110,48,36],['c',50,110,9],['c',150,110,9],['e',120,66,16,9,25]]},
+{n:['أناناس','Pineapple','Ananas','Ananas'],c:1,s:[['e',100,125,38,46],['g','100,78 84,38 100,55 116,38'],['g','82,84 58,56 86,68'],['g','118,84 142,56 114,68'],['l','M70,105 l60,40'],['l','M130,105 l-60,40']]},
+{n:['سيارة','Car','Voiture','Auto'],c:2,s:[['r',38,100,124,42,16],['r',68,68,64,38,14],['r',76,76,48,24,8],['c',70,146,17],['c',130,146,17],['c',70,146,7],['c',130,146,7]]},
+{n:['باص','Bus','Bus','Bus'],c:2,s:[['r',34,68,132,74,14],['r',44,80,32,26,7],['r',84,80,32,26,7],['r',124,80,32,26,7],['c',64,146,15],['c',136,146,15]]},
+{n:['قارب','Boat','Bateau','Boot'],c:2,s:[['g','38,118 162,118 138,162 62,162'],['g','98,38 98,112 52,112'],['g','104,44 104,112 150,112'],['r',97,32,6,84,3]]},
+{n:['طائرة','Airplane','Avion','Flugzeug'],c:2,s:[['e',100,110,56,19],['g','92,98 62,58 112,94'],['g','92,122 62,162 112,126'],['g','148,100 176,74 166,106'],['c',70,106,5],['c',88,106,5]]},
+{n:['صاروخ','Rocket','Fusée','Rakete'],c:2,s:[['p','M100,28 Q132,70 132,122 L68,122 Q68,70 100,28 Z'],['c',100,90,15],['g','68,122 46,154 68,148'],['g','132,122 154,154 132,148'],['g','84,146 100,178 116,146']]},
+{n:['منطاد','Balloon Ride','Montgolfière','Heißluftballon'],c:2,s:[['c',100,78,46],['l','M78,116 l10,34'],['l','M122,116 l-10,34'],['r',84,148,32,24,7],['p','M100,32 q-14,46 0,88'],['p','M100,32 q14,46 0,88']]},
+{n:['قطار','Train','Train','Zug'],c:2,s:[['r',38,90,72,52,10],['r',44,58,36,36,9],['r',92,64,12,28,5],['r',116,100,50,42,9],['c',58,146,13],['c',92,146,13],['c',140,146,13]]},
+{n:['شاحنة','Truck','Camion','Lastwagen'],c:2,s:[['r',34,68,82,64,9],['r',120,88,46,44,11],['r',128,96,28,19,6],['c',60,140,15],['c',140,140,15]]},
+{n:['مروحية','Helicopter','Hélicoptère','Hubschrauber'],c:2,s:[['e',95,110,42,26],['r',132,100,48,11,5],['r',58,68,84,7,3],['r',92,75,7,12,3],['c',85,104,11],['r',68,146,64,6,3],['l','M78,136 l0,10'],['l','M122,136 l0,10']]},
+{n:['غواصة','Submarine','Sous-marin','U-Boot'],c:2,s:[['e',100,122,56,26],['r',84,78,32,26,9],['l','M100,78 l0,-16 l14,0'],['c',74,122,9],['c',100,122,9],['c',126,122,9]]},
+{n:['شمس','Sun','Soleil','Sonne'],c:3,s:[['c',100,100,42],['c',100,25,11],['c',100,175,11],['c',25,100,11],['c',175,100,11],['c',47,47,11],['c',153,47,11],['c',47,153,11],['c',153,153,11]]},
+{n:['زهرة','Flower','Fleur','Blume'],c:3,s:[['e',100,56,16,25],['e',100,144,16,25],['e',56,100,25,16],['e',144,100,25,16],['e',70,70,20,13,45],['e',130,70,20,13,-45],['e',70,130,20,13,-45],['e',130,130,20,13,45],['c',100,100,19],['r',97,150,6,30,3]]},
+{n:['شجرة','Tree','Arbre','Baum'],c:3,s:[['c',100,78,46],['r',90,110,20,62,9],['c',80,68,8],['c',120,90,8],['c',100,52,8]]},
+{n:['نجمة','Star','Étoile','Stern'],c:3,s:[['g','100,28 118,78 172,80 128,112 144,166 100,134 56,166 72,112 28,80 82,78']]},
+{n:['قمر','Moon','Lune','Mond'],c:3,s:[['p','M125,32 A68,68 0 1,0 125,168 A54,54 0 1,1 125,32 Z'],['g','150,60 156,76 172,78 158,88 163,104 150,94 137,104 142,88 128,78 144,76']]},
+{n:['غيمة','Cloud','Nuage','Wolke'],c:3,s:[['c',70,105,26],['c',102,90,32],['c',134,105,26],['r',70,105,64,26,13],['e',70,152,6,11],['e',100,160,6,11],['e',130,152,6,11]]},
+{n:['قوس قزح','Rainbow','Arc-en-ciel','Regenbogen'],c:3,s:[['p','M28,145 A72,72 0 0,1 172,145 L150,145 A50,50 0 0,0 50,145 Z'],['p','M50,145 A50,50 0 0,1 150,145 L128,145 A28,28 0 0,0 72,145 Z'],['c',30,155,12],['c',170,155,12]]},
+{n:['فطر','Mushroom','Champignon','Pilz'],c:3,s:[['p','M38,100 Q100,26 162,100 Q100,122 38,100 Z'],['r',84,106,32,52,11],['c',78,78,9],['c',122,74,9],['c',100,95,7]]},
+{n:['ورقة','Leaf','Feuille','Blatt'],c:3,s:[['p','M100,36 Q154,82 100,164 Q46,82 100,36 Z'],['l','M100,50 L100,150'],['l','M100,80 l22,-12'],['l','M100,110 l-22,-12']]},
+{n:['قلب','Heart','Cœur','Herz'],c:3,s:[['p','M100,164 Q38,112 54,74 Q70,48 100,80 Q130,48 146,74 Q162,112 100,164 Z']]},
+{n:['بيت','House','Maison','Haus'],c:4,s:[['r',50,100,100,72,6],['g','38,100 100,42 162,100'],['r',88,126,24,46,5],['c',68,120,12],['c',132,120,12],['r',126,58,14,26,4]]},
+{n:['بالون','Balloon','Ballon','Luftballon'],c:4,s:[['e',100,78,36,44],['g','94,122 106,122 100,134'],['l','M100,134 Q88,152 100,172'],['e',88,62,8,13]]},
+{n:['هدية','Gift','Cadeau','Geschenk'],c:4,s:[['r',55,92,90,70,9],['r',47,74,106,24,7],['r',92,74,16,88,5],['e',84,62,15,11,-20],['e',116,62,15,11,20]]},
+{n:['بوظة','Ice Cream','Glace','Eis'],c:4,s:[['g','68,100 132,100 100,172'],['c',78,84,22],['c',122,84,22],['c',100,62,22],['c',100,40,9]]},
+{n:['كيك','Cupcake','Cupcake','Muffin'],c:4,s:[['g','58,112 142,112 130,168 70,168'],['p','M58,112 Q58,82 78,82 Q78,60 100,60 Q122,60 122,82 Q142,82 142,112 Z'],['c',100,50,10],['l','M80,120 l6,40'],['l','M100,120 l0,42'],['l','M120,120 l-6,40']]},
+{n:['مظلة','Umbrella','Parapluie','Regenschirm'],c:4,s:[['p','M38,100 Q100,26 162,100 Q146,88 131,100 Q116,88 100,100 Q84,88 69,100 Q54,88 38,100 Z'],['r',97,100,6,58,3],['p','M97,158 Q97,176 82,172']]},
+{n:['طيارة ورقية','Kite','Cerf-volant','Drachen'],c:4,s:[['g','100,28 152,92 100,156 48,92'],['l','M100,28 L100,156'],['l','M48,92 L152,92'],['l','M100,156 q-12,14 0,26 q12,12 0,26']]},
+{n:['كرة','Ball','Ballon','Ball'],c:4,s:[['c',100,100,52],['g','100,78 122,94 114,120 86,120 78,94'],['l','M100,48 l0,30'],['l','M52,84 l26,10'],['l','M148,84 l-26,10'],['l','M64,140 l22,-20'],['l','M136,140 l-22,-20']]},
+{n:['تاج','Crown','Couronne','Krone'],c:4,s:[['r',50,118,100,34,7],['g','50,118 64,66 84,118'],['g','84,118 100,56 116,118'],['g','116,118 136,66 150,118'],['c',66,135,8],['c',100,135,8],['c',134,135,8]]},
+{n:['ساعة','Clock','Horloge','Uhr'],c:4,s:[['c',100,100,56],['c',100,100,44],['r',97,64,6,40,3],['r',100,97,28,6,3],['c',100,100,6]]}
+];
+// إصلاح عنصر 18 (كرز) ليكون مصفوفة أسماء
+IMGS[17].n=['كرز','Cherries','Cerises','Kirschen'];
+
+const CATS=['🐾 حيوانات','🍎 فواكه','🚗 مركبات','🌈 طبيعة','🎁 أشياء'];
+const LANGS=[['🇸🇦','ar-SA'],['🇬🇧','en-US'],['🇫🇷','fr-FR'],['🇩🇪','de-DE']];
+const COLORS=['#e63946','#f77f00','#ffd60a','#2dc653','#06d6a0','#118ab2','#3a86ff','#8338ec','#ff5da2','#8d5524','#f4a261','#333333'];
+
+let curCat=-1,curImg=null,curFill=[],selColor=COLORS[0],quizLang=1,stars=+(localStorage.getItem('qStars')||0);
+let fills=JSON.parse(localStorage.getItem('colorFills')||'{}');
+
+// ===== النطق =====
+function speak(txt,langIdx){
+ if(!('speechSynthesis' in window))return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(txt);
+ u.lang=LANGS[langIdx][1];u.rate=0.75;u.pitch=1.15;
+ const v=speechSynthesis.getVoices().find(v=>v.lang.startsWith(LANGS[langIdx][1].slice(0,2)));
+ if(v)u.voice=v;
+ speechSynthesis.speak(u);
+}
+speechSynthesis&&speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
+// ===== رسم الأشكال =====
+function shp(s,fill,i,tap){
+ const f=fill||'#ffffff';
+ const cm=`fill="${f}" stroke="#3a2b20" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"${tap?` data-i="${i}" class="tap"`:''}`;
+ switch(s[0]){
+  case 'c':return `<circle cx="${s[1]}" cy="${s[2]}" r="${s[3]}" ${cm}/>`;
+  case 'e':return `<ellipse cx="${s[1]}" cy="${s[2]}" rx="${s[3]}" ry="${s[4]}"${s[5]?` transform="rotate(${s[5]} ${s[1]} ${s[2]})"`:''} ${cm}/>`;
+  case 'r':return `<rect x="${s[1]}" y="${s[2]}" width="${s[3]}" height="${s[4]}" rx="${s[5]||0}" ${cm}/>`;
+  case 'g':return `<polygon points="${s[1]}" ${cm}/>`;
+  case 'p':return `<path d="${s[1]}" ${cm}/>`;
+  case 'l':return `<path d="${s[1]}" fill="none" stroke="#3a2b20" stroke-width="4" stroke-linecap="round"/>`;
+ }
+}
+function svgOf(img,arr,tap){
+ return `<svg viewBox="0 0 200 200">${img.s.map((s,i)=>shp(s,arr?arr[i]:null,i,tap)).join('')}</svg>`;
+}
+
+// ===== الرئيسية =====
+function renderCats(){
+ document.getElementById('cats').innerHTML=`<button class="cat${curCat==-1?' on':''}" onclick="setCat(-1)">✨ الكل</button>`+CATS.map((c,i)=>`<button class="cat${curCat==i?' on':''}" onclick="setCat(${i})">${c}</button>`).join('');
+}
+function setCat(i){curCat=i;renderCats();renderGrid()}
+function renderGrid(){
+ const list=IMGS.map((im,i)=>({im,i})).filter(x=>curCat==-1||x.im.c==curCat);
+ document.getElementById('grid').innerHTML=list.map(x=>{
+  const done=fills[x.i]&&fills[x.i].some(f=>f&&f!='#ffffff');
+  return `<div class="card" onclick="openPaint(${x.i})">${done?'<span class="done">✅</span>':''}${svgOf(x.im,null,false)}<div class="nm">${x.im.n[0]}</div></div>`;
+ }).join('');
+}
+function goHome(){
+ document.getElementById('paintScr').style.display='none';
+ document.getElementById('quizScr').style.display='none';
+ document.getElementById('homeScr').style.display='block';
+ document.querySelectorAll('.tab')[0].classList.add('on');
+ document.querySelectorAll('.tab')[1].classList.remove('on');
+ renderGrid();
+}
+
+// ===== التلوين =====
+function openPaint(i){
+ curImg=i;curFill=fills[i]||IMGS[i].s.map(()=>null);
+ document.getElementById('homeScr').style.display='none';
+ document.getElementById('quizScr').style.display='none';
+ document.getElementById('paintScr').style.display='block';
+ renderPaint();renderBoard();renderPalette();
+ speak(IMGS[i].n[0],0);
+}
+function renderPaint(){
+ document.getElementById('paintSvgWrap').innerHTML=svgOf(IMGS[curImg],curFill,true);
+ document.getElementById('paintSvgWrap').onclick=e=>{
+  const t=e.target.closest('[data-i]');if(!t)return;
+  const idx=+t.getAttribute('data-i');
+  curFill[idx]=(selColor=='ERASE')?null:selColor;
+  fills[curImg]=curFill;localStorage.setItem('colorFills',JSON.stringify(fills));
+  renderPaint();checkDone();
+ };
+}
+function renderPalette(){
+ document.getElementById('palette').innerHTML=COLORS.map(c=>`<div class="pal${selColor==c?' on':''}" style="background:${c}" onclick="pick('${c}')"></div>`).join('')+`<div class="pal${selColor=='ERASE'?' on':''}" style="background:#fff;border:3px dashed #94a3b8" onclick="pick('ERASE')">🧽</div>`;
+}
+function pick(c){selColor=c;renderPalette()}
+function resetPaint(){curFill=IMGS[curImg].s.map(()=>null);fills[curImg]=curFill;localStorage.setItem('colorFills',JSON.stringify(fills));renderPaint()}
+function autoFill(){curFill=IMGS[curImg].s.map(s=>s[0]=='l'?null:COLORS[Math.floor(Math.random()*10)]);fills[curImg]=curFill;localStorage.setItem('colorFills',JSON.stringify(fills));renderPaint();checkDone()}
+function renderBoard(){
+ document.getElementById('board').innerHTML=`<h3>📖 سبورة اللغات الأربع</h3>`+IMGS[curImg].n.map((w,i)=>`<div class="brow"><span class="fl">${LANGS[i][0]}</span><span class="wd">${w}</span><button class="sp" onclick="speak('${w.replace(/'/g,"\\'")}',${i})">🔊</button></div>`).join('');
+}
+function speakCur(){speak(IMGS[curImg].n[0],0)}
+function checkDone(){
+ const colorable=curFill.filter((f,i)=>IMGS[curImg].s[i][0]!='l');
+ if(colorable.length&&colorable.every(f=>f&&f!='#ffffff')){
+  document.getElementById('celeb').style.display='flex';
+  document.getElementById('celebWord').textContent=IMGS[curImg].n.join(' • ');
+  confetti();speak('أحسنت! عمل رائع!',0);
+  setTimeout(()=>IMGS[curImg].n.forEach((w,i)=>setTimeout(()=>speak(w,i),1200*(i+1))),500);
+ }
+}
+function closeCeleb(){document.getElementById('celeb').style.display='none';closePaint()}
+function closePaint(){document.getElementById('paintScr').style.display='none';goHome()}
+function confetti(){
+ const em=['🎉','⭐','🎈','💛','💚','','❤️'];
+ for(let i=0;i<25;i++){
+  const d=document.createElement('div');d.className='confetti';
+  d.textContent=em[i%em.length];d.style.left=Math.random()*100+'vw';
+  d.style.animationDuration=(2+Math.random()*2)+'s';
+  document.body.appendChild(d);setTimeout(()=>d.remove(),4500);
+ }
+}
+
+// ===== الكراس التعليمي =====
+let quizAns=null;
+function goQuiz(){
+ document.getElementById('homeScr').style.display='none';
+ document.getElementById('paintScr').style.display='none';
+ document.getElementById('quizScr').style.display='block';
+ document.querySelectorAll('.tab')[1].classList.add('on');
+ document.querySelectorAll('.tab')[0].classList.remove('on');
+ renderLangPick();newQuiz();
+}
+function renderLangPick(){
+ document.getElementById('langPick').innerHTML=LANGS.map((l,i)=>`<button class="${quizLang==i?'on':''}" onclick="quizLang=${i};renderLangPick();playQuizWord()">${l[0]}</button>`).join('');
+}
+function newQuiz(){
+ quizAns=Math.floor(Math.random()*IMGS.length);
+ const opts=[quizAns];
+ while(opts.length<4){const r=Math.floor(Math.random()*IMGS.length);if(!opts.includes(r))opts.push(r)}
+ opts.sort(()=>Math.random()-.5);
+ document.getElementById('qOpts').innerHTML=opts.map(i=>`<div class="qopt" onclick="answer(${i},this)">${svgOf(IMGS[i],null,false)}</div>`).join('');
+ setTimeout(playQuizWord,400);
+}
+function playQuizWord(){if(quizAns!=null)speak(IMGS[quizAns].n[quizLang],quizLang)}
+function answer(i,el){
+ if(i==quizAns){
+  el.classList.add('right');stars++;localStorage.setItem('qStars',stars);
+  document.getElementById('qStars').textContent='⭐ '+stars;
+  speak('ممتاز!',quizLang);
+  setTimeout(newQuiz,1200);
+ }else{
+  el.classList.add('wrong');speak('حاول مرة أخرى',0);
+  setTimeout(()=>el.classList.remove('wrong'),600);
+ }
+}
+document.getElementById('qStars').textContent='⭐ '+stars;
+renderCats();renderGrid();
+</script>
+</body>
+</html>
