@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كتاب الصقر الذكي | تعليم اللغات عبر الرسم</title>
+    <style>
+        /* --- الإعدادات العامة والألوان الزاهية --- */
+        :root {
+            --primary-color: #2c3e50; /* أزرق داكن للنصوص الرئيسية */
+            --bg-page: #f9fbfd; /* خلفية بيضاء مائلة للأزرق الفاتح جداً */
+            --border-radius: 15px;
+            
+            /* ألوان اللغات المبهجة */
+            --lang-ar: #FF9F43; /* برتقالي دافئ */
+            --lang-en: #54A0FF; /* أزرق سماوي */
+            --lang-de: #EE5253; /* أحمر ناعم */
+            --lang-fr: #1DD1A1; /* أخضر نعناعي */
+            --lang-es: #FECA57; /* أصفر ليموني */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-page);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* --- حاوية الكتاب --- */
+        .book-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        /* --- الغلاف --- */
+        .cover {
+            background: linear-gradient(135deg, #6C5CE7, #a29bfe);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+        .cover h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .cover p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        /* --- الفهرس --- */
+        .toc-section {
+            padding: 30px;
+            background: #fff;
+            border-bottom: 2px dashed #eee;
+        }
+        .toc-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-right: 5px solid var(--lang-ar);
+            padding-right: 15px;
+        }
+        .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .toc-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .toc-item:hover {
+            background: #f8f9fa;
+            padding-right: 10px;
+        }
+        .page-num {
+            font-weight: bold;
+            color: #888;
+        }
+
+        /* --- صفحات المحتوى (القالب الموحد) --- */
+        .animal-page {
+            page-break-after: always; /* فصل الصفحات عند الطباعة */
+            padding: 30px;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* رأس الصفحة (اسم الحيوان) */
+        .animal-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .animal-name-ar {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        .animal-subtitle {
+            font-size: 1rem;
+            color: #777;
+        }
+
+        /* شبكة اللغات الملونة */
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .lang-card {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .lang-card:hover {
+            transform: translateY(-5px);
+        }
+        .lang-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .lang-word {
+            font-size: 1.2rem;
+            direction: ltr; /* لضمان قراءة اللغات الأجنبية صح */
+        }
+
+        /* ألوان البطاقات حسب اللغة */
+        .card-ar { background-color: var(--lang-ar); }
+        .card-en { background-color: var(--lang-en); }
+        .card-de { background-color: var(--lang-de); }
+        .card-fr { background-color: var(--lang-fr); }
+        .card-es { background-color: var(--lang-es); }
+
+        /* منطقة الصورة (التلوين) */
+        .image-area {
+            flex-grow: 1;
+            background: #fdfdfd;
+            border: 2px dashed #ccc;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 300px;
+            overflow: hidden;
+        }
+        .image-area img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .placeholder-text {
+            color: #aaa;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* مساحة المرسم (Drawing Space) */
+        .drawing-space {
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 2px solid #eee;
+            border-radius: var(--border-radius);
+            height: 200px;
+            position: relative;
+            margin-top: 10px;
+        }
+        .drawing-label {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: white;
+            padding: 0 10px;
+            color: #888;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* التذييل والحماية */
+        .footer-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* زر الطباعة العائم */
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        @media print {
+            .print-btn, .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .book-container { box-shadow: none; max-width: 100%; }
+            .animal-page { min-height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ اطبع الكتاب كـ PDF</button>
+
+<div class="book-container">
+
+    <!-- 1. الغلاف -->
+    <div class="cover">
+        <div class="logo-placeholder">🦅</div>
+        <h1>كتاب الصقر الذكي</h1>
+        <p>تعليم اللغات الخمس عبر الرسم والتلوين</p>
+        <p style="margin-top: 20px; font-size: 0.9rem;">إعداد: مملكة التطبيقات & شركة عودة للتعهّدات</p>
+    </div>
+
+    <!-- 2. الفهرس -->
+    <div class="toc-section">
+        <h2 class="toc-title">الفهرس المحتويات</h2>
+        <ul class="toc-list">
+            <li class="toc-item" onclick="scrollToPage('lion')">
+                <span>🦁 الأسد (The Lion)</span>
+                <span class="page-num">ص 1</span>
+            </li>
+            <li class="toc-item" onclick="scrollToPage('elephant')">
+                <span>🐘 الفيل (The Elephant)</span>
+                <span class="page-num">ص 2</span>
+            </li>
+            <li class="toc-item" onclick="scrollToPage('dino')">
+                <span>🦕 الديناصور (The Dinosaur)</span>
+                <span class="page-num">ص 3</span>
+            </li>
+            <!-- أضف المزيد هنا يدوياً أو عبر الكود لاحقاً -->
+        </ul>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- صفحة النموذج الأولى: الأسد                   -->
+    <!-- ========================================== -->
+    <div id="lion" class="animal-page">
+        <div class="animal-header">
+            <h2 class="animal-name-ar">أسَد</h2>
+            <p class="animal-subtitle">ملك الغابة القوي والشجاع</p>
+        </div>
+
+        <!-- شبكة اللغات الملونة -->
+        <div class="languages-grid">
+            <div class="lang-card card-ar">
+                <span class="lang-label">العربية</span>
+                <span class="lang-word">أسَد</span>
+            </div>
+            <div class="lang-card card-en">
+                <span class="lang-label">English</span>
+                <span class="lang-word">Lion</span>
+            </div>
+            <div class="lang-card card-de">
+                <span class="lang-label">Deutsch</span>
+                <span class="lang-word">Löwe</span>
+            </div>
+            <div class="lang-card card-fr">
+                <span class="lang-label">Français</span>
+                <span class="lang-word">Lion</span>
+            </div>
+            <div class="lang-card card-es">
+                <span class="lang-label">Español</span>
+                <span class="lang-word">León</span>
+            </div>
+        </div>
+
+        <!-- منطقة الصورة (ضع رابط صورتك هنا بدلاً من src="#") -->
+        <div class="image-area">
+            <!-- مثال: <img src="path/to/lion_coloring.jpg" alt="Lion Coloring Page"> -->
+            <div class="placeholder-text">
+                🖼️ ضع صورة التلوين هنا<br>
+                (استبدل هذا النص بكود <code>&lt;img&gt;</code>)
+            </div>
+        </div>
+
+        <!-- مساحة المرسم -->
+        <div class="drawing-space">
+            <span class="drawing-label">✏️ ارسم صديقك المفضل هنا!</span>
+        </div>
+
+        <div class="footer-note">© 2026 Falcon Tech Info - All Rights Reserved</div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- صفحة النموذج الثانية: الفيل                  -->
+    <!-- ========================================== -->
+    <div id="elephant" class="animal-page">
+        <div class="animal-header">
+            <h2 class="animal-name-ar">فِيل</h2>
+            <p class="animal-subtitle">العملاق الطيب ذو الخرطوم الطويل</p>
+        </div>
+
+        <div class="languages-grid">
+            <div class="lang-card card-ar"><span class="lang-label">العربية</span><span class="lang-word">فِيل</span></div>
+            <div class="lang-card card-en"><span class="lang-label">English</span><span class="lang-word">Elephant</span></div>
+            <div class="lang-card card-de"><span class="lang-label">Deutsch</span><span class="lang-word">Elefant</span></div>
+            <div class="lang-card card-fr"><span class="lang-label">Français</span><span class="lang-word">Éléphant</span></div>
+            <div class="lang-card card-es"><span class="lang-label">Español</span><span class="lang-word">Elefante</span></div>
+        </div>
+
+        <div class="image-area">
+             <div class="placeholder-text">🖼️ ضع صورة الفيل هنا</div>
+        </div>
+
+        <div class="drawing-space">
+            <span class="drawing-label">🎨 مساحتك الخاصة للإبداع</span>
+        </div>
+
+        <div class="footer-note">© 2026 Falcon Tech Info - All Rights Reserved</div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- صفحة النموذج الثالثة: الديناصور              -->
+    <!-- ========================================== -->
+    <div id="dino" class="animal-page">
+        <div class="animal-header">
+            <h2 class="animal-name-ar">ديناصور</h2>
+            <p class="animal-subtitle">من الماضي السحيق إلى حاضرك الممتع</p>
+        </div>
+
+        <div class="languages-grid">
+            <div class="lang-card card-ar"><span class="lang-label">العربية</span><span class="lang-word">ديناصور</span></div>
+            <div class="lang-card card-en"><span class="lang-label">English</span><span class="lang-word">Dinosaur</span></div>
+            <div class="lang-card card-de"><span class="lang-label">Deutsch</span><span class="lang-word">Dinosaurier</span></div>
+            <div class="lang-card card-fr"><span class="lang-label">Français</span><span class="lang-word">Dinosaure</span></div>
+            <div class="lang-card card-es"><span class="lang-label">Español</span><span class="lang-word">Dinosaurio</span></div>
+        </div>
+
+        <div class="image-area">
+             <div class="placeholder-text">🖼️ ضع صورة الديناصور هنا</div>
+        </div>
+
+        <div class="drawing-space">
+            <span class="drawing-label">🚀 ارسم مغامرتك مع الديناصور</span>
+        </div>
+
+        <div class="footer-note">© 2026 Falcon Tech Info - All Rights Reserved</div>
+    </div>
+
+</div>
+
+<script>
+    // وظيفة بسيطة للانتقال السلس للصفحة عند الضغط على الفهرس
+    function scrollToPage(id) {
+        const element = document.getElementById(id);
+        if(element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+</body>
+</html>
