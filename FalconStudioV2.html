@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎬 Falcon Studio V2 | لوحة التحكم الذكية</title>
+<style>
+    :root {
+        --primary: #e879f9;
+        --secondary: #312e81;
+        --dark: #1e1b4b;
+        --light: #f0abfc;
+        --success: #1DD1A1;
+        --danger: #EF4444;
+    }
+
+    body {
+        margin: 0; padding: 0;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        background-color: #111; color: white;
+        display: flex; height: 100vh; overflow: hidden;
+    }
+
+    /* --- Sidebar Controls (لوحة التحكم) --- */
+    .sidebar {
+        width: 350px; min-width: 350px;
+        background: var(--dark);
+        border-left: 2px solid var(--primary);
+        padding: 15px; overflow-y: auto;
+        display: flex; flex-direction: column; gap: 15px;
+    }
+
+    h2 { text-align: center; color: var(--light); margin: 0 0 10px 0; font-size: 1.2rem; }
+    
+    .section-title {
+        color: var(--primary); font-weight: bold; font-size: 0.9rem;
+        border-bottom: 1px solid #444; padding-bottom: 5px; margin-top: 10px;
+    }
+
+    label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 3px; }
+    input[type="text"], input[type="number"], select {
+        width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #444;
+        background: #2a2a40; color: white; box-sizing: border-box;
+    }
+    input[type="color"] { width: 100%; height: 35px; cursor: pointer; border: none; }
+    
+    .btn-group { display: flex; gap: 5px; }
+    button {
+        flex: 1; padding: 10px; border: none; border-radius: 6px;
+        cursor: pointer; font-weight: bold; transition: 0.2s;
+    }
+    .btn-add { background: var(--success); color: #000; }
+    .btn-del { background: var(--danger); color: white; }
+    .btn-export { background: var(--primary); color: var(--dark); width: 100%; margin-top: 10px; }
+    .btn-save-template { background: #333; color: white; font-size: 0.8rem; }
+
+    /* --- Preview Area (منطقة المعاينة) --- */
+    .preview-area {
+        flex-grow: 1; display: flex; justify-content: center; align-items: center;
+        background-image: radial-gradient(#333 1px, transparent 1px);
+        background-size: 20px 20px; position: relative;
+    }
+
+    #canvas-container {
+        width: 360px; height: 640px;
+        background: transparent; /* شفافة افتراضياُ للدمج */
+        position: relative; overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        border: 2px dashed #555;
+    }
+
+    canvas { display: block; width: 100%; height: 100%; }
+
+    /* --- List Items (قائمة العناصر المضافة) --- */
+    .item-list { max-height: 200px; overflow-y: auto; background: #222; border-radius: 6px; padding: 5px; }
+    .item-row {
+        display: flex; align-items: center; gap: 5px;
+        background: #333; padding: 5px; margin-bottom: 5px; border-radius: 4px;
+    }
+    .item-thumb { width: 30px; height: 30px; object-fit: cover; border-radius: 3px; }
+    .item-text { flex-grow: 1; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    /* Hidden File Input */
+    #fileInput { display: none; }
+
+</style>
+</head>
+<body>
+
+<!-- ======================= SIDEBAR ======================= -->
+<div class="sidebar">
+    <h2>🦅 Falcon Studio V2</h2>
+    
+    <!-- 1. Global Settings -->
+    <div class="section-title">⚙️ الإعدادات العامة</div>
+    <label>عنوان الفيديو الرئيسي</label>
+    <input type="text" id="globalTitle" value="مملكة الصقر">
+    
+    <label>نوع الخلفية للمونتاج</label>
+    <select id="bgType">
+        <option value="transparent">شفاف (Transparent)</option>
+        <option value="green">أخضر Chroma (#00FF00)</option>
+        <option value="black">أسود نقي</option>
+    </select>
+
+    <!-- 2. Slides Manager -->
+    <div class="section-title">🖼️ إدارة المشاهد (Slides)</div>
+    <button class="btn-add" onclick="document.getElementById('fileInput').click()">➕ أضف صورة جديدة</button>
+    <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(this)">
+    
+    <div class="item-list" id="slidesList">
+        <!-- سيتم ملؤها بالجافاسكريبت -->
+        <div style="text-align:center; color:#666; padding:10px;">لا توجد صور بعد</div>
+    </div>
+
+    <!-- 3. Text Layers (The Magic Part) -->
+    <div class="section-title">✍️ طبقات النص الحالية</div>
+    <div id="currentSlideEditor" style="display:none;">
+        <p style="font-size:0.8rem; color:var(--primary);">جارٍ تعديل الصورة رقم: <span id="editIndexDisplay"></span></p>
+        
+        <label>النص العربي (كبير)</label>
+        <input type="text" id="txtAr" placeholder="مثال: أسَد">
+        <input type="color" id="colAr" value="#FF9F43">
+
+        <label>النص الإنجليزي</label>
+        <input type="text" id="txtEn" placeholder="Lion">
+        <input type="color" id="colEn" value="#54A0FF">
+
+        <label>نص إضافي (اختياري - لأي لغة ثالثة)</label>
+        <input type="text" id="txtExtra" placeholder="Löwe / León...">
+        <input type="color" id="colExtra" value="#1DD1A1">
+        
+        <button class="btn-save-template" onclick="applyChangesToCurrentSlide()">✅ تطبيق التغييرات على هذه الصورة</button>
+    </div>
+
+    <!-- 4. Actions -->
+    <button class="btn-export" onclick="startExportProcess()">🚀 صدّر الفيديو الجاهز</button>
+    <button class="btn-save-template" onclick="saveProjectState()" style="margin-top:5px;">💾 حفظ المشروع (JSON)</button>
+    <button class="btn-save-template" onclick="loadProjectState()" style="margin-top:5px;">📂 استرجاع مشروع محفوظ</button>
+</div>
+
+<!-- ======================= PREVIEW AREA ======================= -->
+<div class="preview-area">
+    <div id="canvas-container">
+        <canvas id="videoCanvas" width="720" height="1280"></canvas>
+    </div>
+</div>
+
+<script>
+    // --- State Management ---
+    let slides = []; // Array of objects: { imgSrc, texts: { ar, en, extra }, colors: {...} }
+    let activeSlideIndex = -1;
+    const canvas = document.getElementById('videoCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // --- Initialization ---
+    window.onload = () => {
+        renderPreview(); // Draw empty state or first slide if exists
+    };
+
+    // --- Image Handling ---
+    function handleImageUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                // Default text structure for new image
+                const newSlide = {
+                    imgElement: img,
+                    imgSrc: e.target.result,
+                    texts: { ar: "", en: "", extra: "" },
+                    colors: { ar: "#FF9F43", en: "#54A0FF", extra: "#1DD1A1" }
+                };
+                
+                slides.push(newSlide);
+                updateSlidesListUI();
+                
+                // Auto-select the newly added slide for editing
+                selectSlide(slides.length - 1);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        input.value = ''; // Reset input
+    }
+
+    function deleteSlide(index) {
+        slides.splice(index, 1);
+        if (activeSlideIndex >= slides.length) activeSlideIndex = slides.length - 1;
+        updateSlidesListUI();
+        if(activeSlideIndex >= 0) selectSlide(activeSlideIndex);
+        else hideEditor();
+        renderPreview();
+    }
+
+    function updateSlidesListUI() {
+        const list = document.getElementById('slidesList');
+        if (slides.length === 0) {
+            list.innerHTML = '<div style="text-align:center; color:#666; padding:10px;">لا توجد صور بعد</div>';
+            return;
+        }
+        
+        list.innerHTML = slides.map((s, i) => `
+            <div class="item-row ${i === activeSlideIndex ? 'active' : ''}" onclick="selectSlide(${i})">
+                <img src="${s.imgSrc}" class="item-thumb">
+                <span class="item-text">${s.texts.ar || s.texts.en || 'صورة بدون نص'}</span>
+                <button class="btn-del" onclick="event.stopPropagation(); deleteSlide(${i})">✖</button>
+            </div>
+        `).join('');
+    }
+
+    // --- Editor Logic ---
+    function selectSlide(index) {
+        activeSlideIndex = index;
+        const slide = slides[index];
+        
+        // Populate inputs
+        document.getElementById('txtAr').value = slide.texts.ar;
+        document.getElementById('txtEn').value = slide.texts.en;
+        document.getElementById('txtExtra').value = slide.texts.extra;
+        
+        document.getElementById('colAr').value = slide.colors.ar;
+        document.getElementById('colEn').value = slide.colors.en;
+        document.getElementById('colExtra').value = slide.colors.extra;
+        
+        document.getElementById('editIndexDisplay').innerText = index + 1;
+        document.getElementById('currentSlideEditor').style.display = 'block';
+        
+        updateSlidesListUI(); // Highlight selected row
+        renderPreview(); // Show this slide in preview
+    }
+
+    function applyChangesToCurrentSlide() {
+        if (activeSlideIndex === -1) return;
+        
+        slides[activeSlideIndex].texts.ar = document.getElementById('txtAr').value;
+        slides[activeSlideIndex].texts.en = document.getElementById('txtEn').value;
+        slides[activeSlideIndex].texts.extra = document.getElementById('txtExtra').value;
+        
+        slides[activeSlideIndex].colors.ar = document.getElementById('colAr').value;
+        slides[activeSlideIndex].colors.en = document.getElementById('colEn').value;
+        slides[activeSlideIndex].colors.extra = document.getElementById('colExtra').value;
+        
+        updateSlidesListUI();
+        renderPreview();
+        alert("تم تحديث المشهد بنجاح!");
+    }
+
+    function hideEditor() {
+        document.getElementById('currentSlideEditor').style.display = 'none';
+        activeSlideIndex = -1;
+    }
+
+    // --- Rendering Engine (The Core) ---
+    function renderPreview(slideToShow = null) {
+        const W = canvas.width;
+        const H = canvas.height;
+        
+        // Clear Canvas
+        ctx.clearRect(0, 0, W, H);
+        
+        // Background
+        const bgMode = document.getElementById('bgType').value;
+        if (bgMode === 'green') { ctx.fillStyle = '#00FF00'; ctx.fillRect(0,0,W,H); }
+        else if (bgMode === 'black') { ctx.fillStyle = '#000000'; ctx.fillRect(0,0,W,H); }
+        // Transparent does nothing (keeps clearRect result)
+
+        // Determine which slide to draw
+        let targetSlide = slideToShow !== null ? slideToShow : (activeSlideIndex !== -1 ? slides[activeSlideIndex] : null);
+        
+        if (!targetSlide) {
+            // Placeholder when no image
+            ctx.fillStyle = "#333";
+            ctx.font = "30px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("أضف صورة للبدء...", W/2, H/2);
+            return;
+        }
+
+        // Draw Image (Centered, Fit Cover-ish but safe)
+        const img = targetSlide.imgElement;
+        const scale = Math.min(W / img.width, (H * 0.7) / img.height); // Leave room for text at bottom
+        const dw = img.width * scale;
+        const dh = img.height * scale;
+        const dx = (W - dw) / 2;
+        const dy = 50; // Top margin
+        
+        ctx.drawImage(img, dx, dy, dw, dh);
+
+        // Draw Text Block at Bottom
+        const textAreaY = dy + dh + 40;
+        const lineHeight = 60;
+        
+        ctx.textAlign = "center";
+        ctx.direction = "rtl";
+
+        // Helper to draw styled text
+        const drawLine = (text, color, size, yOffset) => {
+            if(!text) return;
+            ctx.fillStyle = color;
+            ctx.font = `bold ${size}px Cairo, Tahoma`;
+            // Shadow for readability on any bg
+            ctx.shadowColor = "rgba(0,0,0,0.8)";
+            ctx.shadowBlur = 4;
+            ctx.fillText(text, W/2, textAreaY + yOffset);
+            ctx.shadowBlur = 0;
+        };
+
+        drawLine(targetSlide.texts.ar, targetSlide.colors.ar, 50, 0);       // Arabic Big
+        drawLine(targetSlide.texts.en, targetSlide.colors.en, 35, 60);      // English Medium
+        drawLine(targetSlide.texts.extra, targetSlide.colors.extra, 30, 110); // Extra Small
+
+        // Global Title Overlay (Optional visual cue)
+        const gTitle = document.getElementById('globalTitle').value;
+        if(gTitle) {
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            ctx.font = "20px Arial";
+            ctx.fillText(gTitle, W/2, H - 20);
+        }
+    }
+
+    // Update preview on input change (Real-time feedback)
+    ['txtAr','txtEn','txtExtra','colAr','colEn','colExtra'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            if(activeSlideIndex !== -1) {
+                // Temporarily update memory for preview without saving permanently yet
+                slides[activeSlideIndex].texts.ar = document.getElementById('txtAr').value;
+                slides[activeSlideIndex].texts.en = document.getElementById('txtEn').value;
+                slides[activeSlideIndex].texts.extra = document.getElementById('txtExtra').value;
+                slides[activeSlideIndex].colors.ar = document.getElementById('colAr').value;
+                slides[activeSlideIndex].colors.en = document.getElementById('colEn').value;
+                slides[activeSlideIndex].colors.extra = document.getElementById('colExtra').value;
+                renderPreview();
+            }
+        });
+    });
+
+    // --- Export Logic (Video Recording) ---
+    async function startExportProcess() {
+        if(slides.length === 0) { alert("أضف صورة أولاً!"); return; }
+        
+        const btn = document.querySelector('.btn-export');
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ جارٍ التسجيل...";
+        btn.disabled = true;
+
+        const stream = canvas.captureStream(30); // 30 FPS
+        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+        const chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Falcon_Ad_${Date.now()}.webm`;
+            a.click();
+            
+            btn.innerText = originalText;
+            btn.disabled = false;
+            alert("تم تنزيل الفيديو! ارفعه لـ VN/CapCut.");
+        };
+
+        recorder.start();
+        
+        // Animation Loop for Export
+        const DUR_PER_SLIDE = 3000; // 3 seconds per slide
+        const TOTAL_TIME = slides.length * DUR_PER_SLIDE;
+        const startTime = performance.now();
+
+        function animate(timeElapsed) {
+            const elapsed = timeElapsed - startTime;
+            if (elapsed >= TOTAL_TIME) {
+                recorder.stop();
+                return;
+            }
+
+            const currentIndex = Math.floor(elapsed / DUR_PER_SLIDE);
+            const progressInSlide = (elapsed % DUR_PER_SLIDE) / DUR_PER_SLIDE;
+            
+            // Render specific frame based on current slide and fade effect
+            renderPreview(slides[currentIndex]);
+            
+            // Add Fade In/Out effect manually via globalAlpha if needed, 
+            // but for simplicity now we just switch scenes cleanly.
+            // To make it smoother, you can interpolate alpha here.
+            
+            requestAnimationFrame(animate);
+        }
+        
+        requestAnimationFrame(animate);
+    }
+
+    // --- Save/Load Project (Future Proofing) ---
+    function saveProjectState() {
+        // We cannot save Image Elements directly to JSON easily without Base64 conversion overhead.
+        // For MVP, we save text configs. User must re-upload images if they want full backup.
+        // OR, we convert images to DataURLs (heavy). Let's stick to config for speed.
+        const data = slides.map(s => ({
+            texts: s.texts,
+            colors: s.colors,
+            // Note: imgSrc is saved as base64 string which might be large. 
+            // Better approach for production: Upload images separately.
+            imgBase64: s.imgSrc 
+        }));
+        
+        localStorage.setItem('falcon_project_v2', JSON.stringify(data));
+        alert("تم حفظ إعدادات المشروع محلياً في المتصفح.");
+    }
+
+    function loadProjectState() {
+        const saved = localStorage.getItem('falcon_project_v2');
+        if(!saved) { alert("لا يوجد مشروع محفوظ."); return; }
+        
+        const data = JSON.parse(saved);
+        slides = [];
+        
+        data.forEach(item => {
+            const img = new Image();
+            img.onload = () => {
+                slides.push({
+                    imgElement: img,
+                    imgSrc: item.imgBase64,
+                    texts: item.texts,
+                    colors: item.colors
+                });
+                updateSlidesListUI();
+                if(slides.length === data.length) renderPreview(); // Refresh after all loaded
+            };
+            img.src = item.imgBase64;
+        });
+    }
+
+</script>
+</body>
+</html>
