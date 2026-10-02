@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>دفتري الملكي | Smart Book Pro V5</title>
+<title>دفتري الملكي | Smart Book Pro V6 (Cloud Sync)</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma,sans-serif}
 body{background:#eef1f6;color:#1c2340;padding-bottom:40px}
@@ -20,7 +20,7 @@ input,textarea{width:100%;border:1px solid #e5e7eb;border-radius:10px;padding:11
 textarea{min-height:90px}
 .btn{border:none;border-radius:10px;padding:11px 16px;font-weight:bold;font-size:13px;cursor:pointer;color:#fff;transition:.2s}
 .g{background:#16a34a}.b{background:#2563eb}.r{background:#dc2626}.o{background:#f59e0b}.gr{background:#6b7280}.p{background:#6d28d9}
-.gold-btn{background:#f5a524;color:#241303;font-weight:900} /* زر النشر الذهبي */
+.gold-btn{background:#f5a524;color:#241303;font-weight:900; border:none; padding:7px 12px; border-radius:8px; cursor:pointer; font-size:12px;} 
 .item{border-right:4px solid #2563eb;background:#fff;border-radius:12px;padding:12px;margin-bottom:10px}
 .item h3{color:#2563eb;margin-bottom:6px}
 .item .row{margin:4px 0;font-size:13px}
@@ -64,8 +64,8 @@ textarea::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 </head>
 <body>
 <div class="wrap">
- <div class="hero"><h1>📒 دفتري الملكي V5</h1><p>مركز حفظ الحلول والأكواد + محرر حي + نشر سحري بالمملكة</p>
- <div class="nav"><button class="n1" onclick="show('sol')">🛠️ حلول المشاكل</button><button class="n2" onclick="show('codes')">💻 خزانة الأكواد</button><button class="n3" onclick="show('projs')">📚 المشاريع</button><button class="n4" onclick="show('tools')">🧰 الأدوات</button></div></div>
+ <div class="hero"><h1>📒 دفتري الملكي V6</h1><p>مركز حفظ الحلول والأكواد + محرر حي + نشر سحري بالمملكة + رفع صور مباشر</p>
+ <div class="nav"><button class="n1" onclick="show('sol')">🛠️ حلول المشاكل</button><button class="n2" onclick="show('codes')">💻 خزانة الأكواد</button><button class="n3" onclick="show('projs')">📚 المشاريع</button><button class="n4" onclick="show('tools')">🧰 الأدوات والسحابة</button></div></div>
  <div class="card"><input id="q" placeholder="🔍 ابحث عن مشكلة أو حل أو كود..." oninput="renderAll(this.value)"></div>
  
  <!-- قسم الحلول -->
@@ -106,20 +106,34 @@ textarea::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
  <!-- قسم الأدوات -->
  <div id="sec-tools" class="hide">
-  <div class="bar" style="background:#0ea5e9">🧰 الأدوات والخزانة</div>
+  <div class="bar" style="background:#0ea5e9">🧰 الأدوات والخزانة السحابية</div>
+  
+  <!-- بطاقة رفع الصور المباشرة لـ GitHub -->
+  <div class="card" style="border-right:4px solid #f5a524;">
+   <h3 style="margin-bottom:8px; color:#f5a524;">📸 رافع الصور المباشر (GitHub Images)</h3>
+   <p style="font-size:12px; color:#6b7280; margin-bottom:10px;">ارفع صورة من جوالك وستظهر فوراً في مستودع mamlaka/images مع رابط جاهز للنسخ.</p>
+   
+   <input type="file" id="ghImgInput" accept="image/*" onchange="uploadImageToGithub(this)">
+   <button class="btn gold-btn" onclick="document.getElementById('ghImgInput').click()" style="width:100%">📤 اختر صورة وارفعها الآن</button>
+   
+   <div id="ghUploadStatus" style="margin-top:10px; font-size:13px;"></div>
+   
+   <!-- قائمة بالصور المرفوعة مؤخراَ -->
+   <h4 style="margin-top:15px; border-bottom:1px dashed #ddd; padding-bottom:5px;">آخر الصور المرفوعة للسحابة:</h4>
+   <div id="recentImagesList" style="max-height:200px; overflow-y:auto; margin-top:10px;">
+       <small style="color:#9ca3af">لا توجد صور مرفوعة بعد...</small>
+   </div>
+  </div>
+
   <div class="card">
    <h3 style="margin-bottom:8px">📧 الحفظ بالإيميل والاسترجاع</h3>
-   <button class="btn b" onclick="mailBackup()">📤 إرسال نسخة بالإيميل</button>
-   <textarea id="impBox" placeholder="📥 الصق هون النص اللي وصلك بالإيميل لاسترجاع كل شي..." style="margin-top:8px"></textarea>
-   <button class="btn g" onclick="importBackup()">📥 استرجاع من الإيميل</button>
+   <button class="btn b" onclick="mailBackup()">📤 إرسال نسخة احتياطية كاملة</button>
+   <textarea id="impBox" placeholder="📥 الصق هنا النص لاسترجاع كل شي..." style="margin-top:8px"></textarea>
+   <button class="btn g" onclick="importBackup()">📥 استرجاع البيانات</button>
   </div>
+  
   <div class="card">
-   <h3 style="margin-bottom:8px">📼 خزانة الوسائط (أصوات، فيديوهات، صور)</h3>
-   <input type="file" id="fileIn" onchange="addFile(this)">
-   <div id="fileList" style="margin-top:10px"></div>
-  </div>
-  <div class="card">
-   <h3 style="margin-bottom:8px">🔀 محول الصيغ والإيميلات</h3>
+   <h3 style="margin-bottom:8px">🔀 محول النصوص والإيميلات</h3>
    <textarea id="cvIn" placeholder="الصق النص هنا..."></textarea>
    <div class="acts">
     <button class="b" onclick="cv('b64e')">→ Base64</button>
@@ -235,7 +249,6 @@ function addFile(inp){const f=inp.files[0];if(!f)return;putFile({id:String(Date.
 function playF(id){getAll().then(a=>{const x=a.find(v=>v.id===id);window.open(URL.createObjectURL(x.blob))})}
 function dlF(id){getAll().then(a=>{const x=a.find(v=>v.id===id);dl(x.name,x.blob)})}
 function delF(id){if(!confirm("حذف الملف؟"))return;const t=idb.transaction("files","readwrite");t.objectStore("files").delete(id);t.oncomplete=renderFiles}
-function renderFiles(){getAll().then(a=>{document.getElementById("fileList").innerHTML=a.length?a.map(x=>`<div class="item" style="border-color:#0ea5e9"><h3 style="color:#0ea5e9">${x.type.startsWith("audio")?"🎙️":x.type.startsWith("video")?"🎬":x.type.startsWith("image")?"🖼️":""} ${esc(x.name)}</h3><small>${x.date} • ${(x.blob.size/1024).toFixed(0)} KB</small><div class="acts"><button class="b" onclick="playF('${x.id}')">▶ تشغيل</button><button class="o" onclick="dlF('${x.id}')">📥 تنزيل</button><button class="r" onclick="delF('${x.id}')">🗑 حذف</button></div></div>`).join(""):`<div style="text-align:center;color:#9ca3af;font-size:13px">الخزانة فاضية</div>`})}
 
 // === دالة العرض الرئيسية (مع أزرار النشر والتحرير) ===
 function renderAll(q){
@@ -254,12 +267,39 @@ function renderAll(q){
     <button class="r" onclick="del('codes','${x.id}')">🗑 حذف</button>
  </div></div>`).join("")||`<div class="card" style="text-align:center;color:#9ca3af">لا أكواد محفوظة</div>`;
  
- // قائمة المشاريع (مع زر النشر الذهبي)
- document.getElementById("projList").innerHTML=db.projs.filter(f).map(x=>`<div class="item" style="border-color:#f59e0b"><h3 style="color:#f59e0b">📚 ${esc(x.name)}</h3><div class="row">${esc(x.desc)}</div><small>${x.date}</small><div class="acts">
-    ${x.code?`<button class="p" onclick="openLiveEditor('${x.id}','projs')">⚡ تحرير حي</button><button class="gold-btn" onclick="publishToKingdom('${esc(x.name).replace(/[^a-z0-9\u0600-\u06FF]/gi,'')}.html', db.projs.find(v=>v.id==='${x.id}').code)">🗝️ نشر بالمملكة</button><button class="b" onclick="runProj('${x.id}')">▶ تشغيل</button>`:""}
-    <button class="o" onclick="editProj('${x.id}')">✏️ تعديل عادي</button>
-    <button class="r" onclick="del('projs','${x.id}')">🗑 حذف</button>
- </div></div>`).join("")||`<div class="card" style="text-align:center;color:#9ca3af">لا مشاريع محفوظة</div>`;
+ // قائمة المشاريع (مع تصنيف ذكي بالألوان)
+ document.getElementById("projList").innerHTML = db.projs.filter(f).map(x => {
+     let category = 'OTHER';
+     let color = '#6b7280'; 
+     
+     const nameLower = x.name.toLowerCase();
+     
+     if(nameLower.startsWith('bk') || nameLower.includes('book')) { 
+         category = '📚 كتاب'; 
+         color = '#8b5cf6'; 
+     } else if(nameLower.startsWith('vid') || nameLower.includes('video')) {
+         category = '🎬 فيديو';
+         color = '#ef4444'; 
+     } else if(nameLower.startsWith('app') || nameLower.includes('tool')) {
+         category = '⚙️ أداة';
+         color = '#10b981'; 
+     } else if(nameLower.startsWith('img') || nameLower.includes('pic')) {
+         category = '🖼️ صورة';
+         color = '#f59e0b'; 
+     }
+
+     return `<div class="item" style="border-color:${color}; border-right-width:5px;">
+        <h3 style="color:${color}">${esc(x.name)}</h3>
+        <span style="background:${color}20; color:${color}; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:5px;">${category}</span>
+        <div class="row" style="font-size:12px; color:#666;">${esc(x.desc)}</div>
+        <small>${x.date}</small>
+        <div class="acts">
+           ${x.code ? `<button class="p" onclick="openLiveEditor('${x.id}','projs')">⚡ تحرير حي</button><button class="gold-btn" onclick="publishToKingdom('${esc(x.name).replace(/[^a-z0-9\u0600-\u06FF]/gi,'')}.html', db.projs.find(v=>v.id==='${x.id}').code)">🗝️ نشر بالمملكة</button><button class="b" onclick="runProj('${x.id}')">▶ تشغيل</button>`:""}
+           <button class="o" onclick="editProj('${x.id}')">✏️ تعديل الاسم/الوصف</button>
+           <button class="r" onclick="del('projs','${x.id}')">🗑 حذف</button>
+        </div>
+    </div>`;
+ }).join("") || `<div class="card" style="text-align:center;color:#9ca3af">لا مشاريع محفوظة</div>`;
 }
 
 // === منطق المحرر المباشر مع الترقيم ===
@@ -340,7 +380,7 @@ function syncScroll() {
 async function publishToKingdom(fileName, codeContent) {
     let tok = localStorage.getItem('gh_token_smartbook');
     if (!tok) {
-        tok = prompt("أدخل مفتاح GitHub السري (ghp_...):\n(يُحفظ محلياً للاستخدام القادم)");
+        tok = prompt("أدخل مفتاح GitHub السري (ghp_...):\n(يُحفظ محلياَ للاستخدام القادم)");
         if (!tok) return alert("تم إلغاء النشر.");
         localStorage.setItem('gh_token_smartbook', tok);
     } else {
@@ -402,28 +442,123 @@ async function publishToKingdom(fileName, codeContent) {
     }
 }
 
-openDB().then(renderFiles);
-// تحسين عرض المشاريع بالألوان تلقائياُ
-function enhanceProjectsView() {
-    const items = document.querySelectorAll('#projList .item');
-    items.forEach(item => {
-        const title = item.querySelector('h3').innerText.toLowerCase();
-        let color = '#6b7280'; // رمادي افتراضي
-        
-        if(title.includes('كتاب') || title.startsWith('bk')) color = '#8b5cf6'; // بنفسجي
-        else if(title.includes('فيديو') || title.startsWith('vid')) color = '#ef4444'; // أحمر
-        else if(title.includes('تطبيق') || title.startsWith('app')) color = '#10b981'; // أخضر
-        else if(title.includes('صورة') || title.startsWith('img')) color = '#f59e0b'; // برتقالي
+// === دوال رفع الصور لـ GitHub ===
 
-        item.style.borderRightColor = color;
-        item.style.borderRightWidth = '5px';
-        const h3 = item.querySelector('h3');
-        if(h3) h3.style.color = color;
-    });
+async function uploadImageToGithub(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // التحقق من التوكن
+    let tok = localStorage.getItem('gh_token_smartbook');
+    if (!tok) {
+        alert("⚠️ يجب إدخال مفتاح GitHub أولاَ.\nاذهب لقسم النشر وأدخل التوكن.");
+        return;
+    }
+
+    const statusDiv = document.getElementById('ghUploadStatus');
+    statusDiv.innerHTML = "⏳ جارٍ معالجة الصورة ورفعها...";
+    statusDiv.style.color = "#f59e0b";
+
+    try {
+        // قراءة الملف وتحويله لـ Base64
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64Data = reader.result.split(',')[1];
+            
+            // تسمية الملف بشكل آمن (بدون مسافات)
+            const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const path = `images/${safeName}`;
+            const owner = 'ff1980ff';
+            const repo = 'mamlaka';
+            const branch = 'main';
+            const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+            // محاولة الحصول على SHA الحالي للملف إذا كان موجوداَ (لتحديثه)
+            let sha = null;
+            const checkRes = await fetch(apiBase, { headers: { Authorization: `token ${tok}` } });
+            if(checkRes.ok) {
+                const existing = await checkRes.json();
+                sha = existing.sha;
+            }
+
+            // إعداد بيانات الرفع
+            const payload = {
+                message: `📸 Upload image: ${safeName}`,
+                content: base64Data,
+                branch: branch
+            };
+            if(sha) payload.sha = sha; // إذا كان ملفاَ محدثاَ
+
+            // تنفيذ الرفع
+            const res = await fetch(apiBase, {
+                method: 'PUT',
+                headers: { 
+                    'Authorization': `token ${tok}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok) {
+                const result = await res.json();
+                const imageUrl = result.content.download_url;
+                
+                statusDiv.innerHTML = `✅ <b>تم الرفع بنجاح!</b><br><a href="${imageUrl}" target="_blank" style="word-break:break-all; color:#10b981">${imageUrl}</a>`;
+                statusDiv.style.color = "#10b981";
+                
+                // حفظ الرابط في سجل مؤقت لعرضه في القائمة
+                saveRecentImage(safeName, imageUrl);
+                renderRecentImages();
+                
+                // تنبيه المستخدم بالنجاح
+                navigator.vibrate && navigator.vibrate(200); // اهتزاز خفيف للجوال
+                
+            } else {
+                const err = await res.json();
+                throw new Error(err.message || "فشل الرفع");
+            }
+        };
+        reader.readAsDataURL(file);
+        
+    } catch(e) {
+        statusDiv.innerHTML = `❌ خطأ: ${e.message}`;
+        statusDiv.style.color = "#dc2626";
+    } finally {
+        input.value = ""; // تفريغ حقل الاختيار
+    }
 }
-// استدعاء التحسين بعد كل عرض
-const oldRenderAll = renderAll;
-renderAll = function(q) { oldRenderAll(q); setTimeout(enhanceProjectsView, 100); };
+
+function saveRecentImage(name, url) {
+    let recent = JSON.parse(localStorage.getItem('recent_gh_images') || '[]');
+    recent.unshift({ name, url, date: now() });
+    if(recent.length > 20) recent.pop(); // الاحتفاظ بآخر 20 فقط
+    localStorage.setItem('recent_gh_images', JSON.stringify(recent));
+}
+
+function renderRecentImages() {
+    const list = document.getElementById('recentImagesList');
+    const recent = JSON.parse(localStorage.getItem('recent_gh_images') || '[]');
+    
+    if(recent.length === 0) {
+        list.innerHTML = '<small style="color:#9ca3af">لا توجد صور مرفوعة بعد...</small>';
+        return;
+    }
+
+    list.innerHTML = recent.map(img => `
+        <div class="item" style="padding:8px; margin-bottom:5px; border-color:#f5a524; background:#fffbeb;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-size:12px; word-break:break-all;">${img.name}</strong>
+                <button class="btn o" style="padding:2px 6px; font-size:10px;" onclick="copyTxt('${img.url}')">📋 نسخ الرابط</button>
+            </div>
+            <small style="color:#6b7280; display:block; margin-top:2px;">${img.date}</small>
+        </div>
+    `).join('');
+}
+
+// تشغيل عرض الصور الحديثة عند تحميل الصفحة
+window.addEventListener('load', renderRecentImages);
+
+openDB().then(renderFiles);
 renderAll();
 </script>
 </body>
