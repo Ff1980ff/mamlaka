@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦅 كتاب الصقر الذكي | رسوم وتلوين تعليمي</title>
+    
+    <!-- خطوط احترافية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-dark: #1a1a2e;
+            --accent-purple: #6C5CE7;
+            --bg-paper: #ffffff;
+            --text-main: #2d3436;
+            
+            /* ألوان اللغات */
+            --lang-ar: #FF9F43; 
+            --lang-en: #54A0FF; 
+            --lang-de: #EE5253; 
+            --lang-fr: #1DD1A1; 
+            --lang-es: #FECA57; 
+            
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.08);
+            --radius-lg: 20px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f2f5;
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- الحاوية الرئيسية --- */
+        .book-wrapper {
+            max-width: 850px; margin: 20px auto; padding: 0 15px;
+        }
+
+        /* --- الغلاف الاحترافي --- */
+        .cover-section {
+            background: linear-gradient(135deg, #6C5CE7 0%, #a29bfe 100%);
+            border-radius: var(--radius-lg);
+            padding: 40px 20px; text-align: center; color: white;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+            margin-bottom: 30px;
+        }
+        .cover-logo { font-size: 4rem; margin-bottom: 10px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }
+        .cover-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px; }
+        .cover-subtitle { font-size: 1.1rem; opacity: 0.9; font-family: 'Tajawal', sans-serif; }
+        .cover-badge {
+            display: inline-block; background: rgba(255,255,255,0.2);
+            padding: 5px 15px; border-radius: 50px; font-size: 0.9rem; margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* --- أدوات التحكم العائمة --- */
+        .controls-float {
+            position: fixed; bottom: 20px; left: 20px; z-index: 999;
+            display: flex; gap: 10px;
+        }
+        .ctrl-btn {
+            background: var(--primary-dark); color: white;
+            border: none; padding: 12px 20px; border-radius: 50px;
+            cursor: pointer; font-weight: bold; font-family: inherit;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .ctrl-btn:hover { transform: translateY(-3px); background: var(--accent-purple); }
+        .ctrl-btn.print-mode { background: #e74c3c; }
+        
+        /* وضع الطباعة النظيف */
+        @media print {
+            .controls-float { display: none !important; }
+            body { background: white; }
+            .book-wrapper { margin: 0; max-width: 100%; }
+            .animal-page { page-break-after: always; min-height: 90vh; border: none; shadow: none; margin: 0; padding: 20px; }
+            .art-frame img { filter: grayscale(100%) contrast(120%); } /* تحويل للصورة بالأبيض والأسود للطباعة */
+        }
+
+        /* --- صفحات الحيوانات --- */
+        .animal-page {
+            background: var(--bg-paper);
+            border-radius: var(--radius-lg);
+            padding: 25px; margin-bottom: 25px;
+            box-shadow: var(--shadow-soft);
+            opacity: 1 !important; 
+            transform: none !important;
+        }
+        .animal-page:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+
+        /* رأس الصفحة */
+        .page-header { text-align: center; margin-bottom: 20px; border-bottom: 2px dashed #eee; padding-bottom: 15px; }
+        .animal-name-big { font-size: 2.8rem; font-weight: 900; color: var(--primary-dark); margin: 0; }
+        .animal-desc { color: #636e72; font-size: 1rem; margin-top: 5px; }
+
+        /* شبكة اللغات التفاعلية */
+        .langs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px; margin-bottom: 20px;
+        }
+        .lang-card {
+            padding: 12px 8px; border-radius: 12px; text-align: center;
+            color: white; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .lang-card:hover { transform: scale(1.05); z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .lang-label { font-size: 0.7rem; opacity: 0.8; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        .lang-word { font-size: 1.2rem; direction: ltr; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+        /* تخصيص ألوان البطاقات */
+        .card-ar { background: var(--lang-ar); }
+        .card-en { background: var(--lang-en); }
+        .card-de { background: var(--lang-de); }
+        .card-fr { background: var(--lang-fr); }
+        .card-es { background: var(--lang-es); }
+
+        /* منطقة الصورة والتلوين */
+        .art-frame {
+            background: #fafafa; border: 3px solid #eee; border-radius: 15px;
+            min-height: 300px; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden; margin-bottom: 15px;
+        }
+        .art-frame img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+            transition: transform 0.3s;
+        }
+        .art-frame:hover img { transform: scale(1.02); }
+        
+        /* مساحة الرسم الحر */
+        .free-draw-zone {
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 2px dashed #ccc; border-radius: 12px;
+            height: 120px; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            color: #aaa; font-style: italic; font-size: 0.9rem;
+        }
+        .draw-icon { font-size: 1.5rem; margin-left: 8px; opacity: 0.5; }
+
+        /* تذييل الصفحة */
+        .page-footer {
+            text-align: center; font-size: 0.75rem; color: #b2bec3;
+            margin-top: 15px; padding-top: 10px; border-top: 1px solid #f1f2f6;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .cover-title { font-size: 1.8rem; }
+            .animal-name-big { font-size: 2rem; }
+            .langs-grid { grid-template-columns: 1fr 1fr; }
+            .controls-float { bottom: 10px; left: 10px; }
+            .ctrl-btn { padding: 10px 15px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- أدوات التحكم -->
+<div class="controls-float">
+    <button class="ctrl-btn print-mode" onclick="window.print()">🖨️ حفظ كـ PDF / طباعة</button>
+</div>
+
+<div class="book-wrapper">
+
+    <!-- 1. الغلاف -->
+    <section class="cover-section">
+        <div class="cover-logo">🦅</div>
+        <h1 class="cover-title">كتاب الصقر الذكي</h1>
+        <p class="cover-subtitle">رحلة تعليمية ممتعة في عالم اللغات الخمس عبر الرسم والتلوين</p>
+        <div class="cover-badge">⭐ إصدار احترافي 2026 | مناسب للعمر 4-10 سنوات</div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- صفحة الأسد                                 -->
+    <!-- ========================================== -->
+    <article class="animal-page">
+        <header class="page-header">
+            <h2 class="animal-name-big">أسَد</h2>
+            <p class="animal-desc">ملك الغابة القوي والشجاع 🦁</p>
+        </header>
+
+        <div class="langs-grid">
+            <div class="lang-card card-ar"><span class="lang-label">العربية</span><span class="lang-word">أسَد</span></div>
+            <div class="lang-card card-en"><span class="lang-label">English</span><span class="lang-word">Lion</span></div>
+            <div class="lang-card card-de"><span class="lang-label">Deutsch</span><span class="lang-word">Löwe</span></div>
+            <div class="lang-card card-fr"><span class="lang-label">Français</span><span class="lang-word">Lion</span></div>
+            <div class="lang-card card-es"><span class="lang-label">Español</span><span class="lang-word">León</span></div>
+        </div>
+
+        <div class="art-frame">
+            <!-- ضع رابط صورة الأسد هنا -->
+            <img src="https://via.placeholder.com/600x400.png?text=Lion+Coloring+Page" alt="Lion Coloring">
+        </div>
+
+        <div class="free-draw-zone">
+            <span class="draw-icon">✏️</span> ارسم صديقك المفضل بجانب الأسد!
+        </div>
+
+        <footer class="page-footer">© 2026 Mamlaka Apps - جميع الحقوق محفوظة</footer>
+    </article>
+
+    <!-- ========================================== -->
+    <!-- صفحة الحصان (مثال حي من صورتك)             -->
+    <!-- ========================================== -->
+    <article class="animal-page">
+        <header class="page-header">
+            <h2 class="animal-name-big">حصَان</h2>
+            <p class="animal-desc">صديق السرعة والأصالة 🐎</p>
+        </header>
+
+        <div class="langs-grid">
+            <div class="lang-card card-ar"><span class="lang-label">العربية</span><span class="lang-word">حصَان</span></div>
+            <div class="lang-card card-en"><span class="lang-label">English</span><span class="lang-word">Horse</span></div>
+            <div class="lang-card card-de"><span class="lang-label">Deutsch</span><span class="lang-word">Pferd</span></div>
+            <div class="lang-card card-fr"><span class="lang-label">Français</span><span class="lang-word">Cheval</span></div>
+            <div class="lang-card card-es"><span class="lang-label">Español</span><span class="lang-word">Caballo</span></div>
+        </div>
+
+        <div class="art-frame">
+            <!-- استخدم رابط صورتك الحقيقي هنا -->
+            <img src="https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/54421.jpg" alt="Horse Coloring">
+        </div>
+
+        <div class="free-draw-zone">
+            <span class="draw-icon">🎨</span> لوّن عريف الحصان بألوان قوس قزح!
+        </div>
+
+        <footer class="page-footer">© 2026 Mamlaka Apps - جميع الحقوق محفوظة</footer>
+    </article>
+
+    <!-- ========================================== -->
+    <!-- صفحة الفيل                                 -->
+    <!-- ========================================== -->
+    <article class="animal-page">
+        <header class="page-header">
+            <h2 class="animal-name-big">فِيل</h2>
+            <p class="animal-desc">العملاق الطيب ذو الخرطوم الطويل 🐘</p>
+        </header>
+
+        <div class="langs-grid">
+            <div class="lang-card card-ar"><span class="lang-label">العربية</span><span class="lang-word">فِيل</span></div>
+            <div class="lang-card card-en"><span class="lang-label">English</span><span class="lang-word">Elephant</span></div>
+            <div class="lang-card card-de"><span class="lang-label">Deutsch</span><span class="lang-word">Elefant</span></div>
+            <div class="lang-card card-fr"><span class="lang-label">Français</span><span class="lang-word">Éléphant</span></div>
+            <div class="lang-card card-es"><span class="lang-label">Español</span><span class="lang-word">Elefante</span></div>
+        </div>
+
+        <div class="art-frame">
+            <!-- ضع رابط صورة الفيل هنا -->
+            <img src="https://via.placeholder.com/600x400.png?text=Elephant+Coloring+Page" alt="Elephant Coloring">
+        </div>
+
+        <div class="free-draw-zone">
+            <span class="draw-icon">🚀</span> تخيل مغامرة مع الفيل وارسمها!
+        </div>
+
+        <footer class="page-footer">© 2026 Mamlaka Apps - جميع الحقوق محفوظة</footer>
+    </article>
+
+</div>
+
+<script>
+    // كود بسيط جداً لضمان عمل الأزرار فقط بدون تعقيدات
+    document.querySelectorAll('.lang-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => card.style.transform = '', 150);
+        });
+    });
+</script>
+
+</body>
+</html>
