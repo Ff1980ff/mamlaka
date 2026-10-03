@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>الناشر الذكي Pro | Ultimate Fixed</title>
+<title>الناشر الذكي Pro | Ultimate Fixed v2</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma,sans-serif}
 body{background:#eef1f6;color:#1c2340;padding-bottom:40px}
@@ -148,6 +148,7 @@ textarea#codeEditor { width: 100%; height: 100%; font-family: 'Courier New', mon
       <label>Token:</label>
       <input type="password" id="myGhToken" placeholder="ghp_...">
       <button class="btn b" onclick="saveMyConfig()">💾 حفظ الإعدادات السحابية</button>
+      <div id="configStatus" style="margin-top:5px; font-size:12px; color:#16a34a; display:none;">✅ تم الحفظ بنجاح!</div>
   </div>
 
   <!-- مولد بطاقة الحيوان -->
@@ -694,14 +695,51 @@ function initApp() {
     MY_GH_USER = localStorage.getItem('my_gh_user') || '';
     MY_GH_TOKEN = localStorage.getItem('my_gh_token') || '';
     
-    if(MY_GH_USER) document.getElementById('myGhUser').value = MY_GH_USER;
-    if(MY_GH_TOKEN) document.getElementById('myGhToken').value = MY_GH_TOKEN;
-
-    openDB().then(renderFiles);
+    // ملء الحقول تلقائياً عند الفتح
+    const userField = document.getElementById('myGhUser');
+    const tokenField = document.getElementById('myGhToken');
+    
+    if(userField && MY_GH_USER) userField.value = MY_GH_USER;
+    // ملاحظة: نحن لا نعرض التوكن في الحقل لأسباب أمنية، لكننا نخزنه في المتغير MY_GH_TOKEN
+    
+    // تشغيل بقية الوظائف
+    openDB().then(() => {
+        if(typeof renderFiles === 'function') renderFiles(); 
+    });
     renderAll();
     
-    // إضافة الزر العائم بعد ثانيتين للتأكد من تحميل الصفحة
-    setTimeout(addBulkButton, 2000);
+    // ضمان ظهور زر الرفع الجماعي
+    setTimeout(addBulkButton, 1000); 
+}
+
+// === دالة حفظ الإعدادات المحدثة (مع رسالة تأكيد مرئية) ===
+function saveMyConfig() {
+    const userEl = document.getElementById('myGhUser');
+    const tokenEl = document.getElementById('myGhToken');
+    
+    // تنظيف المدخلات من المسافات الزائدة
+    MY_GH_USER = userEl.value.trim();
+    MY_GH_TOKEN = tokenEl.value.trim();
+    
+    if(!MY_GH_USER || !MY_GH_TOKEN) {
+        alert("❌ يرجى إدخال اسم المستخدم والتوكن أولاً!");
+        return;
+    }
+    
+    // الحفظ في الذاكرة المحلية
+    localStorage.setItem('my_gh_user', MY_GH_USER);
+    localStorage.setItem('my_gh_token', MY_GH_TOKEN);
+    
+    // رسالة تأكيد مرئية حتى لو تم حظر التنبيهات
+    const statusMsg = document.getElementById('configStatus');
+    if(statusMsg) {
+        statusMsg.style.display = 'block';
+        setTimeout(() => statusMsg.style.display = 'none', 3000); // تختفي بعد 3 ثواني
+    }
+    
+    // إعادة تعبئة حقل الاسم فوراً للتأكد بصريااً
+    userEl.value = MY_GH_USER;
+    tokenEl.value = ""; // نظيف لأسباب أمنية
 }
 
 // بدء عملية التحقق عند تحميل الصفحة
