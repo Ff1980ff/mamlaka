@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🖼️ عارض صور الكتاب السريع</title>
+<style>
+    body { font-family: 'Tajawal', sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
+    .container { max-width: 600px; margin: auto; }
+    h2 { color: #2563eb; text-align: center; margin-bottom: 20px; }
+    
+    /* بطاقة العنصر */
+    .item-card {
+        display: flex; align-items: center; gap: 15px;
+        background: white; border-radius: 12px; padding: 10px;
+        margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-right: 4px solid #10b981; /* لون أخضر للتمييز */
+    }
+    
+    /* صورة مصغرة قابلة للنقر */
+    .thumb-img {
+        width: 80px; height: 80px; object-fit: cover;
+        border-radius: 8px; cursor: pointer;
+        border: 2px solid #e5e7eb; transition: 0.3s;
+    }
+    .thumb-img:hover { transform: scale(1.05); border-color: #10b981; }
+    
+    /* معلومات النص */
+    .info-box { flex-grow: 1; overflow: hidden; }
+    .file-name { font-weight: bold; color: #1c2340; font-size: 0.9rem; margin-bottom: 5px; }
+    .url-text { font-size: 0.7rem; color: #6b7280; word-break: break-all; line-height: 1.2; }
+    
+    /* أزرار التحكم */
+    .actions { display: flex; flex-direction: column; gap: 5px; min-width: 60px; }
+    .btn-sm {
+        border: none; padding: 6px; border-radius: 6px; cursor: pointer;
+        font-size: 0.8rem; font-weight: bold; color: white;
+    }
+    .btn-copy { background: #3b82f6; }
+    .btn-check { background: #10b981; } /* زر تأكيد الاسم */
+    
+    /* حقل إدخال الاسم المؤقت */
+    .name-input {
+        width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 5px;
+        font-family: inherit; font-size: 0.9rem; margin-top: 5px;
+    }
+    
+    /* رسالة النجاح */
+    #toast {
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: #1c2340; color: white; padding: 10px 20px; border-radius: 20px;
+        opacity: 0; transition: 0.3s; z-index: 100;
+    }
+    #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📸 حدد أسماء الحيوانات</h2>
+    <p style="text-align:center; font-size:0.8rem; color:#666;">اضغط على الصورة لتكبيرها، ثم اكتب الاسم في المربع.</p>
+    
+    <div id="gallery"></div>
+    
+    <!-- زر حفظ القائمة النهائية -->
+    <button onclick="exportList()" style="width:100%; padding:15px; background:#6C5CE7; color:white; border:none; border-radius:10px; font-weight:bold; font-size:1.1rem; margin-top:20px; cursor:pointer;">
+        📥 تصدير القائمة الجاهزة للكود
+    </button>
+</div>
+
+<!-- رسالة التنبيه -->
+<div id="toast"></div>
+
+<script>
+// قائمة الروابط التي أرسلتها
+const urls = [
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53596.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53597.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53598.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53599.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53600.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53676.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53677.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53678.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53680.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53683.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53686.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53685.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53687.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53688.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53694.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53693.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53697.jpg",
+"https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53671.jpg"
+];
+
+function renderGallery() {
+    const gallery = document.getElementById('gallery');
+    let html = '';
+    
+    urls.forEach((url, index) => {
+        const fileName = url.split('/').pop();
+        
+        html += `
+        <div class="item-card" id="card-${index}">
+            <!-- الصورة المصغرة -->
+            <img src="${url}" alt="${fileName}" class="thumb-img" onclick="openImage('${url}')">
+            
+            <!-- المعلومات والإدخال -->
+            <div class="info-box">
+                <div class="file-name">${fileName}</div>
+                <input type="text" class="name-input" placeholder="اكتب اسم الحيوان هنا..." data-url="${url}">
+            </div>
+            
+            <!-- الأزرار -->
+            <div class="actions">
+                <button class="btn-sm btn-copy" onclick="copyUrl('${url}')">📋 نسخ</button>
+            </div>
+        </div>`;
+    });
+    
+    gallery.innerHTML = html;
+}
+
+// دالة لفتح الصورة بحجم كامل إذا كانت صغيرة جداً
+function openImage(url) {
+    window.open(url, '_blank');
+}
+
+// دالة لنسخ الرابط
+function copyUrl(url) {
+    navigator.clipboard.writeText(url).then(() => showToast("✅ تم نسخ الرابط"));
+}
+
+// دالة لإظهار رسالة قصيرة
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// دالة لتصدير القائمة النهائية كـ JSON جاهز للنسخ
+function exportList() {
+    const inputs = document.querySelectorAll('.name-input');
+    let finalData = [];
+    
+    inputs.forEach(input => {
+        const name = input.value.trim();
+        const url = input.getAttribute('data-url');
+        if(name && url) {
+            finalData.push({ img: url, ar: name });
+        }
+    });
+    
+    if(finalData.length === 0) {
+        alert("⚠️ لم تقم بإدخال أي أسماء بعد!");
+        return;
+    }
+    
+    // تحويل البيانات إلى نص يمكن نسخه
+    const jsonString = JSON.stringify(finalData, null, 2);
+    
+    // إنشاء textarea مؤقت لعرض النتيجة ونسخها
+    const tempArea = document.createElement('textarea');
+    tempArea.value = jsonString;
+    document.body.appendChild(tempArea);
+    tempArea.select();
+    try {
+        document.execCommand('copy');
+        alert(`✅ تم نسخ ${finalData.length} حيوانات!\n\nالآن الصقها في الشات معي أو في مولد الكتاب.`);
+    } catch(e) {
+        alert("❌ فشل النسخ التلقائي. انسخ النص يدوياً:\n" + jsonString);
+    }
+    document.body.removeChild(tempArea);
+}
+
+// تشغيل عند التحميل
+renderGallery();
+</script>
+
+</body>
+</html>
