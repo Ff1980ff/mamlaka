@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🦅 كتاب الصقر الذهبي | نسخة الجوال</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gold: #D4AF37; 
+            --future-purple: #6C5CE7; 
+            --active-green: #2ecc71;
+            --locked-gray: #7f8c8d;
+            --dark-bg: #1a1a1a;      
+            --card-bg: #ffffff;      
+            --text-dark: #2c3e50;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at center, #2b2b2b 0%, #000000 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* منع التمرير العام */
+        }
+
+        /* === الهيدر العلوي === */
+        header {
+            background: linear-gradient(to bottom, #333, #111);
+            border-bottom: 2px solid var(--primary-gold);
+            padding: 10px;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            flex-shrink: 0; /* لا يتقلص */
+        }
+        .logo-text {
+            font-size: 1.2rem; /* تصغير بسيط للعنوان */
+            font-weight: 900;
+            color: var(--primary-gold);
+            letter-spacing: 1px;
+        }
+        .section-status-bar {
+            background: rgba(255,255,255,0.1);
+            padding: 3px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 0.7rem;
+            color: var(--active-green);
+            border: 1px solid var(--active-green);
+        }
+
+        /* === منطقة العرض الرئيسية === */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animal-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 400px;
+            height: 100%; /* يملأ المساحة المتاحة */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 3px solid var(--primary-gold);
+            position: relative;
+        }
+
+        /* شريط الأدوات العلوي داخل البطاقة (New Location for Actions) */
+        .top-actions-bar {
+            background: #f0f0f0;
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+        
+        .tool-btn {
+            background: white;
+            border: 1px solid #ccc;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tool-btn.future {
+            background: var(--future-purple);
+            color: white;
+            border: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(108, 92, 231, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        }
+
+        /* صورة العنصر */
+        .image-wrapper {
+            flex: 1;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow: hidden;
+        }
+        .item-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* معلومات العنصر */
+        .info-section {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+        .name-ar {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+        .name-en {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .category-badge {
+            display: inline-block;
+            background: var(--primary-gold);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* === أدوات التحكم السفلية (Navigation Only) === */
+        footer {
+            background: #111;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #333;
+            flex-shrink: 0;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 2px solid var(--primary-gold);
+            color: var(--primary-gold);
+            width: 60px; /* أكبر لمساً */
+            height: 60px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .nav-btn:active { background: var(--primary-gold); color: black; transform: scale(0.9); }
+        
+        .page-indicator {
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* مؤشر التحميل */
+        #loader {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px; height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+            z-index: 20;
+        }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* طباعة مخفية */
+        @media print {
+            body > *:not(.print-area) { display: none !important; }
+            .print-area { display: block !important; width: 100%; text-align: center; }
+            .print-area img { max-width: 100%; max-height: 90vh; }
+        }
+
+        /* === نافذة المستقبل المنبثقة === */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: #1e1e2e;
+            border: 2px solid var(--future-purple);
+            border-radius: 15px;
+            width: 95%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-title {
+            color: var(--future-purple);
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+        
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .section-card {
+            background: #2d2d44;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: right;
+        }
+        .section-card.active {
+            border-color: var(--active-green);
+            background: rgba(46, 204, 113, 0.1);
+        }
+        .section-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: white;
+        }
+        .section-info p {
+            margin: 3px 0 0;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+        .status-icon {
+            font-size: 1.2rem;
+        }
+        .close-modal-btn {
+            background: var(--future-purple);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Cairo';
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-text">🦅 كتاب الصقر الذهبي</div>
+    <div class="section-status-bar" id="headerStatus">القسم النشط: الحيوانات 🐾</div>
+</header>
+
+<main>
+    <div id="loader"></div>
+    
+    <div class="animal-card" id="mainCard">
+        <!-- الشريط العلوي الجديد للأدوات -->
+        <div class="top-actions-bar">
+            <button class="tool-btn sound" onclick="speakCurrent()">🔊 صوت</button>
+            <button class="tool-btn print" onclick="printPage()">🖨️ طباعة</button>
+            <button class="tool-btn future" onclick="openFutureModal()">🚀 تطوّر</button>
+        </div>
+
+        <div class="progress-bar-container" style="height: 4px; background: #eee;">
+            <div class="progress-fill" id="progressFill" style="height: 100%; background: var(--primary-gold); width: 0%; transition: width 0.3s;"></div>
+        </div>
+        
+        <div class="image-wrapper">
+            <img src="" alt="Item Image" class="item-img" id="itemImg">
+        </div>
+        
+        <div class="info-section">
+            <div class="name-ar" id="nameAr">جارٍ التحميل...</div>
+            <div class="name-en" id="nameEn">Loading...</div>
+            <div class="category-badge" id="catBadge">الفئة</div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <button class="nav-btn" onclick="prevItem()">→</button> 
+    
+    <span class="page-indicator" id="pageIndex">1 / 30</span>
+
+    <button class="nav-btn" onclick="nextItem()">←</button> 
+</footer>
+
+<!-- عنصر مخفي للطباعة فقط -->
+<div class="print-area" style="display:none;" id="printContainer">
+    <h1 id="printTitle"></h1>
+    <img id="printImgSrc" src="">
+</div>
+
+<!-- === نافذة المستقبل المنبثقة === -->
+<div class="modal-overlay" id="futureModal">
+    <div class="modal-content">
+        <div class="modal-title">🌟 خارطة الطريق للمستقبل</div>
+        <p style="color:#ccc; font-size:0.8rem; margin-bottom:15px;">اختر القسم الذي تريد استكشافه.</p>
+        
+        <div class="section-grid" id="sectionsList">
+            <!-- سيتم تعبئتها بالكود -->
+        </div>
+
+        <button class="close-modal-btn" onclick="closeFutureModal()">إغلاق ✕</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // ⚙️ إعدادات الأقسام
+    // ==========================================
+    const sectionsConfig = [
+        { id: 'animals', title: 'عالم الحيوانات', desc: 'أسود، نمور، ديناصورات.', icon: '🐾', status: 'active' },
+        { id: 'vehicles', title: 'الآليات والمركبات', desc: 'سيارات، طائرات، سفن.', icon: '🚗️', status: 'coming_soon' },
+        { id: 'architecture', title: 'هندسة العمارة', desc: 'بيوت، فنادق، أبراج.', icon: '🏰🏨', status: 'locked' },
+        { id: 'underwater', title: 'أعماق المحيطات', desc: 'غواصات، شعاب مرجانية.', icon: '🐙', status: 'locked' }
+    ];
+
+    // ==========================================
+    // 📚 قاعدة بيانات الحيوانات الحالية
+    // ==========================================
+    const animalsData = [
+        { ar: "صقر", en: "Falcon", cat: "طيور جارحة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/55078.jpg" },
+        { ar: "أسد", en: "Lion", cat: "حيوانات مفترسة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53594.jpg" },
+        { ar: "حصان", en: "Horse", cat: "حيوانات أليفة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53591.jpg" },
+        { ar: "نمر", en: "Tiger", cat: "حيوانات مفترسة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53596.jpg" },
+        { ar: "فيل", en: "Elephant", cat: "عمالقة البر", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53597.jpg" },
+        { ar: "زرافة", en: "Giraffe", cat: "حيوانات طويلة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53598.jpg" },
+        { ar: "قرد", en: "Monkey", cat: "حيوانات ذكية", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53599.jpg" },
+        { ar: "خروف", en: "Sheep", cat: "حيوانات المزرعة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53589.jpg" },
+        { ar: "ماعز جبلي", en: "Mountain Goat", cat: "حيوانات الجبال", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53590.jpg" },
+        { ar: "دب قطبي", en: "Polar Bear", cat: "حيوانات القطب", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53600.jpg" },
+        { ar: "كلب", en: "Dog", cat: "أصدقاء البشر", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53578.jpg" },
+        { ar: "قط", en: "Cat", cat: "حيوانات منزلية", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53579.jpg" },
+        { ar: "أرنب", en: "Rabbit", cat: "حيوانات سريعة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53584.jpg" },
+        { ar: "هامستر", en: "Hamster", cat: "قوارض لطيفة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53588.jpg" },
+        { ar: "عصفور", en: "Bird", cat: "طيور مغردة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53586.jpg" },
+        { ar: "سلحفاة برية", en: "Land Turtle", cat: "زواحف بطيئة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53587.jpg" },
+        { ar: "سمكة مهرج", en: "Clownfish", cat: "أسماك ملونة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53585.jpg" },
+        { ar: "سلحفاة بحرية", en: "Sea Turtle", cat: "زواحف مائية", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53676.jpg" },
+        { ar: "قرش", en: "Shark", cat: "مفترسات البحر", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53677.jpg" },
+        { ar: "صدفة نوتيلوس", en: "Nautilus", cat: "كائنات غريبة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53678.jpg" },
+        { ar: "قنديل بحر", en: "Jellyfish", cat: "كائنات شفافة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53671.jpg" },
+        { ar: "تي-ريكس", en: "T-Rex", cat: "ديناصورات مفترسة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53680.jpg" },
+        { ar: "راپتور", en: "Velociraptor", cat: "ديناصورات صيادة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53697.jpg" },
+        { ar: "برونتوصور", en: "Brontosaurus", cat: "ديناصورات عملاقة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53693.jpg" },
+        { ar: "أنكيلوصور", en: "Ankylosaurus", cat: "ديناصورات مدرعة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53688.jpg" },
+        { ar: "بترانودون", en: "Pteranodon", cat: "زواحف طائرة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53687.jpg" },
+        { ar: "ثيرانوصور", en: "Triceratops", cat: "ديناصورات قرنية", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53683.jpg" },
+        { ar: "بيضة ديناصور", en: "Dino Egg", cat: "بداية الحياة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53694.jpg" },
+        { ar: "طفل ديناصور", en: "Baby Dino", cat: "صغار العمالقة", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53686.jpg" },
+        { ar: "ديناصور ريشي", en: "Feathered Raptor", cat: "حلقة وصل بالطيور", url: "https://raw.githubusercontent.com/Ff1980ff/mamlaka/main/images/53685.jpg" }
+    ];
+
+    // قواعد بيانات فارغة للأقسام المستقبلية
+    const vehiclesData = []; 
+    const architectureData = [];
+    const underwaterData = [];
+
+    const databaseMap = {
+        'animals': animalsData,
+        'vehicles': vehiclesData,
+        'architecture': architectureData,
+        'underwater': underwaterData
+    };
+
+    let currentSectionId = 'animals';
+    let currentIndex = 0;
+    let pagesVisited = 0;
+
+    // عناصر DOM
+    const elImg = document.getElementById('itemImg');
+    const elNameAr = document.getElementById('nameAr');
+    const elNameEn = document.getElementById('nameEn');
+    const elCat = document.getElementById('catBadge');
+    const elProgress = document.getElementById('progressFill');
+    const pageIndexEl = document.getElementById('pageIndex');
+    const loader = document.getElementById('loader');
+    const modal = document.getElementById('futureModal');
+    const headerStatus = document.getElementById('headerStatus');
+
+    function getCurrentData() {
+        return databaseMap[currentSectionId] || [];
+    }
+
+    function loadItem(index) {
+        const data = getCurrentData();
+        if (!data || index < 0 || index >= data.length) return;
+        
+        loader.style.display = 'block';
+        elImg.style.opacity = '0.5';
+
+        const item = data[index];
+        
+        elNameAr.textContent = item.ar;
+        elNameEn.textContent = item.en;
+        elCat.textContent = item.cat;
+        
+        // تحديث المؤشر السفلي
+        pageIndexEl.textContent = `${index + 1} / ${data.length}`;
+
+        const percent = ((index + 1) / data.length) * 100;
+        elProgress.style.width = percent + '%';
+
+        pagesVisited++;
+
+        const imgObj = new Image();
+        imgObj.src = item.url;
+        
+        imgObj.onload = () => {
+            elImg.src = item.url;
+            elImg.style.opacity = '1';
+            loader.style.display = 'none';
+        };
+
+        imgObj.onerror = () => {
+            loader.style.display = 'none';
+            elNameAr.textContent = "خطأ في تحميل الصورة";
+        };
+    }
+
+    function nextItem() {
+        const data = getCurrentData();
+        if (currentIndex < data.length - 1) {
+            currentIndex++;
+            loadItem(currentIndex);
+        } else {
+            alert("وصلت لآخر صفحة في هذا القسم!");
+        }
+    }
+
+    function prevItem() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            loadItem(currentIndex);
+        }
+    }
+
+    function speakCurrent() {
+        const data = getCurrentData();
+        if(!data[currentIndex]) return;
+        const item = data[currentIndex];
+        speak(item.ar, 'ar-SA', () => {
+            setTimeout(() => speak(item.en, 'en-US'), 500);
+        });
+    }
+
+    function speak(text, lang, callback) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
+            utterance.onend = callback;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("متصفحك لا يدعم تقنية النطق الصوتي.");
+        }
+    }
+
+    function printPage() {
+        const data = getCurrentData();
+        if(!data[currentIndex]) return;
+        const item = data[currentIndex];
+        document.getElementById('printTitle').textContent = `${item.ar} (${item.en})`;
+        document.getElementById('printImgSrc').src = item.url;
+        window.print();
+    }
+
+    function openFutureModal() {
+        const listDiv = document.getElementById('sectionsList');
+        listDiv.innerHTML = '';
+
+        sectionsConfig.forEach(sec => {
+            const card = document.createElement('div');
+            card.className = `section-card ${sec.status === 'active' ? 'active' : ''}`;
+            
+            let statusText = "";
+            let iconHtml = "";
+
+            if (sec.status === 'active') {
+                statusText = "نشط الآن ✅";
+                iconHtml = `<span class="status-icon" style="color:var(--active-green)">✔️</span>`;
+            } else if (sec.status === 'coming_soon') {
+                statusText = "قريباً جداً ⏳";
+                iconHtml = `<span class="status-icon" style="color:orange">⏳</span>`;
+            } else {
+                statusText = "مقفل 🔒";
+                iconHtml = `<span class="status-icon" style="color:red">🔒</span>`;
+            }
+
+            card.innerHTML = `
+                <div class="section-info">
+                    <h3>${sec.icon} ${sec.title}</h3>
+                    <p>${sec.desc}</p>
+                    <small style="color:${sec.status==='active'?'#2ecc71':'#7f8c8d'}">${statusText}</small>
+                </div>
+                ${iconHtml}
+            `;
+            
+            if(sec.status === 'active') {
+                card.onclick = () => closeFutureModal();
+            }
+
+            listDiv.appendChild(card);
+        });
+
+        modal.classList.add('active');
+    }
+
+    function closeFutureModal() {
+        modal.classList.remove('active');
+    }
+
+    window.onload = () => {
+        const activeSec = sectionsConfig.find(s => s.id === currentSectionId);
+        if(activeSec) {
+            headerStatus.innerText = `القسم النشط: ${activeSec.title} ${activeSec.icon}`;
+        }
+        
+        loadItem(0); 
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowLeft') nextItem(); 
+            if(e.key === 'ArrowRight') prevItem(); 
+        });
+    };
+
+</script>
+
+</body>
+</html>
