@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>👑 مركز قيادة المملكة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 مركز قيادة المملكة | النسخة الوظيفية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -32,7 +32,7 @@
             display: flex;
         }
 
-        /* === الشريط الجانبي (Desktop) === */
+        /* الشريط الجانبي */
         aside {
             width: 260px;
             background-color: var(--sidebar-bg);
@@ -66,7 +66,7 @@
             border-right-color: var(--primary-gold);
         }
 
-        /* === زر القائمة للموبايل (Hidden on Desktop) === */
+        /* زر الموبايل */
         .mobile-menu-btn {
             display: none;
             position: fixed;
@@ -82,7 +82,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* === المنطقة الرئيسية === */
+        /* المحتوى الرئيسي */
         main {
             flex: 1;
             padding: 20px;
@@ -98,14 +98,12 @@
         }
         .page-title { font-size: 1.5rem; font-weight: bold; color: var(--text-main); }
         
-        /* شبكة المشاريع */
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
-        /* بطاقة المشروع (بدون أزرار متداخلة!) */
         .project-card {
             background: var(--card-bg);
             border-radius: 15px;
@@ -113,7 +111,6 @@
             border: 1px solid var(--border-color);
             position: relative;
             transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer; /* يجعل البطاقة كلها قابلة للنقر */
         }
         .project-card:hover {
             transform: translateY(-5px);
@@ -129,70 +126,79 @@
         .tag-ready { background: var(--success-green); color: white; }
         .tag-edit { background: var(--warning-yellow); color: black; }
         .tag-work { background: var(--secondary-purple); color: white; }
-        .tag-archive { background: var(--danger-red); color: white; }
 
         .proj-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
         .proj-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; color: var(--primary-gold); }
-        .proj-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px; height: 45px; overflow: hidden; }
+        .proj-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px; min-height: 40px; }
         
-        /* روابط داخل البطاقة (بدون buttons) */
-        .card-links {
+        /* أزرار العمل داخل البطاقة */
+        .card-actions {
             display: flex; gap: 10px; margin-top: auto;
         }
-        .card-link {
+        .action-btn {
             flex: 1;
             text-align: center;
-            padding: 8px;
-            background: rgba(255,255,255,0.05);
+            padding: 10px;
             border-radius: 8px;
             color: var(--text-main);
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: bold;
             transition: 0.2s;
-            border: 1px solid transparent;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            background: transparent;
         }
-        .card-link:hover { background: var(--primary-gold); color: black; }
-        .card-link.primary { background: var(--primary-gold); color: black; font-weight: bold; }
+        .action-btn.primary { 
+            background: var(--primary-gold); 
+            color: black; 
+            border: none;
+        }
+        .action-btn.secondary { 
+            background: rgba(255,255,255,0.05); 
+        }
+        .action-btn:hover { opacity: 0.9; transform: scale(0.98); }
 
-        /* الإحصائيات العلوية */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px; margin-bottom: 30px;
+        /* نافذة الإضافة (Modal) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; justify-content: center; align-items: center;
         }
-        .stat-box {
-            background: var(--card-bg); padding: 15px; border-radius: 12px;
-            text-align: center; border: 1px solid var(--border-color);
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--card-bg); border: 1px solid var(--primary-gold);
+            border-radius: 15px; width: 90%; max-width: 500px; padding: 25px;
+            max-height: 80vh; overflow-y: auto;
         }
-        .stat-num { font-size: 1.8rem; font-weight: 900; color: var(--primary-gold); }
-        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; }
+        .form-control {
+            width: 100%; padding: 10px; background: #2a2a35; border: 1px solid #444;
+            color: white; border-radius: 8px; font-family: 'Cairo';
+        }
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--success-green); color: white;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;
+        }
 
-        /* === استعلامات الوسائط (Media Queries) للجوال === */
+        /* Responsive */
         @media (max-width: 768px) {
             aside {
-                position: fixed;
-                top: 0; bottom: 0; right: 0;
-                transform: translateX(100%); /* إخفاء خارج الشاشة */
-                width: 80%; max-width: 300px;
-                box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+                position: fixed; top: 0; bottom: 0; right: 0;
+                transform: translateX(100%); width: 80%; max-width: 300px;
             }
-            aside.open { transform: translateX(0); } /* إظهار عند الضغط */
-            
+            aside.open { transform: translateX(0); }
             .mobile-menu-btn { display: block; }
-            
-            main { padding: 15px; padding-top: 70px; /* مساحة للزر العلوي */ }
-            
-            .projects-grid { grid-template-columns: 1fr; } /* عمود واحد */
-            
-            .header-search { display: none; } /* إخفاء البحث لتوفير المساحة */
+            main { padding: 15px; padding-top: 70px; }
+            .projects-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<!-- زر القائمة للموبايل -->
 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 
-<!-- الشريط الجانبي -->
 <aside id="sidebar">
     <div class="logo-area">
         <h2>👑 المملكة</h2>
@@ -205,116 +211,186 @@
             <li><a href="#" onclick="showPage('editing')"><span>🔧 قيد التعديل</span></a></li>
             <li><a href="#" onclick="showPage('working')"><span>⚙️ قيد العمل</span></a></li>
             <hr style="border:0; border-top:1px solid #333; margin:10px 0;">
-            <li><a href="#" onclick="showPage('images')"><span>🖼️ مكتبة الصور</span></a></li>
-            <li><a href="#" onclick="showPage('videos')"><span>🎥 الفيديوهات</span></a></li>
-            <li><a href="#" onclick="showPage('links')"><span>🔗 الروابط</span></a></li>
-            <li><a href="#" onclick="showPage('code')"><span>💻 الكواد</span></a></li>
-            <hr style="border:0; border-top:1px solid #333; margin:10px 0;">
-            <li><a href="#" onclick="showPage('notes')"><span>📝 الملاحظات</span></a></li>
-            <li><a href="#" onclick="showPage('stories')"><span>📖 القصص</span></a></li>
-            <li><a href="#" onclick="showPage('explore')"><span>🧭 الاستكشاف</span></a></li>
+            <li><a href="#" onclick="openAddModal()"><span>➕ إضافة مشروع جديد</span></a></li>
         </ul>
     </nav>
 </aside>
 
-<!-- المحتوى الرئيسي -->
 <main>
     <header class="main-header">
         <h1 class="page-title" id="pageTitle">نظرة عامة</h1>
-        <!-- يمكن إضافة بحث هنا لاحقاً -->
+        <button class="action-btn primary" style="flex:none; width:auto;" onclick="openAddModal()">+ إضافة</button>
     </header>
 
     <!-- صفحة النظرة العامة -->
     <section id="overview" class="page-section active">
-        <div class="stats-row">
-            <div class="stat-box"><div class="stat-num">12</div><div class="stat-label">جاهز للنشر</div></div>
-            <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">قيد التعديل</div></div>
-            <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">قيد التطوير</div></div>
-            <div class="stat-box"><div class="stat-num">20+</div><div class="stat-label">روابط محفوظة</div></div>
+        <div class="stats-row" style="display:flex; gap:15px; margin-bottom:20px; overflow-x:auto; padding-bottom:10px;">
+            <div style="min-width:100px; background:#1e1e28; padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:1.5rem; color:var(--success-green);" id="countReady">0</div>
+                <small style="color:#aaa;">جاهز</small>
+            </div>
+            <div style="min-width:100px; background:#1e1e28; padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:1.5rem; color:var(--warning-yellow);" id="countEdit">0</div>
+                <small style="color:#aaa;">تعديل</small>
+            </div>
+            <div style="min-width:100px; background:#1e1e28; padding:10px; border-radius:8px; text-align:center;">
+                <div style="font-size:1.5rem; color:var(--secondary-purple);" id="countWork">0</div>
+                <small style="color:#aaa;">عمل</small>
+            </div>
         </div>
 
-        <h3 style="margin-bottom:15px; color:var(--text-muted);">آخر الأنشطة:</h3>
-        <div class="projects-grid">
-            <!-- مثال 1: كتاب الصقر -->
-            <div class="project-card" onclick="alert('فتح تفاصيل كتاب الصقر...')">
-                <span class="status-tag tag-ready">جاهز</span>
-                <span class="proj-icon">🦅</span>
-                <h4 class="proj-title">كتاب الصقر الذهبي</h4>
-                <p class="proj-desc">تم الانتهاء من النسخة المحمولة وإضافة زر التطور المستقبلي. جاهز للتسويق في تجرا وسلكس.</p>
-                <div class="card-links">
-                    <a href="https://ff1980ff.github.io/mamlaka/" target="_blank" class="card-link primary">فتح التطبيق</a>
-                    <a href="#" class="card-link">تعديل</a>
-                </div>
-            </div>
-
-            <!-- مثال 2: مشروع قديم -->
-            <div class="project-card" onclick="alert('فتح تفاصيل المشروع القديم...')">
-                <span class="status-tag tag-edit">يحتاج تعديل</span>
-                <span class="proj-icon">🛒</span>
-                <h4 class="proj-title">متجر الإلكترونيات V1</h4>
-                <p class="proj-desc">التصميم قديم ولا يدعم الجوال. يحتاج لإعادة هيكلة CSS وتحديث الصور قبل النشر مجدداً.</p>
-                <div class="card-links">
-                    <a href="#" class="card-link primary">بدء الإصلاح</a>
-                    <a href="#" class="card-link">GitHub</a>
-                </div>
-            </div>
-            
-             <!-- مثال 3: أداة رفع -->
-             <div class="project-card" onclick="alert('فتح تفاصيل أداة الرفع...')">
-                <span class="status-tag tag-work">قيد العمل</span>
-                <span class="proj-icon">📤</span>
-                <h4 class="proj-title">أداة رفع الملفات الذكية</h4>
-                <p class="proj-desc">جاري تطوير واجهة المستخدم لإضافة سحب وإفلات (Drag & Drop) ودعم الصيغ الجديدة.</p>
-                <div class="card-links">
-                    <a href="#" class="card-link primary">متابعة العمل</a>
-                    <a href="#" class="card-link">الكود</a>
-                </div>
-            </div>
+        <div class="projects-grid" id="projectsContainer">
+            <!-- سيتم حقن المشاريع هنا ديناميكياً -->
         </div>
     </section>
 
-    <!-- صفحات أخرى فارغة كنماذج -->
-    <section id="ready" class="page-section" style="display:none;"><h2>✅ المخزون الاستراتيجي</h2><p style="color:#aaa;">هنا تظهر المشاريع الجاهزة تماماً.</p></section>
-    <section id="editing" class="page-section" style="display:none;"><h2>🔧 ورشة الإصلاح</h2><p style="color:#aaa;">مشاريع تحتاج لمسة جمالية أو تقنية.</p></section>
-    <section id="working" class="page-section" style="display:none;"><h2>⚙️ المختبر</h2><p style="color:#aaa;">أفكار ومشاريع قيد الإنشاء حالياً.</p></section>
-    <section id="images" class="page-section" style="display:none;"><h2>🖼️ بنك الصور</h2><p style="color:#aaa;">جميع الأصول المرئية للمشروعات.</p></section>
-    <section id="videos" class="page-section" style="display:none;"><h2>🎥 مكتبة الفيديو</h2><p style="color:#aaa;">مقاطع الدعاية والشروحات.</p></section>
-    <section id="links" class="page-section" style="display:none;"><h2>🔗 إدارة الروابط</h2><p style="color:#aaa;">روابط GitHub Pages، المتاجر، والحسابات.</p></section>
-    <section id="code" class="page-section" style="display:none;"><h2>💻 قطع الكود</h2><p style="color:#aaa;">أكواد جاهزة للنسخ والاستخدام السريع.</p></section>
-    <section id="notes" class="page-section" style="display:none;"><h2>📝 دفتر اليوميات</h2><textarea style="width:100%;height:300px;background:#1e1e28;color:white;border:1px solid #333;padding:15px;border-radius:10px;font-family:'Cairo';resize:none;" placeholder="اكتب ملاحظاتك وأفكارك هنا..."></textarea></section>
-    <section id="stories" class="page-section" style="display:none;"><h2>📖 قصص النجاح والإلهام</h2><p style="color:#aaa;">قصص عن مشاريع سابقة وكيف نجحت أو فشلت ولماذا.</p></section>
-    <section id="explore" class="page-section" style="display:none;"><h2>🧭 استكشاف الأفكار</h2><p style="color:#aaa;">مساحة حرة لتسجيل أي فكرة تخطر ببالك فوراً.</p></section>
+    <!-- صفحات أخرى بسيطة للفلترة -->
+    <section id="ready" class="page-section" style="display:none;"><h2>✅ المخزون الاستراتيجي</h2><div class="projects-grid" id="gridReady"></div></section>
+    <section id="editing" class="page-section" style="display:none;"><h2>🔧 ورشة الإصلاح</h2><div class="projects-grid" id="gridEditing"></div></section>
+    <section id="working" class="page-section" style="display:none;"><h2>⚙️ المختبر</h2><div class="projects-grid" id="gridWorking"></div></section>
 
 </main>
 
+<!-- نافذة إضافة مشروع -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal-content">
+        <h3 style="color:var(--primary-gold); margin-bottom:20px;">➕ إضافة مشروع جديد</h3>
+        <form onsubmit="saveProject(event)">
+            <div class="form-group">
+                <label>اسم المشروع</label>
+                <input type="text" id="pName" class="form-control" required placeholder="مثال: كتاب الصقر الذهبي">
+            </div>
+            <div class="form-group">
+                <label>الوصف المختصر</label>
+                <textarea id="pDesc" class="form-control" rows="2" placeholder="ماذا يفعل هذا المشروع؟"></textarea>
+            </div>
+            <div class="form-group">
+                <label>رابط المعاينة (GitHub Pages)</label>
+                <input type="url" id="pLiveUrl" class="form-control" placeholder="https://username.github.io/repo/">
+            </div>
+            <div class="form-group">
+                <label>رابط الكود (GitHub Repo)</label>
+                <input type="url" id="pCodeUrl" class="form-control" placeholder="https://github.com/username/repo">
+            </div>
+            <div class="form-group">
+                <label>الحالة الحالية</label>
+                <select id="pStatus" class="form-control">
+                    <option value="ready">✅ جاهز للنشر</option>
+                    <option value="edit">🔧 يحتاج تعديل</option>
+                    <option value="work">⚙️ قيد العمل</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">حفظ المشروع</button>
+            <button type="button" class="btn-submit" style="background:#e74c3c; margin-top:10px;" onclick="closeAddModal()">إلغاء</button>
+        </form>
+    </div>
+</div>
+
 <script>
-    // دالة التنقل بين الصفحات
+    // قاعدة البيانات المحلية
+    let projects = JSON.parse(localStorage.getItem('myKingdomProjects')) || [];
+
+    // إذا كانت القائمة فارغة، نضيف مثالاً واحداً لاختبار النظام
+    if(projects.length === 0) {
+        projects.push({
+            id: Date.now(),
+            name: "كتاب الصقر الذهبي",
+            desc: "تطبيق تفاعلي لتعليم الأطفال أسماء الحيوانات مع صوت وترجمة.",
+            liveUrl: "https://ff1980ff.github.io/mamlaka/",
+            codeUrl: "https://github.com/Ff1980ff/mamlaka",
+            status: "ready",
+            icon: "🦅"
+        });
+        saveToStorage();
+    }
+
+    function init() {
+        renderProjects();
+        updateStats();
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('myKingdomProjects', JSON.stringify(projects));
+    }
+
+    function renderProjects(filterStatus = null) {
+        const containerId = filterStatus ? `grid${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}` : 'projectsContainer';
+        const containers = ['projectsContainer', 'gridReady', 'gridEditing', 'gridWorking'];
+        
+        // مسح الحاويات القديمة
+        containers.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.innerHTML = '';
+        });
+
+        projects.forEach(proj => {
+            // تحديد مكان العرض بناءً على الفلتر الحالي
+            let targetContainer = document.getElementById('projectsContainer'); // Default to Overview
+            
+            if (document.querySelector('.page-section.active').id === 'ready' && proj.status === 'ready') {
+                targetContainer = document.getElementById('gridReady');
+            } else if (document.querySelector('.page-section.active').id === 'editing' && proj.status === 'edit') {
+                targetContainer = document.getElementById('gridEditing');
+            } else if (document.querySelector('.page-section.active').id === 'working' && proj.status === 'work') {
+                targetContainer = document.getElementById('gridWorking');
+            } else if (document.querySelector('.page-section.active').id !== 'overview') {
+                return; // Don't show in specific tabs if not matching status
+            }
+
+            if(!targetContainer) return;
+
+            const card = createCardElement(proj);
+            targetContainer.appendChild(card);
+        });
+    }
+
+    function createCardElement(proj) {
+        const div = document.createElement('div');
+        div.className = 'project-card';
+        
+        let tagClass = '', tagText = '';
+        if(proj.status === 'ready') { tagClass='tag-ready'; tagText='جاهز'; }
+        else if(proj.status === 'edit') { tagClass='tag-edit'; tagText='تعديل'; }
+        else { tagClass='tag-work'; tagText='قيد العمل'; }
+
+        div.innerHTML = `
+            <span class="status-tag ${tagClass}">${tagText}</span>
+            <span class="proj-icon">${proj.icon || '💻'}</span>
+            <h4 class="proj-title">${proj.name}</h4>
+            <p class="proj-desc">${proj.desc}</p>
+            <div class="card-actions">
+                ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" class="action-btn primary">🌐 معاينة</a>` : '<span class="action-btn secondary" style="opacity:0.5">لا يوجد رابط</span>'}
+                ${proj.codeUrl ? `<a href="${proj.codeUrl}" target="_blank" class="action-btn secondary">📂 الكود</a>` : ''}
+                <button class="action-btn secondary" onclick="deleteProject(${proj.id})" style="color:#e74c3c; border-color:#e74c3c;">🗑️ حذف</button>
+            </div>
+        `;
+        return div;
+    }
+
+    function updateStats() {
+        document.getElementById('countReady').innerText = projects.filter(p => p.status === 'ready').length;
+        document.getElementById('countEdit').innerText = projects.filter(p => p.status === 'edit').length;
+        document.getElementById('countWork').innerText = projects.filter(p => p.status === 'work').length;
+    }
+
+    // إدارة النوافذ المنبثقة والتنقل
     function showPage(pageId) {
-        // إخفاء الكل
         document.querySelectorAll('.page-section').forEach(el => el.style.display = 'none');
         document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
         
-        // إظهار المطلوب
         const target = document.getElementById(pageId);
         if(target) target.style.display = 'block';
         
-        // تفعيل الرابط
         event.currentTarget.classList.add('active');
         
-        // تغيير العنوان
-        const titles = {
-            'overview': 'نظرة عامة', 'ready': 'جاهز للنشر', 'editing': 'قيد التعديل',
-            'working': 'قيد العمل', 'images': 'مكتبة الصور', 'videos': 'الفيديوهات',
-            'links': 'الروابط', 'code': 'الكود', 'notes': 'الملاحظات', 
-            'stories': 'القصص', 'explore': 'الاستكشاف'
-        };
-        document.getElementById('pageTitle').innerText = titles[pageId] || 'القسم';
+        const titles = {'overview':'نظرة عامة','ready':'جاهز للنشر','editing':'قيد التعديل','working':'قيد العمل'};
+        document.getElementById('pageTitle').innerText = titles[pageId];
 
-        // إغلاق القائمة الجانبية تلقائياً بعد الاختيار (للجوال)
+        renderProjects(); // إعادة الرسم حسب التبويب النشط
+        
         if(window.innerWidth <= 768) toggleSidebar(false);
     }
 
-    // دالة فتح/إغلاق القائمة الجانبية للجوال
     function toggleSidebar(forceState) {
         const sidebar = document.getElementById('sidebar');
         if (forceState !== undefined) {
@@ -325,14 +401,63 @@
         }
     }
 
-    // إغلاق القائمة عند الضغط خارجها (للجوال)
+    function openAddModal() {
+        document.getElementById('addModal').classList.add('active');
+    }
+
+    function closeAddModal() {
+        document.getElementById('addModal').classList.remove('active');
+    }
+
+    function saveProject(e) {
+        e.preventDefault();
+        const newProj = {
+            id: Date.now(),
+            name: document.getElementById('pName').value,
+            desc: document.getElementById('pDesc').value,
+            liveUrl: document.getElementById('pLiveUrl').value,
+            codeUrl: document.getElementById('pCodeUrl').value,
+            status: document.getElementById('pStatus').value,
+            icon: getIconForStatus(document.getElementById('pStatus').value)
+        };
+        
+        projects.push(newProj);
+        saveToStorage();
+        renderProjects();
+        updateStats();
+        closeAddModal();
+        alert("تم حفظ المشروع بنجاح في ذاكرتك المحلية!");
+    }
+
+    function deleteProject(id) {
+        if(confirm("هل أنت متأكد من حذف هذا المشروع من القائمة؟")) {
+            projects = projects.filter(p => p.id !== id);
+            saveToStorage();
+            renderProjects();
+            updateStats();
+        }
+    }
+
+    function getIconForStatus(status) {
+        if(status === 'ready') return '✅';
+        if(status === 'edit') return '🔧';
+        return '⚙️';
+    }
+
     window.onclick = function(event) {
         if (!event.target.matches('.mobile-menu-btn') && !event.target.closest('#sidebar')) {
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.remove('open');
             }
         }
+        if (event.target == document.getElementById('addModal')) {
+            closeAddModal();
+        }
     }
+
+    // تشغيل أولي
+    init();
+
 </script>
 
 </body>
