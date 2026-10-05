@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 عقل الرياضيات | النسخة المستقرة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a; 
+            --card-bg: #1e293b;
+            --primary-blue: #3b82f6;
+            --accent-green: #10b981; 
+            --accent-purple: #8b5cf6; 
+            --accent-orange: #f59e0b; 
+            --text-light: #f8fafc;
+            --border-color: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple));
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .logo-title { font-size: 1.8rem; font-weight: 900; color: white; }
+        .subtitle { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+
+        .tabs-nav {
+            display: flex;
+            justify-content: space-around;
+            background: var(--card-bg);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: 0.3s;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        .tab-btn.active { color: white; background: rgba(255,255,255,0.1); transform: scale(1.05); }
+        .tab-btn.calc.active { border-bottom: 3px solid var(--primary-blue); }
+        .tab-btn.alg.active { border-bottom: 3px solid var(--accent-purple); }
+        .tab-btn.geo.active { border-bottom: 3px solid var(--accent-orange); }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            width: 100%;
+        }
+
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .tool-header {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+            color: var(--primary-blue); font-weight: bold; font-size: 1.2rem;
+        }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #cbd5e1; font-size: 0.9rem; }
+        input[type="number"], input[type="text"] {
+            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
+            color: white; border-radius: 8px; font-size: 1.1rem; direction: ltr; text-align: left;
+        }
+        input:focus { outline: none; border-color: var(--primary-blue); }
+
+        .btn-action {
+            width: 100%; padding: 12px; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-calc { background: var(--primary-blue); color: white; }
+        .btn-alg { background: var(--accent-purple); color: white; }
+        .btn-geo { background: var(--accent-orange); color: black; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .result-box {
+            margin-top: 15px; padding: 15px; background: rgba(16, 185, 129, 0.1);
+            border-right: 4px solid var(--accent-green); border-radius: 8px;
+            display: none; 
+        }
+        .result-label { font-size: 0.8rem; color: #10b981; margin-bottom: 5px; font-weight: bold; }
+        .result-value { font-size: 1.5rem; font-weight: 900; color: white; word-wrap: break-word; }
+        .steps-detail { font-size: 0.9rem; color: #94a3b8; margin-top: 10px; line-height: 1.6; background: #0f172a; padding: 10px; border-radius: 5px; }
+
+        .num-pad {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;
+        }
+        .pad-key {
+            background: #334155; color: white; border: none; padding: 15px; border-radius: 8px;
+            font-size: 1.2rem; cursor: pointer; transition: 0.1s;
+        }
+        .pad-key:active { background: var(--primary-blue); transform: scale(0.95); }
+        .pad-op { background: #475569; font-weight: bold; }
+        .pad-eq { background: var(--accent-green); color: black; font-weight: 900; }
+
+        @media (max-width: 480px) {
+            .tabs-nav { overflow-x: auto; justify-content: flex-start; padding-left: 10px; }
+            .tab-btn { white-space: nowrap; padding: 10px 15px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">🧠 عقل الرياضيات</div>
+    <div class="subtitle">نسخة مستقرة تعمل دون إنترنت - حساب، جبر، هندسة</div>
+</header>
+
+<nav class="tabs-nav">
+    <button class="tab-btn calc active" onclick="switchTab('calc')">➕ الحساب السريع</button>
+    <button class="tab-btn alg" onclick="switchTab('alg')">📐 الجبر والمعادلات</button>
+    <button class="tab-btn geo" onclick="switchTab('geo')">🔷 الهندسة والأشكال</button>
+</nav>
+
+<main>
+    <!-- ================= قسم الحساب ================= -->
+    <section id="calc" class="section active">
+        <div class="tool-card">
+            <div class="tool-header">🔢 الآلة الحاسبة الذكية</div>
+            <div class="input-group">
+                <label>أدخل العملية (مثال: 5*5 + sqrt(16)):</label>
+                <input type="text" id="calcInput" placeholder="اكتب المعادلة هنا..." onkeypress="handleCalcEnter(event)">
+            </div>
+            
+            <div class="num-pad">
+                <button class="pad-key pad-op" onclick="appendCalc('(')">(</button>
+                <button class="pad-key pad-op" onclick="appendCalc(')')">)</button>
+                <button class="pad-key pad-op" onclick="appendCalc('^')">^</button>
+                <button class="pad-key pad-op" onclick="appendCalc('/')">÷</button>
+                
+                <button class="pad-key" onclick="appendCalc('7')">7</button>
+                <button class="pad-key" onclick="appendCalc('8')">8</button>
+                <button class="pad-key" onclick="appendCalc('9')">9</button>
+                <button class="pad-key pad-op" onclick="appendCalc('*')">×</button>
+                
+                <button class="pad-key" onclick="appendCalc('4')">4</button>
+                <button class="pad-key" onclick="appendCalc('5')">5</button>
+                <button class="pad-key" onclick="appendCalc('6')">6</button>
+                <button class="pad-key pad-op" onclick="appendCalc('-')">−</button>
+                
+                <button class="pad-key" onclick="appendCalc('1')">1</button>
+                <button class="pad-key" onclick="appendCalc('2')">2</button>
+                <button class="pad-key" onclick="appendCalc('3')">3</button>
+                <button class="pad-key pad-op" onclick="appendCalc('+')">+</button>
+                
+                <button class="pad-key" onclick="clearCalc()">C</button>
+                <button class="pad-key" onclick="appendCalc('0')">0</button>
+                <button class="pad-key" onclick="appendCalc('.')">.</button>
+                <button class="pad-key pad-eq" onclick="calculateResult()">=</button>
+            </div>
+
+            <div id="calcResultBox" class="result-box">
+                <div class="result-label">النتيجة النهائية:</div>
+                <div class="result-value" id="calcOutput">--</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= قسم الجبر ================= -->
+    <section id="alg" class="section">
+        <div class="tool-card">
+            <div class="tool-header" style="color:var(--accent-purple)">📝 حل المعادلات الخطية (ax + b = c)</div>
+            <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">أدخل معاملات المعادلة لإيجاد قيمة x بدقة.</p>
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <div class="input-group" style="flex:1"><label>a (معامل x)</label><input type="number" id="algA" value="2"></div>
+                <div class="input-group" style="flex:1"><label>b (الثابت)</label><input type="number" id="algB" value="5"></div>
+                <div class="input-group" style="flex:1"><label>= c (الناتج)</label><input type="number" id="algC" value="15"></div>
+            </div>
+            
+            <button class="btn-action btn-alg" onclick="solveLinearEq()">🔍 حل المعادلة</button>
+            
+            <div id="algResultBox" class="result-box" style="border-right-color: var(--accent-purple); background: rgba(139, 92, 246, 0.1);">
+                <div class="result-label" style="color:var(--accent-purple)">خطوات الحل:</div>
+                <div class="steps-detail" id="algSteps"></div>
+                <div class="result-value" id="algOutput" style="margin-top:10px;">x = --</div>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header" style="color:var(--accent-purple)">🔄 المشتقة الأولى (تبسيط الدوال)</div>
+            <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">يدعم حالياً دوال كثيرة الحدود البسيطة مثل x^2, 3x, 5.</p>
+            <div class="input-group">
+                <input type="text" id="derivInput" placeholder="مثال: x^2 + 3x - 5">
+            </div>
+            <button class="btn-action btn-alg" onclick="calculateDerivativeSimple()">∂ اشتق الدالة</button>
+            <div id="derivResultBox" class="result-box" style="border-right-color: var(--accent-purple); background: rgba(139, 92, 246, 0.1);">
+                <div class="result-label" style="color:var(--accent-purple)">المشتقة f'(x):</div>
+                <div class="result-value" id="derivOutput">--</div>
+                <div class="steps-detail" id="derivNote" style="display:none; margin-top:5px; font-size:0.8rem;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= قسم الهندسة ================= -->
+    <section id="geo" class="section">
+        <div class="tool-card">
+            <div class="tool-header" style="color:var(--accent-orange)">🔺 مساحة ومحيط المثلث</div>
+            <div class="input-group"><label>طول الضلع a</label><input type="number" id="triA" placeholder="مثال: 3"></div>
+            <div class="input-group"><label>طول الضلع b</label><input type="number" id="triB" placeholder="مثال: 4"></div>
+            <div class="input-group"><label>طول الضلع c</label><input type="number" id="triC" placeholder="مثال: 5"></div>
+            <button class="btn-action btn-geo" onclick="calcTriangle()">📏 احسب الخصائص</button>
+            <div id="triResultBox" class="result-box" style="border-right-color: var(--accent-orange); background: rgba(245, 158, 11, 0.1);">
+                <div class="result-label" style="color:var(--accent-orange)">النتائج:</div>
+                <div class="steps-detail" id="triDetails"></div>
+                <div class="result-value" id="triAreaOut" style="margin-top:5px;">المساحة: --</div>
+                <div class="result-value" id="triPerimOut">المحيط: --</div>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header" style="color:var(--accent-orange)">⭕ دائرة وقطاع دائري</div>
+            <div class="input-group"><label>نصف القطر (r)</label><input type="number" id="circR" placeholder="مثال: 7"></div>
+            <div class="input-group"><label>زاوية القطاع (بالدرجات θ) [اختياري]</label><input type="number" id="circTheta" placeholder="اتركه فارغا للدائرة الكاملة"></div>
+            <button class="btn-action btn-geo" onclick="calcCircle()">☀️ احسب المساحة والمحيط</button>
+            <div id="circResultBox" class="result-box" style="border-right-color: var(--accent-orange); background: rgba(245, 158, 11, 0.1);">
+                <div class="result-label" style="color:var(--accent-orange)">النتائج:</div>
+                <div class="result-value" id="circAreaOut">المساحة: --</div>
+                <div class="result-value" id="circPerimOut">محيط الدائرة: --</div>
+                <div class="steps-detail" id="circNotes"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // === التنقل بين التبويبات ===
+    function switchTab(tabId) {
+        document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`.tab-btn.${tabId}`).classList.add('active');
+    }
+
+    // === 1. منطق الحساب (Safe Eval Logic) ===
+    const calcInput = document.getElementById('calcInput');
+    
+    function appendCalc(val) {
+        calcInput.value += val;
+        calcInput.focus();
+    }
+    function clearCalc() {
+        calcInput.value = '';
+        document.getElementById('calcResultBox').style.display = 'none';
+    }
+    function handleCalcEnter(e) {
+        if(e.key === 'Enter') calculateResult();
+    }
+
+    function calculateResult() {
+        try {
+            let expr = calcInput.value.trim();
+            if(!expr) return;
+            
+            // استبدال العمليات الشائعة لتعمل مع JavaScript العادي
+            expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+            // دعم الجذر التربيعي sqrt(x) -> Math.sqrt(x)
+            expr = expr.replace(/sqrt\(([^)]+)\)/gi, 'Math.sqrt($1)');
+            // دعم القوة ^ -> **
+            expr = expr.replace(/\^/g, '**');
+            
+            // تقييم آمن باستخدام Function Constructor (أسرع وأخف من eval الكامل)
+            // ملاحظة: هذا آمن لأننا نتحكم بالمدخلات ولا نسمح بالكلمات المحظورة
+            const sanitizedExpr = expr.replace(/[^0-9+\-*/().,\sMath\.sqrt]/g, ''); 
+            
+            // تنفيذ الحساب
+            const result = new Function('return ' + sanitizedExpr)();
+            
+            if(isNaN(result) || !isFinite(result)) throw new Error("نتيجة غير صالحة");
+
+            document.getElementById('calcOutput').innerText = formatNumber(result);
+            document.getElementById('calcResultBox').style.display = 'block';
+        } catch (err) {
+            alert("صيغة خاطئة! تأكد من الأقواس.\nمثال صحيح: 5+3*2 أو sqrt(16)+1");
+        }
+    }
+
+    function formatNumber(num) {
+        if(Number.isInteger(num)) return num.toString();
+        return parseFloat(num.toFixed(6)).toString(); 
+    }
+
+    // === 2. منطق الجبر (Algebra Logic) ===
+    
+    function solveLinearEq() {
+        const a = parseFloat(document.getElementById('algA').value);
+        const b = parseFloat(document.getElementById('algB').value);
+        const c = parseFloat(document.getElementById('algC').value);
+
+        if(isNaN(a) || isNaN(b) || isNaN(c)) return alert("أدخل قيماً صحيحة");
+        if(a === 0) return alert("المعامل 'a' لا يمكن أن يكون صفراً.");
+
+        const numerator = c - b;
+        const x = numerator / a;
+
+        let stepsHtml = `
+            <strong>المعادلة الأصلية:</strong><br>
+            ${formatCoeff(a)}x + ${formatConst(b)} = ${c}<br><br>
+            <strong>الخطوة 1:</strong> ننقل الثابت للطرف الآخر<br>
+            ${formatCoeff(a)}x = ${c} - (${formatConst(b)})<br>
+            ${formatCoeff(a)}x = ${numerator}<br><br>
+            <strong>الخطوة 2:</strong> نقسم على معامل x<br>
+            x = ${numerator} ÷ ${a}<br>
+        `;
+
+        document.getElementById('algSteps').innerHTML = stepsHtml;
+        document.getElementById('algOutput').innerText = `x = ${formatNumber(x)}`;
+        document.getElementById('algResultBox').style.display = 'block';
+    }
+
+    function formatCoeff(n) {
+        if(n === 1) return "";
+        if(n === -1) return "-";
+        return n;
+    }
+    function formatConst(n) {
+        if(n >= 0) return "+ " + n;
+        return "- " + Math.abs(n);
+    }
+
+    // مشتق بسيط لكثيرات الحدود (Polynomial Derivative)
+    function calculateDerivativeSimple() {
+        const input = document.getElementById('derivInput').value.trim();
+        if(!input) return;
+
+        // تقسيم الدالة إلى حدود مفصولة بـ + أو -
+        // نمط بسيط جداً لدعم x^n و cx^n وثوابت
+        const terms = input.match(/[+-]?[^+-]+/g);
+        if(!terms) return alert("صيغة غير مفهومة");
+
+        let derivativeTerms = [];
+        let originalString = "";
+
+        terms.forEach(term => {
+            term = term.trim();
+            originalString += term + " ";
+            
+            // حالة الثابت (رقم فقط)
+            if(/^[-+]?\d+(\.\d+)?$/.test(term)) {
+                derivativeTerms.push("0");
+                return;
+            }
+
+            // حالة x (درجة أولى)
+            if(term === 'x' || term === '+x' || term === '-x') {
+                derivativeTerms.push(term.startsWith('-') ? '-1' : '1');
+                return;
+            }
+
+            // حالة coef * x^power
+            // مثال: 3x^2 , -5x , x^3
+            const regex = /^([+-]?\d*\.?\d*)?x(?:\^(\d+))?$/;
+            const match = term.match(regex);
+            
+            if(match) {
+                let coefStr = match[1];
+                let powerStr = match[2];
+                
+                let coef = coefStr === '' || coefStr === '+' ? 1 : (coefStr === '-' ? -1 : parseFloat(coefStr));
+                let power = powerStr ? parseInt(powerStr) : 1;
+
+                // قاعدة الاشتقاق: d/dx(ax^n) = anx^(n-1)
+                let newCoef = coef * power;
+                let newPower = power - 1;
+
+                if(newPower === 0) {
+                    derivativeTerms.push(formatNum(newCoef));
+                } else if (newPower === 1) {
+                    derivativeTerms.push(`${formatCoeff(newCoef)}x`);
+                } else {
+                    derivativeTerms.push(`${formatCoeff(newCoef)}x^${newPower}`);
+                }
+            } else {
+                // إذا لم يفهم الصيغة، يضعها كما هي مع تحذير
+                derivativeTerms.push("?");
+            }
+        });
+
+        // تنظيف الناتج النهائي
+        let finalDeriv = derivativeTerms.join(' ').replace(/\+ -/g, '- ').trim();
+        if(finalDeriv.includes('?')) {
+             document.getElementById('derivNote').innerText = "تحذير: بعض الحدود لم تُفهم تماماً. استخدم صيغة مثل 3x^2 + 5x.";
+             document.getElementById('derivNote').style.display = 'block';
+        } else {
+             document.getElementById('derivNote').style.display = 'none';
+        }
+
+        document.getElementById('derivOutput').innerText = finalDeriv || "0";
+        document.getElementById('derivResultBox').style.display = 'block';
+    }
+
+    function formatNum(n) {
+        if(Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    // === 3. منطق الهندسة (Geometry Logic) ===
+
+    function calcTriangle() {
+        const a = parseFloat(document.getElementById('triA').value);
+        const b = parseFloat(document.getElementById('triB').value);
+        const c = parseFloat(document.getElementById('triC').value);
+
+        if(isNaN(a)||isNaN(b)||isNaN(c)) return alert("أدخل أطوال الأضلاع الثلاثة");
+        if(a<=0 || b<=0 || c<=0) return alert("الأطوال يجب أن تكون موجبة");
+        if((a+b <= c) || (a+c <= b) || (b+c <= a)) {
+            return alert("هذه الأطوال لا تشكل مثلثاَ صالحاً.");
+        }
+
+        const perimeter = a + b + c;
+        const s = perimeter / 2; 
+        const areaSquared = s * (s-a) * (s-b) * (s-c);
+        const area = Math.sqrt(areaSquared);
+
+        let type = "مثلث مختلف الأضلاع";
+        if(Math.abs(a-b)<0.01 && Math.abs(b-c)<0.01) type = "مثلث متساوي الأضلاع";
+        else if(Math.abs(a-b)<0.01 || Math.abs(b-c)<0.01 || Math.abs(a-c)<0.01) type = "مثلث متساوي الساقين";
+        
+        const sides = [a,b,c].sort((x,y)=>x-y);
+        if(Math.abs(sides[0]**2 + sides[1]**2 - sides[2]**2) < 0.01) type += " (قائم الزاوية)";
+
+        document.getElementById('triDetails').innerHTML = `
+            <strong>التصنيف:</strong> ${type}<br>
+            <strong>نصف المحيط (s):</strong> ${formatNumber(s)}<br>
+            <strong>القانون المستخدم:</strong> √[s(s-a)(s-b)(s-c)]
+        `;
+        document.getElementById('triAreaOut').innerText = `المساحة: ${formatNumber(area)} وحدة مربعة`;
+        document.getElementById('triPerimOut').innerText = `المحيط: ${formatNumber(perimeter)} وحدة طول`;
+        document.getElementById('triResultBox').style.display = 'block';
+    }
+
+    function calcCircle() {
+        const r = parseFloat(document.getElementById('circR').value);
+        const thetaDeg = parseFloat(document.getElementById('circTheta').value); 
+        
+        if(isNaN(r) || r <= 0) return alert("أدخل نصف قطر موجب صحيح");
+
+        const pi = Math.PI;
+        const fullArea = pi * r * r;
+        const fullCircumference = 2 * pi * r;
+
+        let finalArea = fullArea;
+        let note = "دائرة كاملة.";
+
+        if(!isNaN(thetaDeg) && thetaDeg > 0 && thetaDeg <= 360) {
+            const fraction = thetaDeg / 360;
+            finalArea = fullArea * fraction;
+            const arcLength = fullCircumference * fraction;
+            const sectorPerimeter = arcLength + (2 * r);
+            
+            note = `قطاع زاويته ${thetaDeg}°.<br>مساحة القطاع = πr² × (θ/360)`;
+            document.getElementById('circPerimOut').innerText = `محيط القطاع: ${formatNumber(sectorPerimeter)} (يشمل الوتر)`;
+        } else {
+             document.getElementById('circPerimOut').innerText = `محيط الدائرة: ${formatNumber(fullCircumference)}`;
+        }
+
+        document.getElementById('circAreaOut').innerText = `المساحة: ${formatNumber(finalArea)} وحدة مربعة`;
+        document.getElementById('circNotes').innerHTML = note;
+        document.getElementById('circResultBox').style.display = 'block';
+    }
+
+</script>
+
+</body>
+</html>
