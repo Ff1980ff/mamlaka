@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <!-- الإصلاح هنا: تم تصحيح الوسم meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🇸 Swedish Master Pro | إتقان اللغة السويدية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --sw-blue: #005293; 
+            --sw-yellow: #FECB00; 
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* الهيدر */
+        header {
+            background: linear-gradient(to right, var(--sw-blue), #003d73);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-title { font-size: 1.2rem; font-weight: 900; display: flex; align-items: center; gap: 8px; }
+        .user-stats { font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 20px; }
+
+        /* التنقل السفلي */
+        nav.bottom-nav {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 5px 10px;
+        }
+        .nav-item.active { color: var(--sw-blue); font-weight: bold; transform: translateY(-2px); }
+        .nav-icon { font-size: 1.3rem; margin-bottom: 2px; }
+
+        /* المحتوى الرئيسي */
+        main {
+            flex: 1;
+            padding: 20px;
+            padding-bottom: 80px;
+            max-width: 600px;
+            margin: auto;
+            width: 100%;
+        }
+
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* بطاقات الدروس */
+        .level-badge {
+            display: inline-block;
+            background: var(--sw-yellow);
+            color: black;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .lesson-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border-right: 4px solid var(--sw-blue);
+        }
+        .word-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .word-row:last-child { border-bottom: none; }
+        .sw-word { font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--sw-blue); font-size: 1.1rem; direction: ltr; text-align: left; }
+        .ar-word { font-weight: bold; color: var(--text-dark); }
+        .play-btn {
+            background: var(--sw-blue);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .play-btn:hover { background: #003d73; transform: scale(1.1); }
+
+        /* قسم الاختبار */
+        .quiz-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--sw-blue);
+            margin-bottom: 20px;
+            font-family: 'Poppins';
+            direction: ltr;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.2s;
+            text-align: right;
+        }
+        .option-btn:hover { background: #e2e8f0; }
+        .option-btn.selected { border-color: var(--sw-blue); background: #eff6ff; }
+        .option-btn.correct { border-color: var(--success); background: #dcfce7; color: #166534; }
+        .option-btn.wrong { border-color: var(--error); background: #fee2e2; color: #991b1b; }
+        
+        .next-btn {
+            background: var(--sw-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            display: none;
+        }
+
+        /* نتيجة الاختبار */
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--success) 0%, #e2e8f0 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .score-inner {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-num { font-size: 2rem; font-weight: 900; color: var(--sw-blue); }
+        .restart-btn {
+            background: var(--sw-yellow);
+            color: black;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* المعجم */
+        .search-box-dict {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .dict-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .dict-tab {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .dict-tab.active { background: var(--sw-blue); color: white; }
+        
+        .dict-input-wrapper { position: relative; }
+        .dict-input {
+            width: 100%;
+            padding: 15px 40px 15px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .dict-input:focus { border-color: var(--sw-blue); }
+        .clear-btn {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .dict-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .dict-result-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border-right: 3px solid var(--sw-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .dict-main-info { flex: 1; }
+        .dict-term-sw { font-family: 'Poppins'; font-weight: bold; color: var(--sw-blue); font-size: 1.2rem; direction: ltr; text-align: left; }
+        .dict-term-ar { font-weight: bold; color: var(--text-dark); font-size: 1.1rem; margin-top: 2px; }
+        .dict-example { font-size: 0.85rem; color: #666; margin-top: 5px; font-style: italic; direction: ltr; text-align: left; }
+        
+        .dict-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-right: 10px;
+        }
+        .mini-play-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--sw-blue);
+            transition: 0.2s;
+        }
+        .mini-play-btn:hover { background: var(--sw-blue); color: white; }
+
+        /* الأخبار */
+        .news-article {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+        .news-text-sw { 
+            font-family: 'Poppins'; 
+            line-height: 1.8; 
+            color: #334155; 
+            margin-bottom: 15px; 
+            direction: ltr; 
+            text-align: left;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">🇸 Swedish Master Pro</div>
+    <div class="user-stats">⭐ النقاط: <span id="totalScore">0</span></div>
+</header>
+
+<main>
+    <!-- ================= 1. الدروس ================= -->
+    <section id="lessons" class="section active">
+        <h2 style="margin-bottom: 15px; color: var(--sw-blue);">📚 المسار التعليمي</h2>
+        
+        <div class="lesson-card">
+            <span class="level-badge">Level 1: مبتدئ</span>
+            <h3 style="color: var(--text-muted); margin-bottom: 10px;">التحيات والأرقام</h3>
+            <div id="lessonContent1"></div>
+        </div>
+
+        <div class="lesson-card">
+            <span class="level-badge" style="background:#dbeafe; color:#1e40af;">Level 2: متوسط</span>
+            <h3 style="color: var(--text-muted); margin-bottom: 10px;">الحياة اليومية</h3>
+            <div id="lessonContent2"></div>
+        </div>
+    </section>
+
+    <!-- ================= 2. الاختبار ================= -->
+    <section id="quiz" class="section">
+        <div class="quiz-container" id="quizScreen">
+            <div class="progress-bar"><div class="progress-fill" id="quizProgress"></div></div>
+            <h3 style="margin-bottom: 10px; color: var(--text-muted);">السؤال <span id="qNum">1</span> من <span id="qTotal">10</span></h3>
+            
+            <div class="question-text" id="questionText">...</div>
+            
+            <div class="options-grid" id="optionsContainer"></div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي ←</button>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <div class="score-circle" id="scoreCircle">
+                <div class="score-inner">
+                    <div class="score-num" id="finalScore">0%</div>
+                    <small>نتيجتك</small>
+                </div>
+            </div>
+            <h2 id="resultMsg">أحسنت!</h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">لقد أتممت اختبار اليوم.</p>
+            <button class="restart-btn" onclick="startQuiz()">🔄 إعادة المحاولة</button>
+        </div>
+    </section>
+
+    <!-- ================= 3. المعجم الشامل (NEW FEATURE) ================= -->
+    <section id="dictionary" class="section">
+        <h2 style="margin-bottom: 15px; color: var(--sw-blue);">🔎 المعجم الثنائي الاتجاه</h2>
+        
+        <div class="search-box-dict">
+            <!-- تبويبات البحث -->
+            <div class="dict-tabs">
+                <div class="dict-tab active" onclick="setDictMode('sw_ar')">سويدي ➔ عربي</div>
+                <div class="dict-tab" onclick="setDictMode('ar_sw')">عربي ➔ سويدي</div>
+            </div>
+
+            <!-- حقل الإدخال -->
+            <div class="dict-input-wrapper">
+                <input type="text" class="dict-input" id="dictSearchInput" placeholder="اكتب كلمة للسويدية..." onkeyup="performDictionarySearch()">
+                <button class="clear-btn" onclick="clearDictSearch()">✕</button>
+            </div>
+        </div>
+
+        <!-- نتائج البحث -->
+        <div class="dict-results-list" id="dictResultsContainer">
+            <p style="text-align: center; color: #94a3b8; padding: 20px;">ابدأ الكتابة للبحث في المعجم...</p>
+        </div>
+    </section>
+
+    <!-- ================= 4. الأخبار ================= -->
+    <section id="news" class="section">
+        <h2 style="margin-bottom: 15px; color: var(--sw-blue);">📰 قراءة وفهم</h2>
+        
+        <article class="news-article">
+            <h3 style="color:var(--sw-blue); margin-bottom:5px;">En dag i Stockholm</h3>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:10px;">يوم في ستوكهولم</p>
+            
+            <div class="news-text-sw" id="newsText1">
+                Idag är det soligt och varmt. Jag går till parken med min hund. 
+                Vi äter en glass på vägen hem. Det är en fin dag!
+            </div>
+            
+            <button class="play-btn" style="width:auto; padding:10px 20px; border-radius:20px;" onclick="speakArticle('newsText1')">🔊 استمع للنص</button>
+        </article>
+    </section>
+
+</main>
+
+<!-- التنقل السفلي -->
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('lessons')">
+        <span class="nav-icon">📖</span>
+        <span>الدروس</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('quiz')">
+        <span class="nav-icon">✅</span>
+        <span>اختبار</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('dictionary')">
+        <span class="nav-icon">🔎</span>
+        <span>معجم</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('news')">
+        <span class="nav-icon">📰</span>
+        <span>أخبار</span>
+    </div>
+</nav>
+
+<script>
+    // ==========================================
+    // 📚 قاعدة البيانات الموسعة للمعجم
+    // ==========================================
+    const db = [
+        // Level 1 Basics
+        { level: 1, sw: "Hej", ar: "مرحباَ", ex: "Hej, hur mår du?" },
+        { level: 1, sw: "Tack", ar: "شكراً", ex: "Tack så mycket." },
+        { level: 1, sw: "Ja", ar: "نعم", ex: "Ja, visst." },
+        { level: 1, sw: "Nej", ar: "لا", ex: "Nej, tack." },
+        { level: 1, sw: "Ett", ar: "واحد", ex: "Jag har ett äpple." },
+        { level: 1, sw: "Två", ar: "اثنان", ex: "Vi är två personer." },
+        { level: 1, sw: "Tre", ar: "ثلاثة", ex: "Klockan är tre." },
+        { level: 1, sw: "Vatten", ar: "ماء", ex: "Kan jag få lite vatten?" },
+        { level: 1, sw: "Mat", ar: "طعام", ex: "Maten är god." },
+        { level: 1, sw: "Hus", ar: "بيت", ex: "Mitt hus är stort." },
+        
+        // Level 2 Daily Life
+        { level: 2, sw: "Bil", ar: "سيارة", ex: "Min bil är röd." },
+        { level: 2, sw: "Tåg", ar: "قطار", ex: "Jag tar tåget till jobbet." },
+        { level: 2, sw: "Bus", ar: "حافلة", ex: "Bussen kommer snart." },
+        { level: 2, sw: "Skola", ar: "مدرسة", ex: "Barnen går till skolan." },
+        { level: 2, sw: "Arbeta", ar: "يعمل", ex: "Han arbetar hårt." },
+        { level: 2, sw: "Sova", ar: "ينام", ex: "Jag vill sova nu." },
+        { level: 2, sw: "Äta", ar: "يأكل", ex: "Vi ska äta lunch." },
+        { level: 2, sw: "Dricka", ar: "يشرب", ex: "Hon dricker kaffe." },
+        { level: 2, sw: "Prata", ar: "يتحدث", ex: "De pratar svenska." },
+        { level: 2, sw: "Lyssna", ar: "يستع", ex: "Lyssna på mig!" },
+
+        // Additional Vocabulary for Richer Dictionary
+        { level: 2, sw: "God morgon", ar: "صباح الخير", ex: "God morgon alla!" },
+        { level: 2, sw: "God kväll", ar: "مساء الخير", ex: "God kväll, hur var din dag?" },
+        { level: 2, sw: "Hur mår du?", ar: "كيف حالك؟", ex: "Hej! Hur mår du?" },
+        { level: 2, sw: "Jag mår bra", ar: "أنا بخير", ex: "Tack, jag mår bra." },
+        { level: 2, sw: "Var bor du?", ar: "أين تسكن؟", ex: "Var bor du i Stockholm?" },
+        { level: 2, sw: "Jag bor här", ar: "أسكن هنا", ex: "Jag bor här nära stationen." },
+        { level: 2, sw: "Kaffe", ar: "قهوة", ex: "Vill du ha kaffe?" },
+        { level: 2, sw: "Te", ar: "شاي", ex: "Jag dricker te varje morgon." },
+        { level: 2, sw: "Bröd", ar: "خبز", ex: "Vi köper färskt bröd." },
+        { level: 2, sw: "Mjölk", ar: "حليب", ex: "Barnet dricker mjölk." },
+        { level: 2, sw: "Stol", ar: "كرسي", ex: "Sätt dig på stolen." },
+        { level: 2, sw: "Bord", ar: "طاولة", ex: "Lägg boken på bordet." },
+        { level: 2, sw: "Dörr", ar: "باب", ex: "Stäng dörren, snälla." },
+        { level: 2, sw: "Fönster", ar: "نافذة", ex: "Öppna fönstret för luft." },
+        { level: 2, sw: "Trädgård", ar: "حديقة", ex: "Vi leker i trädgården." },
+        { level: 2, sw: "Sol", ar: "شمس", ex: "Solen skiner idag." },
+        { level: 2, sw: "Regn", ar: "مطر", ex: "Det börjar regna ute." },
+        { level: 2, sw: "Snö", ar: "ثلج", ex: "Det ligger snö på marken." },
+        { level: 2, sw: "Vinter", ar: "شتاء", ex: "Vintern är kall i Sverige." },
+        { level: 2, sw: "Sommar", ar: "صيف", ex: "Sommaren är varm och ljus." }
+    ];
+
+    // ==========================================
+    // ⚙️ إدارة الحالة والمتغيرات
+    // ==========================================
+    let userScore = parseInt(localStorage.getItem('swedishScore')) || 0;
+    let currentQuizQuestions = [];
+    let currentQIndex = 0;
+    let correctAnswersCount = 0;
+    
+    // متغير لتبديل وضع المعجم (سويدي->عربي أو العكس)
+    let dictMode = 'sw_ar'; 
+
+    window.onload = () => {
+        document.getElementById('totalScore').innerText = userScore;
+        renderLesson(1, 'lessonContent1');
+        renderLesson(2, 'lessonContent2');
+    };
+
+    // ==========================================
+    // 🎨 عرض الدروس
+    // ==========================================
+    function renderLesson(level, containerId) {
+        const items = db.filter(item => item.level === level);
+        const container = document.getElementById(containerId);
+        let html = '';
+        
+        items.forEach(item => {
+            html += `
+                <div class="word-row">
+                    <div>
+                        <div class="sw-word">${item.sw}</div>
+                        <div class="ar-word">${item.ar}</div>
+                    </div>
+                    <button class="play-btn" onclick="speakWord('${item.sw}', 'sv-SE')">▶</button>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // ==========================================
+    // 🔊 نظام الصوت الذكي (يدعم اللغتين)
+    // ==========================================
+    function speakWord(text, langCode = 'sv-SE') {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = langCode; // sv-SE للسويدية، ar-SA للعربية
+            
+            // محاولة اختيار صوت مناسب إن وجد
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
+            if(preferredVoice) utterance.voice = preferredVoice;
+
+            utterance.rate = 0.9;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("متصفحك لا يدعم خاصية النطق الصوتي.");
+        }
+    }
+
+    function speakArticle(id) {
+        const el = document.getElementById(id);
+        speakWord(el.innerText, 'sv-SE');
+    }
+
+    // ==========================================
+    // ✅ منطق الاختبار
+    // ==========================================
+    function startQuiz() {
+        const shuffled = [...db].sort(() => 0.5 - Math.random());
+        currentQuizQuestions = shuffled.slice(0, 10);
+        currentQIndex = 0;
+        correctAnswersCount = 0;
+        
+        document.getElementById('quizScreen').style.display = 'block';
+        document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById('qTotal').innerText = currentQuizQuestions.length;
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = currentQuizQuestions[currentQIndex];
+        document.getElementById('qNum').innerText = currentQIndex + 1;
+        document.getElementById('quizProgress').style.width = `${((currentQIndex) / currentQuizQuestions.length) * 100}%`;
+        
+        const types = ['sw_to_ar', 'ar_to_sw', 'listen'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        
+        const questionEl = document.getElementById('questionText');
+        const optionsEl = document.getElementById('optionsContainer');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        nextBtn.style.display = 'none';
+        optionsEl.innerHTML = '';
+
+        let correctAnswer = "";
+        let optionsList = [];
+
+        if (type === 'sw_to_ar') {
+            questionEl.innerText = `ترجم: "${q.sw}"`;
+            correctAnswer = q.ar;
+            const wrongOptions = db.filter(i => i.ar !== q.ar).map(i => i.ar).sort(() => 0.5 - Math.random()).slice(0, 3);
+            optionsList = [correctAnswer, ...wrongOptions].sort(() => 0.5 - Math.random());
+        } else if (type === 'ar_to_sw') {
+            questionEl.innerText = `ما الكلمة السويدية لـ: "${q.ar}"؟`;
+            correctAnswer = q.sw;
+            const wrongOptions = db.filter(i => i.sw !== q.sw).map(i => i.sw).sort(() => 0.5 - Math.random()).slice(0, 3);
+            optionsList = [correctAnswer, ...wrongOptions].sort(() => 0.5 - Math.random());
+        } else {
+            questionEl.innerHTML = `<button class="play-btn" style="width:50px;height:50px;font-size:1.5rem;margin:0 auto;display:block;" onclick="speakWord('${q.sw}', 'sv-SE')">🔊</button><br><small>استمع واختر الترجمة الصحيحة</small>`;
+            correctAnswer = q.ar;
+            const wrongOptions = db.filter(i => i.ar !== q.ar).map(i => i.ar).sort(() => 0.5 - Math.random()).slice(0, 3);
+            optionsList = [correctAnswer, ...wrongOptions].sort(() => 0.5 - Math.random());
+        }
+
+        optionsList.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, correctAnswer);
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (selected === correct) {
+            btn.classList.add('correct');
+            correctAnswersCount++;
+        } else {
+            btn.classList.add('wrong');
+            allBtns.forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct');
+            });
+        }
+        document.getElementById('nextBtn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        if (currentQIndex < currentQuizQuestions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quizScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'block';
+        
+        const percentage = Math.round((correctAnswersCount / currentQuizQuestions.length) * 100);
+        document.getElementById('finalScore').innerText = percentage + "%";
+        
+        const circle = document.getElementById('scoreCircle');
+        circle.style.background = `conic-gradient(${percentage >= 50 ? 'var(--success)' : 'var(--error)'} ${percentage}%, #e2e8f0 ${percentage}%)`;
+        
+        let msg = "";
+        if(percentage === 100) msg = "مثالي! أنت نجم 🌟";
+        else if(percentage >= 80) msg = "ممتاز جداَ! 👏";
+        else if(percentage >= 50) msg = "جيد، واصل التدريب! 💪";
+        else msg = "لا تستسلم، حاول مرة أخرى! 🔄";
+        
+        document.getElementById('resultMsg').innerText = msg;
+
+        userScore += correctAnswersCount * 10;
+        localStorage.setItem('swedishScore', userScore);
+        document.getElementById('totalScore').innerText = userScore;
+    }
+
+    // ==========================================
+    // 🔎 منطق المعجم الجديد (الذكي والثنائي)
+    // ==========================================
+    
+    function setDictMode(mode) {
+        dictMode = mode;
+        // تحديث التبويبات بصرياَ
+        const tabs = document.querySelectorAll('.dict-tab');
+        tabs.forEach(t => t.classList.remove('active'));
+        if(mode === 'sw_ar') tabs[0].classList.add('active');
+        else tabs[1].classList.add('active');
+
+        // تحديث Placeholder للحقل
+        const input = document.getElementById('dictSearchInput');
+        if(mode === 'sw_ar') {
+            input.placeholder = "اكتب كلمة بالسويدية... (مثال: Hej)";
+        } else {
+            input.placeholder = "اكتب كلمة بالعربية... (مثال: مرحباَ)";
+        }
+        
+        // مسح النتائج القديمة
+        clearDictSearch();
+    }
+
+    function performDictionarySearch() {
+        const query = document.getElementById('dictSearchInput').value.toLowerCase().trim();
+        const container = document.getElementById('dictResultsContainer');
+        
+        if (!query) {
+            container.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 20px;">ابدأ الكتابة للبحث...</p>';
+            return;
+        }
+
+        let results = [];
+
+        if (dictMode === 'sw_ar') {
+            // بحث سويدي -> عربي
+            results = db.filter(item => item.sw.toLowerCase().includes(query));
+        } else {
+            // بحث عربي -> سويدي
+            results = db.filter(item => item.ar.includes(query));
+        }
+
+        if (results.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: red; padding: 20px;">لم يتم العثور على نتائج مطابقة.</p>';
+            return;
+        }
+
+        let html = '';
+        results.forEach(item => {
+            // تحديد أي جزء هو "الكلمة الأساسية" وأيها "الترجمة" بناءً على الوضع
+            let mainTerm, translation, example;
+            
+            if(dictMode === 'sw_ar') {
+                mainTerm = item.sw;
+                translation = item.ar;
+                example = item.ex;
+            } else {
+                mainTerm = item.ar;
+                translation = item.sw;
+                example = item.ex;
+            }
+
+            html += `
+                <div class="dict-result-item">
+                    <div class="dict-main-info">
+                        <div class="dict-term-sw">${mainTerm}</div>
+                        <div class="dict-term-ar">${translation}</div>
+                        <div class="dict-example">"${example}"</div>
+                    </div>
+                    <div class="dict-actions">
+                        <!-- زر نطق الكلمة الرئيسية (سواء كانت سويدية أو عربية حسب السياق، لكننا نجبر السويدية للنطق الأجنبي) -->
+                        <button class="mini-play-btn" title="استمع للسويدية" onclick="speakWord('${item.sw}', 'sv-SE')">🇸🇪</button>
+                        <!-- زر نطق الترجمة العربية -->
+                        <button class="mini-play-btn" title="استمع للعربية" onclick="speakWord('${item.ar}', 'ar-SA')">🇸🇦</button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function clearDictSearch() {
+        document.getElementById('dictSearchInput').value = '';
+        document.getElementById('dictResultsContainer').innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 20px;">ابدأ الكتابة للبحث...</p>';
+    }
+
+    // ==========================================
+    // 🧭 التنقل بين التبويبات
+    // ==========================================
+    function switchTab(tabId) {
+        document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+
+        if(tabId === 'quiz') startQuiz();
+    }
+
+</script>
+
+</body>
+</html>
