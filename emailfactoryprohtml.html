@@ -1,110 +1,292 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مصنع الإيميلات الذهبي | إرسال وربح</title><style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo', Tahoma, sans-serif}body{background:linear-gradient(160deg,#7f1d1d,#450a0a);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}.frame{width:100%;max-width:460px;background:#0f172a;border:6px solid #f87171;border-radius:24px;padding:16px;min-height:85vh;box-shadow:0 10px 30px rgba(0,0,0,0.5)}h2{text-align:center;color:#fca5a5;font-size:20px;margin-bottom:5px}.sub{text-align:center;font-size:11px;color:#94a3b8;margin:4px 0 12px;line-height:1.5}select,input,textarea{width:100%;border:0;border-radius:12px;padding:11px;font-size:14px;background:#1e293b;color:#fff;outline:0;border:1px solid #334155;margin-bottom:8px;font-family:inherit}textarea{min-height:150px;line-height:1.8;font-size:13px;resize:none}.btn{border:0;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;width:100%;margin-bottom:6px;transition:transform 0.2s, opacity 0.2s}.btn:active{transform:scale(0.98)}.btn.red{background:#f87171;color:#450a0a}.btn.green{background:#22c55e;color:#fff;box-shadow:0 4px 15px rgba(34, 197, 94, 0.3)}.btn.blue{background:#38bdf8;color:#000}.loader{display:none;text-align:center;color:#fbbf24;font-size:12px;margin-top:5px;animation:pulse 1.5s infinite}@keyframes pulse{0%{opacity:0.5}50%{opacity:1}100%{opacity:0.5}}</style></head><body><div class="frame">
-<h2>📧 مصنع الإيميلات الذهبي</h2><div class="sub">اكتب طلبك بضغطة زر... وأرسله مع توقيع مربح!</div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📧 مصنع الإيميلات الرسمي | Email Factory Pro</title>
+<style>
+    :root {
+        --primary-blue: #1e40af; /* أزرق ملكي عميق */
+        --secondary-blue: #3b82f6; /* أزرق فاتح للأزرار */
+        --bg-dark: #0f172a;
+        --card-bg: #1e293b;
+        --text-light: #f8fafc;
+        --border-color: #334155;
+        --success-green: #10b981;
+    }
 
-<select id="tp"><option value="job">💼 طلب عمل</option><option value="comp">⚖️ شكوى رسمية</option><option value="thx">💐 شكر وتقدير</option><option value="ask">❓ استفسار</option><option value="sry">🙏 اعتذار</option></select>
-<input id="nm" placeholder="اسمك الكامل">
-<input id="rc" placeholder="المرسل إليه (مثلا: مدير الشركة)">
-<input id="sb" placeholder="الموضوع (مثلا: وظيفة معلم)">
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
+    
+    body {
+        background: linear-gradient(160deg, var(--bg-dark), #1e1e2e);
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+    }
 
-<button class="btn red" onclick="make()">⚙️ اصنع الإيميل (معاينة)</button>
-<textarea id="out" placeholder="هون بيطلع الإيميل الجاهز..."></textarea>
+    .frame {
+        width: 100%;
+        max-width: 500px;
+        background: var(--card-bg);
+        border: 2px solid var(--secondary-blue);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
+    }
 
-<!-- الأزرار الذكية الجديدة -->
-<button class="btn green" onclick="sendWithProfitSignature()">📨 أرسل الآن واربح (Gmail/Outlook)</button>
-<button class="btn blue" onclick="copyOnly()">📋 نسخ النص فقط</button>
+    /* تأثير زجاجي علوي */
+    .frame::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 4px;
+        background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+    }
 
-<div class="loader" id="loader">⏳ جارٍ تجهيز الرابط المربح...</div>
+    h2 {
+        text-align: center;
+        color: white;
+        font-size: 22px;
+        margin-bottom: 5px;
+        font-weight: 800;
+    }
+    
+    .sub {
+        text-align: center;
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    select, input, textarea {
+        width: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 15px;
+        background: #0f172a;
+        color: white;
+        outline: none;
+        transition: 0.3s;
+        margin-bottom: 15px;
+        font-family: inherit;
+    }
+
+    select:focus, input:focus, textarea:focus {
+        border-color: var(--secondary-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    textarea {
+        min-height: 200px;
+        line-height: 1.8;
+        resize: vertical;
+        direction: rtl;
+        text-align: right;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-size: 14px;
+    }
+
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-make {
+        background: var(--secondary-blue);
+        color: white;
+        grid-column: span 2; /* يأخذ عرض كامل */
+        margin-bottom: 10px;
+    }
+    .btn-make:hover { background: #2563eb; transform: translateY(-2px); }
+
+    .btn-copy {
+        background: var(--success-green);
+        color: white;
+    }
+    .btn-copy:hover { background: #059669; }
+
+    .btn-download {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: #94a3b8;
+    }
+    .btn-download:hover { background: rgba(255,255,255,0.05); color: white; }
+
+    /* رسالة نجاح عائمة */
+    #toast {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 8px;
+        padding: 12px;
+        position: fixed;
+        z-index: 1;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #toast.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+</style>
+</head>
+<body>
+
+<div class="frame">
+    <h2>📧 مصنع الإيميلات الرسمي</h2>
+    <div class="sub">اكتب البيانات... واحصل على إيميل احترافي بضغطة زر.</div>
+
+    <!-- اختيار نوع الإيميل -->
+    <label for="tp">نوع الرسالة:</label>
+    <select id="tp">
+        <option value="job">💼 طلب وظيفة / انضمام لفريق</option>
+        <option value="interview">🤝 تأكيد موعد مقابلة عمل</option>
+        <option value="resignation">👋 استقالة مهذبة</option>
+        <option value="salary">💰 طلب زيادة راتب</option>
+        <option value="complaint">⚖️ شكوى رسمية (خدمة/منتج)</option>
+        <option value="thanks">💐 شكر وتقدير</option>
+        <option value="inquiry">❓ استفسار عام</option>
+        <option value="apology">🙏 اعتذار رسمي</option>
+    </select>
+
+    <!-- الحقول الأساسية -->
+    <label for="nm">اسمك الكامل:</label>
+    <input type="text" id="nm" placeholder="مثال: أحمد محمد العلي">
+
+    <label for="rc">الجهة المرسل إليها:</label>
+    <input type="text" id="rc" placeholder="مثال: السيد مدير الموارد البشرية المحترم">
+
+    <label for="sb">الموضوع الرئيسي:</label>
+    <input type="text" id="sb" placeholder="مثال: بخصوص التقديم على وظيفة محاسب">
+
+    <!-- زر الإنشاء -->
+    <button class="btn btn-make" onclick="makeEmail()">
+        ⚙️ توليد الإيميل الآن
+    </button>
+
+    <!-- مربع النتيجة -->
+    <textarea id="out" readonly placeholder="سيظهر النص هنا..."></textarea>
+
+    <!-- أزرار الإجراءات -->
+    <div class="btn-group">
+        <button class="btn btn-copy" onclick="copyText()">📋 نسخ النص</button>
+        <button class="btn btn-download" onclick="downloadTxt()">💾 تحميل ملف TXT</button>
+    </div>
 </div>
 
+<!-- إشعار النجاح -->
+<div id="toast">تم النسخ بنجاح! ✅</div>
+
 <script>
-// ==========================================
-// ⚠️ ضع مفاتيحك الحقيقية هنا
-// ==========================================
-const SHRINK_API_KEY = 'ضع_مفتاح_ShrinkMe_هنا'; 
-const EXE_API_KEY = 'ضع_مفتاح_Exe_io_هنا'; 
+    // قوالب الرسائل الموسعة والمحسنة
+    const templates = {
+        job: (n,r,s) => `السادة ${r}،\n\nتحية طيبة وبعد،\n\nأتقدم إليكم أنا/${n} بطلب الانضمام لفريق العمل المتميز لديكم، وذلك بخصوص: ${s}.\n\nأرفق لكم نبذة مختصرة عن خبراتي ومهاراتي التي أعتقد أنها ستشكل إضافة قيمة لمؤسستكم الموقرة. وأرحب بأي فرصة للقاء والتعرف أكثر على متطلباتكم.\n\nمع خالص التقدير والاحترام،\n${n}\n[رقم الهاتف]\n[البريد الإلكتروني]`,
+        
+        interview: (n,r,s) => `السادة ${r}،\n\nتحية طيبة،\n\nبالإشارة إلى اتصالنا السابق بخصوص: ${s}، أود تأكيد حضوري للمقابلة في الموعد المتفق عليه.\n\nشاكراً لكم حسن تعاونكم وترتيبكم المسبق.\n\nوتفضلوا بقبول فائق الاحترام،\n${n}`,
+        
+        resignation: (n,r,s) => `السادة ${r}،\n\nتحية طيبة وبعد،\n\nبعد تفكير طويل ونظر في مستقبلي المهني، أتقدم إليكم أنا/${n} باستقالتي رسمياً من منصبي الحالي، اعتباراً من تاريخ [حدد التاريخ].\n\nأعرب عن امتناني العميق للفرص والدعم الذي حظيت به خلال فترة عملي معكم، وأتمنى للشركة دوام التقدم والازدهار.\n\nسأحرص على تسليم مهامي بشكل كامل ومنظم قبل مغادرتي.\n\nمع أطيب التمنيات،\n${n}`,
+        
+        salary: (n,r,s) => `السادة ${r}،\n\nتحية طيبة،\n\nبناءً على أدائي خلال الفترة الماضية وتحقيق أهداف: ${s}، ورغبةً مني في تطوير مساري المهني داخل الشركة، أرجو التكرم بالنظر في إمكانية مراجعة راتبي الحالي بما يتناسب مع مسؤولياتي الجديدة وإنجازاتي.\n\nأقدر اهتمامكم وتعاونكم المستمر.\n\nمع الاحترام،\n${n}`,
+        
+        complaint: (n,r,s) => `السادة ${r}،\n\nتحية طيبة وبعد،\n\nأرفع لكم هذه الشكوى بخصوص: ${s}.\n\nلقد واجهت مشكلة أثرت سلباً على تجربتي، وأثق تماماً في حرص مؤسستكم على رضا العملاء وجودة الخدمة. لذا، أرجو من سيادتكم التدخل السريع لحل هذا الإشكال وإعلامي بالإجراءات المتخذة.\n\nوثقتي بكم كبيرة لإنصافي.\n\nوتفضلوا بقبول فائق الاحترام،\n${n}`,
+        
+        thanks: (n,r,s) => `السادة ${r}،\n\nتحية طيبة،\n\nيسعدني أن أتقدم لكم بأصدق عبارات الشكر والتقدير على: ${s}.\n\nإن جهودكم الطيبة ودعمكم المستمر كان له أثر بالغ الإيجابية، وأنا ممتن لهذه اللفتة الكريمة من جانبكم.\n\nدمتم بخير وعافية،\n${n}`,
+        
+        inquiry: (n,r,s) => `السادة ${r}،\n\nتحية طيبة وبعد،\n\nأود الاستفسار بخصوص التفاصيل المتعلقة بـ: ${s}.\n\nسأكون شاكراً لو تفضلتم بتزويدي بالمعلومات اللازمة أو الإرشاد إلى الجهة المختصة للإجابة على تساؤلاتي.\n\nمع جزيل الشكر،\n${n}`,
+        
+        apology: (n,r,s) => `السادة ${r}،\n\nتحية طيبة،\n\nأتقدم إليكم باعتذاري الصادق والرسمي بخصوص: ${s}.\n\nلم يكن ذلك بقصد مني، وأدرك حجم التأثير السلبي الذي قد يكون حدث. أعدكم باتخاذ كافة التدابير اللازمة لتدارك الأمر وضمان عدم تكراره مستقبلاً.\n\nتقبلوا اعتذاري مع خالص تقديري،\n${n}`
+    };
 
-// رابط موقعك الأساسي الذي تريد الترويج له
-const MY_PORTAL_URL = 'https://ff1980ff.github.io/mamlaka/index.html';
+    function makeEmail() {
+        const n = document.getElementById("nm").value.trim() || "(اسمك الكامل)";
+        const r = document.getElementById("rc").value.trim() || "(الجهة المعنية)";
+        const s = document.getElementById("sb").value.trim() || "(الموضوع)";
+        const type = document.getElementById("tp").value;
 
-const T={
-job:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، أتقدم إليكم بطلب الانضمام لفريقكم بخصوص: ${s}.\nأرفق لكم نبذة عن خبرتي ومهاراتي، وآمل بفرصة للقاء والتعارف.\nمع فائق الاحترام والتقدير،\n${n}`,
-comp:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، أرفع لكم شكواي بخصوص: ${s}.\nراجيًا من سيادتكم النظر بالموضوع ومعالجته بأسرع وقت، وثقتي بكم كبيرة بإنصافي.\nوتفضلوا بقبول فائق الاحترام،\n${n}`,
-thx:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، ويسعدني أن أتقدم لكم بأصدق عبارات الشكر والتقدير على: ${s}.\nجهودكم الطيبة لا تقدر بثمن، ووجودكم نعمة حقيقية.\nدمتم بخير وعافية،\n${n}`,
-ask:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، وأود الاستفسار بخصوص: ${s}.\nسأكون شاكرًا لكم تزويدي بالتفاصيل اللازمة، ولكم مني جزيل الشكر.\nمع الاحترام،\n${n}`,
-sry:(n,r,s)=>`السلام عليكم ${r}،\nتحية طيبة وبعد،\nأنا ${n}، وأتقدم إليكم باعتذاري الصادق بخصوص: ${s}.\nلم يكن ذلك بقصد مني، وأعدكم بتدارك الأمر بأفضل صورة.\nتقبلوا اعتذاري مع خالص تقديري،\n${n}`
-};
+        if (!templates[type]) return alert("نوع غير معروف");
 
-function make(){
- const n=document.getElementById("nm").value.trim()||"(اسمك)";
- const r=document.getElementById("rc").value.trim()||"(الجهة المحترمة)";
- const s=document.getElementById("sb").value.trim()||"(الموضوع)";
- document.getElementById("out").value=T[document.getElementById("tp").value](n,r,s);
-}
+        const generatedText = templates[type](n, r, s);
+        document.getElementById("out").value = generatedText;
+    }
 
-// دالة الربح الذكية
-async function getProfitUrl(longUrl) {
-    try {
-        // محاولة ShrinkMe
-        const apiUrl = `https://shrinkme.io/api?url=${encodeURIComponent(longUrl)}&token=${SHRINK_API_KEY}`;
-        const response = await fetch(apiUrl);
-        if (response.ok) {
-            const data = await response.json();
-            if (data.shortenedUrl || data.link) return data.shortenedUrl || data.link;
+    function copyText() {
+        const textArea = document.getElementById("out");
+        if (!textArea.value) {
+            alert("قم بتوليد الإيميل أولاً!");
+            return;
         }
-    } catch (e) {}
+        
+        // طريقة حديثة للنسخ
+        navigator.clipboard.writeText(textArea.value).then(() => {
+            showToast();
+        }).catch(err => {
+            // fallback للمتصفحات القديمة
+            textArea.select();
+            document.execCommand('copy');
+            showToast();
+        });
+    }
 
-    try {
-        // محاولة Exe.io
-        const apiUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(longUrl)}`;
-        const response = await fetch(apiUrl);
-        if (response.ok) {
-            const data = await response.json();
-            if (data.shortenedUrl) return data.shortenedUrl;
+    function downloadTxt() {
+        const element = document.createElement('a');
+        const fileContent = document.getElementById("out").value;
+        
+        if (!fileContent) {
+            alert("لا يوجد نص للتحميل!");
+            return;
         }
-    } catch (e) {}
 
-    return longUrl; // احتياطيا
-}
+        const blob = new Blob([fileContent], {type: 'text/plain;charset=utf-8'});
+        element.href = URL.createObjectURL(blob);
+        element.download = "Official_Email_" + Date.now() + ".txt";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
 
-async function sendWithProfitSignature() {
-    const bodyText = document.getElementById("out").value;
-    if(!bodyText){ alert("اصنع الإيميل أولاً"); return; }
-
-    const loader = document.getElementById("loader");
-    loader.style.display = 'block';
-    
-    // 1. توليد الرابط المربح لموقعك
-    const profitLink = await getProfitUrl(MY_PORTAL_URL);
-    
-    // 2. بناء التوقيع الذكي
-    const signature = `\n\n------------------\n🌐 اكتشف أدواتي الرقمية المجانية والاحترافية:\n👉 ${profitLink}\n(Powered by Mamlaka Apps)`;
-    
-    // 3. الدمج النهائي
-    const finalBody = bodyText + signature;
-    
-    // 4. استخراج البيانات للحقول
-    const subject = document.getElementById("sb").value || "استفسار عام";
-    const recipient = ""; // يمكن للمستخدم إضافته لاحقاً
-    
-    // 5. فتح تطبيق البريد (mailto link)
-    // نستخدم encodeURI لضمان سلامة الرموز العربية والمسافات
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(finalBody)}`;
-    
-    window.location.href = mailtoLink;
-    
-    loader.style.display = 'none';
-}
-
-function copyOnly() {
-    const t=document.getElementById("out").value;
-    if(!t){alert("اصنع الإيميل أولًا");return}
-    navigator.clipboard.writeText(t).then(() => {
-        alert("✅ اننسخ النص! الصقه بأي بريد.");
-    }).catch(err => {
-        // طريقة قديمة للنسخ
-        const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
-        alert("📋 اننسخت!");
-    });
-}
-</script></body></html>
+    function showToast() {
+        const x = document.getElementById("toast");
+        x.className = "show";
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    }
+</script>
+</body>
+</html>
