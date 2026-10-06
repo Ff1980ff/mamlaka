@@ -1,463 +1,394 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👑 مركز قيادة المملكة | النسخة الوظيفية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-dark: #0f0f13;
-            --sidebar-bg: #16161e;
-            --card-bg: #1e1e28;
-            --primary-gold: #D4AF37;
-            --secondary-purple: #6C5CE7;
-            --success-green: #2ecc71;
-            --warning-yellow: #f1c40f;
-            --danger-red: #e74c3c;
-            --text-main: #ffffff;
-            --text-muted: #a0a0b0;
-            --border-color: #2d2d3d;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🏛️ مملكة التطبيقات | بوابة المعرفة الرقمية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-deep: #0f172a;
+    --surface: rgba(30, 41, 59, 0.8);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --gold-primary: #fbbf24;
+    --gold-dark: #d97706;
+    --blue-accent: #38bdf8;
+    --green-accent: #4ade80;
+    --purple-accent: #8b5cf6;
+}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
 
-        /* الشريط الجانبي */
-        aside {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-            z-index: 100;
-        }
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(251, 191, 36, 0.05) 0%, transparent 25%);
+}
 
-        .logo-area {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .logo-area h2 { color: var(--primary-gold); font-size: 1.4rem; }
-        .logo-area p { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
+.hero-section { text-align: center; max-width: 600px; width: 100%; animation: fadeInUp 0.8s ease-out; }
+.logo-container { position: relative; display: inline-block; margin-bottom: 20px; }
+.main-logo { font-size: 4rem; filter: drop-shadow(0 0 15px var(--gold-primary)); animation: float 3s infinite ease-in-out; }
+.badge-version { position: absolute; top: -10px; left: -10px; background: var(--blue-accent); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+h1.title { font-size: 2.2rem; font-weight: 800; background: linear-gradient(to right, var(--gold-primary), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; line-height: 1.3; }
+p.subtitle { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; font-family: 'Tajawal', sans-serif; }
+.highlight-text { color: var(--gold-primary); font-weight: bold; }
 
-        nav ul { list-style: none; padding: 15px 0; flex: 1; overflow-y: auto; }
-        nav li a {
-            display: flex; align-items: center; gap: 10px;
-            padding: 12px 20px;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: 0.2s;
-            border-right: 3px solid transparent;
-        }
-        nav li a:hover, nav li a.active {
-            background-color: rgba(212, 175, 55, 0.1);
-            color: var(--primary-gold);
-            border-right-color: var(--primary-gold);
-        }
+.stats-bar { display: flex; justify-content: space-around; background: var(--surface); backdrop-filter: blur(10px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 15px; margin-bottom: 30px; width: 100%; }
+.stat-item { text-align: center; }
+.stat-number { font-size: 1.5rem; font-weight: 800; color: var(--blue-accent); display: block; }
+.stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* زر الموبايل */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 15px; right: 15px;
-            z-index: 200;
-            background: var(--primary-gold);
-            color: black;
-            border: none;
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+.categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; max-width: 600px; margin-bottom: 30px; }
+.category-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+.category-card:hover { transform: translateY(-5px); border-color: var(--gold-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+.category-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+.category-name { font-weight: 700; font-size: 1rem; color: white; margin-bottom: 5px; }
+.category-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-        /* المحتوى الرئيسي */
-        main {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            position: relative;
-        }
+.cat-edu .category-icon { color: var(--blue-accent); }
+.cat-tech .category-icon { color: var(--green-accent); }
+.cat-lang .category-icon { color: #e879f9; }
+.cat-tools .category-icon { color: var(--gold-primary); }
+.cat-wisdom .category-icon { color: var(--purple-accent); }
+.cat-shop .category-icon { color: #fb7185; } /* لون جديد للمحل */
 
-        header.main-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .page-title { font-size: 1.5rem; font-weight: bold; color: var(--text-main); }
-        
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+.actions-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
+.btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-secondary { background: transparent; border: 1px solid var(--border-glass); color: var(--text-main); padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
 
-        .project-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            border-color: var(--primary-gold);
-        }
+.footer-info { margin-top: 40px; text-align: center; font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; }
+.footer-info a { color: var(--blue-accent); text-decoration: none; }
 
-        .status-tag {
-            position: absolute; top: 15px; left: 15px;
-            padding: 4px 10px; border-radius: 20px;
-            font-size: 0.7rem; font-weight: bold;
-        }
-        .tag-ready { background: var(--success-green); color: white; }
-        .tag-edit { background: var(--warning-yellow); color: black; }
-        .tag-work { background: var(--secondary-purple); color: white; }
+/* تنسيقات آلة الربح الجديدة */
+.profit-machine {
+    max-width: 600px;
+    width: 100%;
+    margin: 30px auto;
+    padding: 25px;
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+.profit-title {
+    color: var(--gold-primary);
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 800;
+}
+.profit-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+    font-family: monospace;
+    direction: ltr;
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+.profit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    font-size: 1.1rem;
+}
+.profit-btn:hover { transform: scale(1.02); }
+.result-box {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: rgba(0,0,0,0.3);
+    position: relative;
+}
+.final-url {
+    display: block;
+    word-break: break-all;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-decoration: underline dotted #fbbf24;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+.copy-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #1e293b;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.copy-btn:hover { background: #334155; }
 
-        .proj-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-        .proj-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; color: var(--primary-gold); }
-        .proj-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px; min-height: 40px; }
-        
-        /* أزرار العمل داخل البطاقة */
-        .card-actions {
-            display: flex; gap: 10px; margin-top: auto;
-        }
-        .action-btn {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: bold;
-            transition: 0.2s;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            background: transparent;
-        }
-        .action-btn.primary { 
-            background: var(--primary-gold); 
-            color: black; 
-            border: none;
-        }
-        .action-btn.secondary { 
-            background: rgba(255,255,255,0.05); 
-        }
-        .action-btn:hover { opacity: 0.9; transform: scale(0.98); }
-
-        /* نافذة الإضافة (Modal) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            z-index: 1000; display: none; justify-content: center; align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: var(--card-bg); border: 1px solid var(--primary-gold);
-            border-radius: 15px; width: 90%; max-width: 500px; padding: 25px;
-            max-height: 80vh; overflow-y: auto;
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; }
-        .form-control {
-            width: 100%; padding: 10px; background: #2a2a35; border: 1px solid #444;
-            color: white; border-radius: 8px; font-family: 'Cairo';
-        }
-        .btn-submit {
-            width: 100%; padding: 12px; background: var(--success-green); color: white;
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            aside {
-                position: fixed; top: 0; bottom: 0; right: 0;
-                transform: translateX(100%); width: 80%; max-width: 300px;
-            }
-            aside.open { transform: translateX(0); }
-            .mobile-menu-btn { display: block; }
-            main { padding: 15px; padding-top: 70px; }
-            .projects-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 480px) { h1.title { font-size: 1.8rem; } .categories-grid { grid-template-columns: 1fr 1fr; } .stats-bar { flex-wrap: wrap; gap: 10px; } .stat-item { flex: 1 1 40%; } }
+</style>
 </head>
 <body>
 
-<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-
-<aside id="sidebar">
-    <div class="logo-area">
-        <h2>👑 المملكة</h2>
-        <p>لوحة التحكم الخاصة</p>
+<div class="hero-section">
+    <div class="logo-container">
+        <div class="main-logo">🏛️</div>
+        <span class="badge-version">v2.3 Fixed & Updated</span>
     </div>
-    <nav>
-        <ul>
-            <li><a href="#" onclick="showPage('overview')" class="active"><span>📊 نظرة عامة</span></a></li>
-            <li><a href="#" onclick="showPage('ready')"><span>✅ جاهز للنشر</span></a></li>
-            <li><a href="#" onclick="showPage('editing')"><span>🔧 قيد التعديل</span></a></li>
-            <li><a href="#" onclick="showPage('working')"><span>⚙️ قيد العمل</span></a></li>
-            <hr style="border:0; border-top:1px solid #333; margin:10px 0;">
-            <li><a href="#" onclick="openAddModal()"><span>➕ إضافة مشروع جديد</span></a></li>
-        </ul>
-    </nav>
-</aside>
+    
+    <h1 class="title">مملكة التطبيقات التعليمية</h1>
+    <p class="subtitle">
+        منصتك الشاملة للتعلم الذاتي، البرمجة، واللغات.<br>
+        مصممة خصيصاَ للعقل العربي الطموح، وتعمل <span class="highlight-text">دون إنترنت</span>.
+    </p>
 
-<main>
-    <header class="main-header">
-        <h1 class="page-title" id="pageTitle">نظرة عامة</h1>
-        <button class="action-btn primary" style="flex:none; width:auto;" onclick="openAddModal()">+ إضافة</button>
-    </header>
-
-    <!-- صفحة النظرة العامة -->
-    <section id="overview" class="page-section active">
-        <div class="stats-row" style="display:flex; gap:15px; margin-bottom:20px; overflow-x:auto; padding-bottom:10px;">
-            <div style="min-width:100px; background:#1e1e28; padding:10px; border-radius:8px; text-align:center;">
-                <div style="font-size:1.5rem; color:var(--success-green);" id="countReady">0</div>
-                <small style="color:#aaa;">جاهز</small>
-            </div>
-            <div style="min-width:100px; background:#1e1e28; padding:10px; border-radius:8px; text-align:center;">
-                <div style="font-size:1.5rem; color:var(--warning-yellow);" id="countEdit">0</div>
-                <small style="color:#aaa;">تعديل</small>
-            </div>
-            <div style="min-width:100px; background:#1e1e28; padding:10px; border-radius:8px; text-align:center;">
-                <div style="font-size:1.5rem; color:var(--secondary-purple);" id="countWork">0</div>
-                <small style="color:#aaa;">عمل</small>
-            </div>
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-number" id="countApps">16+</span>
+            <span class="stat-label">تطبيق تفاعلي</span>
         </div>
-
-        <div class="projects-grid" id="projectsContainer">
-            <!-- سيتم حقن المشاريع هنا ديناميكياً -->
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">مجاني ومفتوح</span>
         </div>
-    </section>
-
-    <!-- صفحات أخرى بسيطة للفلترة -->
-    <section id="ready" class="page-section" style="display:none;"><h2>✅ المخزون الاستراتيجي</h2><div class="projects-grid" id="gridReady"></div></section>
-    <section id="editing" class="page-section" style="display:none;"><h2>🔧 ورشة الإصلاح</h2><div class="projects-grid" id="gridEditing"></div></section>
-    <section id="working" class="page-section" style="display:none;"><h2>⚙️ المختبر</h2><div class="projects-grid" id="gridWorking"></div></section>
-
-</main>
-
-<!-- نافذة إضافة مشروع -->
-<div class="modal-overlay" id="addModal">
-    <div class="modal-content">
-        <h3 style="color:var(--primary-gold); margin-bottom:20px;">➕ إضافة مشروع جديد</h3>
-        <form onsubmit="saveProject(event)">
-            <div class="form-group">
-                <label>اسم المشروع</label>
-                <input type="text" id="pName" class="form-control" required placeholder="مثال: كتاب الصقر الذهبي">
-            </div>
-            <div class="form-group">
-                <label>الوصف المختصر</label>
-                <textarea id="pDesc" class="form-control" rows="2" placeholder="ماذا يفعل هذا المشروع؟"></textarea>
-            </div>
-            <div class="form-group">
-                <label>رابط المعاينة (GitHub Pages)</label>
-                <input type="url" id="pLiveUrl" class="form-control" placeholder="https://username.github.io/repo/">
-            </div>
-            <div class="form-group">
-                <label>رابط الكود (GitHub Repo)</label>
-                <input type="url" id="pCodeUrl" class="form-control" placeholder="https://github.com/username/repo">
-            </div>
-            <div class="form-group">
-                <label>الحالة الحالية</label>
-                <select id="pStatus" class="form-control">
-                    <option value="ready">✅ جاهز للنشر</option>
-                    <option value="edit">🔧 يحتاج تعديل</option>
-                    <option value="work">⚙️ قيد العمل</option>
-                </select>
-            </div>
-            <button type="submit" class="btn-submit">حفظ المشروع</button>
-            <button type="button" class="btn-submit" style="background:#e74c3c; margin-top:10px;" onclick="closeAddModal()">إلغاء</button>
-        </form>
+        <div class="stat-item">
+            <span class="stat-number">AR</span>
+            <span class="stat-label">واجهة عربية أصيلة</span>
+        </div>
     </div>
 </div>
 
+<!-- ✅ القسم المعدل: إضافة بطاقة المحل وإصلاح مركز القيادة -->
+<div class="categories-grid">
+    <!-- 1. الأدوات المالية (محدثة لترابط مع الأخشاب) -->
+    <div class="category-card cat-tools" onclick="navigateTo('woodcalculatorhtml.html')">
+        <span class="category-icon">💰</span>
+        <div class="category-name">الأدوات المالية</div>
+        <div class="category-desc">محاسب أخشاب ذكي وعقود إيجار.</div>
+    </div>
+
+    <!-- 2. نظام إدارة المحلات (الجديد!) -->
+    <div class="category-card cat-shop" onclick="navigateTo('shop-manager.html')">
+        <span class="category-icon">🏪</span>
+        <div class="category-name">إدارة المحلات</div>
+        <div class="category-desc">سجل المبيعات والمشتريات والحركة النقدية.</div>
+    </div>
+
+    <!-- 3. الإبداع والصوت -->
+    <div class="category-card cat-tech" onclick="navigateTo('royalvoicestudio.html')">
+        <span class="category-icon">🎙️</span>
+        <div class="category-name">الإبداع والصوت</div>
+        <div class="category-desc">استوديو رسم ونطق بالذكاء الاصطناعي.</div>
+    </div>
+
+    <!-- 4. مركز القيادة (تم إصلاح الرابط هنا!) -->
+    <div class="category-card cat-edu" onclick="navigateTo('oshub.html')">
+        <span class="category-icon">🏛️</span>
+        <div class="category-name">مركز القيادة</div>
+        <div class="category-desc">الدخول لنظام المملكة الشامل.</div>
+    </div>
+
+    <!-- 5. سفارة المعرفة -->
+    <div class="category-card cat-lang" onclick="navigateTo('safara.html')">
+        <span class="category-icon">🌍</span>
+        <div class="category-name">سفارة المعرفة</div>
+        <div class="category-desc">روابط تعليمية عالمية مجانية.</div>
+    </div>
+
+    <!-- 6. زاوية الحكمة -->
+    <div class="category-card cat-wisdom" onclick="navigateTo('tafsirhtml.html')">
+        <span class="category-icon">🌙</span>
+        <div class="category-name">زاوية الحكمة</div>
+        <div class="category-desc">تفسير الأحلام حسب ابن سيرين.</div>
+    </div>
+</div>
+
+<!-- ==================== آلة الربح الذكية (ShrinkMe & Exe.io) ==================== -->
+<div class="profit-machine">
+    <h3 class="profit-title">💸 مولّد الدخل السلبي الذكي</h3>
+    <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 20px;">
+        قص روابطك الطويلة واربح المال تلقائياَ عبر خادمين احتياطيين.
+    </p>
+
+    <!-- حقل الإدخال -->
+    <input type="url" id="profitLongUrl" class="profit-input" placeholder="الصق الرابط الطويل هنا..." dir="ltr">
+
+    <!-- زر التوليد -->
+    <button onclick="generateProfitLink()" class="profit-btn">
+        ⚡ ولّد الرابط المختصر واربح الآن
+    </button>
+
+    <!-- منطقة النتيجة (مخفية افتراضياً) -->
+    <div id="profitResultBox" class="result-box">
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">الرابط الجديد:</p>
+        <span id="profitFinalUrl" class="final-url"></span>
+        
+        <!-- زر النسخ الديناميكي -->
+        <button id="profitCopyBtn" class="copy-btn" style="display:none;">📋 نسخ الرابط المختصر</button>
+    </div>
+</div>
+<!-- ============================================================================ -->
+
+<div class="actions-container">
+    <button class="btn-primary" onclick="openOS()">
+        🚀 دخول نظام التشغيل الكامل
+    </button>
+    
+    <button class="btn-secondary" onclick="window.location.href='safara.html'">
+        🌍 زيارة سفارة الروابط العالمية
+    </button>
+</div>
+
+<div class="footer-info">
+    © 2026 مملكة التطبيقات | بُنيت بشغف من سوريا 🇸<br>
+    جميع الحقوق محفوظة • <a href="#">سياسة الخصوصية</a>
+</div>
+
 <script>
-    // قاعدة البيانات المحلية
-    let projects = JSON.parse(localStorage.getItem('myKingdomProjects')) || [];
+function navigateTo(page) {
+    window.location.href = page;
+}
 
-    // إذا كانت القائمة فارغة، نضيف مثالاً واحداً لاختبار النظام
-    if(projects.length === 0) {
-        projects.push({
-            id: Date.now(),
-            name: "كتاب الصقر الذهبي",
-            desc: "تطبيق تفاعلي لتعليم الأطفال أسماء الحيوانات مع صوت وترجمة.",
-            liveUrl: "https://ff1980ff.github.io/mamlaka/",
-            codeUrl: "https://github.com/Ff1980ff/mamlaka",
-            status: "ready",
-            icon: "🦅"
-        });
-        saveToStorage();
+// ✅ التأكد من أن الزر الرئيسي يقود للمركز الجديد (تم التصحيح هنا)
+function openOS() {
+    window.location.href = 'oshub.html'; 
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const countEl = document.getElementById('countApps');
+    let currentCount = 0;
+    const targetCount = 16; // زاد العدد بسبب إضافة تطبيق المحل
+    
+    const interval = setInterval(() => {
+        currentCount++;
+        countEl.textContent = currentCount + "+";
+        if(currentCount >= targetCount) clearInterval(interval);
+    }, 50);
+});
+
+// --- منطق آلة الربح الذكية ---
+
+// ✅ المفاتيح الصحيحة داخل علامات التنصيص ومع الفاصلة المنقوطة
+const SHRINK_API_KEY = '0fc4e8bc09ec2508d213af0e810bbe1d8f1cf4c3'; 
+const EXE_API_KEY = '8a00e563ec670798e86aeb5560a6f424894f3bd4';
+
+async function generateProfitLink() {
+    const inputEl = document.getElementById('profitLongUrl');
+    const resultBox = document.getElementById('profitResultBox');
+    const finalUrlSpan = document.getElementById('profitFinalUrl');
+    const copyBtn = document.getElementById('profitCopyBtn');
+    
+    if(!inputEl || !resultBox || !finalUrlSpan) return alert("خطأ تقني في العناصر");
+
+    const longUrl = inputEl.value.trim();
+
+    if(!longUrl || !longUrl.startsWith('http')) {
+        alert("الرجاء إدخال رابط صحيح يبدأ بـ http أو https");
+        return;
     }
 
-    function init() {
-        renderProjects();
-        updateStats();
-    }
+    // حالة التحميل
+    resultBox.style.display = 'block';
+    finalUrlSpan.innerText = "⏳ جارٍ المحاولة عبر الخادم الأول (ShrinkMe)...";
+    resultBox.style.borderColor = "#fbbf24"; // أصفر للتنبيه
+    copyBtn.style.display = 'none'; 
 
-    function saveToStorage() {
-        localStorage.setItem('myKingdomProjects', JSON.stringify(projects));
-    }
-
-    function renderProjects(filterStatus = null) {
-        const containerId = filterStatus ? `grid${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}` : 'projectsContainer';
-        const containers = ['projectsContainer', 'gridReady', 'gridEditing', 'gridWorking'];
+    try {
+        // محاولة أولى: ShrinkMe.io
+        let shortLink = await tryShrinkMe(longUrl);
         
-        // مسح الحاويات القديمة
-        containers.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.innerHTML = '';
-        });
+        if (!shortLink) {
+            // محاولة ثانية: Exe.io (إذا فشلت الأولى)
+            finalUrlSpan.innerText = "⚠️ الخادم الأول مشغول، تجربة الاحتياطي (Exe.io)...";
+            shortLink = await tryExeIo(longUrl);
+        }
 
-        projects.forEach(proj => {
-            // تحديد مكان العرض بناءً على الفلتر الحالي
-            let targetContainer = document.getElementById('projectsContainer'); // Default to Overview
+        if (shortLink) {
+            // نجاح!
+            finalUrlSpan.innerText = shortLink;
+            resultBox.style.borderColor = "#4ade80"; // أخضر للنجاح
             
-            if (document.querySelector('.page-section.active').id === 'ready' && proj.status === 'ready') {
-                targetContainer = document.getElementById('gridReady');
-            } else if (document.querySelector('.page-section.active').id === 'editing' && proj.status === 'edit') {
-                targetContainer = document.getElementById('gridEditing');
-            } else if (document.querySelector('.page-section.active').id === 'working' && proj.status === 'work') {
-                targetContainer = document.getElementById('gridWorking');
-            } else if (document.querySelector('.page-section.active').id !== 'overview') {
-                return; // Don't show in specific tabs if not matching status
-            }
-
-            if(!targetContainer) return;
-
-            const card = createCardElement(proj);
-            targetContainer.appendChild(card);
-        });
-    }
-
-    function createCardElement(proj) {
-        const div = document.createElement('div');
-        div.className = 'project-card';
-        
-        let tagClass = '', tagText = '';
-        if(proj.status === 'ready') { tagClass='tag-ready'; tagText='جاهز'; }
-        else if(proj.status === 'edit') { tagClass='tag-edit'; tagText='تعديل'; }
-        else { tagClass='tag-work'; tagText='قيد العمل'; }
-
-        div.innerHTML = `
-            <span class="status-tag ${tagClass}">${tagText}</span>
-            <span class="proj-icon">${proj.icon || '💻'}</span>
-            <h4 class="proj-title">${proj.name}</h4>
-            <p class="proj-desc">${proj.desc}</p>
-            <div class="card-actions">
-                ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" class="action-btn primary">🌐 معاينة</a>` : '<span class="action-btn secondary" style="opacity:0.5">لا يوجد رابط</span>'}
-                ${proj.codeUrl ? `<a href="${proj.codeUrl}" target="_blank" class="action-btn secondary">📂 الكود</a>` : ''}
-                <button class="action-btn secondary" onclick="deleteProject(${proj.id})" style="color:#e74c3c; border-color:#e74c3c;">🗑️ حذف</button>
-            </div>
-        `;
-        return div;
-    }
-
-    function updateStats() {
-        document.getElementById('countReady').innerText = projects.filter(p => p.status === 'ready').length;
-        document.getElementById('countEdit').innerText = projects.filter(p => p.status === 'edit').length;
-        document.getElementById('countWork').innerText = projects.filter(p => p.status === 'work').length;
-    }
-
-    // إدارة النوافذ المنبثقة والتنقل
-    function showPage(pageId) {
-        document.querySelectorAll('.page-section').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
-        
-        const target = document.getElementById(pageId);
-        if(target) target.style.display = 'block';
-        
-        event.currentTarget.classList.add('active');
-        
-        const titles = {'overview':'نظرة عامة','ready':'جاهز للنشر','editing':'قيد التعديل','working':'قيد العمل'};
-        document.getElementById('pageTitle').innerText = titles[pageId];
-
-        renderProjects(); // إعادة الرسم حسب التبويب النشط
-        
-        if(window.innerWidth <= 768) toggleSidebar(false);
-    }
-
-    function toggleSidebar(forceState) {
-        const sidebar = document.getElementById('sidebar');
-        if (forceState !== undefined) {
-            if(forceState) sidebar.classList.add('open');
-            else sidebar.classList.remove('open');
+            // إظهار زر النسخ
+            copyBtn.style.display = 'block';
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(shortLink).then(() => {
+                    copyBtn.innerText = "✅ تم النسخ بنجاح!";
+                    setTimeout(() => copyBtn.innerText = "📋 نسخ الرابط المختصر", 2000);
+                });
+            };
+            
+            console.log("✅ تم القص بنجاح.");
         } else {
-            sidebar.classList.toggle('open');
+            throw new Error("فشلت جميع المحاولات.");
         }
-    }
 
-    function openAddModal() {
-        document.getElementById('addModal').classList.add('active');
+    } catch (error) {
+        console.error(error);
+        finalUrlSpan.innerText = "❌ تعذر الاتصال بأي خادم. تحقق من الإنترنت.";
+        resultBox.style.borderColor = "#ef4444"; // أحمر للخطأ
     }
+}
 
-    function closeAddModal() {
-        document.getElementById('addModal').classList.remove('active');
-    }
-
-    function saveProject(e) {
-        e.preventDefault();
-        const newProj = {
-            id: Date.now(),
-            name: document.getElementById('pName').value,
-            desc: document.getElementById('pDesc').value,
-            liveUrl: document.getElementById('pLiveUrl').value,
-            codeUrl: document.getElementById('pCodeUrl').value,
-            status: document.getElementById('pStatus').value,
-            icon: getIconForStatus(document.getElementById('pStatus').value)
-        };
+// ✅ دالة ShrinkMe المعدلة لتجاوز الحجب (CORS) باستخدام وسيط آمن
+async function tryShrinkMe(url) {
+    const targetUrl = `https://shrinkme.io/api?url=${encodeURIComponent(url)}&token=${SHRINK_API_KEY}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+    
+    try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) return null;
         
-        projects.push(newProj);
-        saveToStorage();
-        renderProjects();
-        updateStats();
-        closeAddModal();
-        alert("تم حفظ المشروع بنجاح في ذاكرتك المحلية!");
+        const data = await response.json();
+        return data.shortenedUrl || data.link || null; 
+    } catch (e) {
+        console.error("ShrinkMe Error:", e);
+        return null;
     }
+}
 
-    function deleteProject(id) {
-        if(confirm("هل أنت متأكد من حذف هذا المشروع من القائمة؟")) {
-            projects = projects.filter(p => p.id !== id);
-            saveToStorage();
-            renderProjects();
-            updateStats();
-        }
+// ✅ دالة Exe.io المعدلة لتجاوز الحجب (CORS)
+async function tryExeIo(url) {
+    const targetUrl = `https://exe.io/api?api=${EXE_API_KEY}&url=${encodeURIComponent(url)}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+    
+    try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) return null;
+        
+        const data = await response.json();
+        return data.shortenedUrl || null;
+    } catch (e) {
+        console.error("Exe.io Error:", e);
+        return null;
     }
-
-    function getIconForStatus(status) {
-        if(status === 'ready') return '✅';
-        if(status === 'edit') return '🔧';
-        return '⚙️';
-    }
-
-    window.onclick = function(event) {
-        if (!event.target.matches('.mobile-menu-btn') && !event.target.closest('#sidebar')) {
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('open');
-            }
-        }
-        if (event.target == document.getElementById('addModal')) {
-            closeAddModal();
-        }
-    }
-
-    // تشغيل أولي
-    init();
-
+}
 </script>
 
 </body>
