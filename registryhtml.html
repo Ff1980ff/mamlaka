@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 سجل المملكة | The Kingdom Registry</title>
+    <title>📋 سجل المملكة الشامل | All Files Registry</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -66,16 +66,16 @@
 <body>
 
 <header>
-    <h1>📋 سجل المملكة الرقمي</h1>
-    <p class="subtitle">نظام إدارة المشاريع المحلي - يعمل بدون إنترنت - حفظ تلقائي</p>
+    <h1>📋 سجل المملكة الشامل</h1>
+    <p class="subtitle">جميع ملفات GitHub - نظام إدارة محلي - حفظ تلقائي</p>
 </header>
 
 <div class="controls">
-    <button class="btn btn-add" onclick="addRow()">➕ إضافة تطبيق جديد</button>
-    <button class="btn btn-export" onclick="exportData()">💾 تصدير النسخة الاحتياطية (JSON)</button>
-    <button class="btn btn-import" onclick="importDataTrigger()">📂 استيراد نسخة سابقة</button>
+    <button class="btn btn-add" onclick="addRow()">➕ إضافة يدوي</button>
+    <button class="btn btn-export" onclick="exportData()">💾 تصدير JSON</button>
+    <button class="btn btn-import" onclick="importDataTrigger()">📂 استيراد نسخة</button>
     <input type="file" id="fileInput" style="display:none;" onchange="handleFileImport(event)">
-    <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح الكل (احذر!)</button>
+    <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح الكل</button>
 </div>
 
 <div class="table-container">
@@ -83,116 +83,138 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>اسم التطبيق</th>
+                <th>اسم الملف / التطبيق</th>
                 <th>الرابط المباشر (URL)</th>
-                <th>الميزات الأساسية (Brief Description)</th>
-                <th>الحالة / التصنيف</th>
+                <th>الميزات / ملاحظات سريعة</th>
+                <th>الحالة</th>
                 <th>إجراءات</th>
             </tr>
         </thead>
-        <tbody id="tableBody">
-            <!-- الصفوف ستضاف هنا ديناميكياَ -->
-        </tbody>
+        <tbody id="tableBody"></tbody>
     </table>
-    <div id="emptyState" class="empty-msg" style="display:none;">لا توجد تطبيقات مسجلة بعد. اضغط "إضافة تطبيق جديد" للبدء.</div>
+    <div id="emptyState" class="empty-msg" style="display:none;">جارٍ التحميل...</div>
 </div>
 
 <script>
-    // === البيانات الأولية المستخرجة من GitHub (Seed Data) ===
+    // === البيانات الأولية الشاملة (من كل الصور المرسلة) ===
     const BASE_URL = "https://ff1980ff.github.io/mamlaka/";
     
-    const seedApps = [
-        // الدفعة الأولى (كنوز تعليمية وأدوات)
-        { name: "كتاب الصقر للبيع (تجريبي)", url: BASE_URL + "FalconBookForSalehtml.html", features: "نسخة قديمة من كتاب الأطفال.", status: "draft" },
-        { name: "كتاب الصقر الذكي (الجوال)", url: BASE_URL + "FalconBookMobilehtml.html", features: "تعليم حيوانات بالألوان والصوت. الأفضل بين نسخ الصقر.", status: "pending" },
-        { name: "كتاب الصقر (أصلي)", url: BASE_URL + "FalconBookhtml.html", features: "النسخة الأولية البسيطة.", status: "draft" },
-        { name: "استوديو الصقر V2", url: BASE_URL + "FalconStudioV2.html", features: "أداة تحرير صور/فيديو بسيطة.", status: "pending" },
-        { name: "عبقري الرياضيات (Pro)", url: BASE_URL + "MathMasterFixedhtml.html", features: "حل معادلات وجبر وهندسة خطوة بخطوة. منتج قوي جداً.", status: "ready" },
-        { name: "مصنع الإيميلات الرسمي Pro", url: BASE_URL + "emailfactoryprohtml.html", features: "توليد إيميلات رسمية (وظيفة، شكوى...) بضغطة زر. يعمل Offline.", status: "ready" },
-        { name: "السويدية للمستقبل (Final)", url: BASE_URL + "SwedishMasterFinalHtml.ht...", features: "معجم سويدي-عربي ذكي مع نطق صوتي واختبارات.", status: "pending" },
-        { name: "ألوان الحكمة v2", url: BASE_URL + "WisdomColorsv2.html", features: "تطبيق تلوين تعليمي للأطفال (نسخة محسنة).", status: "ready" },
-        { name: "عقد العمل v23", url: BASE_URL + "contractv23.html", features: "منشئ عقود عمل واتفاقيات قانونية.", status: "pending" },
-        { name: "دفتر جاهز V6", url: BASE_URL + "دفترجاهزV6.html", features: "نسخة محدثة من الدفتر الرقمي.", status: "draft" },
+    const fullSeedApps = [
+        // --- الدفعة 1 (الكنوز والتعليمية) ---
+        { name: "كتاب الصقر للبيع", url: BASE_URL + "FalconBookForSalehtml.html", features: "نسخة قديمة للتجربة.", status: "draft" },
+        { name: "كتاب الصقر الذكي (Mobile)", url: BASE_URL + "FalconBookMobilehtml.html", features: "الأفضل للأطفال. تلوين ولغات.", status: "pending" },
+        { name: "كتاب الصقر (Original)", url: BASE_URL + "FalconBookhtml.html", features: "النسخة الأولى البسيطة.", status: "draft" },
+        { name: "استوديو الصقر V2", url: BASE_URL + "FalconStudioV2.html", features: "تحرير صور/فيديو بسيط.", status: "pending" },
+        { name: "عبقري الرياضيات Pro", url: BASE_URL + "MathMasterFixedhtml.html", features: "حل معادلات وهندسة. منتج قوي.", status: "ready" },
+        { name: "مصنع الإيميلات Pro", url: BASE_URL + "emailfactoryprohtml.html", features: "توليد إيميلات رسمية بضغطة زر.", status: "ready" },
+        { name: "السويدية للمستقبل Final", url: BASE_URL + "SwedishMasterFinalHtml.ht...", features: "معجم سويدي-عربي ونطق صوتي.", status: "pending" },
+        { name: "ألوان الحكمة v2", url: BASE_URL + "WisdomColorsv2.html", features: "تلوين تعليمي للأطفال.", status: "ready" },
+        { name: "عقد العمل v23", url: BASE_URL + "contractv23.html", features: "منشئ عقود قانونية.", status: "pending" },
+        { name: "دفتر جاهز V6", url: BASE_URL + "دفترجاهزV6.html", features: "نسخة محدثة للدفتر الرقمي.", status: "draft" },
 
-        // الدفعة الثانية (أدوات صحية وخدمات)
-        { name: "صحة الأطفال Kids Health", url: BASE_URL + "kidshealthhtml.html", features: "دليل طبي مبسط للأمهات حول رعاية الأطفال.", status: "ready" },
-        { name: "هندسي (Handasi)", url: BASE_URL + "handasi.html", features: "حاسبة هندسية أو أداة للمعماريين.", status: "pending" },
-        { name: "جسمي (Jismi)", url: BASE_URL + "jismi.html", features: "تشريح الجسم البشري أو صحة عامة.", status: "pending" },
-        { name: "معلم (Muallim)", url: BASE_URL + "muallim.html", features: "منصة دروس خصوصية أو شرح مواضيع مدرسية.", status: "pending" },
-        { name: "المصحف الشريف", url: BASE_URL + "mushaf.html", features: "قارئ مصحف إلكتروني. طلب هائل جداً.", status: "ready" },
-        { name: "تفسير الأحلام", url: BASE_URL + "tafsirhtml.html", features: "مرجع لتفسير ابن سيرين. SEO Gold.", status: "ready" },
-        { name: "وصفات المطبخ (Recipe Studio)", url: BASE_URL + "recipestudiohtml.html", features: "تطبيق طبخ تفاعلي. جمهور النساء كبير جداً.", status: "pending" },
-        { name: "قصص الأطفال (Stories)", url: BASE_URL + "storieshtml.html", features: "قصص صوتية ومصورة للأطفال.", status: "pending" },
-        { name: "حاسبة الأخشاب", url: BASE_URL + "woodcalculatorhtml.html", features: "أداة لحساب كميات خشب النجارة والأسعار.", status: "ready" },
-        { name: "رحلات وسفر (Safara Pro)", url: BASE_URL + "safaraprohtml.html", features: "دليل سفر أو حجز رحلات.", status: "pending" },
+        // --- الدفعة 2 (صحة وخدمات) ---
+        { name: "صحة الأطفال Kids Health", url: BASE_URL + "kidshealthhtml.html", features: "دليل طبي للأمهات.", status: "ready" },
+        { name: "هندسي Handasi", url: BASE_URL + "handasi.html", features: "حاسبة هندسية للمعماريين.", status: "pending" },
+        { name: "جسمي Jismi", url: BASE_URL + "jismi.html", features: "تشريح الجسم والصحة العامة.", status: "pending" },
+        { name: "معلم Muallim", url: BASE_URL + "muallim.html", features: "شرح دروس ومناهج مدرسية.", status: "pending" },
+        { name: "المصحف الشريف Mushaf", url: BASE_URL + "mushaf.html", features: "قارئ مصحف إلكتروني. طلب هائل.", status: "ready" },
+        { name: "تفسير الأحلام Tafsir", url: BASE_URL + "tafsirhtml.html", features: "مرجع ابن سيرين. SEO Gold.", status: "ready" },
+        { name: "وصفات المطبخ Recipe Studio", url: BASE_URL + "recipestudiohtml.html", features: "تطبيق طبخ تفاعلي.", status: "pending" },
+        { name: "قصص الأطفال Stories", url: BASE_URL + "storieshtml.html", features: "قصص صوتية ومصورة.", status: "pending" },
+        { name: "حاسبة الأخشاب Wood Calc", url: BASE_URL + "woodcalculatorhtml.html", features: "لحساب كميات خشب النجارة.", status: "ready" },
+        { name: "رحلات وسفر Safara Pro", url: BASE_URL + "safaraprohtml.html", features: "دليل سفر وحجز رحلات.", status: "pending" },
 
-        // ملفات أخرى مهمة
-        { name: "بوابة المملكة الرئيسية", url: BASE_URL + "index.html", features: "الصفحة الأم للموقع.", status: "ready" },
-        { name: "مركز القيادة (Oshub)", url: BASE_URL + "oshub.html", features: "البوابة الداخلية للمملكة.", status: "pending" },
-        { name: "استوديو الصوت الملكي", url: BASE_URL + "royalvoicestudio.html", features: "محرر صوتي أو مسجل ذكي.", status: "pending" },
-        { name: "تلوين عام (Talwin)", url: BASE_URL + "talwin.html", features: "تطبيق تلوين عام.", status: "draft" },
-        { name: "معجم (Mojam)", url: BASE_URL + "mojam.html", features: "قاموس عربي-إنجليزي.", status: "pending" },
-        { name: "مترجم (Mutarjim)", url: BASE_URL + "mutarjim.html", features: "أداة ترجمة نصوص.", status: "pending" },
-        { name: "ضيافة (Diyaafa)", url: BASE_URL + "diyafa.html", features: "قالب صفحة هبوط سياحية.", status: "draft" },
-        { name: "كرة القدم المحترفة", url: BASE_URL + "footballprohtml.html", features: "لعبة كرة قدم بسيطة.", status: "draft" },
-        { name: "مولد المواقع (GenSite)", url: BASE_URL + "gensitehtml.html", features: "أداة لإنشاء مواقع بسيطة.", status: "pending" },
-        { name: "ناشر (Nashir)", url: BASE_URL + "nashir.html", features: "أداة لنشر المنشورات على السوشيال ميديا.", status: "draft" }
+        // --- الدفعة 3 (أدوات عامة وتكرارية) ---
+        { name: "بوابة المملكة Index", url: BASE_URL + "index.html", features: "الصفحة الرئيسية للموقع.", status: "ready" },
+        { name: "مركز القيادة Oshub", url: BASE_URL + "oshub.html", features: "البوابة الداخلية القديمة.", status: "pending" },
+        { name: "استوديو الصوت Royal Voice", url: BASE_URL + "royalvoicestudio.html", features: "مسجل صوتي ذكي.", status: "pending" },
+        { name: "تلوين عام Talwin", url: BASE_URL + "talwin.html", features: "تطبيق تلوين إضافي.", status: "draft" },
+        { name: "معجم Mojam", url: BASE_URL + "mojam.html", features: "قاموس عربي-إنجليزي.", status: "pending" },
+        { name: "مترجم Mutarjim", url: BASE_URL + "mutarjim.html", features: "أداة ترجمة نصوص.", status: "pending" },
+        { name: "ضيافة Diyaafa", url: BASE_URL + "diyafa.html", features: "قالب صفحة هبوط سياحية.", status: "draft" },
+        { name: "كرة القدم Football Pro", url: BASE_URL + "footballprohtml.html", features: "لعبة كرة قدم بسيطة.", status: "draft" },
+        { name: "مولد المواقع GenSite", url: BASE_URL + "gensitehtml.html", features: "أداة إنشاء مواقع.", status: "pending" },
+        { name: "ناشر Nashir", url: BASE_URL + "nashir.html", features: "نشر منشورات للسوشيال ميديا.", status: "draft" },
+
+        // --- الدفعة 4 (ملفات أخرى موجودة في القائمة) ---
+        { name: "عن المملكة About", url: BASE_URL + "about.html", features: "صفحة تعريفية بالمطور.", status: "info" },
+        { name: "لوحة تحكم Admin Panel", url: BASE_URL + "adminpanelhtml.html", features: "واجهة إدارة داخلية.", status: "internal" },
+        { name: "ألعاب Alaab", url: BASE_URL + "alaab.html", features: "مجموعة ألعاب مصغرة.", status: "draft" },
+        { name: "ورشة تدقيق Audit Workshop", url: BASE_URL + "auditworkshophtml.html", features: "فحص أخطاء المواقع.", status: "tech" },
+        { name: "بوابة أخبار Bawaba", url: BASE_URL + "bawaba.html", features: "قالب أخبار بسيط.", status: "draft" },
+        { name: "العقل Brain", url: BASE_URL + "brain.html", features: "اختبار ذكاء أو أحجية.", status: "game" },
+        { name: "زر المستقبل BtnFuture", url: BASE_URL + "btnfuture.html", features: "عنصر واجهة منفصل.", status: "junk" },
+        { name: "داftar Daftar", url: BASE_URL + "daftar.html", features: "دفتر يوميات بسيط.", status: "old" },
+        { name: "وميض Flash", url: BASE_URL + "flash.html", features: "تأثير بصري سريع.", status: "junk" },
+        { name: "حروف Huruf", url: BASE_URL + "huruf.html", features: "تعليم الحروف العربية.", status: "edu" },
+        { name: "إسلام Islam", url: BASE_URL + "islam.html", features: "معلومات دينية وأذكار.", status: "religion" },
+        { name: "جيب Jayb", url: BASE_URL + "jayb.html", features: "حساب مثلثات.", status: "math" },
+        { name: "كرة Kora", url: BASE_URL + "kora.html", features: "لعبة كرة بسيطة.", status: "game" },
+        { name: "كتاب روابط Link Book", url: BASE_URL + "linkbookhtml.html", features: "تنظيم الروابط الشخصية.", status: "tool" },
+        { name: "عارض روابط Links Viewer", url: BASE_URL + "linksviewerhtml.html", features: "فحص الروابط.", status: "tech" },
+        { name: "مهنة Mahatta", url: BASE_URL + "mahatta.html", features: "منصة وظائف مصغرة.", status: "biz" },
+        { name: "بريد Mail", url: BASE_URL + "mail.html", features: "واجهة بريد بسيطة.", status: "old" },
+        { name: "مكتبة Maktaba", url: BASE_URL + "maktaba.html", features: "عرض كتب وملخصات.", status: "lib" },
+        { name: "مرسم Marsam", url: BASE_URL + "marsam.html", features: "رسم وفنون.", status: "art" },
+        { name: "رياضيات Math", url: BASE_URL + "math.html", features: "نسخة أولية للرياضيات.", status: "old" },
+        { name: "مرسال Mirsal", url: BASE_URL + "mirsal.html", features: "دردشة ومراسلة.", status: "chat" },
+        { name: "مكتشف Muktashif", url: BASE_URL + "muktashif.html", features: "لعبة استكشاف.", status: "game" },
+        { name: "ملتقى Multaga", url: BASE_URL + "multaqa.html", features: "منتدى نقاش.", status: "social" },
+        { name: "مترجم جديد New", url: BASE_URL + "new.html", features: "ملف تجريبي.", status: "junk" },
+        { name: "عقود إيجار Rental Contract", url: BASE_URL + "rental-contract.html", features: "منشئ عقود إيجار.", status: "legal" },
+        { name: "رواق Riwaq", url: BASE_URL + "riwaq.html", features: "مساحة عمل أو دراسة.", status: "study" },
+        { name: "مستخرج رويال Royal Extractor", url: BASE_URL + "royalextractorhtml.html", features: "استخراج بيانات.", status: "tech" },
+        { name: "صبورة Saboura", url: BASE_URL + "saboura.html", features: "تطبيق صبر أو تأمل.", status: "mind" },
+        { name: "سفارة Safara", url: BASE_URL + "safara.html", features: "روابط تعليمية عالمية.", status: "edu" },
+        { name: "سخرة Sakhra", url: BASE_URL + "sakhras.html", features: "تطبيق حجري أو بناء.", status: "misc" },
+        { name: "صراف Sarraf", url: BASE_URL + "sarraf.html", features: "تحويل عملات.", status: "finance" },
+        { name: "شاشة Shasha", url: BASE_URL + "shasha.html", features: "عرض شرائح.", status: "pres" },
+        { name: "شاي Shay", url: BASE_URL + "shay.html", features: "وصفات شاي أو مقهى.", status: "food" },
+        { name: "قصص Stories", url: BASE_URL + "stories.html", features: "نسخة قصص قديمة.", status: "old" },
+        { name: "استوديو Studio", url: BASE_URL + "studio.html", features: "استوديو تصميم.", status: "design" },
+        { name: "صوت Sound", url: BASE_URL + "sound.html", features: "مؤثرات صوتية.", status: "audio" },
+        { name: "فيديو Video", url: BASE_URL + "video.html", features: "مشغل فيديو بسيط.", status: "media" },
+        { name: "صانع فيديو Video Maker", url: BASE_URL + "videomakerprohtml.html", features: "تحرير فيديو أونلاين.", status: "media" },
+        { name: "صوت Voice", url: BASE_URL + "voice.html", features: "تسجيل صوتي.", status: "audio" },
+        { name: "واعي Wa3i", url: BASE_URL + "wa3i.html", features: "توعية صحية أو اجتماعية.", status: "aware" }
     ];
 
-    // === قاعدة البيانات المحلية ===
-    let registryData = JSON.parse(localStorage.getItem('kingdom_registry_v1')) || [];
+    let registryData = [];
 
     window.onload = () => {
-        // إذا كان الجدول فارغاً لأول مرة، حمّل البيانات المبدئية
-        if(registryData.length === 0) {
-            registryData = seedApps.map((app, index) => ({
-                id: Date.now() + index,
-                ...app
-            }));
-            saveToStorage();
-        } else {
-            renderTable();
-        }
+        // تحميل البيانات الكاملة فوراً
+        registryData = fullSeedApps.map((app, index) => ({
+            id: Date.now() + index,
+            ...app
+        }));
+        saveToStorage();
     };
 
     function saveToStorage() {
-        localStorage.setItem('kingdom_registry_v1', JSON.stringify(registryData));
+        localStorage.setItem('kingdom_registry_full_v2', JSON.stringify(registryData));
         renderTable();
     }
 
     function addRow() {
-        const newRow = {
-            id: Date.now(),
-            name: "",
-            url: "",
-            features: "",
-            status: "draft"
-        };
+        const newRow = { id: Date.now(), name: "", url: "", features: "", status: "draft" };
         registryData.push(newRow);
         saveToStorage();
-        setTimeout(() => {
-            const inputs = document.querySelectorAll('.row-input-name');
-            if(inputs.length > 0) inputs[inputs.length-1].focus();
-        }, 100);
     }
 
     function updateField(id, field, value) {
         const item = registryData.find(r => r.id === id);
-        if(item) {
-            item[field] = value;
-            saveToStorage();
-        }
+        if(item) { item[field] = value; saveToStorage(); }
     }
 
     function deleteRow(id) {
-        if(confirm("هل أنت متأكد من حذف هذا السطر؟")) {
+        if(confirm("حذف هذا السطر؟")) {
             registryData = registryData.filter(r => r.id !== id);
             saveToStorage();
         }
     }
 
     function clearAll() {
-        if(confirm("⚠️ تحذير: سيتم مسح جميع البيانات المخزنة محلياً. هل تريد المتابعة؟")) {
+        if(confirm("⚠️ مسح جميع البيانات؟")) {
             registryData = [];
             saveToStorage();
         }
@@ -200,36 +222,23 @@
 
     function exportData() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(registryData));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "kingdom_backup_" + new Date().toISOString().slice(0,10) + ".json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-        alert("تم تنزيل النسخة الاحتياطية بنجاح!");
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "kingdom_full_backup_" + new Date().toISOString().slice(0,10) + ".json";
+        a.click();
     }
 
-    function importDataTrigger() {
-        document.getElementById('fileInput').click();
-    }
-
-    function handleFileImport(event) {
-        const file = event.target.files[0];
+    function importDataTrigger() { document.getElementById('fileInput').click(); }
+    
+    function handleFileImport(e) {
+        const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = ev => {
             try {
-                const importedData = JSON.parse(e.target.result);
-                if(Array.isArray(importedData)) {
-                    registryData = importedData;
-                    saveToStorage();
-                    alert("تم استيراد البيانات بنجاح!");
-                } else {
-                    alert("ملف غير صالح.");
-                }
-            } catch (err) {
-                alert("خطأ في قراءة الملف: " + err.message);
-            }
+                const imported = JSON.parse(ev.target.result);
+                if(Array.isArray(imported)) { registryData = imported; saveToStorage(); alert("تم الاستيراد!"); }
+            } catch(err) { alert("خطأ في الملف"); }
         };
         reader.readAsText(file);
     }
@@ -248,28 +257,33 @@
         registryData.forEach((item, index) => {
             const tr = document.createElement('tr');
             
-            // تحديد لون الحالة
             let statusClass = 'status-draft';
             let statusLabel = 'مسودة';
             if(item.status === 'pending') { statusClass = 'status-pending'; statusLabel = 'قيد الفحص 🔍'; }
             if(item.status === 'ready') { statusClass = 'status-ready'; statusLabel = 'جاهز للنشر ✅'; }
+            if(item.status === 'info') { statusLabel = 'معلومات ℹ️'; }
+            if(item.status === 'internal') { statusLabel = 'داخلي 🔒'; }
+            if(item.status === 'junk') { statusLabel = 'إهمال 🗑️'; }
 
             tr.innerHTML = `
                 <td>${index + 1}</td>
-                <td><input type="text" class="row-input-name" value="${item.name}" placeholder="مثال: مصنع الإيميلات" onchange="updateField(${item.id}, 'name', this.value)"></td>
-                <td><input type="text" value="${item.url}" placeholder="https://..." onchange="updateField(${item.id}, 'url', this.value)"></td>
-                <td><input type="text" value="${item.features}" placeholder="اكتب ميزات سريعة هنا..." onchange="updateField(${item.id}, 'features', this.value)"></td>
+                <td><input type="text" value="${item.name}" onchange="updateField(${item.id}, 'name', this.value)"></td>
+                <td><input type="text" value="${item.url}" onchange="updateField(${item.id}, 'url', this.value)"></td>
+                <td><input type="text" value="${item.features}" onchange="updateField(${item.id}, 'features', this.value)"></td>
                 <td>
                     <select onchange="updateField(${item.id}, 'status', this.value)">
                         <option value="draft" ${item.status === 'draft' ? 'selected' : ''}>مسودة 📝</option>
                         <option value="pending" ${item.status === 'pending' ? 'selected' : ''}>قيد الفحص 🔍</option>
                         <option value="ready" ${item.status === 'ready' ? 'selected' : ''}>جاهز للنشر ✅</option>
+                        <option value="info" ${item.status === 'info' ? 'selected' : ''}>معلومات ℹ️</option>
+                        <option value="internal" ${item.status === 'internal' ? 'selected' : ''}>داخلي 🔒</option>
+                        <option value="junk" ${item.status === 'junk' ? 'selected' : ''}>إهمال 🗑️</option>
                     </select>
                     <span style="display:block; margin-top:5px; font-size:0.8rem;" class="${statusClass}">${statusLabel}</span>
                 </td>
                 <td>
-                    <button class="action-btn open-link" onclick="window.open('${item.url}', '_blank')" title="فتح الرابط">🌐</button>
-                    <button class="action-btn delete" onclick="deleteRow(${item.id})" title="حذف">❌</button>
+                    <button class="action-btn open-link" onclick="window.open('${item.url}', '_blank')">🌐</button>
+                    <button class="action-btn delete" onclick="deleteRow(${item.id})">❌</button>
                 </td>
             `;
             tbody.appendChild(tr);
