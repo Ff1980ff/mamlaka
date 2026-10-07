@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 سجل المملكة | The Kingdom Registry</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --gold: #fbbf24;
+            --green: #10b981;
+            --red: #ef4444;
+            --blue: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; min-height: 100vh; }
+
+        header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--gold); padding-bottom: 15px; }
+        h1 { color: var(--gold); font-size: 1.8rem; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+
+        /* لوحة التحكم */
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-add { background: var(--green); color: white; }
+        .btn-export { background: var(--blue); color: black; }
+        .btn-import { background: var(--gold); color: black; }
+        .btn-clear { background: var(--red); color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* الجدول */
+        .table-container { overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: rgba(255,255,255,0.05); color: var(--gold); font-weight: bold; position: sticky; top: 0; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        /* حقول الإدخال داخل الجدول */
+        input[type="text"], select { 
+            width: 100%; padding: 8px; background: #0f172a; border: 1px solid var(--border); 
+            color: white; border-radius: 6px; font-size: 0.85rem;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--gold); }
+
+        /* حالات التطبيق */
+        .status-ready { color: var(--green); font-weight: bold; }
+        .status-pending { color: var(--gold); font-weight: bold; }
+        .status-draft { color: var(--text-muted); }
+
+        /* أزرار صغيرة */
+        .action-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-left: 5px; }
+        .action-btn.delete { color: var(--red); border-color: var(--red); }
+        .action-btn.open-link { color: var(--blue); border-color: var(--blue); }
+        .action-btn:hover { background: rgba(255,255,255,0.1); }
+
+        /* رسالة فارغة */
+        .empty-msg { text-align: center; padding: 40px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📋 سجل المملكة الرقمي</h1>
+    <p class="subtitle">نظام إدارة المشاريع المحلي - يعمل بدون إنترنت - حفظ تلقائي</p>
+</header>
+
+<div class="controls">
+    <button class="btn btn-add" onclick="addRow()">➕ إضافة تطبيق جديد</button>
+    <button class="btn btn-export" onclick="exportData()">💾 تصدير النسخة الاحتياطية (JSON)</button>
+    <button class="btn btn-import" onclick="importDataTrigger()">📂 استيراد نسخة سابقة</button>
+    <input type="file" id="fileInput" style="display:none;" onchange="handleFileImport(event)">
+    <button class="btn btn-clear" onclick="clearAll()">🗑️ مسح الكل (احذر!)</button>
+</div>
+
+<div class="table-container">
+    <table id="registryTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>اسم التطبيق</th>
+                <th>الرابط المباشر (URL)</th>
+                <th>الميزات الأساسية (Brief Description)</th>
+                <th>الحالة / التصنيف</th>
+                <th>إجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- الصفوف ستضاف هنا ديناميكياَ -->
+        </tbody>
+    </table>
+    <div id="emptyState" class="empty-msg" style="display:none;">لا توجد تطبيقات مسجلة بعد. اضغط "إضافة تطبيق جديد" للبدء.</div>
+</div>
+
+<script>
+    // === البيانات الأولية المستخرجة من GitHub (Seed Data) ===
+    const BASE_URL = "https://ff1980ff.github.io/mamlaka/";
+    
+    const seedApps = [
+        // الدفعة الأولى (كنوز تعليمية وأدوات)
+        { name: "كتاب الصقر للبيع (تجريبي)", url: BASE_URL + "FalconBookForSalehtml.html", features: "نسخة قديمة من كتاب الأطفال.", status: "draft" },
+        { name: "كتاب الصقر الذكي (الجوال)", url: BASE_URL + "FalconBookMobilehtml.html", features: "تعليم حيوانات بالألوان والصوت. الأفضل بين نسخ الصقر.", status: "pending" },
+        { name: "كتاب الصقر (أصلي)", url: BASE_URL + "FalconBookhtml.html", features: "النسخة الأولية البسيطة.", status: "draft" },
+        { name: "استوديو الصقر V2", url: BASE_URL + "FalconStudioV2.html", features: "أداة تحرير صور/فيديو بسيطة.", status: "pending" },
+        { name: "عبقري الرياضيات (Pro)", url: BASE_URL + "MathMasterFixedhtml.html", features: "حل معادلات وجبر وهندسة خطوة بخطوة. منتج قوي جداً.", status: "ready" },
+        { name: "مصنع الإيميلات الرسمي Pro", url: BASE_URL + "emailfactoryprohtml.html", features: "توليد إيميلات رسمية (وظيفة، شكوى...) بضغطة زر. يعمل Offline.", status: "ready" },
+        { name: "السويدية للمستقبل (Final)", url: BASE_URL + "SwedishMasterFinalHtml.ht...", features: "معجم سويدي-عربي ذكي مع نطق صوتي واختبارات.", status: "pending" },
+        { name: "ألوان الحكمة v2", url: BASE_URL + "WisdomColorsv2.html", features: "تطبيق تلوين تعليمي للأطفال (نسخة محسنة).", status: "ready" },
+        { name: "عقد العمل v23", url: BASE_URL + "contractv23.html", features: "منشئ عقود عمل واتفاقيات قانونية.", status: "pending" },
+        { name: "دفتر جاهز V6", url: BASE_URL + "دفترجاهزV6.html", features: "نسخة محدثة من الدفتر الرقمي.", status: "draft" },
+
+        // الدفعة الثانية (أدوات صحية وخدمات)
+        { name: "صحة الأطفال Kids Health", url: BASE_URL + "kidshealthhtml.html", features: "دليل طبي مبسط للأمهات حول رعاية الأطفال.", status: "ready" },
+        { name: "هندسي (Handasi)", url: BASE_URL + "handasi.html", features: "حاسبة هندسية أو أداة للمعماريين.", status: "pending" },
+        { name: "جسمي (Jismi)", url: BASE_URL + "jismi.html", features: "تشريح الجسم البشري أو صحة عامة.", status: "pending" },
+        { name: "معلم (Muallim)", url: BASE_URL + "muallim.html", features: "منصة دروس خصوصية أو شرح مواضيع مدرسية.", status: "pending" },
+        { name: "المصحف الشريف", url: BASE_URL + "mushaf.html", features: "قارئ مصحف إلكتروني. طلب هائل جداً.", status: "ready" },
+        { name: "تفسير الأحلام", url: BASE_URL + "tafsirhtml.html", features: "مرجع لتفسير ابن سيرين. SEO Gold.", status: "ready" },
+        { name: "وصفات المطبخ (Recipe Studio)", url: BASE_URL + "recipestudiohtml.html", features: "تطبيق طبخ تفاعلي. جمهور النساء كبير جداً.", status: "pending" },
+        { name: "قصص الأطفال (Stories)", url: BASE_URL + "storieshtml.html", features: "قصص صوتية ومصورة للأطفال.", status: "pending" },
+        { name: "حاسبة الأخشاب", url: BASE_URL + "woodcalculatorhtml.html", features: "أداة لحساب كميات خشب النجارة والأسعار.", status: "ready" },
+        { name: "رحلات وسفر (Safara Pro)", url: BASE_URL + "safaraprohtml.html", features: "دليل سفر أو حجز رحلات.", status: "pending" },
+
+        // ملفات أخرى مهمة
+        { name: "بوابة المملكة الرئيسية", url: BASE_URL + "index.html", features: "الصفحة الأم للموقع.", status: "ready" },
+        { name: "مركز القيادة (Oshub)", url: BASE_URL + "oshub.html", features: "البوابة الداخلية للمملكة.", status: "pending" },
+        { name: "استوديو الصوت الملكي", url: BASE_URL + "royalvoicestudio.html", features: "محرر صوتي أو مسجل ذكي.", status: "pending" },
+        { name: "تلوين عام (Talwin)", url: BASE_URL + "talwin.html", features: "تطبيق تلوين عام.", status: "draft" },
+        { name: "معجم (Mojam)", url: BASE_URL + "mojam.html", features: "قاموس عربي-إنجليزي.", status: "pending" },
+        { name: "مترجم (Mutarjim)", url: BASE_URL + "mutarjim.html", features: "أداة ترجمة نصوص.", status: "pending" },
+        { name: "ضيافة (Diyaafa)", url: BASE_URL + "diyafa.html", features: "قالب صفحة هبوط سياحية.", status: "draft" },
+        { name: "كرة القدم المحترفة", url: BASE_URL + "footballprohtml.html", features: "لعبة كرة قدم بسيطة.", status: "draft" },
+        { name: "مولد المواقع (GenSite)", url: BASE_URL + "gensitehtml.html", features: "أداة لإنشاء مواقع بسيطة.", status: "pending" },
+        { name: "ناشر (Nashir)", url: BASE_URL + "nashir.html", features: "أداة لنشر المنشورات على السوشيال ميديا.", status: "draft" }
+    ];
+
+    // === قاعدة البيانات المحلية ===
+    let registryData = JSON.parse(localStorage.getItem('kingdom_registry_v1')) || [];
+
+    window.onload = () => {
+        // إذا كان الجدول فارغاً لأول مرة، حمّل البيانات المبدئية
+        if(registryData.length === 0) {
+            registryData = seedApps.map((app, index) => ({
+                id: Date.now() + index,
+                ...app
+            }));
+            saveToStorage();
+        } else {
+            renderTable();
+        }
+    };
+
+    function saveToStorage() {
+        localStorage.setItem('kingdom_registry_v1', JSON.stringify(registryData));
+        renderTable();
+    }
+
+    function addRow() {
+        const newRow = {
+            id: Date.now(),
+            name: "",
+            url: "",
+            features: "",
+            status: "draft"
+        };
+        registryData.push(newRow);
+        saveToStorage();
+        setTimeout(() => {
+            const inputs = document.querySelectorAll('.row-input-name');
+            if(inputs.length > 0) inputs[inputs.length-1].focus();
+        }, 100);
+    }
+
+    function updateField(id, field, value) {
+        const item = registryData.find(r => r.id === id);
+        if(item) {
+            item[field] = value;
+            saveToStorage();
+        }
+    }
+
+    function deleteRow(id) {
+        if(confirm("هل أنت متأكد من حذف هذا السطر؟")) {
+            registryData = registryData.filter(r => r.id !== id);
+            saveToStorage();
+        }
+    }
+
+    function clearAll() {
+        if(confirm("⚠️ تحذير: سيتم مسح جميع البيانات المخزنة محلياً. هل تريد المتابعة؟")) {
+            registryData = [];
+            saveToStorage();
+        }
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(registryData));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "kingdom_backup_" + new Date().toISOString().slice(0,10) + ".json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        alert("تم تنزيل النسخة الاحتياطية بنجاح!");
+    }
+
+    function importDataTrigger() {
+        document.getElementById('fileInput').click();
+    }
+
+    function handleFileImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if(Array.isArray(importedData)) {
+                    registryData = importedData;
+                    saveToStorage();
+                    alert("تم استيراد البيانات بنجاح!");
+                } else {
+                    alert("ملف غير صالح.");
+                }
+            } catch (err) {
+                alert("خطأ في قراءة الملف: " + err.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        const emptyMsg = document.getElementById('emptyState');
+        tbody.innerHTML = '';
+
+        if(registryData.length === 0) {
+            emptyMsg.style.display = 'block';
+            return;
+        }
+        emptyMsg.style.display = 'none';
+
+        registryData.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            
+            // تحديد لون الحالة
+            let statusClass = 'status-draft';
+            let statusLabel = 'مسودة';
+            if(item.status === 'pending') { statusClass = 'status-pending'; statusLabel = 'قيد الفحص 🔍'; }
+            if(item.status === 'ready') { statusClass = 'status-ready'; statusLabel = 'جاهز للنشر ✅'; }
+
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><input type="text" class="row-input-name" value="${item.name}" placeholder="مثال: مصنع الإيميلات" onchange="updateField(${item.id}, 'name', this.value)"></td>
+                <td><input type="text" value="${item.url}" placeholder="https://..." onchange="updateField(${item.id}, 'url', this.value)"></td>
+                <td><input type="text" value="${item.features}" placeholder="اكتب ميزات سريعة هنا..." onchange="updateField(${item.id}, 'features', this.value)"></td>
+                <td>
+                    <select onchange="updateField(${item.id}, 'status', this.value)">
+                        <option value="draft" ${item.status === 'draft' ? 'selected' : ''}>مسودة 📝</option>
+                        <option value="pending" ${item.status === 'pending' ? 'selected' : ''}>قيد الفحص 🔍</option>
+                        <option value="ready" ${item.status === 'ready' ? 'selected' : ''}>جاهز للنشر ✅</option>
+                    </select>
+                    <span style="display:block; margin-top:5px; font-size:0.8rem;" class="${statusClass}">${statusLabel}</span>
+                </td>
+                <td>
+                    <button class="action-btn open-link" onclick="window.open('${item.url}', '_blank')" title="فتح الرابط">🌐</button>
+                    <button class="action-btn delete" onclick="deleteRow(${item.id})" title="حذف">❌</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+</body>
+</html>
