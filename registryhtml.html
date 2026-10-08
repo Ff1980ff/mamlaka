@@ -206,18 +206,41 @@
     ];
 
     let registryData = [];
+    const STORAGE_KEY = 'kingdom_registry_final_v4'; // مفتاح تخزين موحد
 
     window.onload = () => {
-        // تحميل البيانات الكاملة فوراَ
+        // 1. حاول قراءة البيانات المحفوظة مسبقاً
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        
+        if(storedData) {
+            // إذا وجدنا بيانات، نحمّلها كما هي (نحترم تعديلاتك اليدوية)
+            try {
+                registryData = JSON.parse(storedData);
+                console.log("✅ تم تحميل البيانات المحفوظة يدوياً.");
+            } catch(e) {
+                console.error("❌ خطأ في القراءة، سيتم إعادة التهيئة.");
+                initializeDefaultData();
+            }
+        } else {
+            // إذا كانت فارغة (أول مرة)، نحقن القائمة الافتراضية
+            initializeDefaultData();
+        }
+        
+        renderTable(); 
+    };
+
+    function initializeDefaultData() {
         registryData = fullSeedApps.map((app, index) => ({
             id: Date.now() + index,
             ...app
         }));
-        saveToStorage();
-    };
+        saveToStorage(); 
+        console.log("🆕 تم إنشاء قاعدة البيانات الافتراضية لأول مرة.");
+    }
 
     function saveToStorage() {
-        localStorage.setItem('kingdom_registry_full_v2', JSON.stringify(registryData));
+        // هنا نستخدم نفس المفتاح STORAGE_KEY لضمان التطابق
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(registryData));
         renderTable();
     }
 
