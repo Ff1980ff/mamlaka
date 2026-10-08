@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 عقارات لايت | Realty Lite Edition</title>
+    <style>
+        :root {
+            --primary: #2563eb; /* أزرق اقتصادي واضح */
+            --secondary: #64748b;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-main); }
+        
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* Header Simple & Clean */
+        header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { font-size: 1.2rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .admin-toggle { cursor: pointer; background: none; border: 1px solid #ddd; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; }
+        .admin-active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Main Content */
+        main { flex: 1; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
+        
+        /* Empty State */
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--secondary); }
+        .empty-icon { font-size: 3rem; margin-bottom: 10px; opacity: 0.5; }
+
+        /* Properties Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Card Design - Minimalist */
+        .prop-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .prop-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .img-container { height: 180px; background: #e2e8f0; position: relative; }
+        .prop-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .type-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;
+            color: var(--text);
+        }
+
+        .card-content { padding: 15px; }
+        .title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; color: var(--text); }
+        .location { font-size: 0.9rem; color: var(--secondary); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+        .price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; }
+        
+        .actions { display: flex; gap: 10px; }
+        .btn-wa {
+            flex: 1; background: #25D366; color: white; border: none; padding: 8px;
+            border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none;
+            display: flex; justify-content: center; align-items: center; gap: 5px;
+        }
+        .btn-del {
+            background: #fee2e2; color: var(--danger); border: none; padding: 8px;
+            border-radius: 5px; cursor: pointer; display: none; /* Hidden unless admin mode */
+        }
+        .admin-mode .btn-del { display: block; }
+
+        /* Admin Form Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 200;
+            padding: 20px;
+        }
+        .modal-form {
+            background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; color: var(--text); }
+        .form-input {
+            width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;
+            font-family: inherit;
+        }
+        .file-preview {
+            margin-top: 10px; max-height: 100px; max-width: 100%; border-radius: 5px; display: none;
+        }
+        .submit-btn {
+            width: 100%; background: var(--primary); color: white; border: none; padding: 12px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+        .cancel-btn {
+            width: 100%; background: #f1f5f9; color: var(--secondary); border: none; padding: 10px;
+            border-radius: 6px; cursor: pointer; margin-top: 5px;
+        }
+
+        /* Footer Note */
+        footer {
+            text-align: center; padding: 20px; font-size: 0.8rem; color: var(--secondary);
+            background: var(--card-bg); margin-top: auto;
+        }
+        .warning-note { color: var(--danger); font-weight: bold; margin-bottom: 5px; display: block; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">🏠 عقارات لايت</div>
+    <button id="adminBtn" class="admin-toggle" onclick="toggleAdmin()">وضع الإدارة ⚙️</button>
+</header>
+
+<main>
+    <div id="contentArea">
+        <!-- Will be populated by JS -->
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>لا توجد عقارات مضافة بعد</h3>
+            <p>اضغط على "وضع الإدارة" لإضافة أول عقار.</p>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <span class="warning-note">⚠️ تنبيه: البيانات محفوظة محلياً على هذا الجهاز فقط.</span>
+    © 2026 Mamlaka Apps - Realty Lite Edition
+</footer>
+
+<!-- Add Property Modal -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal-form">
+        <h2 style="margin-bottom:20px; color:var(--primary)">➕ إضافة عقار جديد</h2>
+        <form id="propForm">
+            <div class="form-group">
+                <label class="form-label">عنوان العقار *</label>
+                <input type="text" id="inpTitle" class="form-input" required placeholder="مثال: شقة مفروشة في الميدان">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">النوع *</label>
+                <select id="inpType" class="form-input">
+                    <option value="sale">للبيع</option>
+                    <option value="rent">للإيجار</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">السعر ($) *</label>
+                <input type="number" id="inpPrice" class="form-input" required placeholder="100000">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">الموقع / الحي *</label>
+                <input type="text" id="inpLoc" class="form-input" required placeholder="دمشق - المزة">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">صورة العقار</label>
+                <input type="file" id="inpImg" accept="image/*" onchange="previewImage(this)" style="padding:5px;">
+                <img id="prevImg" class="file-preview" src="" alt="Preview">
+            </div>
+
+            <button type="submit" class="submit-btn">حفظ ونشر</button>
+            <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // === State Management ===
+    let properties = JSON.parse(localStorage.getItem('lite_realty_data')) || [];
+    let isAdminMode = false;
+
+    // === Initialization ===
+    window.onload = () => {
+        renderProperties();
+        updateUIState();
+    };
+
+    // === Core Functions ===
+    function toggleAdmin() {
+        isAdminMode = !isAdminMode;
+        const btn = document.getElementById('adminBtn');
+        if(isAdminMode) {
+            btn.classList.add('admin-active');
+            btn.innerText = "خروج من الإدارة ❌";
+            openModal(); // Open add form immediately for convenience
+        } else {
+            btn.classList.remove('admin-active');
+            btn.innerText = "وضع الإدارة ⚙️";
+            closeModal();
+        }
+        updateUIState();
+    }
+
+    function updateUIState() {
+        document.body.className = isAdminMode ? 'admin-mode' : '';
+    }
+
+    function openModal() {
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('addModal').style.display = 'none';
+        document.getElementById('propForm').reset();
+        document.getElementById('prevImg').style.display = 'none';
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('prevImg');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // === Data Handling ===
+    document.getElementById('propForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('inpImg');
+        let imageDataUrl = "";
+
+        // Convert image to Base64 string for local storage
+        if (fileInput.files[0]) {
+            imageDataUrl = await convertToBase64(fileInput.files[0]);
+        } else {
+            imageDataUrl = "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image"; // Placeholder
+        }
+
+        const newProp = {
+            id: Date.now(),
+            title: document.getElementById('inpTitle').value,
+            type: document.getElementById('inpType').value,
+            price: parseFloat(document.getElementById('inpPrice').value),
+            location: document.getElementById('inpLoc').value,
+            image: imageDataUrl,
+            createdAt: new Date().toLocaleString('ar-SA')
+        };
+
+        properties.unshift(newProp); // Add to top
+        saveData();
+        renderProperties();
+        closeModal();
+        alert("✅ تم حفظ العقار محلياً!");
+    });
+
+    function deleteProperty(id) {
+        if(confirm("هل تريد حذف هذا العقار نهائياً؟")) {
+            properties = properties.filter(p => p.id !== id);
+            saveData();
+            renderProperties();
+        }
+    }
+
+    function saveData() {
+        try {
+            localStorage.setItem('lite_realty_data', JSON.stringify(properties));
+        } catch(e) {
+            alert("خطأ: مساحة التخزين المحلية ممتلئة! حاول حذف بعض العقارات القديمة.");
+        }
+    }
+
+    function convertToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // === Rendering ===
+    function renderProperties() {
+        const container = document.getElementById('contentArea');
+        
+        if(properties.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>لا توجد عقارات مضافة بعد</h3>
+                    <p>اضغط على "وضع الإدارة" لإضافة أول عقار.</p>
+                </div>`;
+            return;
+        }
+
+        let html = '<div class="grid">';
+        
+        properties.forEach(prop => {
+            const waLink = `https://wa.me/?text=${encodeURIComponent('مرحبا، أنا مهتم بعقار: ' + prop.title)}`;
+            const typeText = prop.type === 'sale' ? 'للبيع' : 'للإيجار';
+            
+            html += `
+                <div class="prop-card">
+                    <div class="img-container">
+                        <img src="${prop.image}" class="prop-img" alt="${prop.title}">
+                        <span class="type-badge">${typeText}</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="title">${prop.title}</h3>
+                        <div class="location">📍 ${prop.location}</div>
+                        <div class="price">$${prop.price.toLocaleString()}</div>
+                        
+                        <div class="actions">
+                            <a href="${waLink}" target="_blank" class="btn-wa">💬 واتساب</a>
+                            <button onclick="deleteProperty(${prop.id})" class="btn-del">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
