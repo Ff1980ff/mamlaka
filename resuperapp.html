@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏢 عقارات الشام | النسخة الخارقة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة Firebase (قلب النظام التقني) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+        // ⚠️ ضع هنا إعدادات مشروعك من Firebase Console (سأشرح كيف تجدها بالأسفل)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+
+        // تهيئة الاتصال
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        
+        window.db = db; // جعله متاحاً للدوال الخارجية
+        window.storage = storage;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.where = where;
+        window.ref = ref;
+        window.uploadBytesResumable = uploadBytesResumable;
+        window.getDownloadURL = getDownloadURL;
+    </script>
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #d97706;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --white: #ffffff;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
+
+        /* Header Modern Glassmorphism */
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo h1 { font-size: 1.4rem; color: var(--primary); font-weight: 800; }
+        .nav-actions button {
+            background: none; border: none; cursor: pointer; font-size: 1.2rem; margin-left: 15px;
+            transition: 0.3s;
+        }
+        .btn-admin { color: var(--primary); }
+        .btn-present { color: var(--accent); }
+
+        /* Hero Section with Search Overlay */
+        .hero {
+            height: 40vh; min-height: 300px;
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600') no-repeat center/cover;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; color: white;
+        }
+        .search-box {
+            background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;
+            transform: translateY(50px); /* Pull up effect */
+        }
+        .input-group label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px; text-align: right; }
+        .input-control {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
+        }
+        .btn-search-main {
+            background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px;
+            font-weight: bold; cursor: pointer; height: 42px; align-self: end;
+        }
+
+        /* Listings Grid */
+        .container { max-width: 1200px; margin: 60px auto 20px; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        
+        .card {
+            background: white; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;
+            position: relative;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .img-wrapper { height: 200px; position: relative; overflow: hidden; }
+        .prop-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover .prop-img { transform: scale(1.1); }
+        
+        .badge {
+            position: absolute; top: 10px; right: 10px;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white;
+        }
+        .badge-sale { background: var(--danger); }
+        .badge-rent { background: var(--success); }
+
+        .card-body { padding: 20px; }
+        .title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
+        .loc { color: #666; font-size: 0.9rem; margin-bottom: 15px; }
+        .price { font-size: 1.3rem; font-weight: 900; color: var(--accent); margin-bottom: 15px; }
+        
+        .actions { display: flex; gap: 10px; }
+        .act-btn {
+            flex: 1; padding: 8px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        .view-det { background: #eff6ff; color: var(--primary); }
+        .contact-wa { background: #25D366; color: white; }
+
+        /* Admin Panel Modal */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .form-row { margin-bottom: 15px; }
+        .file-upload-area {
+            border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 10px;
+            cursor: pointer; margin-bottom: 15px; background: #f9f9f9;
+        }
+        .file-upload-area:hover { border-color: var(--accent); background: #fffaf0; }
+        
+        /* Presentation Mode CSS */
+        body.present-mode .header, 
+        body.present-mode .search-box, 
+        body.present-mode .admin-panel,
+        body.present-mode .fab { display: none !important; }
+        body.present-mode .hero { height: 20vh; }
+        body.present-mode .container { margin-top: 20px; }
+        body.present-mode .card { animation: floatUp 0.5s ease-out forwards; opacity: 0; }
+        @keyframes floatUp { to { opacity: 1; transform: translateY(0); } from { transform: translateY(20px); } }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--accent);
+            border-radius: 50%; width: 30px; height: 30px;
+            animation: spin 1s linear infinite; margin: 20px auto; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo"><h1>🏢 عقارات الشام <span style="font-size:0.8rem; color:#666;">Super Edition</span></h1></div>
+    <div class="nav-actions">
+        <button class="btn-present" onclick="togglePresentMode()" title="وضع العرض السينمائي">🎬 عرض</button>
+        <button class="btn-admin" onclick="openAdminPanel()" title="لوحة التحكم">⚙️ إدارة</button>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="search-box">
+        <div class="input-group">
+            <label>نوع الصفقة</label>
+            <select id="filterType" class="input-control">
+                <option value="">الكل</option>
+                <option value="sale">للبيع</option>
+                <option value="rent">للإيجار</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>الحي / المنطقة</label>
+            <input type="text" id="filterLoc" class="input-control" placeholder="مثال: المزة، حمص...">
+        </div>
+        <div class="input-group">
+            <label>السعر الأقصى ($)</label>
+            <input type="number" id="filterPrice" class="input-control" placeholder="100000">
+        </div>
+        <button class="btn-search-main" onclick="performSearch()">🔍 بحث ذكي</button>
+    </div>
+</section>
+
+<div class="loader" id="globalLoader"></div>
+
+<div class="container">
+    <div class="grid" id="listingsGrid">
+        <!-- سيتم حقن العقارات هنا -->
+        <p style="grid-column: span 3; text-align:center; color:#888;">جارٍ تحميل العقارات من السحابة...</p>
+    </div>
+</div>
+
+<!-- Admin Add Property Modal -->
+<div class="modal admin-panel" id="addPropModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:20px; color:var(--primary)">➕ إضافة عقار جديد للسحابة</h2>
+        <form id="propForm">
+            <div class="form-row">
+                <label>عنوان العقار</label>
+                <input type="text" id="pTitle" class="input-control" required>
+            </div>
+            <div class="form-row">
+                <label>نوع الصفقة</label>
+                <select id="pType" class="input-control" required>
+                    <option value="sale">للبيع</option>
+                    <option value="rent">للإيجار</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>السعر ($)</label>
+                <input type="number" id="pPrice" class="input-control" required>
+            </div>
+            <div class="form-row">
+                <label>الموقع / الحي</label>
+                <input type="text" id="pLoc" class="input-control" required>
+            </div>
+            <div class="form-row">
+                <label>وصف مختصر</label>
+                <textarea id="pDesc" class="input-control" rows="3"></textarea>
+            </div>
+            
+            <div class="file-upload-area" onclick="document.getElementById('pImageFile').click()">
+                📷 اضغط هنا لاختيار صورة العقار (سيتم رفعها تلقائياً)
+                <input type="file" id="pImageFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
+                <img id="imgPreview" src="" alt="Preview" style="max-width:100%; max-height:100px; margin-top:10px; display:none;">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="button" class="act-btn view-det" onclick="closeAdmin()">إلغاء</button>
+                <button type="submit" class="act-btn contact-wa" style="background:var(--primary)">حفظ ونشر فوري ☁️</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // === Global State ===
+    let allProperties = [];
+    let isAdmin = false;
+    let isPresenting = false;
+
+    // === Initialization ===
+    document.addEventListener("DOMContentLoaded", async () => {
+        await loadFromCloud();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        document.getElementById('propForm').addEventListener('submit', handleAddProperty);
+        // Live search listeners could be added here for instant filtering
+    }
+
+    // === Cloud Functions (Firebase) ===
+    async function loadFromCloud() {
+        showLoader(true);
+        try {
+            const q = query(collection(window.db, "properties"), orderBy("createdAt", "desc"));
+            const snapshot = await getDocs(q);
+            allProperties = [];
+            snapshot.forEach(doc => {
+                allProperties.push({ id: doc.id, ...doc.data() });
+            });
+            renderListings(allProperties);
+        } catch (error) {
+            console.error("Error loading data:", error);
+            alert("تعذر الاتصال بالسحابة. تأكد من إعدادات Firebase.");
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    async function handleAddProperty(e) {
+        e.preventDefault();
+        showLoader(true);
+        
+        const fileInput = document.getElementById('pImageFile');
+        const file = fileInput.files[0];
+        let imageUrl = "";
+
+        // 1. Upload Image if exists
+        if (file) {
+            const storageRef = ref(window.storage, `images/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+            
+            // Wait for upload completion
+            await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed', 
+                    (snapshot) => {}, 
+                    (error) => reject(error), 
+                    () => resolve()
+                );
+            });
+            imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        } else {
+            imageUrl = "https://via.placeholder.com/400x300?text=No+Image"; // Default
+        }
+
+        // 2. Save Data to Firestore
+        const newData = {
+            title: document.getElementById('pTitle').value,
+            type: document.getElementById('pType').value,
+            price: parseFloat(document.getElementById('pPrice').value),
+            location: document.getElementById('pLoc').value,
+            description: document.getElementById('pDesc').value,
+            image: imageUrl,
+            createdAt: Date.now()
+        };
+
+        try {
+            await addDoc(collection(window.db, "properties"), newData);
+            alert("✅ تم نشر العقار بنجاح على السحابة!");
+            closeAdmin();
+            await loadFromCloud(); // Refresh list
+        } catch (error) {
+            alert("خطأ في الحفظ: " + error.message);
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    // === UI Rendering ===
+    function renderListings(data) {
+        const grid = document.getElementById('listingsGrid');
+        grid.innerHTML = '';
+
+        if(data.length === 0) {
+            grid.innerHTML = '<p style="grid-column: span 3; text-align:center;">لا توجد عقارات حالياً.</p>';
+            return;
+        }
+
+        data.forEach(prop => {
+            const badgeClass = prop.type === 'sale' ? 'badge-sale' : 'badge-rent';
+            const badgeText = prop.type === 'sale' ? 'للبيع' : 'للإيجار';
+            const currency = prop.type === 'sale' ? '$' : '$/شهر';
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.animationDelay = `${Math.random() * 0.5}s`; // Staggered animation
+            
+            card.innerHTML = `
+                <div class="img-wrapper">
+                    <img src="${prop.image}" class="prop-img" alt="${prop.title}">
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                    ${isAdmin ? `<button onclick="deleteProp('${prop.id}')" style="position:absolute;top:10px;left:10px;background:red;color:white;border:none;border-radius:50%;width:25px;height:25px;cursor:pointer;">×</button>` : ''}
+                </div>
+                <div class="card-body">
+                    <h3 class="title">${prop.title}</h3>
+                    <p class="loc">📍 ${prop.location}</p>
+                    <div class="price">${prop.price.toLocaleString()} ${currency}</div>
+                    <div class="actions">
+                        <button class="act-btn view-det" onclick="alert('فتح التفاصيل الكاملة...')">تفاصيل</button>
+                        <a href="https://wa.me/?text=${encodeURIComponent('مرحبا، مهتم بعقار: '+prop.title)}" target="_blank" class="act-btn contact-wa" style="text-decoration:none;text-align:center;">واتساب</a>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // === Features Logic ===
+    function performSearch() {
+        const type = document.getElementById('filterType').value;
+        const loc = document.getElementById('filterLoc').value.toLowerCase();
+        const maxPrice = parseFloat(document.getElementById('filterPrice').value) || Infinity;
+
+        const filtered = allProperties.filter(p => {
+            const matchType = !type || p.type === type;
+            const matchLoc = !loc || p.location.toLowerCase().includes(loc);
+            const matchPrice = p.price <= maxPrice;
+            return matchType && matchLoc && matchPrice;
+        });
+
+        renderListings(filtered);
+    }
+
+    function togglePresentMode() {
+        isPresenting = !isPresenting;
+        document.body.classList.toggle('present-mode', isPresenting);
+        if(isPresenting) {
+            // Optional: Auto scroll or slideshow logic can go here
+            alert("وضع العرض السينمائي مفعل. اضغط ESC للخروج.");
+            setTimeout(() => document.exitFullscreen?.(), 100); // Try fullscreen if supported
+        }
+    }
+
+    // Exit presentation mode on Escape key
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && isPresenting) {
+            togglePresentMode();
+        }
+    });
+
+    function openAdminPanel() {
+        document.getElementById('addPropModal').style.display = 'flex';
+    }
+    function closeAdmin() {
+        document.getElementById('addPropModal').style.display = 'none';
+        document.getElementById('propForm').reset();
+        document.getElementById('imgPreview').style.display = 'none';
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('imgPreview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    async function deleteProp(id) {
+        if(confirm("حذف هذا العقار نهائياً من السحابة؟")) {
+            await deleteDoc(doc(window.db, "properties", id));
+            await loadFromCloud();
+        }
+    }
+
+    function showLoader(show) {
+        document.getElementById('globalLoader').style.display = show ? 'block' : 'none';
+    }
+
+</script>
+
+</body>
+</html>
