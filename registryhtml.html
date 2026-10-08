@@ -57,17 +57,40 @@
         .action-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-left: 5px; }
         .action-btn.delete { color: var(--red); border-color: var(--red); }
         .action-btn.open-link { color: var(--blue); border-color: var(--blue); }
+        .action-btn.save-btn { color: var(--green); border-color: var(--green); font-weight: bold; } /* زر الحفظ الجديد */
         .action-btn:hover { background: rgba(255,255,255,0.1); }
 
         /* رسالة فارغة */
         .empty-msg { text-align: center; padding: 40px; color: var(--text-muted); }
+
+        /* إشعار النجاح (Toast) */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 1000;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; }
+        #toast.success { background-color: var(--green); }
     </style>
 </head>
 <body>
 
 <header>
     <h1>📋 سجل المملكة الشامل</h1>
-    <p class="subtitle">جميع ملفات GitHub - نظام إدارة محلي - حفظ تلقائي</p>
+    <p class="subtitle">جميع ملفات GitHub - نظام إدارة محلي - حفظ تلقائي + يدوي</p>
 </header>
 
 <div class="controls">
@@ -94,6 +117,9 @@
     </table>
     <div id="emptyState" class="empty-msg" style="display:none;">جارٍ التحميل...</div>
 </div>
+
+<!-- عنصر الإشعار -->
+<div id="toast">تم الحفظ بنجاح!</div>
 
 <script>
     // === البيانات الأولية الشاملة (من كل الصور المرسلة) ===
@@ -182,7 +208,7 @@
     let registryData = [];
 
     window.onload = () => {
-        // تحميل البيانات الكاملة فوراً
+        // تحميل البيانات الكاملة فوراَ
         registryData = fullSeedApps.map((app, index) => ({
             id: Date.now() + index,
             ...app
@@ -199,6 +225,7 @@
         const newRow = { id: Date.now(), name: "", url: "", features: "", status: "draft" };
         registryData.push(newRow);
         saveToStorage();
+        showToast("تمت إضافة صف جديد");
     }
 
     function updateField(id, field, value) {
@@ -206,10 +233,18 @@
         if(item) { item[field] = value; saveToStorage(); }
     }
 
+    // دالة الحفظ اليدوي (الجديدة)
+    function forceSaveRow(id) {
+        // بما أن updateField يحفظ تلقائياً، هذه الدالة تعمل فقط كـ "تأكيد بصري"
+        saveToStorage(); 
+        showToast("✅ تم حفظ السطر بنجاح!");
+    }
+
     function deleteRow(id) {
         if(confirm("حذف هذا السطر؟")) {
             registryData = registryData.filter(r => r.id !== id);
             saveToStorage();
+            showToast("تم الحذف");
         }
     }
 
@@ -217,6 +252,7 @@
         if(confirm("⚠️ مسح جميع البيانات؟")) {
             registryData = [];
             saveToStorage();
+            showToast("تم المسح الكامل");
         }
     }
 
@@ -226,6 +262,7 @@
         a.href = dataStr;
         a.download = "kingdom_full_backup_" + new Date().toISOString().slice(0,10) + ".json";
         a.click();
+        showToast("تم التصدير");
     }
 
     function importDataTrigger() { document.getElementById('fileInput').click(); }
@@ -237,10 +274,18 @@
         reader.onload = ev => {
             try {
                 const imported = JSON.parse(ev.target.result);
-                if(Array.isArray(imported)) { registryData = imported; saveToStorage(); alert("تم الاستيراد!"); }
+                if(Array.isArray(imported)) { registryData = imported; saveToStorage(); showToast("تم الاستيراد!"); }
             } catch(err) { alert("خطأ في الملف"); }
         };
         reader.readAsText(file);
+    }
+
+    // دالة عرض الإشعار
+    function showToast(msg) {
+        const x = document.getElementById("toast");
+        x.innerText = msg;
+        x.className = "show success";
+        setTimeout(function(){ x.className = x.className.replace("show success", ""); }, 3000);
     }
 
     function renderTable() {
@@ -282,6 +327,9 @@
                     <span style="display:block; margin-top:5px; font-size:0.8rem;" class="${statusClass}">${statusLabel}</span>
                 </td>
                 <td>
+                    <!-- زر الحفظ الأخضر الجديد -->
+                    <button class="action-btn save-btn" onclick="forceSaveRow(${item.id})" title="حفظ التغييرات لهذا السطر">💾 حفظ</button>
+                    
                     <button class="action-btn open-link" onclick="window.open('${item.url}', '_blank')">🌐</button>
                     <button class="action-btn delete" onclick="deleteRow(${item.id})">❌</button>
                 </td>
