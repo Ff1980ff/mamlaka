@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📈 متتبع المبيعات | Kingdom Sales HQ</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --gold: #fbbf24;
+            --green: #10b981; /* للنجاح/المبيع */
+            --blue: #38bdf8; /* للمعلومات */
+            --red: #ef4444; /* للحذف/الفشل */
+            --purple: #8b5cf6; /* للمنصات الاجتماعية */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        
+        body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; min-height: 100vh; }
+
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 15px; }
+        h1 { color: var(--gold); font-size: 1.6rem; }
+        .stats-bar { display: flex; justify-content: space-around; background: var(--card-bg); padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
+        .stat-item span { display: block; font-weight: bold; color: var(--green); font-size: 1.2rem; }
+
+        /* لوحة التحكم العلوية */
+        .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .btn { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
+        .btn-add-log { background: var(--green); color: white; }
+        .btn-manage-platforms { background: var(--blue); color: black; }
+        .btn-export { background: var(--gold); color: black; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* الجدول الرئيسي للسجلات */
+        .table-container { overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        th { background: rgba(255,255,255,0.05); color: var(--gold); position: sticky; top: 0; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        /* ألوان المنصات */
+        .platform-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: white; display: inline-block; }
+        .tag-shrinkme { background: #ff9f43; } /* برتقالي */
+        .tag-souqna { background: #ee5253; }   /* أحمر */
+        .tag-tajer { background: #54a0ff; }    /* أزرق فاتح */
+        .tag-mostaqbal { background: #1dd1a1; }/* أخضر زمردي */
+        .tag-whatsapp { background: #25d366; } /* أخضر واتساب */
+        .tag-other { background: #576574; }    /* رمادي */
+
+        /* حالات البيع */
+        .status-sold { color: var(--green); font-weight: bold; }
+        .status-pending { color: var(--gold); }
+        .status-failed { color: var(--red); }
+
+        /* النوافذ المنبثقة (Modals) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 25px; border-radius: 15px; width: 90%; max-width: 500px;
+            border: 1px solid var(--border);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; }
+        .form-input, .form-select {
+            width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--border); 
+            color: white; border-radius: 6px; font-family: inherit;
+        }
+        .action-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-left: 5px; }
+        .action-btn.delete { color: var(--red); border-color: var(--red); }
+        .action-btn.edit { color: var(--blue); border-color: var(--blue); }
+
+        /* قسم إدارة المنصات */
+        .platform-list { list-style: none; padding: 0; }
+        .platform-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #334155; }
+        .platform-name { font-weight: bold; color: var(--text-main); }
+        .platform-url-link { color: var(--blue); text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📈 مركز عمليات المبيعات والتسويق</h1>
+    <div class="subtitle" style="color:#94a3b8; font-size:0.8rem;">تتبع كل نشر، كل رابط، وكل دولار</div>
+</header>
+
+<!-- إحصائيات سريعة -->
+<div class="stats-bar">
+    <div class="stat-item">إجمالي السجلات: <span id="totalCount">0</span></div>
+    <div class="stat-item">عمليات بيع ناجحة: <span id="soldCount" style="color:var(--green)">0</span></div>
+    <div class="stat-item">أرباح تقديرية ($): <span id="profitEstimate" style="color:var(--gold)">0</span></div>
+</div>
+
+<div class="controls">
+    <button class="btn btn-add-log" onclick="openAddLogModal()">➕ تسجيل عملية جديدة</button>
+    <button class="btn btn-manage-platforms" onclick="openManagePlatformsModal()">⚙️ إدارة المنصات</button>
+    <button class="btn btn-export" onclick="exportData()">💾 تصدير التقرير</button>
+</div>
+
+<div class="table-container">
+    <table id="logsTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>التاريخ</th>
+                <th>المنصة</th>
+                <th>اسم المنتج / الرابط المنشور</th>
+                <th>نوع النشر</th>
+                <th>الحالة / الإيراد</th>
+                <th>إجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="logsBody"></tbody>
+    </table>
+</div>
+
+<!-- Modal: إضافة سجل -->
+<div class="modal-overlay" id="addLogModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:15px; color:var(--gold)">📝 تسجيل عملية نشر/بيع</h2>
+        <form id="logForm" onsubmit="saveLog(event)">
+            <div class="form-group">
+                <label class="form-label">اختر المنصة:</label>
+                <select id="lPlatform" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">ما الذي نشرته؟ (اسم التطبيق أو وصف الإعلان)</label>
+                <input type="text" id="lProduct" class="form-input" placeholder="مثال: موقع عقارات لايت - إعلان سوقنا" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">رابط المحتوى المنشور (اختياري)</label>
+                <input type="url" id="lUrl" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">نوع العملية:</label>
+                <select id="lType" class="form-select">
+                    <option value="marketing">تسويق مجاني (جذب زوار)</option>
+                    <option value="shrink">اختصار روابط (ربح نقري)</option>
+                    <option value="sale">بيع مباشر (منتج مدفوع)</option>
+                    <option value="service">خدمة عميل (مستقل)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">الحالة / المبلغ المحصل (إذا كان بيعاً):</label>
+                <input type="text" id="lStatus" class="form-input" placeholder="مثال: $60 USDT أو 'بانتظار الرد'">
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="button" class="btn" style="background:#64748b; color:white;" onclick="closeModals()">إلغاء</button>
+                <button type="submit" class="btn" style="background:var(--green); color:white; flex:1;">حفظ السجل ✅</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: إدارة المنصات -->
+<div class="modal-overlay" id="managePlatformsModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:15px; color:var(--blue)">⚙️ قائمة المنصات المتاحة</h2>
+        <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:15px;">أضف或删除 المنصات التي تستخدمها بانتظام.</p>
+        
+        <ul class="platform-list" id="platformListUI"></ul>
+        
+        <hr style="border-color:#334155; margin:20px 0;">
+        
+        <div class="form-group">
+            <label class="form-label">إضافة منصة جديدة:</label>
+            <input type="text" id="newPlatName" class="form-input" placeholder="اسم المنصة (مثال: فيسبوك)">
+            <input type="url" id="newPlatUrl" class="form-input" placeholder="رابط الدخول المباشر" style="margin-top:5px;">
+            <button class="btn" style="background:var(--purple); color:white; width:100%; margin-top:10px;" onclick="addNewPlatform()">➕ إضافة المنصة</button>
+        </div>
+
+        <button class="btn" style="background:#64748b; color:white; width:100%; margin-top:20px;" onclick="closeModals()">إغلاق القائمة</button>
+    </div>
+</div>
+
+<script>
+    // === البيانات الافتراضية للمنصات ===
+    let platforms = JSON.parse(localStorage.getItem('kingdom_platforms')) || [
+        { id: 1, name: "سوقنا (Souqna)", url: "https://souqna.net", type: "local_market" },
+        { id: 2, name: "تجرا (Tajer)", url: "https://tajer.sa", type: "ecommerce" },
+        { id: 3, name: "مستقل (Mostaql)", url: "https://mostaql.com", type: "freelance" },
+        { id: 4, name: "واتساب بزنس", url: "https://wa.me/", type: "communication" },
+        { id: 5, name: "ShrinkMe (اختصار)", url: "https://shrinkme.io", type: "monetization" },
+        { id: 6, name: "سلكس (Salks)", url: "https://www.salks.com", type: "marketplace" }
+    ];
+
+    // === سجل العمليات ===
+    let salesLogs = JSON.parse(localStorage.getItem('kingdom_sales_logs')) || [];
+
+    window.onload = () => {
+        renderStats();
+        populatePlatformDropdown();
+        renderLogsTable();
+        renderPlatformsList();
+    };
+
+    // --- دوال العرض والإحصائيات ---
+    function renderStats() {
+        document.getElementById('totalCount').innerText = salesLogs.length;
+        
+        const soldItems = salesLogs.filter(l => l.type === 'sale' && l.status.includes('$'));
+        document.getElementById('soldCount').innerText = soldItems.length;
+        
+        // حساب تقريبي بسيط للأرباح (يستخرج الأرقام من نص الحالة)
+        let totalProfit = 0;
+        soldItems.forEach(item => {
+            const match = item.status.match(/\$?\s*(\d+(\.\d+)?)/);
+            if(match) totalProfit += parseFloat(match[1]);
+        });
+        document.getElementById('profitEstimate').innerText = totalProfit.toFixed(2);
+    }
+
+    function populatePlatformDropdown() {
+        const select = document.getElementById('lPlatform');
+        select.innerHTML = '';
+        platforms.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderLogsTable() {
+        const tbody = document.getElementById('logsBody');
+        tbody.innerHTML = '';
+        
+        if(salesLogs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#64748b;">لا توجد سجلات بعد. ابدأ بإضافة أول عملية!</td></tr>';
+            return;
+        }
+
+        salesLogs.reverse().forEach((log, index) => {
+            const plat = platforms.find(p => p.id == log.platformId) || { name: "غير معروف", type: "other" };
+            
+            // تحديد لون التاج بناءً على نوع المنصة
+            let tagClass = 'tag-other';
+            if(plat.type === 'monetization') tagClass = 'tag-shrinkme';
+            else if(plat.type === 'local_market') tagClass = 'tag-souqna';
+            else if(plat.type === 'ecommerce') tagClass = 'tag-tajer';
+            else if(plat.type === 'freelance') tagClass = 'tag-mostaqbal';
+            else if(plat.type === 'communication') tagClass = 'tag-whatsapp';
+
+            // تحديد لون النص للحالة
+            let statusClass = '';
+            if(log.status.toLowerCase().includes('sold') || log.status.includes('$')) statusClass = 'status-sold';
+            else if(log.status.toLowerCase().includes('pending')) statusClass = 'status-pending';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${new Date(log.date).toLocaleDateString('ar-SA')}</td>
+                <td><span class="platform-tag ${tagClass}">${plat.name}</span></td>
+                <td>
+                    <strong>${log.product}</strong><br>
+                    ${log.url ? `<a href="${log.url}" target="_blank" style="color:var(--blue); font-size:0.8rem;">🔗 فتح الرابط</a>` : ''}
+                </td>
+                <td>${getTypeLabel(log.type)}</td>
+                <td class="${statusClass}">${log.status || '-'}</td>
+                <td>
+                    <button class="action-btn edit" onclick="editLog(${log.id})">✏️</button>
+                    <button class="action-btn delete" onclick="deleteLog(${log.id})">❌</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function getTypeLabel(type) {
+        switch(type) {
+            case 'marketing': return '📢 تسويق';
+            case 'shrink': return '💰 اختصار';
+            case 'sale': return '💵 بيع';
+            case 'service': return '🛠️ خدمة';
+            default: return type;
+        }
+    }
+
+    // --- دوال CRUD للسجلات ---
+    function openAddLogModal() {
+        document.getElementById('logForm').reset();
+        document.getElementById('addLogModal').style.display = 'flex';
+    }
+
+    function saveLog(e) {
+        e.preventDefault();
+        const newLog = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            platformId: parseInt(document.getElementById('lPlatform').value),
+            product: document.getElementById('lProduct').value,
+            url: document.getElementById('lUrl').value,
+            type: document.getElementById('lType').value,
+            status: document.getElementById('lStatus').value
+        };
+        
+        salesLogs.push(newLog);
+        localStorage.setItem('kingdom_sales_logs', JSON.stringify(salesLogs));
+        
+        closeModals();
+        renderStats();
+        renderLogsTable();
+        alert("✅ تم حفظ السجل بنجاح!");
+    }
+
+    function deleteLog(id) {
+        if(confirm("حذف هذا السجل؟")) {
+            salesLogs = salesLogs.filter(l => l.id !== id);
+            localStorage.setItem('kingdom_sales_logs', JSON.stringify(salesLogs));
+            renderStats();
+            renderLogsTable();
+        }
+    }
+
+    function editLog(id) {
+        const log = salesLogs.find(l => l.id === id);
+        if(!log) return;
+        
+        // تعبئة النموذج بالبيانات الحالية (يمكن توسيع هذه الدالة لاحقاً للتعديل الحقيقي)
+        alert("للتعديل: احذف السجل وأضف سجلاً جديداً بالمعلومات المحدثة.");
+    }
+
+    // --- دوال إدارة المنصات ---
+    function openManagePlatformsModal() {
+        renderPlatformsList();
+        document.getElementById('managePlatformsModal').style.display = 'flex';
+    }
+
+    function renderPlatformsList() {
+        const ul = document.getElementById('platformListUI');
+        ul.innerHTML = '';
+        platforms.forEach(p => {
+            const li = document.createElement('li');
+            li.className = 'platform-item';
+            li.innerHTML = `
+                <div>
+                    <div class="platform-name">${p.name}</div>
+                    <a href="${p.url}" target="_blank" class="platform-url-link">${p.url}</a>
+                </div>
+                <button class="action-btn delete" onclick="removePlatform(${p.id})">حذف</button>
+            `;
+            ul.appendChild(li);
+        });
+    }
+
+    function addNewPlatform() {
+        const name = document.getElementById('newPlatName').value;
+        const url = document.getElementById('newPlatUrl').value;
+        
+        if(name && url) {
+            const newPlat = {
+                id: Date.now(),
+                name: name,
+                url: url,
+                type: 'custom' // نوع مخصص
+            };
+            platforms.push(newPlat);
+            localStorage.setItem('kingdom_platforms', JSON.stringify(platforms));
+            
+            document.getElementById('newPlatName').value = '';
+            document.getElementById('newPlatUrl').value = '';
+            
+            renderPlatformsList();
+            populatePlatformDropdown(); // تحديث القائمة في نموذج الإضافة
+            alert("تمت إضافة المنصة!");
+        } else {
+            alert("يرجى إدخال الاسم والرابط.");
+        }
+    }
+
+    function removePlatform(id) {
+        if(confirm("حذف هذه المنصة من القائمة؟")) {
+            platforms = platforms.filter(p => p.id !== id);
+            localStorage.setItem('kingdom_platforms', JSON.stringify(platforms));
+            renderPlatformsList();
+            populatePlatformDropdown();
+        }
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ logs: salesLogs, platforms: platforms }));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "sales_report_" + new Date().toISOString().slice(0,10) + ".json";
+        a.click();
+    }
+</script>
+
+</body>
+</html>
