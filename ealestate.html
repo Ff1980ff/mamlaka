@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏢 بوابة العقارات الذكية | Real Estate Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a; /* أزرق ملكي */
+            --accent: #f59e0b; /* ذهبي */
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* Header & Hero */
+        header {
+            background: linear-gradient(135deg, var(--primary), #172554);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .logo-area { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; }
+        .logo-icon { font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        h1 { font-size: 2rem; font-weight: 800; }
+        .tagline { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+        /* Contact Bar */
+        .contact-bar {
+            background: var(--white);
+            padding: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .contact-item:hover { color: var(--accent); transform: translateY(-2px); }
+        .btn-whatsapp { background: #25D366; color: white !important; padding: 8px 15px; border-radius: 20px; }
+        .btn-call { background: var(--primary); color: white !important; padding: 8px 15px; border-radius: 20px; }
+
+        /* Main Container */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* Video Section */
+        .video-section {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* Properties Grid */
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-right: 5px solid var(--accent);
+            padding-right: 15px;
+        }
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .property-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: 0.3s;
+            position: relative;
+        }
+        .property-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        
+        .prop-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #ddd;
+        }
+        .prop-body { padding: 20px; }
+        .prop-title { font-size: 1.2rem; font-weight: bold; color: var(--text-dark); margin-bottom: 5px; }
+        .prop-location { color: #64748b; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+        .prop-price { 
+            font-size: 1.3rem; 
+            font-weight: 900; 
+            color: var(--primary); 
+            background: rgba(30, 58, 138, 0.1); 
+            padding: 5px 10px; 
+            border-radius: 6px; 
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .prop-actions { display: flex; gap: 10px; }
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .btn-view-map { background: #eff6ff; color: var(--primary); }
+        .btn-share-ad { background: var(--accent); color: white; }
+        .btn-delete-admin { 
+            position: absolute; top: 10px; left: 10px; 
+            background: red; color: white; 
+            width: 30px; height: 30px; 
+            border-radius: 50%; 
+            display: none; /* Hidden by default */
+            align-items: center; justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-weight: bold;
+        }
+
+        /* Admin Panel Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--text-dark); }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+        .admin-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .btn-close-modal { background: #64748b; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-save-property { background: var(--success); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Floating Admin Button */
+        .fab-admin {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--text-dark);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 99;
+            font-size: 1.5rem;
+            transition: 0.3s;
+        }
+        .fab-admin:hover { background: var(--primary); transform: scale(1.1); }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 1;
+            bottom: 30px;
+            right: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header id="siteHeader">
+    <div class="logo-area">
+        <span class="logo-icon">🏢</span>
+        <h1 id="siteTitleEditable">بوابة العقارات الذكية</h1>
+    </div>
+    <p class="tagline" id="siteTaglineEditable">نجد لك منزلك الحلم بأفضل الأسعار وأسرع وقت.</p>
+</header>
+
+<!-- Contact Bar -->
+<div class="contact-bar">
+    <a href="#" class="contact-item btn-call" id="phoneLink">
+        📞 اتصل بنا الآن
+    </a>
+    <a href="#" class="contact-item btn-whatsapp" id="whatsappLink">
+        💬 تواصل عبر واتساب
+    </a>
+    <a href="#mapSection" class="contact-item">
+        📍 موقعنا على الخريطة
+    </a>
+</div>
+
+<div class="container">
+    
+    <!-- Video Section -->
+    <section class="video-section">
+        <h2 style="margin-bottom:15px; color:var(--primary)">🎥 جولة فيديو تعريفية بالمكتب</h2>
+        <div class="video-wrapper" id="videoContainer">
+            <!-- سيتم حقن الفيديو هنا ديناميكياَ -->
+            <iframe src="" allowfullscreen></iframe>
+        </div>
+        <p style="margin-top:10px; font-size:0.9rem; color:#64748b;">* يمكن لصاحب المكتب تغيير رابط الفيديو من لوحة التحكم.</p>
+    </section>
+
+    <!-- Properties List -->
+    <h2 class="section-title"> أحدث العروض المتاحة</h2>
+    <div class="properties-grid" id="propertiesGrid">
+        <!-- Cards will be injected here via JS -->
+    </div>
+
+    <!-- Map Section Placeholder -->
+    <section id="mapSection" style="margin-top:50px; background:white; padding:20px; border-radius:15px; text-align:center;">
+        <h3 style="color:var(--primary)">🗺️ موقع المكتب الرئيسي</h3>
+        <div style="height:300px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; border-radius:10px; margin-top:15px;">
+            <p>ضع رابط خريطة جوجل هنا من لوحة التحكم</p>
+        </div>
+    </section>
+
+</div>
+
+<!-- Floating Admin Button -->
+<div class="fab-admin" onclick="openAdminLogin()" title="لوحة تحكم المالك">⚙️</div>
+
+<!-- Admin Login Modal -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-content" style="max-width:400px; text-align:center;">
+        <h2 style="margin-bottom:20px; color:var(--primary)">🔐 دخول المسؤول</h2>
+        <input type="password" id="adminPass" class="form-input" placeholder="كلمة المرور الافتراضية: admin123" style="text-align:center;">
+        <button class="btn-save-property" style="width:100%; margin-top:15px;" onclick="checkLogin()">دخول</button>
+        <button class="btn-close-modal" style="width:100%; margin-top:10px;" onclick="closeModals()">إلغاء</button>
+    </div>
+</div>
+
+<!-- Add/Edit Property Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:20px; color:var(--primary)" id="modalTitle">➕ إضافة عقار جديد</h2>
+        <form id="propertyForm" onsubmit="saveProperty(event)">
+            <input type="hidden" id="propId">
+            
+            <div class="form-group">
+                <label class="form-label">عنوان العقار (مثال: شقة فاخرة في المزة)</label>
+                <input type="text" id="pTitle" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">السعر</label>
+                <input type="text" id="pPrice" class="form-input" placeholder="مثال: 50,000$" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">الموقع / الحي</label>
+                <input type="text" id="pLocation" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">رابط الصورة (URL مباشر)</label>
+                <input type="url" id="pImage" class="form-input" placeholder="https://..." required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">وصف قصير (للإعلان التلقائي)</label>
+                <textarea id="pDesc" class="form-input" rows="3" required></textarea>
+            </div>
+
+            <div class="admin-controls">
+                <button type="button" class="btn-close-modal" onclick="closeModals()">إلغاء</button>
+                <button type="submit" class="btn-save-property">حفظ ونشر</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Settings Modal (For Site Title/Video/Contacts) -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom:20px; color:var(--primary)">⚙️ إعدادات الموقع العامة</h2>
+        <form id="settingsForm" onsubmit="saveSettings(event)">
+            <div class="form-group">
+                <label class="form-label">اسم المكتب</label>
+                <input type="text" id="setSiteName" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الشعار النصي (Tagline)</label>
+                <input type="text" id="setTagline" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم الهاتف (مع كود الدولة)</label>
+                <input type="tel" id="setPhone" class="form-input" placeholder="+963...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم الواتساب (للرابط المباشر)</label>
+                <input type="tel" id="setWhatsapp" class="form-input" placeholder="963...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">رابط فيديو اليوتيوب (Embed URL)</label>
+                <input type="url" id="setVideoUrl" class="form-input" placeholder="https://www.youtube.com/embed/...">
+            </div>
+            
+            <div class="admin-controls">
+                <button type="button" class="btn-close-modal" onclick="closeModals()">إغلاق</button>
+                <button type="submit" class="btn-save-property">حفظ الإعدادات</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toast">تم التنفيذ بنجاح!</div>
+
+<script>
+    // === Configuration & State ===
+    const ADMIN_PASSWORD = "admin123"; // Change this later
+    let isAdminMode = false;
+    
+    // Default Data Structure
+    let siteConfig = JSON.parse(localStorage.getItem('re_site_config')) || {
+        siteName: "بوابة العقارات الذكية",
+        tagline: "نجد لك منزلك الحلم بأفضل الأسعار وأسرع وقت.",
+        phone: "+963999999999",
+        whatsapp: "963999999999",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" // Dummy video for demo
+    };
+
+    let properties = JSON.parse(localStorage.getItem('re_properties_list')) || [
+        {
+            id: 1,
+            title: "شقة سكنية راقية - شارع بغداد",
+            price: "$120,000",
+            location: "دمشق - المزة",
+            image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+            desc: "شرفة واسعة، إطلالة جبلية، قرب الخدمات."
+        },
+        {
+            id: 2,
+            title: "منزل مستقل مع حديقة",
+            price: "$250,000",
+            location: "ريف دمشق - جرمانا",
+            image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80",
+            desc: "مساحة خضراء كبيرة، مواقف سيارات خاصة."
+        }
+    ];
+
+    // === Initialization ===
+    window.onload = () => {
+        renderSite();
+        renderProperties();
+    };
+
+    function renderSite() {
+        document.getElementById('siteTitleEditable').innerText = siteConfig.siteName;
+        document.getElementById('siteTaglineEditable').innerText = siteConfig.tagline;
+        
+        // Update Links
+        document.getElementById('phoneLink').href = `tel:${siteConfig.phone}`;
+        document.getElementById('phoneLink').innerHTML = `📞 ${siteConfig.phone}`;
+        
+        document.getElementById('whatsappLink').href = `https://wa.me/${siteConfig.whatsapp}?text=مرحباً، أرغب بالاستفسار عن عقار.`;
+        
+        // Update Video
+        if(siteConfig.videoUrl) {
+            document.querySelector('#videoContainer iframe').src = siteConfig.videoUrl;
+        }
+    }
+
+    function renderProperties() {
+        const grid = document.getElementById('propertiesGrid');
+        grid.innerHTML = '';
+
+        if(properties.length === 0) {
+            grid.innerHTML = '<p style="grid-column: span 3; text-align:center; color:#888;">لا توجد عقارات مضافة بعد.</p>';
+            return;
+        }
+
+        properties.forEach(prop => {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            card.innerHTML = `
+                ${isAdminMode ? `<div class="btn-delete-admin" onclick="deleteProperty(${prop.id})">×</div>` : ''}
+                <img src="${prop.image}" alt="${prop.title}" class="prop-img">
+                <div class="prop-body">
+                    <h3 class="prop-title">${prop.title}</h3>
+                    <div class="prop-location">📍 ${prop.location}</div>
+                    <div class="prop-price">${prop.price}</div>
+                    <div class="prop-actions">
+                        <button class="action-btn btn-view-map" onclick="alert('فتح الخريطة لموقع: ${prop.location}')">🗺️ الموقع</button>
+                        <button class="action-btn btn-share-ad" onclick="copyAdText('${prop.title}', '${prop.price}', '${prop.desc}')">📋 نسخ للإعلان</button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // === Admin Functions ===
+    function openAdminLogin() {
+        document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    function checkLogin() {
+        const pass = document.getElementById('adminPass').value;
+        if(pass === ADMIN_PASSWORD) {
+            isAdminMode = true;
+            closeModals();
+            renderProperties(); // Re-render to show delete buttons
+            showToast("✅ تم الدخول لوضع الإدارة");
+            
+            // Show extra settings button temporarily or integrate into FAB logic
+            const fab = document.querySelector('.fab-admin');
+            fab.innerHTML = "⚙️+"; 
+            fab.onclick = () => toggleSettingsMenu();
+        } else {
+            alert("كلمة المرور خاطئة!");
+        }
+    }
+
+    function toggleSettingsMenu() {
+        // Simple prompt-based menu for now to avoid complex UI clutter
+        const choice = prompt("اختر إجراء:\n1. إضافة عقار\n2. تعديل إعدادات الموقع\n3. خروج من وضع الإدارة");
+        if(choice === "1") {
+            openEditModal(null); // New property
+        } else if (choice === "2") {
+            openSettingsModal();
+        } else if (choice === "3") {
+            logoutAdmin();
+        }
+    }
+
+    function logoutAdmin() {
+        isAdminMode = false;
+        closeModals();
+        renderProperties();
+        const fab = document.querySelector('.fab-admin');
+        fab.innerHTML = "⚙️";
+        fab.onclick = () => openAdminLogin();
+        showToast("تم الخروج من وضع الإدارة");
+    }
+
+    // === CRUD Operations ===
+    function openEditModal(id) {
+        const modal = document.getElementById('editModal');
+        const form = document.getElementById('propertyForm');
+        const titleEl = document.getElementById('modalTitle');
+        
+        form.reset();
+        document.getElementById('propId').value = "";
+
+        if(id) {
+            const prop = properties.find(p => p.id === id);
+            if(prop) {
+                titleEl.innerText = "✏️ تعديل العقار";
+                document.getElementById('propId').value = prop.id;
+                document.getElementById('pTitle').value = prop.title;
+                document.getElementById('pPrice').value = prop.price;
+                document.getElementById('pLocation').value = prop.location;
+                document.getElementById('pImage').value = prop.image;
+                document.getElementById('pDesc').value = prop.desc;
+            }
+        } else {
+            titleEl.innerText = "➕ إضافة عقار جديد";
+        }
+        
+        modal.style.display = 'flex';
+    }
+
+    function saveProperty(e) {
+        e.preventDefault();
+        const idVal = document.getElementById('propId').value;
+        const newProp = {
+            id: idVal ? parseInt(idVal) : Date.now(),
+            title: document.getElementById('pTitle').value,
+            price: document.getElementById('pPrice').value,
+            location: document.getElementById('pLocation').value,
+            image: document.getElementById('pImage').value,
+            desc: document.getElementById('pDesc').value
+        };
+
+        if(idVal) {
+            // Update existing
+            properties = properties.map(p => p.id == idVal ? newProp : p);
+        } else {
+            // Add new
+            properties.unshift(newProp); // Add to top
+        }
+
+        localStorage.setItem('re_properties_list', JSON.stringify(properties));
+        closeModals();
+        renderProperties();
+        showToast("تم حفظ العقار بنجاح");
+    }
+
+    function deleteProperty(id) {
+        if(confirm("هل أنت متأكد من حذف هذا العقار؟")) {
+            properties = properties.filter(p => p.id !== id);
+            localStorage.setItem('re_properties_list', JSON.stringify(properties));
+            renderProperties();
+            showToast("تم الحذف");
+        }
+    }
+
+    function openSettingsModal() {
+        const modal = document.getElementById('settingsModal');
+        document.getElementById('setSiteName').value = siteConfig.siteName;
+        document.getElementById('setTagline').value = siteConfig.tagline;
+        document.getElementById('setPhone').value = siteConfig.phone;
+        document.getElementById('setWhatsapp').value = siteConfig.whatsapp;
+        document.getElementById('setVideoUrl').value = siteConfig.videoUrl;
+        modal.style.display = 'flex';
+    }
+
+    function saveSettings(e) {
+        e.preventDefault();
+        siteConfig = {
+            siteName: document.getElementById('setSiteName').value,
+            tagline: document.getElementById('setTagline').value,
+            phone: document.getElementById('setPhone').value,
+            whatsapp: document.getElementById('setWhatsapp').value,
+            videoUrl: document.getElementById('setVideoUrl').value
+        };
+        localStorage.setItem('re_site_config', JSON.stringify(siteConfig));
+        closeModals();
+        renderSite();
+        showToast("تم تحديث إعدادات الموقع");
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    // === Marketing Helper ===
+    function copyAdText(title, price, desc) {
+        const adTemplate = `
+🏠 *${title}*
+💰 السعر: ${price}
+📝 ${desc}
+
+📲 للتواصل والاستفسار:
+${siteConfig.phone}
+واتساب: https://wa.me/${siteConfig.whatsapp}
+
+#عقارات #سوريا #دمشق #بيت_للبيع
+        `.trim();
+        
+        navigator.clipboard.writeText(adTemplate).then(() => {
+            showToast("📋 تم نسخ نص الإعلان! الصقه في فيسبوك/إنستاغرام");
+        }).catch(err => {
+            alert("فشل النسخ. انسخ يدوياً.");
+        });
+    }
+
+    function showToast(msg) {
+        const x = document.getElementById("toast");
+        x.innerText = msg;
+        x.className = "show";
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    }
+
+</script>
+
+</body>
+</html>
