@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✂️ قصّار الوسائط السريع | Quick Cropper</title>
+    <style>
+        :root {
+            --bg-dark: #1a1a2e;
+            --card-bg: #16213e;
+            --primary: #e94560; /* أحمر جذاب للقص */
+            --accent: #0f3460;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+
+        .container {
+            width: 100%; max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h1 { color: var(--primary); font-size: 1.6rem; margin-bottom: 10px; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(233, 69, 96, 0.05);
+            margin-bottom: 20px; /* Added space below upload */
+        }
+        .upload-area:hover { background: rgba(233, 69, 96, 0.1); }
+        .icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+
+        input[type="file"] { display: none; }
+
+        /* Controls Section - NOW VISIBLE BY DEFAULT */
+        .controls-section {
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .controls-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ratio-btn {
+            padding: 10px;
+            border: 1px solid var(--accent);
+            background: transparent;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70px; /* Fixed height for consistency */
+        }
+        .ratio-btn span { font-size: 1.2rem; margin-bottom: 5px; } /* Icon size */
+        .ratio-btn.active { 
+            background: var(--primary); 
+            border-color: var(--primary); 
+            font-weight: bold; 
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.4);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .action-btn.secondary { background: var(--accent); margin-top: 5px; }
+
+        /* Editor Section (Hidden initially until file is uploaded) */
+        #editorSection { display: none; margin-top: 20px; }
+        
+        .preview-box {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        img#previewImg, video#previewVideo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Result */
+        #resultArea { display: none; margin-top: 20px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .download-link {
+            display: block;
+            background: #10b981;
+            color: black;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>✂️ قصّار الوسائط السريع</h1>
+    <p class="subtitle">اختر البعد المثالي لمنصتك المفضلة.</p>
+
+    <!-- Step 1: Choose Ratio FIRST -->
+    <div class="controls-section">
+        <span class="controls-label">1. اختر أبعاد القص:</span>
+        <div class="controls-grid">
+            <button class="ratio-btn active" onclick="setRatio('square', this)">
+                <span>⬛</span> مربع<br>(إنستاغرام)
+            </button>
+            <button class="ratio-btn" onclick="setRatio('story', this)">
+                <span>📱</span> ستوري<br>(واتساب/ريلز)
+            </button>
+            <button class="ratio-btn" onclick="setRatio('wide', this)">
+                <span>💻</span> عريض<br>(يوتيوب/فيسبوك)
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 2: Upload File -->
+    <div id="stepUpload">
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div class="icon">📤</div>
+            <div><strong>اضغط لرفع صورة أو فيديو</strong></div>
+            <small style="color:#aaa;">يدعم JPG, PNG, MP4, MOV</small>
+        </div>
+        <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleFile(this)">
+    </div>
+
+    <!-- Step 3: Edit & Process (Appears after upload) -->
+    <div id="editorSection">
+        <div class="preview-box">
+            <img id="previewImg" src="" alt="Preview" style="display:none;">
+            <video id="previewVideo" controls muted loop playsinline style="display:none;"></video>
+        </div>
+
+        <button class="action-btn" onclick="processMedia()">✨ تنفيذ القص والتحميل</button>
+        <button class="action-btn secondary" onclick="resetApp()">↩️ إلغاء واختيار ملف آخر</button>
+    </div>
+
+    <!-- Step 4: Result -->
+    <div id="resultArea">
+        <h3 style="color:#10b981;">✅ تم التحضير!</h3>
+        <p style="font-size:0.9rem; color:#ccc;">ملفك جاهز للنشر مباشرة.</p>
+        <a href="#" id="finalDownload" class="download-link" download>⬇️ تحميل الملف المقصوص</a>
+        <button class="action-btn secondary" onclick="resetApp()" style="margin-top:10px;">🔄 ابدأ من جديد</button>
+    </div>
+</div>
+
+<script>
+    let currentFile = null;
+    let selectedRatio = 'square'; // Default selection
+    const fileInput = document.getElementById('fileInput');
+    const stepUpload = document.getElementById('stepUpload');
+    const editorSection = document.getElementById('editorSection');
+    const resultArea = document.getElementById('resultArea');
+    const previewImg = document.getElementById('previewImg');
+    const previewVideo = document.getElementById('previewVideo');
+    const finalDownload = document.getElementById('finalDownload');
+
+    function handleFile(input) {
+        if (input.files && input.files[0]) {
+            currentFile = input.files[0];
+            
+            // Hide upload area, show editor
+            stepUpload.style.display = 'none';
+            editorSection.style.display = 'block';
+            resultArea.style.display = 'none';
+
+            const url = URL.createObjectURL(currentFile);
+            
+            if (currentFile.type.startsWith('image')) {
+                previewImg.src = url;
+                previewImg.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else if (currentFile.type.startsWith('video')) {
+                previewVideo.src = url;
+                previewVideo.style.display = 'block';
+                previewImg.style.display = 'none';
+            }
+        }
+    }
+
+    function setRatio(ratio, btnElement) {
+        selectedRatio = ratio;
+        // Update active button visual
+        document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+        
+        // Visual hint in preview (simple CSS trick for demo purposes)
+        const box = document.querySelector('.preview-box');
+        if(box) {
+             if(ratio === 'square') box.style.aspectRatio = "1/1";
+             if(ratio === 'story') box.style.aspectRatio = "9/16";
+             if(ratio === 'wide') box.style.aspectRatio = "16/9";
+        }
+    }
+
+    async function processMedia() {
+        if(!currentFile) return alert("يرجى اختيار ملف أولا.");
+
+        try {
+            if (currentFile.type.startsWith('image')) {
+                await cropImage();
+            } else {
+                prepareVideoDownload();
+            }
+        } catch (err) {
+            console.error(err);
+            alert("حدث خطأ في المعالجة.");
+        }
+    }
+
+    function cropImage() {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                let targetWidth, targetHeight;
+                const w = img.width;
+                const h = img.height;
+
+                // Calculate dimensions based on ratio
+                if(selectedRatio === 'square') {
+                    const size = Math.min(w, h);
+                    targetWidth = size;
+                    targetHeight = size;
+                    // Center crop
+                    const sx = (w - size) / 2;
+                    const sy = (h - size) / 2;
+                    canvas.width = size;
+                    canvas.height = size;
+                    ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+                } 
+                else if(selectedRatio === 'story') { // 9:16 Vertical
+                     // Fit height, crop width
+                     targetHeight = h;
+                     targetWidth = h * (9/16);
+                     if(targetWidth > w) {
+                         // If image is wider than needed, fit width instead
+                         targetWidth = w;
+                         targetHeight = w * (16/9);
+                     }
+                     canvas.width = targetWidth;
+                     canvas.height = targetHeight;
+                     
+                     // Draw centered
+                     const dx = (targetWidth - w) / 2;
+                     const dy = (targetHeight - h) / 2;
+                     ctx.fillStyle = '#000'; // Background for empty spaces if any
+                     ctx.fillRect(0,0,targetWidth,targetHeight);
+                     ctx.drawImage(img, dx, dy, w, h);
+                }
+                else if(selectedRatio === 'wide') { // 16:9 Horizontal
+                     targetWidth = w;
+                     targetHeight = w * (9/16);
+                     if(targetHeight > h) {
+                         targetHeight = h;
+                         targetWidth = h * (16/9);
+                     }
+                     canvas.width = targetWidth;
+                     canvas.height = targetHeight;
+                     const dx = (targetWidth - w) / 2;
+                     const dy = (targetHeight - h) / 2;
+                     ctx.fillStyle = '#000';
+                     ctx.fillRect(0,0,targetWidth,targetHeight);
+                     ctx.drawImage(img, dx, dy, w, h);
+                }
+
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    finalDownload.href = url;
+                    finalDownload.download = `cropped_${selectedRatio}_${Date.now()}.jpg`;
+                    
+                    editorSection.style.display = 'none';
+                    resultArea.style.display = 'block';
+                    resolve();
+                }, 'image/jpeg', 0.9);
+            };
+            img.src = URL.createObjectURL(currentFile);
+        });
+    }
+
+    function prepareVideoDownload() {
+        const url = URL.createObjectURL(currentFile);
+        finalDownload.href = url;
+        finalDownload.download = `ready_for_${selectedRatio}_social.mp4`;
+        
+        editorSection.style.display = 'none';
+        resultArea.style.display = 'block';
+        
+        // Add a small tip
+        const tip = document.createElement('p');
+        tip.innerText = "💡 نصيحة: قم بقص الفيديو يدويا في تطبيق المونتاج بعد التنزيل إذا كان الطول غير مناسب.";
+        tip.style.fontSize = "0.8rem";
+        tip.style.color = "#aaa";
+        resultArea.insertBefore(tip, finalDownload.nextSibling);
+    }
+
+    function resetApp() {
+        currentFile = null;
+        fileInput.value = '';
+        stepUpload.style.display = 'block';
+        editorSection.style.display = 'none';
+        resultArea.style.display = 'none';
+        previewImg.src = '';
+        previewVideo.src = '';
+        
+        // Reset visuals
+        document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.ratio-btn').classList.add('active'); // Set default back to square
+        const box = document.querySelector('.preview-box');
+        if(box) box.style.aspectRatio = "auto";
+    }
+</script>
+
+</body>
+</html>
