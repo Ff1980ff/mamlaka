@@ -30,6 +30,14 @@
         nav a { text-decoration: none; color: var(--text-gray); margin-left: 30px; font-weight: 500; transition: 0.3s; font-size: 0.95rem; }
         nav a:hover { color: var(--accent-blue); }
         
+        /* ️ تنسيق خاص للرابط العربي ليبرز قليلاَ ⬇️ */
+        .lang-switch {
+            color: var(--accent-blue) !important; 
+            font-weight: 600 !important;
+            border-bottom: 1px dotted var(--accent-blue);
+        }
+        .lang-switch:hover { opacity: 0.8; }
+
         .btn-primary {
             background: var(--text-black); color: white; padding: 10px 24px;
             border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.3s;
@@ -113,6 +121,8 @@
         <a href="#tools">Tools</a>
         <a href="#pricing">Pricing</a>
         <a href="#about">About</a>
+        <!-- ⬇️ أضفنا الرابط العربي هنا بخط مميز ⬇️ -->
+        <a href="https://ff1980ff.github.io/mamlaka/index22html.html" target="_blank" class="lang-switch">🇸🇾 Arabic Market</a>
     </nav>
     <a href="#contact" class="btn-primary">Get Started</a>
 </header>
@@ -187,9 +197,13 @@
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+            const targetId = this.getAttribute('href');
+            if(targetId !== '#') {
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
         });
     });
 </script>
