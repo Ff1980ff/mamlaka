@@ -10,9 +10,11 @@
             --bg-white: #ffffff;
             --text-black: #111827;
             --text-gray: #6b7280;
-            --accent-blue: #2563eb; /* أزرق تقني عالمي */
+            --accent-blue: #2563eb; 
             --border-light: #e5e7eb;
             --hover-bg: #f3f4f6;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -30,13 +32,12 @@
         nav a { text-decoration: none; color: var(--text-gray); margin-left: 30px; font-weight: 500; transition: 0.3s; font-size: 0.95rem; }
         nav a:hover { color: var(--accent-blue); }
         
-        /* ️ تنسيق خاص للرابط العربي ليبرز قليلاَ ⬇️ */
+        /* Lang Switch Style */
         .lang-switch {
             color: var(--accent-blue) !important; 
             font-weight: 600 !important;
             border-bottom: 1px dotted var(--accent-blue);
         }
-        .lang-switch:hover { opacity: 0.8; }
 
         .btn-primary {
             background: var(--text-black); color: white; padding: 10px 24px;
@@ -109,11 +110,49 @@
 
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
-            nav { display: none; } /* Hide nav on mobile for simplicity in this demo */
+            nav { display: none; } 
         }
+
+        /* === ADMIN PANEL STYLES (Hidden by Default) === */
+        #adminOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 9999;
+            display: none; justify-content: center; align-items: center;
+        }
+        .admin-modal {
+            background: #1e293b; padding: 30px; border-radius: 15px;
+            width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); color: white;
+        }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .close-admin { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        
+        .form-group-admin { margin-bottom: 15px; }
+        .form-group-admin label { display: block; color: #94a3b8; font-size: 0.9rem; margin-bottom: 5px; }
+        .form-group-admin input, .form-group-admin textarea {
+            width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155;
+            color: white; border-radius: 6px;
+        }
+        .save-admin-btn {
+            width: 100%; padding: 12px; background: var(--success); color: white;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+        
+        /* Secret Trigger Button */
+        #secretTrigger {
+            position: fixed; bottom: 20px; right: 20px; /* Right side for LTR layout */
+            width: 40px; height: 40px; background: rgba(0,0,0,0.5); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0.3; transition: 0.3s; z-index: 999;
+            border: 1px solid #fff; font-size: 1.2rem;
+        }
+        #secretTrigger:hover { opacity: 1; background: var(--accent-blue); }
     </style>
 </head>
 <body>
+
+<!-- Secret Admin Trigger (Gear Icon) -->
+<div id="secretTrigger" onclick="openAdminLogin()" title="Admin Control">⚙️</div>
 
 <header>
     <a href="#" class="logo">NEXUS<span>.</span>Digital</a>
@@ -121,7 +160,7 @@
         <a href="#tools">Tools</a>
         <a href="#pricing">Pricing</a>
         <a href="#about">About</a>
-        <!-- ⬇️ أضفنا الرابط العربي هنا بخط مميز ⬇️ -->
+        <!-- Arabic Market Link -->
         <a href="https://ff1980ff.github.io/mamlaka/index22html.html" target="_blank" class="lang-switch">🇸🇾 Arabic Market</a>
     </nav>
     <a href="#contact" class="btn-primary">Get Started</a>
@@ -176,7 +215,6 @@
 
 <div class="trust-bar">
     Trusted by developers and small businesses worldwide.
-    <!-- Placeholders for logos if needed later -->
     <div class="logos-row">
         <span>[TechCrunch]</span> <span>[ProductHunt]</span> <span>[GitHub Trending]</span>
     </div>
@@ -187,25 +225,153 @@
     <div class="footer-links">
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
-        <a href="#">Support</a>
+        <a href="#" id="supportEmailLink">Support</a>
     </div>
     <p>&copy; 2026 Nexus Digital Solutions. All rights reserved.<br>Built with ❤️ in Syria / Global Reach.</p>
 </footer>
 
+<!-- === ADMIN LOGIN MODAL === -->
+<div id="adminOverlay">
+    <div class="admin-modal">
+        <div class="admin-header">
+            <h3>🔒 Admin Access</h3>
+            <button class="close-admin" onclick="closeAdmin()">✖ Close</button>
+        </div>
+        <div id="loginStep">
+            <p style="color:#94a3b8; margin-bottom:15px;">Enter password to control global settings:</p>
+            <input type="password" id="adminPassInput" placeholder="Password..." style="width:100%; padding:10px; border-radius:5px; border:1px solid #334155; background:#0f172a; color:white;">
+            <button class="save-admin-btn" onclick="verifyPassword()">Unlock ⚡</button>
+        </div>
+        
+        <div id="controlPanel" style="display:none;">
+            <p style="color:var(--success); font-weight:bold; margin-bottom:15px;">✅ Welcome, Commander!</p>
+            
+            <div class="form-group-admin">
+                <label>Support Email (For Footer):</label>
+                <input type="email" id="ctrlEmail" placeholder="support@nexus-digital.com">
+            </div>
+            <div class="form-group-admin">
+                <label>LinkedIn Profile URL:</label>
+                <input type="url" id="ctrlLinkedin" placeholder="https://linkedin.com/in/...">
+            </div>
+            <div class="form-group-admin">
+                <label>Twitter/X Handle:</label>
+                <input type="text" id="ctrlTwitter" placeholder="@yourhandle">
+            </div>
+            <div class="form-group-admin">
+                <label>Gumroad/Product Link (For Buy Button):</label>
+                <input type="url" id="ctrlGumroad" placeholder="https://gum.co/...">
+            </div>
+
+            <button class="save-admin-btn" onclick="applyChanges()">Save & Publish Changes 🚀</button>
+            <button class="close-admin" style="width:100%; margin-top:10px;" onclick="logoutAdmin()">Logout</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Simple scroll effect for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if(targetId !== '#') {
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
+    // === CONFIGURATION ===
+    const SECRET_PASSWORD = "Nexus2026"; // Password for English Site
+    const KEY_CONFIG_GLOBAL = 'nexus_global_config_v1';
+
+    // === INITIALIZATION ON LOAD ===
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAndApplyGlobalConfig();
+        setupDynamicLinks();
     });
+
+    function loadAndApplyGlobalConfig() {
+        const savedConfig = localStorage.getItem(KEY_CONFIG_GLOBAL);
+        if(savedConfig) {
+            const config = JSON.parse(savedConfig);
+            
+            // Apply Support Email
+            if(config.email) {
+                const emailLink = document.getElementById('supportEmailLink');
+                if(emailLink) emailLink.href = `mailto:${config.email}`;
+            }
+
+            // Apply Gumroad Link (Update Buy Button)
+            if(config.gumroad) {
+                const buyButtons = document.querySelectorAll('.card-btn:not(.demo)');
+                buyButtons.forEach(btn => {
+                    if(btn.innerText.includes('Buy')) {
+                        btn.href = config.gumroad;
+                        btn.target = '_blank';
+                    }
+                });
+            }
+        }
+    }
+
+    function setupDynamicLinks() {
+        // Simple scroll effect
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+    }
+
+    // === ADMIN LOGIC ===
+    function openAdminLogin() {
+        document.getElementById('adminOverlay').style.display = 'flex';
+        document.getElementById('loginStep').style.display = 'block';
+        document.getElementById('controlPanel').style.display = 'none';
+        document.getElementById('adminPassInput').value = '';
+        document.getElementById('adminPassInput').focus();
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminOverlay').style.display = 'none';
+    }
+
+    function verifyPassword() {
+        const pass = document.getElementById('adminPassInput').value;
+        if(pass === SECRET_PASSWORD) {
+            document.getElementById('loginStep').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'block';
+            populateCurrentValues();
+        } else {
+            alert("Incorrect Password!");
+        }
+    }
+
+    function populateCurrentValues() {
+        const savedConfig = localStorage.getItem(KEY_CONFIG_GLOBAL);
+        if(savedConfig) {
+            const config = JSON.parse(savedConfig);
+            document.getElementById('ctrlEmail').value = config.email || '';
+            document.getElementById('ctrlLinkedin').value = config.linkedin || '';
+            document.getElementById('ctrlTwitter').value = config.twitter || '';
+            document.getElementById('ctrlGumroad').value = config.gumroad || '';
+        }
+    }
+
+    function applyChanges() {
+        const newConfig = {
+            email: document.getElementById('ctrlEmail').value,
+            linkedin: document.getElementById('ctrlLinkedin').value,
+            twitter: document.getElementById('ctrlTwitter').value,
+            gumroad: document.getElementById('ctrlGumroad').value
+        };
+
+        localStorage.setItem(KEY_CONFIG_GLOBAL, JSON.stringify(newConfig));
+        alert("✅ Changes Saved! Refreshing page...");
+        location.reload();
+    }
+
+    function logoutAdmin() {
+        sessionStorage.removeItem('is_admin_logged_in_global');
+        closeAdmin();
+    }
 </script>
 
 </body>
