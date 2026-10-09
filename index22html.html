@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 بوابة المملكة | حلول رقمية متكاملة</title>
+    <!-- خطوط Cairo العربية الجميلة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- أيقونات FontAwesome للسوشيال ميديا -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0f172a; /* أزرق ملكي داكن */
+            --secondary: #1e293b; /* رمادي غامق للبطاقات */
+            --accent: #d97706; /* ذهبي نحاسي للفخامة */
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --white: #ffffff;
+            --success: #10b981;
+            --danger: #ef4444;
+            
+            /* ألوان السوشيال ميديا */
+            --fb-blue: #1877f2;
+            --insta-pink: #e1306c;
+            --yt-red: #ff0000;
+            --tg-blue: #0088cc;
+            --wa-green: #25D366;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- Header Sticky --- */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .logo h1 { font-size: 1.6rem; color: var(--primary); font-weight: 900; letter-spacing: -0.5px; }
+        .logo span { color: var(--accent); }
+        
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { 
+            color: var(--text-dark); text-decoration: none; font-weight: 600; font-size: 0.95rem; 
+            transition: 0.3s; position: relative;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a::after { 
+            content: ''; width: 0%; height: 2px; background: var(--accent); 
+            position: absolute; bottom: -5px; right: 0; transition: 0.3s; 
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .btn-contact-header {
+            background: var(--success); color: white; padding: 8px 18px; 
+            border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+        .btn-contact-header:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); }
+
+        /* --- Hero Section --- */
+        .hero {
+            min-height: 80vh;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8)), url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; color: white; padding: 40px 20px;
+            position: relative;
+        }
+        .hero-badge {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .hero h2 { font-size: 3rem; margin-bottom: 15px; font-weight: 900; line-height: 1.2; }
+        .hero h2 span { color: var(--accent); }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin-bottom: 30px; opacity: 0.9; }
+        
+        .cta-buttons { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+        .btn-primary-hero { 
+            background: var(--accent); color: black; padding: 12px 30px; 
+            border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;
+            transition: 0.3s; box-shadow: 0 5px 15px rgba(217, 119, 6, 0.4);
+        }
+        .btn-primary-hero:hover { transform: scale(1.05); background: #fbbf24; }
+        
+        .btn-secondary-hero { 
+            background: transparent; border: 2px solid white; color: white; padding: 12px 30px; 
+            border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        .btn-secondary-hero:hover { background: white; color: var(--primary); }
+
+        /* Social Icons in Hero */
+        .social-icons-row { display: flex; gap: 15px; justify-content: center; }
+        .soc-circle { 
+            width: 50px; height: 50px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .soc-circle:hover { transform: translateY(-5px) rotate(5deg); }
+        .bg-fb { background: var(--fb-blue); }
+        .bg-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .bg-yt { background: var(--yt-red); }
+        .bg-tg { background: var(--tg-blue); }
+        .bg-wa { background: var(--wa-green); }
+
+        /* --- Sections Common --- */
+        section { padding: 80px 20px; max-width: 1200px; margin: auto; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-title { font-size: 2.2rem; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
+        .section-subtitle { color: #64748b; font-size: 1.1rem; }
+
+        /* --- Products Grid --- */
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+        }
+        .product-card {
+            background: white; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #f1f5f9;
+            display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        
+        .card-img-wrapper { height: 200px; background: #e2e8f0; position: relative; overflow: hidden; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .product-card:hover .card-img { transform: scale(1.1); }
+        
+        .badge-price {
+            position: absolute; top: 15px; left: 15px;
+            background: var(--primary); color: white; padding: 5px 12px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .badge-free { background: var(--success); }
+
+        .card-body { padding: 25px; flex: 1; display: flex; flex-direction: column; }
+        .card-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; color: var(--primary); }
+        .card-desc { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; flex: 1; line-height: 1.7; }
+        
+        .features-list { list-style: none; margin-bottom: 20px; }
+        .features-list li { font-size: 0.85rem; color: #475569; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .features-list li i { color: var(--accent); font-size: 0.8rem; }
+
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; pt: 15px; border-top: 1px solid #f1f5f9; }
+        .price-tag { font-size: 1.3rem; font-weight: 900; color: var(--accent); }
+        .action-btn {
+            padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
+            font-weight: bold; font-size: 0.9rem; transition: 0.3s; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-buy { background: var(--primary); color: white; }
+        .btn-buy:hover { background: #334155; }
+        .btn-demo { background: #eff6ff; color: var(--fb-blue); border: 1px solid #bfdbfe; }
+        .btn-demo:hover { background: #dbeafe; }
+
+        /* --- Media Hub (Video & Social) --- */
+        .media-hub { background: white; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        
+        .tabs-container {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 12px 25px; border: 1px solid #e2e8f0; background: transparent;
+            border-radius: 30px; cursor: pointer; font-weight: 700; color: #64748b;
+            transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .tab-btn:hover { background: #f8fafc; color: var(--primary); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2); }
+        
+        /* Specific Tab Colors when Active */
+        .tab-btn.active[data-target="youtube"] { background: var(--yt-red); border-color: var(--yt-red); }
+        .tab-btn.active[data-target="facebook"] { background: var(--fb-blue); border-color: var(--fb-blue); }
+        .tab-btn.active[data-target="instagram"] { background: var(--insta-pink); border-color: var(--insta-pink); }
+        .tab-btn.active[data-target="telegram"] { background: var(--tg-blue); border-color: var(--tg-blue); }
+
+        .content-stage {
+            min-height: 450px; background: #f1f5f9; border-radius: 16px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; position: relative; overflow: hidden;
+        }
+
+        /* Video Player Wrapper */
+        .video-responsive {
+            position: relative; padding-bottom: 56.25%; /* 16:9 */
+            height: 0; width: 100%; max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden;
+        }
+        .video-responsive iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+        }
+
+        /* Social Card Mockup (For FB/Insta/TG) */
+        .social-preview-card {
+            background: white; padding: 40px; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;
+            max-width: 400px; width: 100%; animation: fadeInUp 0.5s ease-out;
+        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .sp-icon { font-size: 4rem; margin-bottom: 20px; }
+        .sp-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+        .sp-desc { color: #64748b; margin-bottom: 25px; line-height: 1.6; }
+        .sp-link {
+            display: inline-block; padding: 12px 30px; border-radius: 8px;
+            color: white; text-decoration: none; font-weight: bold; transition: 0.3s;
+        }
+        .sp-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .link-fb { background: var(--fb-blue); }
+        .link-insta { background: var(--insta-pink); }
+        .link-tg { background: var(--tg-blue); }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--primary); color: white; padding: 60px 20px 30px;
+            margin-top: 50px;
+        }
+        .footer-content {
+            max-width: 1200px; margin: auto; display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 40px; margin-bottom: 30px;
+        }
+        .footer-col h3 { color: var(--accent); margin-bottom: 20px; font-size: 1.2rem; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; }
+        .footer-col ul li a { color: #cbd5e1; text-decoration: none; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-right: 5px; }
+        
+        .footer-socials { display: flex; gap: 15px; }
+        .fs-icon {
+            width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center; color: white;
+            text-decoration: none; transition: 0.3s;
+        }
+        .fs-icon:hover { background: var(--accent); transform: translateY(-3px); }
+
+        .copyright { text-align: center; color: #94a3b8; font-size: 0.9rem; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 2rem; }
+            .nav-links { display: none; } /* Hide nav links on mobile for simplicity in this demo */
+            .mobile-menu-btn { display: block; }
+            .section-title { font-size: 1.8rem; }
+            .tabs-container { gap: 5px; }
+            .tab-btn { padding: 8px 15px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><h1>👑 بوابة <span>المملكة</span></h1></div>
+    <nav class="nav-links">
+        <a href="#home">الرئيسية</a>
+        <a href="#products">المنتجات</a>
+        <a href="#media">الإعلام</a>
+        <a href="#contact">تواصل</a>
+    </nav>
+    <a href="https://wa.me/YOUR_PHONE_NUMBER_HERE" class="btn-contact-header">
+        <i class="fab fa-whatsapp"></i> اطلب الآن
+    </a>
+</header>
+
+<section id="home" class="hero">
+    <div class="hero-badge">✨ الإصدار الجديد 2026 متاح الآن</div>
+    <h2>حلول رقمية <span>ذكية</span> بين يديك</h2>
+    <p>منصات إدارة أعمال، أدوات معالجة وسائط احترافية، وحلول تعليمية مبتكرة. كلها مصنوعة بخبرة محلية ومعايير عالمية.</p>
+    
+    <div class="cta-buttons">
+        <a href="#products" class="btn-primary-hero">استكشف المنتجات 🛒</a>
+        <a href="#media" class="btn-secondary-hero">شاهد العروض 🎬</a>
+    </div>
+
+    <div class="social-icons-row">
+        <a href="https://facebook.com/MamlakaPage" target="_blank" class="soc-circle bg-fb" title="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://instagram.com/MamlakaTech" target="_blank" class="soc-circle bg-insta" title="إنستغرام"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@MamlakaStudio" target="_blank" class="soc-circle bg-yt" title="يوتيوب"><i class="fab fa-youtube"></i></a>
+        <a href="https://t.me/MamlakaChannel" target="_blank" class="soc-circle bg-tg" title="تيليغرام"><i class="fab fa-telegram-plane"></i></a>
+        <a href="https://wa.me/YOUR_PHONE_NUMBER_HERE" target="_blank" class="soc-circle bg-wa" title="واتساب"><i class="fab fa-whatsapp"></i></a>
+    </div>
+</section>
+
+<!-- قسم المنتجات -->
+<section id="products">
+    <div class="section-header">
+        <h2 class="section-title">🛒 متجر التطبيقات الجاهزة</h2>
+        <p class="section-subtitle">اختر الأداة التي تناسب احتياجاتك اليوم وابدأ الربح غداً.</p>
+    </div>
+
+    <div class="products-grid">
+        <!-- Product 1: Realty Lite -->
+        <div class="product-card">
+            <div class="card-img-wrapper">
+                <img src="https://via.placeholder.com/400x300/e2e8f0/1e293b?text=Realty+Lite" alt="عقارات لايت" class="card-img">
+                <span class="badge-price">$60</span>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">عقارات لايت (Realty Lite)</h3>
+                <ul class="features-list">
+                    <li><i class="fas fa-check"></i> يعمل بدون إنترنت (Offline First)</li>
+                    <li><i class="fas fa-check"></i> إضافة عقارات بالصور والسعر</li>
+                    <li><i class="fas fa-check"></i> زر تواصل واتساب مباشر</li>
+                </ul>
+                <p class="card-desc">نظام إدارة عقاري بسيط وآمن للمكاتب الصغيرة والوسطاء الأفراد. بياناتك محفوظة محلياً ولا تضيع أبداً.</p>
+                <div class="card-footer">
+                    <span class="price-tag">$60</span>
+                    <button class="action-btn btn-buy" onclick="orderProduct('عقارات لايت', '$60')">اطلب الآن</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 2: Media Minimizer -->
+        <div class="product-card">
+            <div class="card-img-wrapper">
+                <img src="https://via.placeholder.com/400x300/dbeafe/1e40af?text=Minimizer" alt="مصغر الوسائط" class="card-img">
+                <span class="badge-price badge-free">مجاني</span>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">مصغّر الوسائط الشامل</h3>
+                <ul class="features-list">
+                    <li><i class="fas fa-check"></i> تحويل JPG/PNG/WEBP</li>
+                    <li><i class="fas fa-check"></i> ضغط الفيديو القصير</li>
+                    <li><i class="fas fa-check"></i> خصوصية 100% (Client-Side)</li>
+                </ul>
+                <p class="card-desc">حوّل وصغّر صورك وفيديوهاتك بضغطة زر داخل جهازك. لا حاجة لرفع الملفات لأي سيرفر خارجي.</p>
+                <div class="card-footer">
+                    <span class="price-tag" style="color:var(--success)">مجاني</span>
+                    <a href="https://ff1980ff.github.io/mamlaka/formatconverter.html" target="_blank" class="action-btn btn-demo">جرب الآن ↗</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 3: Quick Cropper -->
+        <div class="product-card">
+            <div class="card-img-wrapper">
+                <img src="https://via.placeholder.com/400x300/fce7f3/be185d?text=Cropper" alt="قصّار" class="card-img">
+                <span class="badge-price badge-free">مجاني</span>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">قصّار الوسائط السريع</h3>
+                <ul class="features-list">
+                    <li><i class="fas fa-check"></i> أبعاد جاهزة (مربع، ستوري، ريلز)</li>
+                    <li><i class="fas fa-check"></i> دعم الصور والفيديو</li>
+                    <li><i class="fas fa-check"></i> واجهة بسيطة وسريعة</li>
+                </ul>
+                <p class="card-desc">الأداة المثالية لصناع المحتوى لضبط أبعاد الصور والفيديوهات للمنصات الاجتماعية دون تعقيد.</p>
+                <div class="card-footer">
+                    <span class="price-tag" style="color:var(--success)">مجاني</span>
+                    <a href="https://ff1980ff.github.io/mamlaka/quick-cropper.html" target="_blank" class="action-btn btn-demo" style="background:#fdf2f8; color:#be185d; border-color:#fbcfe8;">جرب الآن ↗</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- قسم الإعلام والتكامل الاجتماعي -->
+<section id="media" class="media-hub">
+    <div class="section-header">
+        <h2 class="section-title">🌐 مجتمع المملكة النشط</h2>
+        <p class="section-subtitle">تابع أحدث الفيديوهات والشروحات والعروض الحصرية مباشرة هنا.</p>
+    </div>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" data-target="youtube" onclick="switchTab('youtube', this)">
+            <i class="fab fa-youtube"></i> يوتيوب (شروحات)
+        </button>
+        <button class="tab-btn" data-target="facebook" onclick="switchTab('facebook', this)">
+            <i class="fab fa-facebook-f"></i> فيسبوك (منشورات)
+        </button>
+        <button class="tab-btn" data-target="instagram" onclick="switchTab('instagram', this)">
+            <i class="fab fa-instagram"></i> إنستغرام (ريلز)
+        </button>
+        <button class="tab-btn" data-target="telegram" onclick="switchTab('telegram', this)">
+            <i class="fab fa-telegram-plane"></i> تيليغرام (أخبار)
+        </button>
+    </div>
+
+    <div class="content-stage" id="stageContent">
+        <!-- Default Content: YouTube Video -->
+        <div class="video-responsive">
+            <!-- ⚠️ IMPORTANT: Replace VIDEO_ID_HERE with your actual YouTube Video ID -->
+            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+
+<footer id="contact">
+    <div class="footer-content">
+        <div class="footer-col">
+            <h3>👑 بوابة المملكة</h3>
+            <p style="color:#cbd5e1; font-size:0.9rem; margin-top:10px;">
+                وجهتك الأولى للحلول الرقمية المبتكرة. نصنع الأدوات التي تحل مشاكلك اليومية بسرعة وأمان.
+            </p>
+        </div>
+        <div class="footer-col">
+            <h3>روابط سريعة</h3>
+            <ul>
+                <li><a href="#products">المنتجات</a></li>
+                <li><a href="#media">الإعلام</a></li>
+                <li><a href="#">سياسة الخصوصية</a></li>
+                <li><a href="#">الدعم الفني</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>تواصل معنا</h3>
+            <div class="footer-socials">
+                <a href="https://facebook.com/MamlakaPage" target="_blank" class="fs-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/MamlakaTech" target="_blank" class="fs-icon"><i class="fab fa-instagram"></i></a>
+                <a href="https://youtube.com/@MamlakaStudio" target="_blank" class="fs-icon"><i class="fab fa-youtube"></i></a>
+                <a href="https://t.me/MamlakaChannel" target="_blank" class="fs-icon"><i class="fab fa-telegram-plane"></i></a>
+            </div>
+            <p style="margin-top:15px; color:#cbd5e1;">
+                <i class="fas fa-phone-alt"></i> +963 XXX XXX XXX<br>
+                <i class="fas fa-envelope"></i> support@mamlaka.com
+            </p>
+        </div>
+    </div>
+    <div class="copyright">
+        &copy; 2026 بوابة المملكة - جميع الحقوق محفوظة. تم التطوير بحب في سوريا 🇸🇾
+    </div>
+</footer>
+
+<script>
+    // === Order Functionality ===
+    function orderProduct(name, price) {
+        const phoneNumber = "YOUR_PHONE_NUMBER_HERE"; // <-- CHANGE THIS TO YOUR REAL NUMBER
+        const message = encodeURIComponent(`مرحباً، أنا مهتم بشراء "${name}" بسعر ${price}. هل هو متاح؟`);
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    }
+
+    // === Social Media Tabs Logic ===
+    function switchTab(platform, btnElement) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        btnElement.classList.add('active');
+
+        const stage = document.getElementById('stageContent');
+        stage.innerHTML = '<div style="color:#64748b;"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i><br>جارٍ التحميل...</div>';
+
+        setTimeout(() => {
+            let contentHTML = '';
+
+            if (platform === 'youtube') {
+                // REPLACE dQw4w9WgXcQ WITH YOUR ACTUAL YOUTUBE VIDEO ID
+                contentHTML = `
+                    <div class="video-responsive">
+                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Latest Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>`;
+            } 
+            else if (platform === 'facebook') {
+                contentHTML = `
+                    <div class="social-preview-card">
+                        <i class="fab fa-facebook-square sp-icon" style="color:var(--fb-blue);"></i>
+                        <h3 class="sp-title">صفحتنا على فيسبوك</h3>
+                        <p class="sp-desc">تابعنا للحصول على آخر التحديثات، النصائح التقنية، والعروض الحصرية لمجتمع المملكة.</p>
+                        <a href="https://facebook.com/MamlakaPage" target="_blank" class="sp-link link-fb">زيارة الصفحة ↗</a>
+                    </div>`;
+            }
+            else if (platform === 'instagram') {
+                contentHTML = `
+                    <div class="social-preview-card">
+                        <i class="fab fa-instagram sp-icon" style="background:linear-gradient(45deg, #f09433, #dc2743, #bc1888); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i>
+                        <h3 class="sp-title">ريلز وإنستغرام</h3>
+                        <p class="sp-desc">شاهد مقاطع الفيديو القصيرة والشروحات السريعة لاستخدام أدواتنا بفعالية.</p>
+                        <a href="https://instagram.com/MamlakaTech" target="_blank" class="sp-link link-insta">متابعة الحساب ↗</a>
+                    </div>`;
+            }
+            else if (platform === 'telegram') {
+                contentHTML = `
+                    <div class="social-preview-card">
+                        <i class="fab fa-telegram-plane sp-icon" style="color:var(--tg-blue);"></i>
+                        <h3 class="sp-title">قناة تيليغرام</h3>
+                        <p class="sp-desc">احصل على الإشعارات الفورية عند إطلاق منتجات جديدة أو تحديثات مهمة.</p>
+                        <a href="https://t.me/MamlakaChannel" target="_blank" class="sp-link link-tg">انضم للقناة ↗</a>
+                    </div>`;
+            }
+
+            stage.innerHTML = contentHTML;
+        }, 500); // Small delay for smooth UX
+    }
+</script>
+
+</body>
+</html>
