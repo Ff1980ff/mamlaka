@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 محول الصيغ الملكي | Royal Format Converter</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #3b82f6; /* أزرق تقني */
+            --accent: #10b981; /* أخضر للنجاح */
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
+        .container {
+            width: 100%; max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 10px; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
+
+        /* منطقة السحب والإفلات */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            transition: 0.3s;
+            cursor: pointer;
+            background: rgba(255,255,255,0.02);
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .drop-icon { font-size: 3rem; color: var(--primary); margin-bottom: 10px; }
+        .drop-text { font-weight: bold; color: white; }
+        .drop-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
+
+        input[type="file"] { display: none; }
+
+        /* إعدادات التحويل */
+        .settings-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            display: none; /* يظهر بعد اختيار الملف */
+            text-align: right;
+        }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .setting-label { font-size: 0.9rem; color: var(--text-muted); }
+        select, input[type="range"] {
+            background: #0f172a; border: 1px solid var(--border); color: white;
+            padding: 5px; border-radius: 4px;
+        }
+
+        /* زر التحويل */
+        .convert-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to left, var(--primary), #2563eb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+            display: none;
+        }
+        .convert-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
+        .convert-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* النتيجة والتحميل */
+        .result-panel {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .download-link {
+            display: inline-block;
+            background: var(--accent);
+            color: black;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .preview-img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px; border: 1px solid #334155; }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
+            border-radius: 50%; width: 30px; height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        footer { margin-top: 30px; font-size: 0.8rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔄 المحول الملكي للصيغ</h1>
+    <p class="subtitle">حوّل صورك ومستنداتك بأمان تام. ملفاتك لا تغادر جهازك أبداً.</p>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="drop-icon">📂</div>
+        <div class="drop-text">اسحب وأفلت الملف هنا</div>
+        <div class="drop-sub">أو اضغط للاختيار من الجهاز (JPG, PNG, WEBP)</div>
+        <input type="file" id="fileInput" accept="image/*">
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="setting-row">
+            <span class="setting-label">الصيغة الهدف:</span>
+            <select id="targetFormat">
+                <option value="image/jpeg">JPEG (.jpg) - حجم صغير</option>
+                <option value="image/png">PNG (.png) - جودة عالية/شفافية</option>
+                <option value="image/webp">WEBP (.webp) - حديث وسريع</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <span class="setting-label">جودة الضغط (%):</span>
+            <input type="range" id="qualityRange" min="10" max="100" value="80">
+            <span id="qualityValue">80%</span>
+        </div>
+    </div>
+
+    <!-- Convert Button -->
+    <button class="convert-btn" id="convertBtn" onclick="startConversion()">⚡ بدء التحويل الفوري</button>
+
+    <!-- Loader -->
+    <div class="loader" id="loader"></div>
+
+    <!-- Result Panel -->
+    <div class="result-panel" id="resultPanel">
+        <h3 style="color:var(--accent)">✅ تم التحويل بنجاح!</h3>
+        <img id="previewImage" class="preview-img" src="" alt="Preview">
+        <br>
+        <a href="#" id="downloadLink" class="download-link" download>⬇️ تحميل الملف الجديد</a>
+        <button onclick="resetApp()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">🔄 تحويل ملف آخر</button>
+    </div>
+</div>
+
+<footer>
+    © 2026 Mamlaka Apps - يعمل بدون إنترنت وبدون خوادم خارجية.
+</footer>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const convertBtn = document.getElementById('convertBtn');
+    const loader = document.getElementById('loader');
+    const resultPanel = document.getElementById('resultPanel');
+    const qualityRange = document.getElementById('qualityRange');
+    const qualityValue = document.getElementById('qualityValue');
+    
+    let currentFile = null;
+
+    // Event Listeners for Drag & Drop
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+    dropZone.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFileSelect, false);
+    qualityRange.addEventListener('input', (e) => qualityValue.innerText = e.target.value + '%');
+
+    function highlight(e) {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    }
+    function unhighlight(e) {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+    }
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if(files.length > 0) processFile(files[0]);
+    }
+    function handleFileSelect(e) {
+        if(e.target.files.length > 0) processFile(e.target.files[0]);
+    }
+
+    function processFile(file) {
+        if(!file.type.startsWith('image/')) {
+            alert("عذراً، النسخة الحالية تدعم الصور فقط (JPG, PNG, WEBP).");
+            return;
+        }
+        currentFile = file;
+        settingsPanel.style.display = 'block';
+        convertBtn.style.display = 'block';
+        resultPanel.style.display = 'none';
+        
+        // Preview original briefly? No, wait for conversion.
+    }
+
+    async function startConversion() {
+        if(!currentFile) return;
+
+        // Show Loader
+        loader.style.display = 'block';
+        convertBtn.disabled = true;
+        convertBtn.innerText = "جارٍ المعالجة...";
+
+        try {
+            // Create Image Element
+            const img = new Image();
+            const url = URL.createObjectURL(currentFile);
+            
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+                img.src = url;
+            });
+
+            // Create Canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw Image on Canvas
+            ctx.drawImage(img, 0, 0);
+
+            // Get Target Format and Quality
+            const format = document.getElementById('targetFormat').value;
+            const quality = parseInt(qualityRange.value) / 100;
+
+            // Convert to Blob
+            const blob = await new Promise(resolve => {
+                canvas.toBlob(resolve, format, quality);
+            });
+
+            if(blob) {
+                // Prepare Download Link
+                const downloadUrl = URL.createObjectURL(blob);
+                const fileName = currentFile.name.split('.').slice(0, -1).join('.') + '.' + format.split('/')[1].replace('jpeg','jpg');
+                
+                const dlLink = document.getElementById('downloadLink');
+                dlLink.href = downloadUrl;
+                dlLink.download = fileName;
+                
+                // Show Preview
+                document.getElementById('previewImage').src = downloadUrl;
+                
+                // Hide Loader, Show Result
+                loader.style.display = 'none';
+                resultPanel.style.display = 'block';
+                convertBtn.style.display = 'none';
+                settingsPanel.style.display = 'none';
+            } else {
+                throw new Error("Failed to create blob");
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("حدث خطأ أثناء التحويل. حاول بملف آخر.");
+            resetApp();
+        } finally {
+            convertBtn.disabled = false;
+            convertBtn.innerText = "⚡ بدء التحويل الفوري";
+        }
+    }
+
+    function resetApp() {
+        currentFile = null;
+        fileInput.value = '';
+        settingsPanel.style.display = 'none';
+        convertBtn.style.display = 'none';
+        resultPanel.style.display = 'none';
+        loader.style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
