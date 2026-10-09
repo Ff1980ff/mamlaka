@@ -253,9 +253,47 @@
             .tabs-container { gap: 5px; }
             .tab-btn { padding: 8px 15px; font-size: 0.85rem; }
         }
+
+        /* === ADMIN PANEL STYLES (Hidden by Default) === */
+        #adminOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 9999;
+            display: none; justify-content: center; align-items: center;
+        }
+        .admin-modal {
+            background: var(--card-bg); padding: 30px; border-radius: 15px;
+            width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .close-admin { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        
+        .form-group-admin { margin-bottom: 15px; }
+        .form-group-admin label { display: block; color: #94a3b8; font-size: 0.9rem; margin-bottom: 5px; }
+        .form-group-admin input, .form-group-admin textarea {
+            width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155;
+            color: white; border-radius: 6px;
+        }
+        .save-admin-btn {
+            width: 100%; padding: 12px; background: var(--success); color: white;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+        
+        /* Secret Trigger Button (Small gear icon at bottom corner) */
+        #secretTrigger {
+            position: fixed; bottom: 20px; left: 20px;
+            width: 40px; height: 40px; background: rgba(0,0,0,0.5); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0.3; transition: 0.3s; z-index: 999;
+            border: 1px solid #fff;
+        }
+        #secretTrigger:hover { opacity: 1; background: var(--primary); }
     </style>
 </head>
 <body>
+
+<!-- Secret Admin Trigger (Gear Icon) -->
+<div id="secretTrigger" onclick="openAdminLogin()" title="لوحة التحكم">⚙️</div>
 
 <header>
     <div class="logo"><h1>👑 بوابة <span>المملكة</span></h1></div>
@@ -265,7 +303,7 @@
         <a href="#media">الإعلام</a>
         <a href="#contact">تواصل</a>
     </nav>
-    <a href="https://wa.me/YOUR_PHONE_NUMBER_HERE" class="btn-contact-header">
+    <a href="#" id="dynamicWaLink" class="btn-contact-header">
         <i class="fab fa-whatsapp"></i> اطلب الآن
     </a>
 </header>
@@ -281,11 +319,11 @@
     </div>
 
     <div class="social-icons-row">
-        <a href="https://facebook.com/MamlakaPage" target="_blank" class="soc-circle bg-fb" title="فيسبوك"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://instagram.com/MamlakaTech" target="_blank" class="soc-circle bg-insta" title="إنستغرام"><i class="fab fa-instagram"></i></a>
-        <a href="https://youtube.com/@MamlakaStudio" target="_blank" class="soc-circle bg-yt" title="يوتيوب"><i class="fab fa-youtube"></i></a>
-        <a href="https://t.me/MamlakaChannel" target="_blank" class="soc-circle bg-tg" title="تيليغرام"><i class="fab fa-telegram-plane"></i></a>
-        <a href="https://wa.me/YOUR_PHONE_NUMBER_HERE" target="_blank" class="soc-circle bg-wa" title="واتساب"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" target="_blank" class="soc-circle bg-fb dyn-social" data-type="fb" title="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" target="_blank" class="soc-circle bg-insta dyn-social" data-type="insta" title="إنستغرام"><i class="fab fa-instagram"></i></a>
+        <a href="#" target="_blank" class="soc-circle bg-yt dyn-social" data-type="yt" title="يوتيوب"><i class="fab fa-youtube"></i></a>
+        <a href="#" target="_blank" class="soc-circle bg-tg dyn-social" data-type="tg" title="تيليغرام"><i class="fab fa-telegram-plane"></i></a>
+        <a href="#" target="_blank" class="soc-circle bg-wa dyn-social" data-type="wa" title="واتساب"><i class="fab fa-whatsapp"></i></a>
     </div>
 </section>
 
@@ -296,9 +334,11 @@
         <p class="section-subtitle">اختر الأداة التي تناسب احتياجاتك اليوم وابدأ الربح غداً.</p>
     </div>
 
-    <div class="products-grid">
-        <!-- Product 1: Realty Lite -->
-        <div class="product-card">
+    <div class="products-grid" id="mainProductsGrid">
+        <!-- سيتم حقن المنتجات هنا بواسطة JavaScript إذا كانت هناك بيانات محفوظة، وإلا ستظهر البطاقات الافتراضية أدناه -->
+        
+        <!-- Product 1: Realty Lite (Default) -->
+        <div class="product-card default-product">
             <div class="card-img-wrapper">
                 <img src="https://via.placeholder.com/400x300/e2e8f0/1e293b?text=Realty+Lite" alt="عقارات لايت" class="card-img">
                 <span class="badge-price">$60</span>
@@ -310,16 +350,16 @@
                     <li><i class="fas fa-check"></i> إضافة عقارات بالصور والسعر</li>
                     <li><i class="fas fa-check"></i> زر تواصل واتساب مباشر</li>
                 </ul>
-                <p class="card-desc">نظام إدارة عقاري بسيط وآمن للمكاتب الصغيرة والوسطاء الأفراد. بياناتك محفوظة محلياً ولا تضيع أبداً.</p>
+                <p class="card-desc">نظام إدارة عقاري بسيط وآمن للمكاتب الصغيرة والوسطاء الأفراد. بياناتك محفوظة محليا ولا تضيع أبدا.</p>
                 <div class="card-footer">
                     <span class="price-tag">$60</span>
-                    <button class="action-btn btn-buy" onclick="orderProduct('عقارات لايت', '$60')">اطلب الآن</button>
+                    <button class="action-btn btn-buy order-trigger" data-name="عقارات لايت" data-price="$60">اطلب الآن</button>
                 </div>
             </div>
         </div>
 
-        <!-- Product 2: Media Minimizer -->
-        <div class="product-card">
+        <!-- Product 2: Media Minimizer (Default) -->
+        <div class="product-card default-product">
             <div class="card-img-wrapper">
                 <img src="https://via.placeholder.com/400x300/dbeafe/1e40af?text=Minimizer" alt="مصغر الوسائط" class="card-img">
                 <span class="badge-price badge-free">مجاني</span>
@@ -339,8 +379,8 @@
             </div>
         </div>
 
-        <!-- Product 3: Quick Cropper -->
-        <div class="product-card">
+         <!-- Product 3: Quick Cropper (Default) -->
+         <div class="product-card default-product">
             <div class="card-img-wrapper">
                 <img src="https://via.placeholder.com/400x300/fce7f3/be185d?text=Cropper" alt="قصّار" class="card-img">
                 <span class="badge-price badge-free">مجاني</span>
@@ -385,10 +425,9 @@
     </div>
 
     <div class="content-stage" id="stageContent">
-        <!-- Default Content: YouTube Video -->
+        <!-- Default Content: YouTube Video Placeholder -->
         <div class="video-responsive">
-            <!-- ⚠️ IMPORTANT: Replace VIDEO_ID_HERE with your actual YouTube Video ID -->
-            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe id="mainVideoFrame" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
 </section>
@@ -413,35 +452,206 @@
         <div class="footer-col">
             <h3>تواصل معنا</h3>
             <div class="footer-socials">
-                <a href="https://facebook.com/MamlakaPage" target="_blank" class="fs-icon"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://instagram.com/MamlakaTech" target="_blank" class="fs-icon"><i class="fab fa-instagram"></i></a>
-                <a href="https://youtube.com/@MamlakaStudio" target="_blank" class="fs-icon"><i class="fab fa-youtube"></i></a>
-                <a href="https://t.me/MamlakaChannel" target="_blank" class="fs-icon"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#" target="_blank" class="fs-icon dyn-social-foot" data-type="fb"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank" class="fs-icon dyn-social-foot" data-type="insta"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank" class="fs-icon dyn-social-foot" data-type="yt"><i class="fab fa-youtube"></i></a>
+                <a href="#" target="_blank" class="fs-icon dyn-social-foot" data-type="tg"><i class="fab fa-telegram-plane"></i></a>
             </div>
-            <p style="margin-top:15px; color:#cbd5e1;">
+            <p style="margin-top:15px; color:#cbd5e1;" id="footerPhoneDisplay">
                 <i class="fas fa-phone-alt"></i> +963 XXX XXX XXX<br>
                 <i class="fas fa-envelope"></i> support@mamlaka.com
             </p>
         </div>
     </div>
     <div class="copyright">
-        &copy; 2026 بوابة المملكة - جميع الحقوق محفوظة. تم التطوير بحب في سوريا 🇸🇾
+        &copy; 2026 بوابة المملكة - جميع الحقوق محفوظة. تم التطوير بحب في سوريا 🇸
     </div>
 </footer>
 
+<!-- === ADMIN LOGIN MODAL === -->
+<div id="adminOverlay">
+    <div class="admin-modal">
+        <div class="admin-header">
+            <h3>🔒 دخول المدير</h3>
+            <button class="close-admin" onclick="closeAdmin()">✖</button>
+        </div>
+        <div id="loginStep">
+            <p style="color:#94a3b8; margin-bottom:15px;">أدخل كلمة المرور للتحكم بالموقع:</p>
+            <input type="password" id="adminPassInput" placeholder="كلمة المرور..." style="width:100%; padding:10px; border-radius:5px; border:1px solid #334155; background:#0f172a; color:white;">
+            <button class="save-admin-btn" onclick="verifyPassword()">دخول ⚡</button>
+        </div>
+        
+        <div id="controlPanel" style="display:none;">
+            <p style="color:var(--success); font-weight:bold; margin-bottom:15px;">✅ مرحباَ أيها الملك!</p>
+            
+            <div class="form-group-admin">
+                <label>رقم واتساب (للأزرار):</label>
+                <input type="text" id="ctrlPhone" placeholder="9639...">
+            </div>
+            <div class="form-group-admin">
+                <label>رابط فيسبوك:</label>
+                <input type="url" id="ctrlFb" placeholder="https://facebook.com/...">
+            </div>
+            <div class="form-group-admin">
+                <label>رابط إنستغرام:</label>
+                <input type="url" id="ctrlInsta" placeholder="https://instagram.com/...">
+            </div>
+            <div class="form-group-admin">
+                <label>رابط يوتيوب:</label>
+                <input type="url" id="ctrlYt" placeholder="https://youtube.com/@...">
+            </div>
+            <div class="form-group-admin">
+                <label>رابط تيليغرام:</label>
+                <input type="url" id="ctrlTg" placeholder="https://t.me/...">
+            </div>
+            <div class="form-group-admin">
+                <label>معرف فيديو يوتيوب (ID فقط):</label>
+                <input type="text" id="ctrlVideoId" placeholder="مثال: dQw4w9WgXcQ">
+            </div>
+
+            <button class="save-admin-btn" onclick="applyChanges()">حفظ ونشر التغييرات 🚀</button>
+            <button class="close-admin" style="width:100%; margin-top:10px;" onclick="logoutAdmin()">تسجيل خروج</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // === Order Functionality ===
-    function orderProduct(name, price) {
-        const phoneNumber = "YOUR_PHONE_NUMBER_HERE"; // <-- CHANGE THIS TO YOUR REAL NUMBER
-        const message = encodeURIComponent(`مرحباً، أنا مهتم بشراء "${name}" بسعر ${price}. هل هو متاح؟`);
-        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    // === CONFIGURATION ===
+    // ⚠️ غَيّر هذه الكلمة السرية إلى ما تريد (مثلاً: MySecretPass123)
+    const SECRET_PASSWORD = "Mamlaka2026"; 
+    
+    // Storage Keys
+    const KEY_CONFIG = 'kingdom_site_config_v1';
+
+    // === INITIALIZATION ON LOAD ===
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAndApplyConfig();
+        setupOrderButtons();
+    });
+
+    function loadAndApplyConfig() {
+        const savedConfig = localStorage.getItem(KEY_CONFIG);
+        if(savedConfig) {
+            const config = JSON.parse(savedConfig);
+            
+            // Apply Phone Number
+            if(config.phone) {
+                const waLink = document.getElementById('dynamicWaLink');
+                waLink.href = `https://wa.me/${config.phone}?text=${encodeURIComponent('مرحبا، أنا مهتم بمنتجات المملكة.')}`;
+                
+                // Update Footer Text
+                const footPhone = document.getElementById('footerPhoneDisplay');
+                if(footPhone) footPhone.innerHTML = `<i class="fas fa-phone-alt"></i> ${config.phone}<br><i class="fas fa-envelope"></i> support@mamlaka.com`;
+            }
+
+            // Apply Social Links (Hero Section)
+            updateSocialLinks('.dyn-social', config);
+            // Apply Social Links (Footer)
+            updateSocialLinks('.dyn-social-foot', config);
+
+            // Apply Video ID
+            if(config.videoId) {
+                const frame = document.getElementById('mainVideoFrame');
+                if(frame) frame.src = `https://www.youtube.com/embed/${config.videoId}`;
+            }
+        }
     }
 
-    // === Social Media Tabs Logic ===
+    function updateSocialLinks(selectorClass, config) {
+        const elements = document.querySelectorAll(selectorClass);
+        elements.forEach(el => {
+            const type = el.getAttribute('data-type');
+            let url = '';
+            if(type === 'fb' && config.fb) url = config.fb;
+            if(type === 'insta' && config.insta) url = config.insta;
+            if(type === 'yt' && config.yt) url = config.yt;
+            if(type === 'tg' && config.tg) url = config.tg;
+            if(type === 'wa' && config.phone) url = `https://wa.me/${config.phone}`;
+            
+            if(url) el.href = url;
+        });
+    }
+
+    function setupOrderButtons() {
+        const buttons = document.querySelectorAll('.order-trigger');
+        buttons.forEach(btn => {
+            btn.onclick = function() {
+                const name = this.getAttribute('data-name');
+                const price = this.getAttribute('data-price');
+                const savedConfig = localStorage.getItem(KEY_CONFIG);
+                let phone = "YOUR_DEFAULT_NUMBER"; // Fallback
+                
+                if(savedConfig) {
+                    const config = JSON.parse(savedConfig);
+                    if(config.phone) phone = config.phone;
+                }
+
+                const msg = encodeURIComponent(`مرحبا، أنا مهتم بشراء "${name}" بسعر ${price}. هل هو متاح؟`);
+                window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+            };
+        });
+    }
+
+    // === ADMIN LOGIC ===
+    function openAdminLogin() {
+        document.getElementById('adminOverlay').style.display = 'flex';
+        document.getElementById('loginStep').style.display = 'block';
+        document.getElementById('controlPanel').style.display = 'none';
+        document.getElementById('adminPassInput').value = '';
+        document.getElementById('adminPassInput').focus();
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminOverlay').style.display = 'none';
+    }
+
+    function verifyPassword() {
+        const pass = document.getElementById('adminPassInput').value;
+        if(pass === SECRET_PASSWORD) {
+            document.getElementById('loginStep').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'block';
+            populateCurrentValues(); // Fill inputs with current values
+        } else {
+            alert("كلمة المرور خاطئة!");
+        }
+    }
+
+    function populateCurrentValues() {
+        const savedConfig = localStorage.getItem(KEY_CONFIG);
+        if(savedConfig) {
+            const config = JSON.parse(savedConfig);
+            document.getElementById('ctrlPhone').value = config.phone || '';
+            document.getElementById('ctrlFb').value = config.fb || '';
+            document.getElementById('ctrlInsta').value = config.insta || '';
+            document.getElementById('ctrlYt').value = config.yt || '';
+            document.getElementById('ctrlTg').value = config.tg || '';
+            document.getElementById('ctrlVideoId').value = config.videoId || '';
+        }
+    }
+
+    function applyChanges() {
+        const newConfig = {
+            phone: document.getElementById('ctrlPhone').value,
+            fb: document.getElementById('ctrlFb').value,
+            insta: document.getElementById('ctrlInsta').value,
+            yt: document.getElementById('ctrlYt').value,
+            tg: document.getElementById('ctrlTg').value,
+            videoId: document.getElementById('ctrlVideoId').value
+        };
+
+        localStorage.setItem(KEY_CONFIG, JSON.stringify(newConfig));
+        alert("✅ تم حفظ التغييرات بنجاح! سيتم تحديث الصفحة لتطبيقها.");
+        location.reload(); // Reload to see changes immediately
+    }
+
+    function logoutAdmin() {
+        sessionStorage.removeItem('is_admin_logged_in'); // Optional session tracking
+        closeAdmin();
+    }
+
+    // === SOCIAL TABS LOGIC (From previous version) ===
     function switchTab(platform, btnElement) {
-        // Remove active class from all buttons
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        // Add active class to clicked button
         btnElement.classList.add('active');
 
         const stage = document.getElementById('stageContent');
@@ -449,12 +659,15 @@
 
         setTimeout(() => {
             let contentHTML = '';
+            const savedConfig = localStorage.getItem(KEY_CONFIG);
+            let config = {};
+            if(savedConfig) config = JSON.parse(savedConfig);
 
             if (platform === 'youtube') {
-                // REPLACE dQw4w9WgXcQ WITH YOUR ACTUAL YOUTUBE VIDEO ID
+                const vidId = config.videoId || 'dQw4w9WgXcQ'; // Use saved or default
                 contentHTML = `
                     <div class="video-responsive">
-                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Latest Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/${vidId}" title="Latest Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>`;
             } 
             else if (platform === 'facebook') {
@@ -462,17 +675,17 @@
                     <div class="social-preview-card">
                         <i class="fab fa-facebook-square sp-icon" style="color:var(--fb-blue);"></i>
                         <h3 class="sp-title">صفحتنا على فيسبوك</h3>
-                        <p class="sp-desc">تابعنا للحصول على آخر التحديثات، النصائح التقنية، والعروض الحصرية لمجتمع المملكة.</p>
-                        <a href="https://facebook.com/MamlakaPage" target="_blank" class="sp-link link-fb">زيارة الصفحة ↗</a>
+                        <p class="sp-desc">تابعنا للحصول على آخر التحديثات والنصائح التقنية.</p>
+                        <a href="${config.fb || '#'}" target="_blank" class="sp-link link-fb">زيارة الصفحة ↗</a>
                     </div>`;
             }
             else if (platform === 'instagram') {
-                contentHTML = `
+                 contentHTML = `
                     <div class="social-preview-card">
                         <i class="fab fa-instagram sp-icon" style="background:linear-gradient(45deg, #f09433, #dc2743, #bc1888); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i>
                         <h3 class="sp-title">ريلز وإنستغرام</h3>
-                        <p class="sp-desc">شاهد مقاطع الفيديو القصيرة والشروحات السريعة لاستخدام أدواتنا بفعالية.</p>
-                        <a href="https://instagram.com/MamlakaTech" target="_blank" class="sp-link link-insta">متابعة الحساب ↗</a>
+                        <p class="sp-desc">شاهد مقاطع الفيديو القصيرة والشروحات السريعة.</p>
+                        <a href="${config.insta || '#'}" target="_blank" class="sp-link link-insta">متابعة الحساب ↗</a>
                     </div>`;
             }
             else if (platform === 'telegram') {
@@ -480,13 +693,13 @@
                     <div class="social-preview-card">
                         <i class="fab fa-telegram-plane sp-icon" style="color:var(--tg-blue);"></i>
                         <h3 class="sp-title">قناة تيليغرام</h3>
-                        <p class="sp-desc">احصل على الإشعارات الفورية عند إطلاق منتجات جديدة أو تحديثات مهمة.</p>
-                        <a href="https://t.me/MamlakaChannel" target="_blank" class="sp-link link-tg">انضم للقناة ↗</a>
+                        <p class="sp-desc">احصل على الإشعارات الفورية عند إطلاق منتجات جديدة.</p>
+                        <a href="${config.tg || '#'}" target="_blank" class="sp-link link-tg">انضم للقناة ↗</a>
                     </div>`;
             }
 
             stage.innerHTML = contentHTML;
-        }, 500); // Small delay for smooth UX
+        }, 500);
     }
 </script>
 
