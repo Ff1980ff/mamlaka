@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mamlaka Global Market | سوق المملكة العالمي</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #d97706; /* Gold */
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --font-ar: 'Cairo', sans-serif;
+            --font-en: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--primary); 
+            overflow-x: hidden; 
+            padding-bottom: 70px; 
+            font-family: var(--font-ar);
+        }
+
+        [dir="ltr"] body { font-family: var(--font-en); }
+
+        /* Header */
+        header {
+            background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-text { font-weight: 900; font-size: 1.2rem; color: var(--primary); }
+        .lang-toggle {
+            background: #e2e8f0; border: none; padding: 5px 12px; border-radius: 20px;
+            font-weight: bold; cursor: pointer; font-size: 0.85rem; color: var(--primary);
+            display: flex; align-items: center; gap: 5px;
+        }
+        .lang-toggle:hover { background: var(--accent); color: white; }
+
+        /* Categories Scroll */
+        .categories-scroll {
+            display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+            background: var(--white); border-bottom: 1px solid #eee;
+        }
+        .cat-pill {
+            background: #f1f5f9; border: 1px solid transparent; padding: 8px 15px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: bold; color: var(--gray); cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 5px; min-width: fit-content;
+        }
+        .cat-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .cat-pill:hover:not(.active) { background: #e2e8f0; color: var(--primary); }
+
+        /* Ads Grid */
+        .ads-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px;
+        }
+        .ad-card {
+            background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: 0.3s; cursor: pointer; position: relative; border: 1px solid #eee;
+        }
+        .ad-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .ad-img { height: 120px; object-fit: cover; width: 100%; background: #eee; }
+        .ad-info { padding: 10px; }
+        .ad-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; line-height: 1.3; color: var(--primary); }
+        .ad-price { color: var(--accent); font-weight: 900; font-size: 1rem; }
+        .ad-location { font-size: 0.75rem; color: var(--gray); }
+        
+        /* Badges */
+        .badge-new { position: absolute; top: 5px; right: 5px; background: var(--success); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
+        .badge-used { position: absolute; top: 5px; right: 5px; background: var(--gray); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--white);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; color: var(--gray); text-decoration: none;
+            font-size: 0.7rem; gap: 2px; cursor: pointer;
+        }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item.active { color: var(--accent); }
+        
+        /* FAB Post */
+        .fab-post {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: black; width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 5px 15px rgba(217, 119, 6, 0.4);
+            cursor: pointer; z-index: 999; border: none;
+        }
+
+        /* Secret Admin Trigger */
+        #secretAdminBtn {
+            position: fixed; bottom: 85px; left: 20px;
+            width: 45px; height: 45px; background: var(--primary); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0.9; transition: 0.3s; z-index: 1001;
+            border: 2px solid var(--accent); font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        #secretAdminBtn:hover { opacity: 1; transform: scale(1.1); }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto; position: relative;
+        }
+        .close-btn { position: absolute; top: 15px; left: 15px; cursor: pointer; font-size: 1.5rem; color: #aaa; }
+        
+        /* Forms */
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
+        }
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--success); color: white; border: none;
+            border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;
+        }
+        .btn-danger { background: var(--danger); }
+
+        /* Admin Tabs */
+        .admin-tab { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .tab-link { cursor: pointer; padding: 5px 10px; border-radius: 5px; font-weight: bold; color: var(--gray); }
+        .tab-link.active { background: var(--primary); color: white; }
+        
+        .rules-list { list-style: none; padding: 0; }
+        .rule-item { background: #fef2f2; border-right: 4px solid var(--danger); padding: 10px; margin-bottom: 10px; border-radius: 4px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        .del-rule { color: var(--danger); cursor: pointer; font-weight: bold; }
+
+        .pending-ad-item { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        .action-row { display: flex; gap: 10px; margin-top: 10px; }
+        .action-btn-small { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+
+        @media (min-width: 768px) {
+            .ads-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .ad-img { height: 160px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-area" onclick="location.reload()">
+        <span style="font-size:1.5rem;">👑</span>
+        <span class="logo-text" id="siteTitle">سوق المملكة</span>
+    </div>
+    <button class="lang-toggle" onclick="toggleLanguage()">
+        <i class="fas fa-globe"></i> <span id="currentLangLabel">EN</span>
+    </button>
+</header>
+
+<div class="categories-scroll" id="catContainer"></div>
+
+<main id="adsContainer" class="ads-grid"></main>
+
+<button class="fab-post" onclick="openPostModal()">
+    <i class="fas fa-plus"></i>
+</button>
+
+<!-- ✅ SECRET ADMIN BUTTON -->
+<div id="secretAdminBtn" onclick="openAdminLogin()" title="Admin Panel">⚙️</div>
+
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active"><i class="fas fa-home"></i><span data-i18n="home">الرئيسية</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-search"></i><span data-i18n="search">بحث</span></a>
+    <a href="#" class="nav-item" style="opacity:0;"></a>
+    <a href="#" class="nav-item"><i class="far fa-heart"></i><span data-i18n="fav">المفضلة</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-user"></i><span data-i18n="profile">حسابي</span></a>
+</nav>
+
+<!-- User Post Modal -->
+<div id="postModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('postModal')">&times;</span>
+        <h2 style="margin-bottom:20px;" data-i18n="addAdTitle">➕ أضف إعلانك</h2>
+        <form onsubmit="handleUserSubmission(event)">
+            <div class="form-group">
+                <label class="form-label" data-i18n="lblTitle">العنوان *</label>
+                <input type="text" id="userTitle" class="form-input" required placeholder="مثلاَ: تويوتا كامري نظيفة">
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="lblCat">الفئة *</label>
+                <select id="userCat" class="form-select" required></select>
+            </div>
+             <div class="form-group">
+                <label class="form-label" data-i18n="lblCondition">الحالة *</label>
+                <select id="userCond" class="form-select" required>
+                    <option value="new" data-i18n="optNew">جديد</option>
+                    <option value="used" data-i18n="optUsed">مستعمل</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="lblPrice">السعر ($)</label>
+                <input type="number" id="userPrice" class="form-input" placeholder="اتركه فارغاَ للتفاوض">
+            </div>
+             <div class="form-group">
+                <label class="form-label" data-i18n="lblDesc">وصف مختصر</label>
+                <textarea id="userDesc" class="form-textarea" rows="3" placeholder="تفاصيل إضافية..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="lblPhone">رقم الواتساب *</label>
+                <input type="tel" id="userPhone" class="form-input" required placeholder="+9639xxxxxxxxx">
+            </div>
+            
+            <div class="form-group" style="background:#f1f5f9; padding:10px; border-radius:8px;">
+                <label style="font-size:0.85rem; display:flex; align-items:start; gap:5px;">
+                    <input type="checkbox" id="agreeTerms" required style="margin-top:3px;">
+                    <span data-i18n="termsText">أوافق على شروط النشر وأتعهد بعدم مخالفة القوانين.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-submit" data-i18n="btnSubmit">إرسال للمراجعة ⏳</button>
+        </form>
+    </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div id="adminLoginModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 350px; text-align:center;">
+        <span class="close-btn" onclick="closeModal('adminLoginModal')">&times;</span>
+        <h3 data-i18n="adminLoginTitle">🔒 دخول المدير</h3>
+        <input type="password" id="adminPassInput" placeholder="Password..." style="width:100%; padding:10px; margin:15px 0; border-radius:5px; border:1px solid #ccc;">
+        <button class="btn-submit" onclick="verifyAdmin()" data-i18n="btnEnter">دخول</button>
+    </div>
+</div>
+
+<!-- Admin Dashboard Modal -->
+<div id="adminDashModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; background:#f8fafc;">
+        <span class="close-btn" onclick="closeModal('adminDashModal')">&times;</span>
+        <h2 style="color:var(--primary); margin-bottom:20px;" data-i18n="dashTitle">⚙️ مركز التحكم الملكي</h2>
+        
+        <div class="admin-tab">
+            <div class="tab-link active" onclick="switchAdminTab('moderation')" data-i18n="tabMod">🛡️ مراجعة الإعلانات</div>
+            <div class="tab-link" onclick="switchAdminTab('categories')" data-i18n="tabCats">📂 إدارة الأقسام</div>
+            <div class="tab-link" onclick="switchAdminTab('rules')" data-i18n="tabRules">📜 قوانين النشر</div>
+        </div>
+
+        <!-- Moderation Tab -->
+        <div id="tab-moderation" class="admin-panel-section">
+            <h4><span data-i18n="lblPending">الإعلانات قيد المراجعة</span> (<span id="pendingCount">0</span>)</h4>
+            <div id="pendingAdsList" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="tab-categories" class="admin-panel-section" style="display:none;">
+            <div class="form-group" style="display:flex; gap:10px;">
+                <input type="text" id="newCatNameAR" class="form-input" placeholder="اسم القسم بالعربي">
+                <input type="text" id="newCatNameEN" class="form-input" placeholder="Category Name in EN">
+                <button class="btn-submit" style="width:auto;" onclick="addCategory()" data-i18n="btnAddCat">إضافة ➕</button>
+            </div>
+            <ul class="rules-list" id="catsList" style="margin-top:20px;"></ul>
+        </div>
+
+        <!-- Rules Tab -->
+        <div id="tab-rules" class="admin-panel-section" style="display:none;">
+            <div class="form-group" style="display:flex; gap:10px;">
+                <input type="text" id="newRuleText" class="form-input" placeholder="اكتب قانوناَ جديداً / Write a new rule">
+                <button class="btn-submit btn-danger" style="width:auto;" onclick="addRule()" data-i18n="btnBlock">حظر ❌</button>
+            </div>
+            <ul class="rules-list" id="rulesList" style="margin-top:20px;"></ul>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // === CONFIGURATION ===
+    const ADMIN_PASS = "KingMamlaka2026"; 
+    
+    // Translations Dictionary
+    const translations = {
+        ar: {
+            siteTitle: "سوق المملكة",
+            home: "الرئيسية", search: "بحث", fav: "المفضلة", profile: "حسابي",
+            addAdTitle: "➕ أضف إعلانك", lblTitle: "العنوان *", lblCat: "الفئة *", lblCondition: "الحالة *",
+            optNew: "جديد", optUsed: "مستعمل", lblPrice: "السعر ($)", lblDesc: "وصف مختصر", lblPhone: "رقم الواتساب *",
+            termsText: "أوافق على شروط النشر وأتعهد بعدم مخالفة القوانين.", btnSubmit: "إرسال للمراجعة ⏳",
+            adminLoginTitle: "🔒 دخول المدير", btnEnter: "دخول", dashTitle: "⚙️ مركز التحكم الملكي",
+            tabMod: "🛡️ مراجعة الإعلانات", tabCats: "📂 إدارة الأقسام", tabRules: "📜 قوانين النشر",
+            lblPending: "الإعلانات قيد المراجعة", btnAddCat: "إضافة ➕", btnBlock: "حظر ❌",
+            noAds: "لا توجد إعلانات منشورة حالياً.", contactWa: "تواصل عبر واتساب:",
+            successMsg: "✅ تم إرسال إعلانك بنجاح!\n\nسيقوم المشرف بمراجعته قريباَ."
+        },
+        en: {
+            siteTitle: "Mamlaka Market",
+            home: "Home", search: "Search", fav: "Favorites", profile: "Profile",
+            addAdTitle: "➕ Add Your Ad", lblTitle: "Title *", lblCat: "Category *", lblCondition: "Condition *",
+            optNew: "New", optUsed: "Used", lblPrice: "Price ($)", lblDesc: "Short Description", lblPhone: "WhatsApp Number *",
+            termsText: "I agree to the posting terms and pledge not to violate laws.", btnSubmit: "Send for Review ⏳",
+            adminLoginTitle: "🔒 Admin Login", btnEnter: "Enter", dashTitle: "⚙️ Royal Control Center",
+            tabMod: "🛡️ Moderate Ads", tabCats: "📂 Manage Categories", tabRules: "📜 Posting Rules",
+            lblPending: "Pending Ads", btnAddCat: "Add ➕", btnBlock: "Block ❌",
+            noAds: "No published ads currently.", contactWa: "Contact via WhatsApp:",
+            successMsg: "✅ Your ad has been submitted successfully!\n\nThe moderator will review it soon."
+        }
+    };
+
+    let currentLang = 'ar'; // Default language
+
+    // Default Data Structure with Bilingual Categories
+    let appState = {
+        categories: [
+            { id: 'cars', ar: "سيارات ودراجات", en: "Cars & Motorcycles" },
+            { id: 'realestate', ar: "عقارات وإيجارات", en: "Real Estate & Rentals" },
+            { id: 'electronics', ar: "إلكترونيات وجوالات", en: "Electronics & Mobiles" },
+            { id: 'fashion', ar: "ملابس وأحذية", en: "Fashion & Shoes" },
+            { id: 'kids', ar: "ألعاب أطفال ومستلزمات", en: "Kids Toys & Supplies" },
+            { id: 'construction', ar: "مواد بناء وحدادة ونجارة", en: "Construction & Hardware" },
+            { id: 'painting', ar: "دهانات وأدوات صحية", en: "Painting & Sanitary" },
+            { id: 'tailoring', ar: "مشاغل خياطة وتصليح", en: "Tailoring & Repair Shops" },
+            { id: 'wholesale', ar: "بيع بالجملة", en: "Wholesale Suppliers" },
+            { id: 'services', ar: "خدمات عامة وسمنات", en: "General Services & Towing" },
+            { id: 'other', ar: "متفرقات", en: "Miscellaneous" }
+        ],
+        rules: [
+            "يمنع نشر المحتوى الإباحي أو المخالف للآداب.",
+            "No adult or offensive content allowed.",
+            "يمنع الإعلان عن الأسلحة والمخدرات.",
+            "Weapons and drugs advertisements are prohibited.",
+            "الإعلانات الكاذبة تؤدي للحظر الدائم.",
+            "False advertising results in permanent ban."
+        ],
+        ads: [] 
+    };
+
+    // Load State
+    try {
+        const savedState = localStorage.getItem('mamlaka_global_v4');
+        if(savedState) {
+            appState = JSON.parse(savedState);
+        } else {
+            // Init dummy data
+            appState.ads.push({
+                id: Date.now(), title: "Toyota Corolla 2018", catId: 'cars', cond: 'used', price: "$8500", desc: "Clean condition", phone: "+963999...", status: 'pending', timestamp: new Date().toLocaleString()
+            });
+            saveState();
+        }
+    } catch(e) {
+        console.error("Error loading state", e);
+    }
+
+    function saveState() {
+        localStorage.setItem('mamlaka_global_v4', JSON.stringify(appState));
+        renderUI();
+    }
+
+    // === LANGUAGE LOGIC ===
+    function toggleLanguage() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = currentLang;
+        updateUIText();
+        renderCategories(); 
+        renderAds(); 
+    }
+
+    function t(key) {
+        return translations[currentLang][key] || key;
+    }
+
+    function updateUIText() {
+        document.getElementById('siteTitle').innerText = t('siteTitle');
+        document.getElementById('currentLangLabel').innerText = currentLang === 'ar' ? 'EN' : 'ع';
+        
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            el.innerText = t(el.getAttribute('data-i18n'));
+        });
+    }
+
+    // === RENDERING LOGIC ===
+    function renderUI() {
+        updateUIText();
+        renderCategories();
+        renderAds();
+        renderAdminPending();
+        renderAdminCats();
+        renderAdminRules();
+    }
+
+    function renderCategories() {
+        const container = document.getElementById('catContainer');
+        const select = document.getElementById('userCat');
+        
+        container.innerHTML = '';
+        select.innerHTML = '<option value="">-- Select Category --</option>';
+
+        appState.categories.forEach(cat => {
+            const displayName = currentLang === 'ar' ? cat.ar : cat.en;
+            
+            const pill = document.createElement('div');
+            pill.className = 'cat-pill';
+            pill.innerText = displayName;
+            pill.onclick = () => filterAds(cat.id);
+            container.appendChild(pill);
+
+            const opt = document.createElement('option');
+            opt.value = cat.id;
+            opt.innerText = displayName;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderAds(filterCatId = null) {
+        const container = document.getElementById('adsContainer');
+        container.innerHTML = '';
+
+        const visibleAds = appState.ads.filter(ad => ad.status === 'approved');
+        const finalAds = filterCatId ? visibleAds.filter(ad => ad.catId === filterCatId) : visibleAds;
+
+        if(finalAds.length === 0) {
+            container.innerHTML = `<p style="grid-column: span 3; text-align:center; color:#999;">${t('noAds')}</p>`;
+            return;
+        }
+
+        finalAds.forEach(ad => {
+            const card = document.createElement('div');
+            card.className = 'ad-card';
+            const badgeClass = ad.cond === 'new' ? 'badge-new' : 'badge-used';
+            const badgeText = ad.cond === 'new' ? (currentLang==='ar'?'جديد':'NEW') : (currentLang==='ar'?'مستعمل':'USED');
+            
+            card.innerHTML = `
+                <span class="${badgeClass}">${badgeText}</span>
+                <img src="https://via.placeholder.com/300x200/e2e8f0/1e293b?text=${encodeURIComponent(ad.title)}" alt="${ad.title}" class="ad-img">
+                <div class="ad-info">
+                    <h3 class="ad-title">${ad.title}</h3>
+                    <p class="ad-price">${ad.price || 'Negotiable'}</p>
+                    <p class="ad-location">${getCatNameById(ad.catId)}</p>
+                </div>
+            `;
+            card.onclick = () => alert(`${t('contactWa')} ${ad.phone}`);
+            container.appendChild(card);
+        });
+    }
+
+    function getCatNameById(id) {
+        const cat = appState.categories.find(c => c.id === id);
+        return cat ? (currentLang === 'ar' ? cat.ar : cat.en) : id;
+    }
+
+    function filterAds(catId) {
+        renderAds(catId);
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // === USER ACTIONS ===
+    function openPostModal() { document.getElementById('postModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function handleUserSubmission(e) {
+        e.preventDefault();
+        const newAd = {
+            id: Date.now(),
+            title: document.getElementById('userTitle').value,
+            catId: document.getElementById('userCat').value,
+            cond: document.getElementById('userCond').value,
+            price: document.getElementById('userPrice').value,
+            desc: document.getElementById('userDesc').value,
+            phone: document.getElementById('userPhone').value,
+            status: 'pending',
+            timestamp: new Date().toLocaleString()
+        };
+        appState.ads.unshift(newAd); 
+        saveState();
+        closeModal('postModal');
+        e.target.reset();
+        alert(t('successMsg'));
+    }
+
+    // === ADMIN LOGIC ===
+    function openAdminLogin() { document.getElementById('adminLoginModal').style.display = 'flex'; }
+
+    function verifyAdmin() {
+        if(document.getElementById('adminPassInput').value === ADMIN_PASS) {
+            closeModal('adminLoginModal');
+            document.getElementById('adminDashModal').style.display = 'flex';
+            switchAdminTab('moderation');
+        } else {
+            alert("Wrong Password!");
+        }
+    }
+
+    function switchAdminTab(tabId) {
+        document.querySelectorAll('.admin-panel-section').forEach(el => el.style.display = 'none');
+        document.getElementById(`tab-${tabId}`).style.display = 'block';
+        document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
+        const tabs = document.querySelectorAll('.tab-link');
+        tabs.forEach(t => { if(t.getAttribute('onclick').includes(tabId)) t.classList.add('active'); });
+    }
+
+    // --- Moderation ---
+    function renderAdminPending() {
+        const list = document.getElementById('pendingAdsList');
+        const countSpan = document.getElementById('pendingCount');
+        list.innerHTML = '';
+        const pending = appState.ads.filter(a => a.status === 'pending');
+        countSpan.innerText = pending.length;
+
+        if(pending.length === 0) {
+            list.innerHTML = '<p style="color:green;">All clear! 🎉</p>';
+            return;
+        }
+
+        pending.forEach(ad => {
+            const item = document.createElement('div');
+            item.className = 'pending-ad-item';
+            item.innerHTML = `
+                <strong>${ad.title}</strong> (${getCatNameById(ad.catId)})<br>
+                <small>Price: ${ad.price} | Cond: ${ad.cond.toUpperCase()}</small><br>
+                <small style="color:red;">Phone: ${ad.phone}</small>
+                <div class="action-row">
+                    <button class="action-btn-small" style="background:var(--success); color:white;" onclick="approveAd(${ad.id})">Approve ✅</button>
+                    <button class="action-btn-small" style="background:var(--danger); color:white;" onclick="rejectAd(${ad.id})">Reject ❌</button>
+                </div>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    function approveAd(id) {
+        const idx = appState.ads.findIndex(a => a.id === id);
+        if(idx > -1) { appState.ads[idx].status = 'approved'; saveState(); alert("Published."); }
+    }
+
+    function rejectAd(id) {
+        const reason = prompt("Reason?");
+        const idx = appState.ads.findIndex(a => a.id === id);
+        if(idx > -1) { appState.ads.splice(idx, 1); saveState(); alert("Deleted."); }
+    }
+
+    // --- Categories Management ---
+    function renderAdminCats() {
+        const list = document.getElementById('catsList');
+        list.innerHTML = '';
+        appState.categories.forEach((cat, index) => {
+            const li = document.createElement('li');
+            li.className = 'rule-item'; 
+            li.innerHTML = `
+                <span>[AR]: ${cat.ar} <br> [EN]: ${cat.en}</span>
+                <span class="del-rule" onclick="deleteCategory(${index})">Delete 🗑️</span>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function addCategory() {
+        const valAR = document.getElementById('newCatNameAR').value.trim();
+        const valEN = document.getElementById('newCatNameEN').value.trim();
+        if(valAR && valEN) {
+            const newId = valEN.toLowerCase().replace(/[^a-z0-9]/g, '');
+            appState.categories.push({ id: newId, ar: valAR, en: valEN });
+            saveState();
+            document.getElementById('newCatNameAR').value = '';
+            document.getElementById('newCatNameEN').value = '';
+        }
+    }
+
+    function deleteCategory(index) {
+        if(confirm("Delete this category?")) {
+            appState.categories.splice(index, 1);
+            saveState();
+        }
+    }
+
+    // --- Rules Management ---
+    function renderAdminRules() {
+        const list = document.getElementById('rulesList');
+        list.innerHTML = '';
+        appState.rules.forEach((rule, index) => {
+            const li = document.createElement('li');
+            li.className = 'rule-item';
+            li.innerHTML = `<span>${rule}</span><span class="del-rule" onclick="deleteRule(${index})">Del 🗑️</span>`;
+            list.appendChild(li);
+        });
+    }
+
+    function addRule() {
+        const val = document.getElementById('newRuleText').value.trim();
+        if(val) { appState.rules.push(val); saveState(); document.getElementById('newRuleText').value = ''; }
+    }
+
+    function deleteRule(index) { appState.rules.splice(index, 1); saveState(); }
+
+    // Initial Render
+    renderUI();
+
+</script>
+</body>
+</html>
