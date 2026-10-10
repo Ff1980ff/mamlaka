@@ -83,15 +83,20 @@
             cursor: pointer; z-index: 999; border: none;
         }
 
-        /* Secret Admin Trigger (New Addition) */
+        /* ✅ FIXED: Secret Admin Trigger Button (Raised above nav bar) */
         #secretAdminBtn {
-            position: fixed; bottom: 20px; left: 20px;
-            width: 40px; height: 40px; background: rgba(0,0,0,0.5); color: white;
+            position: fixed; 
+            bottom: 85px; /* ⬆️ Raised to clear the bottom nav (which is ~70px high) */
+            left: 20px;   /* Left side for RTL layout visibility */
+            width: 45px; height: 45px; 
+            background: var(--primary); color: white;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; opacity: 0.3; transition: 0.3s; z-index: 999;
-            border: 1px solid #fff; font-size: 1.2rem;
+            cursor: pointer; opacity: 0.9; transition: 0.3s; 
+            z-index: 1001; /* ⬆️ Higher than nav bar (1000) and FAB (999) */
+            border: 2px solid var(--accent); font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        #secretAdminBtn:hover { opacity: 1; background: var(--primary); }
+        #secretAdminBtn:hover { opacity: 1; transform: scale(1.1); }
 
         /* Modals General Style */
         .modal-overlay {
@@ -115,7 +120,6 @@
             border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;
         }
         .btn-danger { background: var(--danger); }
-        .btn-warning { background: var(--warning); color: black; }
 
         /* Admin Panel Specifics */
         .admin-tab {
@@ -143,23 +147,18 @@
 
 <header>
     <div class="logo" onclick="location.reload()">👑 سوق المملكة</div>
-    <!-- Removed old admin trigger from here -->
 </header>
 
 <!-- Dynamic Categories Container -->
-<div class="categories-scroll" id="catContainer">
-    <!-- Will be populated by JS -->
-</div>
+<div class="categories-scroll" id="catContainer"></div>
 
-<main id="adsContainer" class="ads-grid">
-    <!-- Ads will appear here based on status -->
-</main>
+<main id="adsContainer" class="ads-grid"></main>
 
 <button class="fab-post" onclick="openPostModal()">
     <i class="fas fa-plus"></i>
 </button>
 
-<!-- ✅ NEW: Secret Admin Trigger Button (Bottom Left Corner) -->
+<!-- ✅ FIXED: Secret Admin Trigger Button (Bottom Left Corner, Above Nav) -->
 <div id="secretAdminBtn" onclick="openAdminLogin()" title="لوحة التحكم السرية">⚙️</div>
 
 <nav class="bottom-nav">
@@ -182,9 +181,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label">الفئة *</label>
-                <select id="userCat" class="form-select" required>
-                    <!-- Options loaded via JS -->
-                </select>
+                <select id="userCat" class="form-select" required></select>
             </div>
             <div class="form-group">
                 <label class="form-label">السعر ($)</label>
@@ -208,9 +205,6 @@
             </div>
 
             <button type="submit" class="btn-submit">إرسال للمراجعة ⏳</button>
-            <p style="font-size:0.75rem; color:#666; text-align:center; margin-top:10px;">
-                * سيتم مراجعة إعلانك من قبل الإدارة خلال دقائق.
-            </p>
         </form>
     </div>
 </div>
@@ -255,7 +249,7 @@
         <!-- Tab 3: Rules Management -->
         <div id="tab-rules" class="admin-panel-section" style="display:none;">
             <div class="form-group" style="display:flex; gap:10px;">
-                <input type="text" id="newRuleText" class="form-input" placeholder="اكتب قانوناً جديداً">
+                <input type="text" id="newRuleText" class="form-input" placeholder="اكتب قانوناَ جديداً">
                 <button class="btn-submit btn-danger" style="width:auto;" onclick="addRule()">حظر ❌</button>
             </div>
             <ul class="rules-list" id="rulesList" style="margin-top:20px;"></ul>
@@ -266,7 +260,7 @@
 
 <script>
     // === CONFIGURATION ===
-    const ADMIN_PASS = "KingMamlaka2026"; // Change this!
+    const ADMIN_PASS = "KingMamlaka2026"; 
     
     // Default Data Structure
     let appState = {
@@ -277,13 +271,17 @@
             "يمنع الإعلان عن مواد ممنوعة قانونياَ (أسلحة، مخدرات).",
             "الإعلانات الكاذبة أو الاحتيالية ستؤدي لحظر دائم."
         ],
-        ads: [] // Array to store submitted ads
+        ads: [] 
     };
 
     // Load from LocalStorage if exists
-    const savedState = localStorage.getItem('mamlaka_market_state');
+    const savedState = localStorage.getItem('mamlaka_market_state_v3'); // Changed key to force refresh
     if(savedState) {
-        appState = JSON.parse(savedState);
+        try {
+            appState = JSON.parse(savedState);
+        } catch(e) {
+            console.error("Error loading state", e);
+        }
     } else {
         // Initialize with some dummy pending ads for demo
         appState.ads.push({
@@ -293,14 +291,14 @@
             price: "$8500",
             desc: "نظيفة جداُ",
             phone: "+963999...",
-            status: "pending", // pending, approved, rejected
+            status: "pending", 
             timestamp: new Date().toLocaleString()
         });
         saveState();
     }
 
     function saveState() {
-        localStorage.setItem('mamlaka_market_state', JSON.stringify(appState));
+        localStorage.setItem('mamlaka_market_state_v3', JSON.stringify(appState));
         renderUI();
     }
 
@@ -317,19 +315,16 @@
         const container = document.getElementById('catContainer');
         const select = document.getElementById('userCat');
         
-        // Clear existing
         container.innerHTML = '';
         select.innerHTML = '<option value="">اختر الفئة...</option>';
 
         appState.categories.forEach(cat => {
-            // Pill in header
             const pill = document.createElement('div');
             pill.className = 'cat-pill';
             pill.innerText = cat;
             pill.onclick = () => filterAds(cat);
             container.appendChild(pill);
 
-            // Option in form
             const opt = document.createElement('option');
             opt.value = cat;
             opt.innerText = cat;
@@ -341,10 +336,7 @@
         const container = document.getElementById('adsContainer');
         container.innerHTML = '';
 
-        // Show only APPROVED ads to public
         const visibleAds = appState.ads.filter(ad => ad.status === 'approved');
-        
-        // Apply category filter if clicked
         const finalAds = filterCat ? visibleAds.filter(ad => ad.cat === filterCat) : visibleAds;
 
         if(finalAds.length === 0) {
@@ -370,7 +362,6 @@
 
     function filterAds(cat) {
         renderAds(cat);
-        // Highlight active pill visually (simple logic)
         document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
         event.target.classList.add('active');
     }
@@ -391,7 +382,7 @@
             status: 'pending',
             timestamp: new Date().toLocaleString()
         };
-        appState.ads.unshift(newAd); // Add to top
+        appState.ads.unshift(newAd); 
         saveState();
         closeModal('postModal');
         e.target.reset();
@@ -418,7 +409,11 @@
         document.getElementById(`tab-${tabId}`).style.display = 'block';
         
         document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
-        event.target.classList.add('active');
+        // Find the clicked element safely
+        const tabs = document.querySelectorAll('.tab-link');
+        tabs.forEach(t => {
+           if(t.getAttribute('onclick').includes(tabId)) t.classList.add('active');
+        });
     }
 
     // --- Moderation Tab ---
@@ -464,7 +459,7 @@
         const reason = prompt("سبب الرفض (اختياري):");
         const adIndex = appState.ads.findIndex(a => a.id === id);
         if(adIndex > -1) {
-            appState.ads.splice(adIndex, 1); // Delete permanently or mark as rejected
+            appState.ads.splice(adIndex, 1); 
             saveState();
             alert("تم حذف الإعلان المرفوض.");
         }
@@ -476,7 +471,7 @@
         list.innerHTML = '';
         appState.categories.forEach((cat, index) => {
             const li = document.createElement('li');
-            li.className = 'rule-item'; // Reusing style
+            li.className = 'rule-item'; 
             li.innerHTML = `
                 <span>${cat}</span>
                 <span class="del-rule" onclick="deleteCategory(${index})">حذف 🗑️</span>
