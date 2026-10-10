@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوق المملكة | المنصة المحلية الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #d97706; /* ذهبي */
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg); color: var(--primary); overflow-x: hidden; padding-bottom: 70px; }
+
+        /* Header */
+        header {
+            background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); cursor: pointer;}
+        
+        /* Categories Scroll (Dynamic) */
+        .categories-scroll {
+            display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+            background: var(--white); border-bottom: 1px solid #eee;
+        }
+        .cat-pill {
+            background: #f1f5f9; border: 1px solid transparent; padding: 8px 15px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: bold; color: var(--gray); cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .cat-pill.active { background: var(--primary); color: white; }
+        .cat-pill:hover:not(.active) { background: #e2e8f0; }
+
+        /* Ads Grid */
+        .ads-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px;
+        }
+        .ad-card {
+            background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: 0.3s; cursor: pointer; position: relative; border: 1px solid #eee;
+        }
+        .ad-img { height: 120px; object-fit: cover; width: 100%; background: #eee; }
+        .ad-info { padding: 10px; }
+        .ad-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; line-height: 1.3; }
+        .ad-price { color: var(--accent); font-weight: 900; font-size: 1rem; }
+        .ad-location { font-size: 0.75rem; color: var(--gray); }
+        
+        /* Status Badges */
+        .status-badge {
+            position: absolute; top: 5px; right: 5px; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold;
+        }
+        .st-pending { background: var(--warning); color: black; }
+        .st-approved { background: var(--success); color: white; }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--white);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; color: var(--gray); text-decoration: none;
+            font-size: 0.7rem; gap: 2px;
+        }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item.active { color: var(--accent); }
+        
+        /* FAB Post */
+        .fab-post {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: black; width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 5px 15px rgba(217, 119, 6, 0.4);
+            cursor: pointer; z-index: 999; border: none;
+        }
+
+        /* Secret Admin Trigger (New Addition) */
+        #secretAdminBtn {
+            position: fixed; bottom: 20px; left: 20px;
+            width: 40px; height: 40px; background: rgba(0,0,0,0.5); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0.3; transition: 0.3s; z-index: 999;
+            border: 1px solid #fff; font-size: 1.2rem;
+        }
+        #secretAdminBtn:hover { opacity: 1; background: var(--primary); }
+
+        /* Modals General Style */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto; position: relative;
+        }
+        .close-btn { position: absolute; top: 15px; left: 15px; cursor: pointer; font-size: 1.5rem; color: #aaa; }
+        
+        /* Forms */
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
+        }
+        .btn-submit {
+            width: 100%; padding: 12px; background: var(--success); color: white; border: none;
+            border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;
+        }
+        .btn-danger { background: var(--danger); }
+        .btn-warning { background: var(--warning); color: black; }
+
+        /* Admin Panel Specifics */
+        .admin-tab {
+            display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;
+        }
+        .tab-link { cursor: pointer; padding: 5px 10px; border-radius: 5px; font-weight: bold; color: var(--gray); }
+        .tab-link.active { background: var(--primary); color: white; }
+        
+        .rules-list { list-style: none; padding: 0; }
+        .rule-item { 
+            background: #fef2f2; border-right: 4px solid var(--danger); padding: 10px; margin-bottom: 10px; 
+            border-radius: 4px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .del-rule { color: var(--danger); cursor: pointer; font-weight: bold; }
+
+        .pending-ad-item {
+            background: #fffbeb; border: 1px solid #fde68a; padding: 15px; margin-bottom: 10px; border-radius: 8px;
+        }
+        .action-row { display: flex; gap: 10px; margin-top: 10px; }
+        .action-btn-small { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="location.reload()">👑 سوق المملكة</div>
+    <!-- Removed old admin trigger from here -->
+</header>
+
+<!-- Dynamic Categories Container -->
+<div class="categories-scroll" id="catContainer">
+    <!-- Will be populated by JS -->
+</div>
+
+<main id="adsContainer" class="ads-grid">
+    <!-- Ads will appear here based on status -->
+</main>
+
+<button class="fab-post" onclick="openPostModal()">
+    <i class="fas fa-plus"></i>
+</button>
+
+<!-- ✅ NEW: Secret Admin Trigger Button (Bottom Left Corner) -->
+<div id="secretAdminBtn" onclick="openAdminLogin()" title="لوحة التحكم السرية">⚙️</div>
+
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-search"></i><span>بحث</span></a>
+    <a href="#" class="nav-item" style="opacity:0;"></a>
+    <a href="#" class="nav-item"><i class="far fa-heart"></i><span>المفضلة</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-user"></i><span>حسابي</span></a>
+</nav>
+
+<!-- === USER POST MODAL === -->
+<div id="postModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('postModal')">&times;</span>
+        <h2 style="margin-bottom:20px;">➕ أضف إعلانك</h2>
+        <form onsubmit="handleUserSubmission(event)">
+            <div class="form-group">
+                <label class="form-label">العنوان *</label>
+                <input type="text" id="userTitle" class="form-input" required placeholder="مثلاَ: تويوتا كامري نظيفة">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الفئة *</label>
+                <select id="userCat" class="form-select" required>
+                    <!-- Options loaded via JS -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">السعر ($)</label>
+                <input type="number" id="userPrice" class="form-input" placeholder="اتركه فارغاَ للتفاوض">
+            </div>
+             <div class="form-group">
+                <label class="form-label">وصف مختصر</label>
+                <textarea id="userDesc" class="form-textarea" rows="3" placeholder="تفاصيل إضافية..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم الواتساب *</label>
+                <input type="tel" id="userPhone" class="form-input" required placeholder="+9639xxxxxxxxx">
+            </div>
+            
+            <!-- Terms Checkbox -->
+            <div class="form-group" style="background:#f1f5f9; padding:10px; border-radius:8px;">
+                <label style="font-size:0.85rem; display:flex; align-items:start; gap:5px;">
+                    <input type="checkbox" id="agreeTerms" required style="margin-top:3px;">
+                    <span>أوافق على <strong>شروط النشر</strong> وأتعهد بعدم مخالفة القوانين.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-submit">إرسال للمراجعة ⏳</button>
+            <p style="font-size:0.75rem; color:#666; text-align:center; margin-top:10px;">
+                * سيتم مراجعة إعلانك من قبل الإدارة خلال دقائق.
+            </p>
+        </form>
+    </div>
+</div>
+
+<!-- === ADMIN LOGIN MODAL === -->
+<div id="adminLoginModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 350px; text-align:center;">
+        <span class="close-btn" onclick="closeModal('adminLoginModal')">&times;</span>
+        <h3>🔒 دخول المدير</h3>
+        <input type="password" id="adminPassInput" placeholder="كلمة المرور..." style="width:100%; padding:10px; margin:15px 0; border-radius:5px; border:1px solid #ccc;">
+        <button class="btn-submit" onclick="verifyAdmin()">دخول</button>
+    </div>
+</div>
+
+<!-- === ADMIN DASHBOARD MODAL === -->
+<div id="adminDashModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; background:#f8fafc;">
+        <span class="close-btn" onclick="closeModal('adminDashModal')">&times;</span>
+        <h2 style="color:var(--primary); margin-bottom:20px;">⚙️ مركز التحكم الملكي</h2>
+        
+        <div class="admin-tab">
+            <div class="tab-link active" onclick="switchAdminTab('moderation')">🛡️ مراجعة الإعلانات</div>
+            <div class="tab-link" onclick="switchAdminTab('categories')">📂 إدارة الأقسام</div>
+            <div class="tab-link" onclick="switchAdminTab('rules')">📜 قوانين النشر</div>
+        </div>
+
+        <!-- Tab 1: Moderation -->
+        <div id="tab-moderation" class="admin-panel-section">
+            <h4>الإعلانات قيد المراجعة (<span id="pendingCount">0</span>)</h4>
+            <div id="pendingAdsList" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Tab 2: Categories Management -->
+        <div id="tab-categories" class="admin-panel-section" style="display:none;">
+            <div class="form-group" style="display:flex; gap:10px;">
+                <input type="text" id="newCatName" class="form-input" placeholder="اسم القسم الجديد">
+                <button class="btn-submit" style="width:auto;" onclick="addCategory()">إضافة ➕</button>
+            </div>
+            <ul class="rules-list" id="catsList" style="margin-top:20px;"></ul>
+        </div>
+
+        <!-- Tab 3: Rules Management -->
+        <div id="tab-rules" class="admin-panel-section" style="display:none;">
+            <div class="form-group" style="display:flex; gap:10px;">
+                <input type="text" id="newRuleText" class="form-input" placeholder="اكتب قانوناً جديداً">
+                <button class="btn-submit btn-danger" style="width:auto;" onclick="addRule()">حظر ❌</button>
+            </div>
+            <ul class="rules-list" id="rulesList" style="margin-top:20px;"></ul>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // === CONFIGURATION ===
+    const ADMIN_PASS = "KingMamlaka2026"; // Change this!
+    
+    // Default Data Structure
+    let appState = {
+        categories: ["سيارات", "عقارات", "سوبر ماركت", "صناعات", "خدمات"],
+        rules: [
+            "يمنع منعاَ باتاَ نشر أي محتوى إباحي أو مخل بالآداب العامة.",
+            "يمنع نشر بيانات شخصية حساسة (بطاقات هوية، عناوين دقيقة جداَ).",
+            "يمنع الإعلان عن مواد ممنوعة قانونياَ (أسلحة، مخدرات).",
+            "الإعلانات الكاذبة أو الاحتيالية ستؤدي لحظر دائم."
+        ],
+        ads: [] // Array to store submitted ads
+    };
+
+    // Load from LocalStorage if exists
+    const savedState = localStorage.getItem('mamlaka_market_state');
+    if(savedState) {
+        appState = JSON.parse(savedState);
+    } else {
+        // Initialize with some dummy pending ads for demo
+        appState.ads.push({
+            id: Date.now(),
+            title: "تويوتا كورولا 2018",
+            cat: "سيارات",
+            price: "$8500",
+            desc: "نظيفة جداُ",
+            phone: "+963999...",
+            status: "pending", // pending, approved, rejected
+            timestamp: new Date().toLocaleString()
+        });
+        saveState();
+    }
+
+    function saveState() {
+        localStorage.setItem('mamlaka_market_state', JSON.stringify(appState));
+        renderUI();
+    }
+
+    // === RENDERING LOGIC ===
+    function renderUI() {
+        renderCategories();
+        renderAds();
+        renderAdminPending();
+        renderAdminCats();
+        renderAdminRules();
+    }
+
+    function renderCategories() {
+        const container = document.getElementById('catContainer');
+        const select = document.getElementById('userCat');
+        
+        // Clear existing
+        container.innerHTML = '';
+        select.innerHTML = '<option value="">اختر الفئة...</option>';
+
+        appState.categories.forEach(cat => {
+            // Pill in header
+            const pill = document.createElement('div');
+            pill.className = 'cat-pill';
+            pill.innerText = cat;
+            pill.onclick = () => filterAds(cat);
+            container.appendChild(pill);
+
+            // Option in form
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.innerText = cat;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderAds(filterCat = null) {
+        const container = document.getElementById('adsContainer');
+        container.innerHTML = '';
+
+        // Show only APPROVED ads to public
+        const visibleAds = appState.ads.filter(ad => ad.status === 'approved');
+        
+        // Apply category filter if clicked
+        const finalAds = filterCat ? visibleAds.filter(ad => ad.cat === filterCat) : visibleAds;
+
+        if(finalAds.length === 0) {
+            container.innerHTML = '<p style="grid-column: span 3; text-align:center; color:#999;">لا توجد إعلانات منشورة حالياً.</p>';
+            return;
+        }
+
+        finalAds.forEach(ad => {
+            const card = document.createElement('div');
+            card.className = 'ad-card';
+            card.innerHTML = `
+                <img src="https://via.placeholder.com/300x200/e2e8f0/1e293b?text=${encodeURIComponent(ad.title)}" alt="${ad.title}" class="ad-img">
+                <div class="ad-info">
+                    <h3 class="ad-title">${ad.title}</h3>
+                    <p class="ad-price">${ad.price || 'قابل للتفاوض'}</p>
+                    <p class="ad-location">${ad.cat}</p>
+                </div>
+            `;
+            card.onclick = () => alert(`تواصل عبر واتساب: ${ad.phone}`);
+            container.appendChild(card);
+        });
+    }
+
+    function filterAds(cat) {
+        renderAds(cat);
+        // Highlight active pill visually (simple logic)
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // === USER ACTIONS ===
+    function openPostModal() { document.getElementById('postModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function handleUserSubmission(e) {
+        e.preventDefault();
+        const newAd = {
+            id: Date.now(),
+            title: document.getElementById('userTitle').value,
+            cat: document.getElementById('userCat').value,
+            price: document.getElementById('userPrice').value,
+            desc: document.getElementById('userDesc').value,
+            phone: document.getElementById('userPhone').value,
+            status: 'pending',
+            timestamp: new Date().toLocaleString()
+        };
+        appState.ads.unshift(newAd); // Add to top
+        saveState();
+        closeModal('postModal');
+        e.target.reset();
+        alert("✅ تم إرسال إعلانك بنجاح!\n\nسيقوم المشرف بمراجعته قريباَ.");
+    }
+
+    // === ADMIN LOGIC ===
+    function openAdminLogin() {
+        document.getElementById('adminLoginModal').style.display = 'flex';
+    }
+
+    function verifyAdmin() {
+        if(document.getElementById('adminPassInput').value === ADMIN_PASS) {
+            closeModal('adminLoginModal');
+            document.getElementById('adminDashModal').style.display = 'flex';
+            switchAdminTab('moderation');
+        } else {
+            alert("كلمة مرور خاطئة!");
+        }
+    }
+
+    function switchAdminTab(tabId) {
+        document.querySelectorAll('.admin-panel-section').forEach(el => el.style.display = 'none');
+        document.getElementById(`tab-${tabId}`).style.display = 'block';
+        
+        document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // --- Moderation Tab ---
+    function renderAdminPending() {
+        const list = document.getElementById('pendingAdsList');
+        const countSpan = document.getElementById('pendingCount');
+        list.innerHTML = '';
+        
+        const pending = appState.ads.filter(a => a.status === 'pending');
+        countSpan.innerText = pending.length;
+
+        if(pending.length === 0) {
+            list.innerHTML = '<p style="color:green;">لا توجد إعلانات معلقة. العمل منجز! 🎉</p>';
+            return;
+        }
+
+        pending.forEach(ad => {
+            const item = document.createElement('div');
+            item.className = 'pending-ad-item';
+            item.innerHTML = `
+                <strong>${ad.title}</strong> (${ad.cat})<br>
+                <small>السعر: ${ad.price} | التاريخ: ${ad.timestamp}</small><br>
+                <small style="color:red;">الهاتف: ${ad.phone}</small>
+                <div class="action-row">
+                    <button class="action-btn-small" style="background:var(--success); color:white;" onclick="approveAd(${ad.id})">قبول ✅</button>
+                    <button class="action-btn-small" style="background:var(--danger); color:white;" onclick="rejectAd(${ad.id})">رفض ❌</button>
+                </div>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    function approveAd(id) {
+        const adIndex = appState.ads.findIndex(a => a.id === id);
+        if(adIndex > -1) {
+            appState.ads[adIndex].status = 'approved';
+            saveState();
+            alert("تم قبول الإعلان ونشره للجمهور.");
+        }
+    }
+
+    function rejectAd(id) {
+        const reason = prompt("سبب الرفض (اختياري):");
+        const adIndex = appState.ads.findIndex(a => a.id === id);
+        if(adIndex > -1) {
+            appState.ads.splice(adIndex, 1); // Delete permanently or mark as rejected
+            saveState();
+            alert("تم حذف الإعلان المرفوض.");
+        }
+    }
+
+    // --- Categories Tab ---
+    function renderAdminCats() {
+        const list = document.getElementById('catsList');
+        list.innerHTML = '';
+        appState.categories.forEach((cat, index) => {
+            const li = document.createElement('li');
+            li.className = 'rule-item'; // Reusing style
+            li.innerHTML = `
+                <span>${cat}</span>
+                <span class="del-rule" onclick="deleteCategory(${index})">حذف 🗑️</span>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function addCategory() {
+        const val = document.getElementById('newCatName').value.trim();
+        if(val && !appState.categories.includes(val)) {
+            appState.categories.push(val);
+            saveState();
+            document.getElementById('newCatName').value = '';
+        }
+    }
+
+    function deleteCategory(index) {
+        if(confirm("هل أنت متأكد؟ قد تختفي إعلانات هذه الفئة.")) {
+            appState.categories.splice(index, 1);
+            saveState();
+        }
+    }
+
+    // --- Rules Tab ---
+    function renderAdminRules() {
+        const list = document.getElementById('rulesList');
+        list.innerHTML = '';
+        appState.rules.forEach((rule, index) => {
+            const li = document.createElement('li');
+            li.className = 'rule-item';
+            li.innerHTML = `
+                <span>${rule}</span>
+                <span class="del-rule" onclick="deleteRule(${index})">حذف 🗑️</span>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function addRule() {
+        const val = document.getElementById('newRuleText').value.trim();
+        if(val) {
+            appState.rules.push(val);
+            saveState();
+            document.getElementById('newRuleText').value = '';
+        }
+    }
+
+    function deleteRule(index) {
+        appState.rules.splice(index, 1);
+        saveState();
+    }
+
+    // Initial Render
+    renderUI();
+
+</script>
+</body>
+</html>
