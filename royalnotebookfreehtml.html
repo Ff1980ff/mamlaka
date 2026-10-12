@@ -3,303 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👑 دفتر المملكة الذكي | Royal Code & Link Keeper</title>
+    <title>👑 Royal Code Manager PRO | الإصدار الملكي الكامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #050505;
-            --panel-bg: rgba(20, 20, 30, 0.9);
+            --panel-bg: rgba(20, 20, 30, 0.95);
+            --neon-gold: #ffd700; /* لون ذهبي فاخر للإصدار البرو */
             --neon-cyan: #00ffff;
-            --neon-purple: #bc13fe;
-            --gold: #ffd700;
             --text-white: #fff;
             --success: #00ff88;
             --danger: #ff4444;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-white);
-            font-family: 'Tajawal', sans-serif;
-            margin: 0; padding: 20px;
-            min-height: 100vh;
-        }
-
-        header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px;}
-        h1 { color: var(--neon-cyan); font-size: 1.8rem; margin: 0; }
+        body { background-color: var(--bg-dark); color: var(--text-white); font-family: 'Tajawal', sans-serif; margin: 0; padding: 20px; min-height: 100vh; }
         
-        /* أزرار التبديل بين الوضعيات */
-        .mode-switcher {
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;
-        }
-        .mode-btn {
-            padding: 10px 20px; border: 1px solid #444; background: transparent; color: #aaa;
-            border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold;
-        }
-        .mode-btn.active {
-            background: var(--neon-purple); color: white; border-color: var(--neon-purple);
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
-        }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--neon-gold); padding-bottom: 15px;}
+        h1 { color: var(--neon-gold); font-size: 2rem; margin: 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);}
+        .pro-badge { background: var(--neon-gold); color: black; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; vertical-align: middle;}
 
-        /* منطقة الإدخال (سواء كود أو رابط) */
-        .input-area {
-            width: 90%; max-width: 800px; margin: 0 auto 30px auto;
-            background: var(--panel-bg); border: 1px solid #333; border-radius: 12px; padding: 20px;
-            display: none; /* مخفي افتراضياً حتى يختار المستخدم وضعاً */
+        /* شاشة القفل */
+        #lockScreen {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
         }
-        .input-area.visible { display: block; animation: fadeIn 0.3s; }
+        .lock-box { background: #111; padding: 30px; border: 1px solid var(--neon-gold); border-radius: 10px; text-align: center; max-width: 300px;}
+        .lock-input { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 5px; text-align: center;}
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        textarea, input[type="text"], input[type="url"] {
-            width: 100%; padding: 12px; background: #111; border: 1px solid #444; color: #fff;
-            border-radius: 8px; font-family: inherit; box-sizing: border-box; margin-bottom: 10px;
-        }
-        textarea { height: 150px; font-family: 'Fira Code', monospace; direction: ltr; text-align: left;}
-        
-        .btn-save {
-            background: var(--success); color: black; border: none; padding: 12px 25px;
-            border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%;
-            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-save:hover { filter: brightness(1.1); transform: scale(1.02); }
-
-        /* شبكة النتائج (الدفتر المحفوظ) */
-        .results-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px; padding: 10px;
-        }
-
-        .entry-card {
-            background: var(--panel-bg);
-            border: 1px solid #333;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            transition: 0.3s;
-        }
-        .entry-card:hover { border-color: var(--neon-cyan); box-shadow: 0 5px 20px rgba(0,255,255,0.1); }
-
-        .card-header {
-            padding: 12px 15px; background: rgba(0,0,0,0.3);
+        /* أدوات التحكم العلوية */
+        .toolbar {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #333;
+            background: var(--panel-bg); padding: 10px 20px; border-radius: 10px; margin-bottom: 20px;
+            border: 1px solid #333;
         }
-        .entry-title { font-weight: bold; color: var(--gold); font-size: 1rem; word-break: break-all;}
-        .entry-type-badge { 
-            padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: bold;
-            background: #333; color: #fff;
+        .tool-btn {
+            background: transparent; border: 1px solid #555; color: #ccc;
+            padding: 8px 15px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+            font-size: 0.9rem; display: flex; align-items: center; gap: 5px;
         }
-        .badge-code { background: #e34c26; }
-        .badge-link { background: #264de4; }
+        .tool-btn:hover { border-color: var(--neon-gold); color: var(--neon-gold); }
+        .btn-export { border-color: var(--success); color: var(--success); }
+        .btn-lock { border-color: var(--danger); color: var(--danger); }
 
+        /* نفس تنسيقات البطاقات السابقة مع تحسينات طفيفة */
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .entry-card { background: var(--panel-bg); border: 1px solid #333; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .entry-card:hover { border-color: var(--neon-gold); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.1); }
+        .card-header { padding: 12px 15px; background: rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333;}
+        .entry-title { font-weight: bold; color: var(--neon-gold); font-size: 1rem; word-break: break-all;}
         .analysis-body { padding: 15px; font-size: 0.9rem; line-height: 1.6; color: #ddd; }
-        .ai-summary {
-            background: rgba(0, 255, 136, 0.1);
-            border-right: 3px solid var(--success);
-            padding: 10px; margin-top: 10px; border-radius: 4px;
-            font-size: 0.85rem;
-        }
-        
-        .preview-snippet {
-            background: #000; color: #0f0; font-family: 'Fira Code', monospace;
-            padding: 10px; border-radius: 5px; margin-top: 10px;
-            max-height: 100px; overflow-y: auto; font-size: 0.75rem; direction: ltr; text-align: left;
-            white-space: pre-wrap;
-        }
+        .ai-summary { background: rgba(255, 215, 0, 0.1); border-right: 3px solid var(--neon-gold); padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.85rem;}
+        .preview-snippet { background: #000; color: #0f0; font-family: 'Fira Code', monospace; padding: 10px; border-radius: 5px; margin-top: 10px; max-height: 100px; overflow-y: auto; font-size: 0.75rem; direction: ltr; text-align: left; white-space: pre-wrap;}
+        .actions-row { padding: 10px 15px; background: rgba(0,0,0,0.2); display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-action { padding: 5px 10px; border: 1px solid #555; background: transparent; color: #aaa; border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .btn-delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
-        .actions-row {
-            padding: 10px 15px; background: rgba(0,0,0,0.2);
-            display: flex; gap: 10px; justify-content: flex-end;
-        }
-        .btn-action {
-            padding: 5px 10px; border: 1px solid #555; background: transparent; color: #aaa;
-            border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: 0.2s;
-        }
-        .btn-action:hover { background: var(--danger); color: white; border-color: var(--danger); }
-        .btn-view-link { background: var(--neon-cyan); color: black; border:none; }
+        /* منطقة الإدخال (مخفية خلف الزر) */
+        #addModal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #1a1a2e; padding: 25px; border-radius: 15px; width: 90%; max-width: 500px; border: 1px solid var(--neon-gold); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--neon-cyan); font-size: 0.9rem; }
+        input[type="text"], textarea { width: 100%; padding: 10px; background: #111; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        textarea { height: 150px; font-family: 'Fira Code', monospace; direction: ltr; text-align: left; }
+        .btn-submit { background: var(--neon-gold); color: black; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-        #emptyState { text-align: center; color: #666; padding: 40px; display: none; }
     </style>
 </head>
 <body>
 
+<!-- شاشة القفل (تظهر فقط إذا كان هناك بيانات محفوظة) -->
+<div id="lockScreen" style="display:none;">
+    <div class="lock-box">
+        <h2 style="color:var(--neon-gold)">🔒 دفتر مقفل</h2>
+        <p style="font-size:0.9rem; color:#aaa;">أدخل كلمة المرور للوصول لمشاريعك الملكية.</p>
+        <input type="password" id="passInput" class="lock-input" placeholder="********">
+        <button onclick="unlock()" class="btn-submit" style="margin-top:10px;">فتح</button>
+        <small style="display:block; margin-top:10px; color:#666; cursor:pointer;" onclick="resetLock()">نسيت كلمة المرور؟ (سوف يحذف كل شيء)</small>
+    </div>
+</div>
+
 <header>
-    <h1><i class="fas fa-book-open"></i> دفتر المملكة الذكي</h1>
-    <p style="color:#aaa; font-size:0.9rem;">احفظ أكوادك وروابطك، وسأحللها لك تلقائياً.</p>
+    <h1><i class="fas fa-crown"></i> Royal Code Manager <span class="pro-badge">PRO</span></h1>
+    <p style="color:#aaa; font-size:0.9rem;">الإصدار الكامل: حماية، تصدير، وتحليل لا نهائي.</p>
 </header>
 
-<!-- أزرار اختيار نوع الحفظ -->
-<div class="mode-switcher">
-    <button class="mode-btn active" onclick="setMode('code')">💻 حفظ كود/ملف</button>
-    <button class="mode-btn" onclick="setMode('link')">🔗 حفظ رابط مشروع</button>
+<div class="toolbar">
+    <div style="display:flex; gap:10px;">
+        <button class="tool-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> إضافة عنصر جديد</button>
+        <button class="tool-btn btn-export" onclick="exportData()"><i class="fas fa-download"></i> تصدير نسخة احتياطية (JSON)</button>
+    </div>
+    <button class="tool-btn btn-lock" onclick="toggleLockSetting()"><i class="fas fa-shield-alt"></i> إعدادات الحماية</button>
 </div>
-
-<!-- منطقة إدخال الكود -->
-<div id="codeInputArea" class="input-area visible">
-    <label style="display:block; margin-bottom:5px; color:var(--neon-cyan);">اسم المشروع / وصف مختصر:</label>
-    <input type="text" id="codeName" placeholder="مثال: نظام العقارات v2">
-    
-    <label style="display:block; margin-bottom:5px; color:var(--neon-cyan);">الصق الكود هنا (HTML/CSS/JS):</label>
-    <textarea id="codeContent" placeholder="<!DOCTYPE html>..."></textarea>
-    
-    <button class="btn-save" onclick="saveEntry('code')">
-        <i class="fas fa-save"></i> تحليل وحفظ الكود
-    </button>
-</div>
-
-<!-- منطقة إدخال الرابط -->
-<div id="linkInputArea" class="input-area">
-    <label style="display:block; margin-bottom:5px; color:var(--neon-cyan);">عنوان المشروع:</label>
-    <input type="text" id="linkTitle" placeholder="مثال: متجر Sellix الرئيسي">
-    
-    <label style="display:block; margin-bottom:5px; color:var(--neon-cyan);">الرابط المباشر (URL):</label>
-    <input type="url" id="linkUrl" placeholder="https://...">
-    
-    <label style="display:block; margin-bottom:5px; color:var(--neon-cyan);">ملاحظات تسويقية (اختياري):</label>
-    <textarea id="linkNotes" rows="2" placeholder="اكتب النص الذي تريد استخدامه في الإعلانات..."></textarea>
-    
-    <button class="btn-save" onclick="saveEntry('link')">
-        <i class="fas fa-link"></i> حفظ الرابط والملاحظات
-    </button>
-</div>
-
-<div id="emptyState">لا توجد عناصر محفوظة بعد. ابدأ بإضافة أول كود أو رابط!</div>
 
 <main class="results-grid" id="resultsContainer">
     <!-- سيتم حقن البطاقات هنا -->
 </main>
 
+<!-- نافذة الإضافة -->
+<div id="addModal">
+    <div class="modal-content">
+        <h3 style="color:var(--neon-gold); margin-top:0;">إضافة مشروع / كود</h3>
+        <div class="form-group">
+            <label>العنوان:</label>
+            <input type="text" id="newTitle" placeholder="مثال: نظام العقارات v3">
+        </div>
+        <div class="form-group">
+            <label>النوع:</label>
+            <select id="newType" style="width:100%; padding:10px; background:#111; border:1px solid #444; color:white; border-radius:5px;">
+                <option value="code">كود برمجي (HTML/CSS/JS)</option>
+                <option value="link">رابط خارجي (URL)</option>
+            </select>
+        </div>
+        <div class="form-group" id="codeField">
+            <label>الصق الكود:</label>
+            <textarea id="newContent" placeholder="<!DOCTYPE html>..."></textarea>
+        </div>
+        <div class="form-group" id="linkField" style="display:none;">
+            <label>الرابط:</label>
+            <input type="url" id="newUrl" placeholder="https://...">
+            <label style="margin-top:10px;">ملاحظات:</label>
+            <textarea id="newNotes" rows="2" placeholder="وصف تسويقي..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="submitNewItem()">حفظ في الدفتر الملكي 👑</button>
+        <button onclick="closeModal()" style="background:transparent; border:none; color:#888; margin-top:10px; cursor:pointer; width:100%;">إلغاء</button>
+    </div>
+</div>
+
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <script>
-    // --- State Management ---
     let entries = [];
-    const STORAGE_KEY = 'royal_notebook_v2';
+    const STORAGE_KEY = 'royal_pro_data';
+    const PASS_KEY = 'royal_pro_pass';
+    let isLocked = false;
 
-    // Load from LocalStorage on start
+    // --- Initialization & Security Check ---
     window.onload = () => {
+        checkSecurity();
+        loadData();
+        renderEntries();
+    };
+
+    function checkSecurity() {
+        const savedPass = localStorage.getItem(PASS_KEY);
+        const hasData = localStorage.getItem(STORAGE_KEY);
+        
+        if(savedPass && hasData) {
+            isLocked = true;
+            document.getElementById('lockScreen').style.display = 'flex';
+        } else {
+            isLocked = false;
+        }
+    }
+
+    function unlock() {
+        const pass = document.getElementById('passInput').value;
+        const savedPass = localStorage.getItem(PASS_KEY);
+        if(pass === savedPass) {
+            isLocked = false;
+            document.getElementById('lockScreen').style.display = 'none';
+            loadData();
+            renderEntries();
+        } else {
+            alert("كلمة المرور خاطئة!");
+        }
+    }
+
+    function resetLock() {
+        if(confirm("تحذير: هذا سيحذف جميع البيانات وكلمة المرور. هل أنت متأكد؟")) {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(PASS_KEY);
+            location.reload();
+        }
+    }
+
+    function toggleLockSetting() {
+        if(!isLocked && entries.length > 0) {
+            const newPass = prompt("حدد كلمة مرور جديدة لحماية دفترك (اتركها فارغة لإلغاء الحماية):");
+            if(newPass !== null) {
+                if(newPass === "") {
+                    localStorage.removeItem(PASS_KEY);
+                    alert("تم إلغاء الحماية.");
+                } else {
+                    localStorage.setItem(PASS_KEY, newPass);
+                    alert("تم تفعيل الحماية! سيطلب منك إدخالها عند كل زيارة.");
+                }
+            }
+        } else if (entries.length === 0) {
+            alert("لا توجد بيانات لحمايتها بعد.");
+        }
+    }
+
+    // --- Data Management ---
+    function loadData() {
         const saved = localStorage.getItem(STORAGE_KEY);
         if(saved) {
             try { entries = JSON.parse(saved); } catch(e){}
         }
-        renderEntries();
-    };
-
-    function setMode(mode) {
-        const codeArea = document.getElementById('codeInputArea');
-        const linkArea = document.getElementById('linkInputArea');
-        const buttons = document.querySelectorAll('.mode-btn');
-
-        buttons.forEach(b => b.classList.remove('active'));
-        
-        if(mode === 'code') {
-            codeArea.classList.add('visible');
-            linkArea.classList.remove('visible');
-            buttons[0].classList.add('active');
-        } else {
-            codeArea.classList.remove('visible');
-            linkArea.classList.add('visible');
-            buttons[1].classList.add('active');
-        }
-    }
-
-    function saveEntry(type) {
-        let newItem = {};
-        
-        if(type === 'code') {
-            const name = document.getElementById('codeName').value.trim();
-            const content = document.getElementById('codeContent').value.trim();
-            
-            if(!name || !content) { alert("الرجاء إدخال اسم ولصق الكود!"); return; }
-            
-            newItem = {
-                id: Date.now(),
-                type: 'code',
-                title: name,
-                content: content, // Save full content for re-analysis later if needed
-                analysis: analyzeCode(content), // Run analysis immediately
-                timestamp: new Date().toLocaleDateString()
-            };
-
-            // Clear inputs
-            document.getElementById('codeName').value = '';
-            document.getElementById('codeContent').value = '';
-
-        } else if (type === 'link') {
-            const title = document.getElementById('linkTitle').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
-            const notes = document.getElementById('linkNotes').value.trim();
-
-            if(!title || !url) { alert("الرجاء إدخال العنوان والرابط!"); return; }
-
-            newItem = {
-                id: Date.now(),
-                type: 'link',
-                title: title,
-                url: url,
-                notes: notes,
-                analysis: "رابط خارجي محفوظ للرجوع إليه بسرعة.",
-                timestamp: new Date().toLocaleDateString()
-            };
-
-            // Clear inputs
-            document.getElementById('linkTitle').value = '';
-            document.getElementById('linkUrl').value = '';
-            document.getElementById('linkNotes').value = '';
-        }
-
-        entries.unshift(newItem); // Add to top
-        persistData();
-        renderEntries();
     }
 
     function persistData() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }
 
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("download", "royal_backup_" + Date.now() + ".json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        alert("تم تحميل نسخة احتياطية آمنة من مشاريعك!");
+    }
+
+    // --- UI Logic ---
+    function openAddModal() { document.getElementById('addModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('addModal').style.display = 'none'; }
+
+    // Toggle fields based on type selection
+    document.getElementById('newType').addEventListener('change', (e) => {
+        const val = e.target.value;
+        document.getElementById('codeField').style.display = val === 'code' ? 'block' : 'none';
+        document.getElementById('linkField').style.display = val === 'link' ? 'block' : 'none';
+    });
+
+    function submitNewItem() {
+        const title = document.getElementById('newTitle').value.trim();
+        const type = document.getElementById('newType').value;
+        
+        if(!title) { alert("أدخل عنواناً أولاً!"); return; }
+
+        let newItem = { id: Date.now(), title, type, timestamp: new Date().toLocaleString() };
+
+        if(type === 'code') {
+            const content = document.getElementById('newContent').value.trim();
+            if(!content) { alert("الصق الكود!"); return; }
+            newItem.content = content;
+            newItem.analysis = analyzeCode(content);
+        } else {
+            const url = document.getElementById('newUrl').value.trim();
+            const notes = document.getElementById('newNotes').value.trim();
+            if(!url) { alert("أدخل الرابط!"); return; }
+            newItem.url = url;
+            newItem.notes = notes;
+            newItem.analysis = "رابط محفوظ للرجوع السريع.";
+        }
+
+        entries.unshift(newItem);
+        persistData();
+        renderEntries();
+        closeModal();
+        
+        // Clear inputs
+        document.getElementById('newTitle').value = '';
+        document.getElementById('newContent').value = '';
+        document.getElementById('newUrl').value = '';
+        document.getElementById('newNotes').value = '';
+    }
+
     function deleteEntry(id) {
-        if(confirm("هل أنت متأكد من حذف هذا العنصر من الدفتر؟")) {
+        if(confirm("حذف هذا العنصر نهائياً؟")) {
             entries = entries.filter(e => e.id !== id);
             persistData();
             renderEntries();
         }
     }
 
-    // --- The Brain: Analysis Logic (Same as before but optimized) ---
+    // --- Advanced Analysis Engine ---
     function analyzeCode(content) {
-        let summary = "";
-        const hasCanvas = content.includes('<canvas');
-        const hasLocalStorage = content.includes('localStorage');
-        const hasFetch = content.includes('fetch(') || content.includes('XMLHttpRequest');
-        const hasModal = content.includes('modal') || content.includes('overlay');
-        const isReact = content.includes('react') || content.includes('useState');
-        const isVue = content.includes('vue') || content.includes('v-if');
+        let summary = `<strong>🤖 تحليل برو (Deep Scan):</strong><br>`;
+        const libs = [];
+        
+        if(content.includes('react')) libs.push('React');
+        if(content.includes('vue')) libs.push('Vue');
+        if(content.includes('angular')) libs.push('Angular');
+        if(content.includes('jquery')) libs.push('jQuery');
+        if(content.includes('tailwind')) libs.push('Tailwind CSS');
+        if(content.includes('bootstrap')) libs.push('Bootstrap');
+        if(content.includes('chart.js')) libs.push('Chart.js');
+        if(content.includes('three.js')) libs.push('Three.js (3D)');
+        if(content.includes('firebase')) libs.push('Firebase');
+        if(content.includes('supabase')) libs.push('Supabase');
 
-        summary += `<strong>🤖 التحليل الآلي:</strong><br>`;
+        if(libs.length > 0) summary += `📚 مكتبات مكتشفة: <span style="color:var(--neon-cyan)">${libs.join(', ')}</span>.<br>`;
         
-        if(isReact) summary += "⚛️ يحتوي على مكونات React.<br>";
-        if(isVue) summary += "💚 يحتوي على منطق Vue.js.<br>";
-        if(hasCanvas) summary += "🎨 يستخدم Canvas للرسم/الفيديو.<br>";
-        if(hasLocalStorage) summary += "💾 يحفظ البيانات محلياً (Offline).<br>";
-        if(hasFetch) summary += "🌐 يتصل بخوادم خارجية (API).<br>";
-        if(hasModal) summary += "🪟 يحتوي على نوافذ منبثقة.<br>";
+        if(content.includes('<canvas')) summary += `🎨 رسم بياني/فيديو (Canvas).<br>`;
+        if(content.includes('localStorage')) summary += `💾 تخزين محلي (Offline First).<br>`;
+        if(content.includes('fetch(')) summary += `🌐 اتصال شبكي (API Calls).<br>`;
+        if(content.includes('websocket')) summary += `⚡ اتصال فوري (WebSocket).<br>`;
         
-        if(!hasFetch && !isReact && !isVue) summary += "✅ كود خفيف ومستقل تماماً.";
+        const lines = content.split('\n').length;
+        summary += `📏 حجم الكود التقريبي: ${lines} سطر.`;
 
         return summary;
     }
 
     function renderEntries() {
         const container = document.getElementById('resultsContainer');
-        const emptyState = document.getElementById('emptyState');
         container.innerHTML = '';
 
         if(entries.length === 0) {
-            emptyState.style.display = 'block';
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#666; padding:40px;">الدفتر فارغ. ابدأ بإضافة أول مشروع ملكي!</div>';
             return;
         }
-        emptyState.style.display = 'none';
 
         entries.forEach(entry => {
             const card = document.createElement('div');
@@ -311,14 +319,12 @@
             let bodyHtml = '';
             
             if(entry.type === 'code') {
-                // Show snippet of code
                 const snippet = entry.content.substring(0, 150) + "...";
                 bodyHtml = `
                     <div class="preview-snippet">${snippet}</div>
                     <div class="ai-summary">${entry.analysis}</div>
                 `;
             } else {
-                // Show link details
                 bodyHtml = `
                     <p style="margin:5px 0;"><a href="${entry.url}" target="_blank" style="color:var(--neon-cyan); text-decoration:none;">🔗 ${entry.url}</a></p>
                     ${entry.notes ? `<p style="font-size:0.85rem; color:#aaa; margin-top:5px;">📝 ${entry.notes}</p>` : ''}
@@ -335,8 +341,8 @@
                     <small style="color:#555; display:block; margin-top:10px;">${entry.timestamp}</small>
                 </div>
                 <div class="actions-row">
-                    ${entry.type === 'link' ? `<button class="btn-action btn-view-link" onclick="window.open('${entry.url}', '_blank')">فتح الرابط</button>` : ''}
-                    <button class="btn-action" onclick="deleteEntry(${entry.id})">حذف 🗑️</button>
+                    ${entry.type === 'link' ? `<button class="btn-action" onclick="window.open('${entry.url}', '_blank')">فتح</button>` : ''}
+                    <button class="btn-action btn-delete" onclick="deleteEntry(${entry.id})">حذف 🗑️</button>
                 </div>
             `;
             container.appendChild(card);
