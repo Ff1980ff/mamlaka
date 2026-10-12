@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 مُفَرِّز الأكواد الملكي | Royal Code Sorter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 30, 0.9);
+            --neon-cyan: #00ffff;
+            --neon-purple: #bc13fe;
+            --gold: #ffd700;
+            --text-white: #fff;
+            --success: #00ff88;
+            --danger: #ff4444;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            font-family: 'Tajawal', sans-serif;
+            margin: 0; padding: 20px;
+            min-height: 100vh;
+        }
+
+        header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px;}
+        h1 { color: var(--neon-cyan); font-size: 2rem; margin: 0; text-shadow: 0 0 10px rgba(0,255,255,0.3);}
+        p.subtitle { color: #aaa; font-size: 0.9rem; }
+
+        /* منطقة السحب والإفلات */
+        .drop-zone {
+            width: 90%; max-width: 800px; height: 200px;
+            border: 2px dashed var(--neon-purple);
+            border-radius: 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin: 0 auto 30px auto;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: rgba(188, 19, 254, 0.05);
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.02);
+        }
+        .drop-icon { font-size: 3rem; color: var(--neon-purple); margin-bottom: 10px; }
+        
+        input[type="file"] { display: none; }
+
+        /* شبكة النتائج */
+        .results-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px; padding: 10px;
+        }
+
+        .code-card {
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+            position: relative;
+        }
+        .code-card:hover { border-color: var(--neon-cyan); box-shadow: 0 5px 20px rgba(0,255,255,0.1); }
+
+        .card-header {
+            padding: 15px; background: rgba(0,0,0,0.3);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .file-name { font-weight: bold; color: var(--gold); font-size: 1.1rem; word-break: break-all;}
+        .file-type-badge { 
+            padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;
+            background: #333; color: #fff;
+        }
+        .badge-html { background: #e34c26; }
+        .badge-css { background: #264de4; }
+        .badge-js { background: #f0db4f; color: #000; }
+        .badge-json { background: #cbcb41; color: #000; }
+
+        .analysis-body { padding: 15px; }
+        
+        .ai-summary {
+            background: rgba(0, 255, 136, 0.1);
+            border-right: 3px solid var(--success);
+            padding: 10px; margin-bottom: 15px;
+            font-size: 0.9rem; line-height: 1.5;
+            color: #ddd;
+        }
+        .ai-title { color: var(--success); font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.8rem;}
+
+        .key-snippets { margin-top: 10px; }
+        .snippet-item {
+            background: #111; padding: 8px; border-radius: 5px; margin-bottom: 5px;
+            font-family: 'Fira Code', monospace; font-size: 0.8rem;
+            color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            border-left: 2px solid #555;
+        }
+        .snippet-label { color: var(--neon-cyan); font-size: 0.7rem; display: block; margin-bottom: 2px; font-family: 'Tajawal';}
+
+        .actions-row {
+            padding: 10px 15px; background: rgba(0,0,0,0.2);
+            display: flex; gap: 10px; justify-content: flex-end;
+        }
+        .btn-action {
+            padding: 5px 10px; border: 1px solid #555; background: transparent; color: #aaa;
+            border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: 0.2s;
+        }
+        .btn-action:hover { background: var(--neon-cyan); color: #000; border-color: var(--neon-cyan); }
+
+        #loadingOverlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.8); z-index: 9999;
+            display: none; justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+        .spinner { border: 4px solid #333; border-top: 4px solid var(--neon-cyan); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><i class="fas fa-brain"></i> مُفَرِّز الأكواد الملكي</h1>
+    <p class="subtitle">ارفع ملفاتك البرمجية، وسأحللها وأشرح لك وظيفتها بالعربية فوراً.</p>
+</header>
+
+<div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <div class="drop-icon">📂</div>
+    <strong>اسحب وأفلت ملفات HTML/CSS/JS هنا</strong>
+    <small style="color:#888; margin-top:5px;">أو اضغط للاختيار من جهازك</small>
+</div>
+<input type="file" id="fileInput" multiple accept=".html,.css,.js,.json">
+
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top:10px; color:var(--neon-cyan);">جارٍ تحليل الكود بعمق...</p>
+</div>
+
+<main class="results-grid" id="resultsContainer">
+    <!-- سيتم حقن البطاقات هنا -->
+</main>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Placeholder for icons if needed, using unicode fallback below -->
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    // Event Listeners for Drag & Drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+    });
+
+    dropZone.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFiles, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles({ target: { files: files } });
+    }
+
+    function handleFiles(e) {
+        const files = [...e.target.files];
+        if(files.length === 0) return;
+
+        loadingOverlay.style.display = 'flex';
+        resultsContainer.innerHTML = ''; // Clear previous
+
+        let processedCount = 0;
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const content = event.target.result;
+                analyzeAndRender(file.name, file.type, content);
+                
+                processedCount++;
+                if(processedCount === files.length) {
+                    loadingOverlay.style.display = 'none';
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // --- The Brain: Analysis Logic ---
+    function analyzeAndRender(fileName, fileType, content) {
+        let category = 'unknown';
+        let summary = "";
+        let snippets = [];
+        let badgeClass = "";
+
+        // Detect Type
+        if(fileName.endsWith('.html') || content.includes('<!DOCTYPE html>')) {
+            category = 'html';
+            badgeClass = 'badge-html';
+            
+            // Analyze HTML
+            const titleMatch = content.match(/<title>(.*?)<\/title>/i);
+            const hasForm = content.includes('<form');
+            const hasCanvas = content.includes('<canvas');
+            const hasLocalStorage = content.includes('localStorage');
+            const hasFetch = content.includes('fetch(') || content.includes('XMLHttpRequest');
+            const hasModal = content.includes('modal') || content.includes('overlay');
+
+            summary = `<span class="ai-title">🤖 التحليل الذكي:</span>`;
+            if(titleMatch) summary += `هذا ملف واجهة أمامية بعنوان "<strong>${titleMatch[1]}</strong>". `;
+            else summary += `ملف HTML عام. `;
+            
+            if(hasCanvas) summary += `يحتوي على رسم بياني/فيديو (Canvas). `;
+            if(hasLocalStorage) summary += `يحفظ البيانات محلياً في المتصفح (Offline Capable). `;
+            if(hasForm) summary += `يحتوي على نماذج إدخال بيانات. `;
+            if(hasModal) summary += `يستخدم نوافذ منبثقة للتفاعل. `;
+            if(!hasFetch && !hasLocalStorage) summary += `يعمل بشكل مستقل تماماً بدون إنترنت. `;
+
+            // Extract Key Snippets
+            if(hasLocalStorage) snippets.push({label: "تخزين محلي", code: "localStorage.setItem(...)"});
+            if(hasCanvas) snippets.push({label: "رسم فيديو", code: "ctx.drawImage(...)"});
+            if(content.includes('onclick')) snippets.push({label: "تفاعل زر", code: "onclick=\"...\""});
+
+        } else if(fileName.endsWith('.css') || content.includes('{') && content.includes(':')) {
+            category = 'css';
+            badgeClass = 'badge-css';
+            
+            const variables = (content.match(/--[a-zA-Z-]+:/g) || []).length;
+            const mediaQueries = (content.match(/@media/g) || []).length;
+            const animations = (content.match(/@keyframes/g) || []).length;
+
+            summary = `<span class="ai-title">🎨 تحليل التنسيق:</span>`;
+            summary += `ملف تنسيقات (CSS). `;
+            if(variables > 0) summary += `يستخدم ${variables} متغيرات ألوان ديناميكية (--vars). `;
+            if(mediaQueries > 0) summary += `متجاوب مع الجوال (${mediaQueries} نقاط توقف). `;
+            if(animations > 0) summary += `يحتوي على حركات وأنيميشن (${animations}). `;
+            
+            snippets.push({label: "متغيرات", code: ":root { --primary: ... }"});
+            if(mediaQueries > 0) snippets.push({label: "جوال", code: "@media (max-width: 768px)"});
+
+        } else if(fileName.endsWith('.js') || content.includes('function') || content.includes('const ')) {
+            category = 'js';
+            badgeClass = 'badge-js';
+            
+            const functions = (content.match(/function\s+\w+/g) || []).length;
+            const asyncFuncs = (content.match(/async\s+function|=>\s*\{/g) || []).length;
+            const domManipulation = content.includes('document.') || content.includes('$(');
+            const apiCalls = content.includes('axios') || content.includes('fetch');
+
+            summary = `<span class="ai-title">⚙️ تحليل المنطق:</span>`;
+            summary += `ملف جافاسكريبت برمجي. `;
+            if(functions > 0) summary += `يحتوي على ${functions} دالة رئيسية. `;
+            if(asyncFuncs > 0) summary += `يدعم العمليات غير المتزامنة (Async/Await). `;
+            if(domManipulation) summary += `يتحكم مباشرة في عناصر الصفحة (DOM). `;
+            if(apiCalls) summary += `يتصل بخوادم خارجية لجلب البيانات. `;
+            else summary += `يعمل منطقياً داخل الملف فقط. `;
+
+            snippets.push({label: "دالة رئيسية", code: "function init() { ... }"});
+            if(domManipulation) snippets.push({label: "تعديل DOM", code: "document.getElementById(...)"});
+
+        } else if(fileName.endsWith('.json')) {
+            category = 'json';
+            badgeClass = 'badge-json';
+            try {
+                const obj = JSON.parse(content);
+                const keys = Object.keys(obj).length;
+                summary = `<span class="ai-title">📦 بيانات مهيكلة:</span>`;
+                summary += `ملف إعدادات أو بيانات بصيغة JSON. يحتوي على ${keys} مفتاح رئيسي.`;
+                snippets.push({label: "هيكل", code: "{ \"key\": \"value\" }"});
+            } catch(e) {
+                summary = "❌ خطأ في صيغة JSON!";
+            }
+        } else {
+            summary = "ملف غير مدعوم حالياً.";
+        }
+
+        // Render Card
+        const card = document.createElement('div');
+        card.className = 'code-card';
+        
+        let snippetsHtml = '';
+        snippets.forEach(s => {
+            snippetsHtml += `
+                <div class="snippet-item">
+                    <span class="snippet-label">${s.label}</span>
+                    ${s.code}
+                </div>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="file-name">${fileName}</span>
+                <span class="file-type-badge ${badgeClass}">${category.toUpperCase()}</span>
+            </div>
+            <div class="analysis-body">
+                <div class="ai-summary">
+                    ${summary}
+                </div>
+                <div class="key-snippets">
+                    <strong style="font-size:0.8rem; color:#888;">اقتباسات مهمة:</strong>
+                    ${snippetsHtml}
+                </div>
+            </div>
+            <div class="actions-row">
+                <button class="btn-action" onclick="copyContent(this)" data-content="${encodeURIComponent(content)}">نسخ الكود الخام</button>
+                <button class="btn-action" onclick="alert('يمكنك حفظ هذا التحليل في دفتر الملاحظات الخاص بك')">حفظ التقرير</button>
+            </div>
+        `;
+        
+        resultsContainer.appendChild(card);
+    }
+
+    function copyContent(btn) {
+        const content = decodeURIComponent(btn.getAttribute('data-content'));
+        navigator.clipboard.writeText(content).then(() => {
+            btn.innerText = "✅ تم النسخ!";
+            setTimeout(() => btn.innerText = "نسخ الكود الخام", 2000);
+        });
+    }
+
+</script>
+</body>
+</html>
