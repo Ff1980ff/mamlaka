@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>👑 المملكة المركزية | النسخة النهائية</title>
+    
+    <!-- خطوط وأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* نظام ألوان نهاري مريح للعين وواضح على شاشات OnePlus */
+            --bg-body: #f4f6f9;       /* خلفية رمادية فاتحة جداَ */
+            --bg-card: #ffffff;       /* البطاقات بيضاء ناصعة */
+            
+            --text-main: #1a1a1a;     /* نص أسود داكن (أعلى تباين ممكن) */
+            --text-muted: #555555;    /* نص ثانوي رمادي متوسط */
+            
+            --primary: #6c3ce9;       /* بنفسجي عميق ومميز */
+            --secondary: #007bff;     /* أزرق ملكي هادئ */
+            --accent: #d4af37;        /* ذهبي مطفي للعناوين الهامة */
+            --success: #28a745;       /* أخضر طبي */
+            --danger: #dc3545;        /* أحمر تحذيري */
+            
+            --border-light: #e0e0e0;  
+            --shadow-soft: 0 2px 8px rgba(0,0,0,0.05); 
+            
+            --nav-height: 65px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+        }
+
+        /* Header White/Clean */
+        header {
+            padding: 12px 15px; 
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-soft);
+            display: flex; justify-content: space-between; align-items: center; z-index: 100; min-height: 55px;
+        }
+        .logo h1 { font-size: 1.1rem; color: var(--primary); font-weight: bold;}
+        .header-actions button { background: transparent; border: none; color: var(--secondary); font-size: 1.3rem; cursor: pointer; }
+
+        /* Main Content Area */
+        main { flex-grow: 1; overflow-y: auto; padding: 15px; padding-bottom: calc(var(--nav-height) + 20px); scroll-behavior: smooth; }
+        
+        /* View Sections */
+        .view-section { display: none; animation: fadeIn 0.2s ease-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-size: 1.2rem; font-weight: bold; color: var(--text-main); margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--primary); padding-bottom: 8px;
+        }
+        
+        /* FAB Container */
+        .fab-container { position: fixed; bottom: calc(var(--nav-height) + 15px); right: 15px; z-index: 90; display: flex; flex-direction: column-reverse; align-items: center; gap: 10px; }
+        
+        .btn-add-floating {
+            width: 55px; height: 55px; border-radius: 50%; background: var(--primary); color: white; border: 2px solid white;
+            box-shadow: 0 4px 12px rgba(108, 60, 233, 0.3); font-size: 1.6rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-add-floating:hover { transform: scale(1.1); background: #5a2bc2; }
+        .btn-add-floating.rotated i { transform: rotate(45deg); }
+
+        .sub-action {
+            background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-light); border-radius: 25px;
+            padding: 10px 18px; font-size: 0.9rem; font-weight: bold; cursor: pointer;
+            display: none; align-items: center; gap: 10px; box-shadow: var(--shadow-soft);
+            transition: 0.2s; opacity: 0; transform: translateX(20px);
+        }
+        .sub-action.show { display: flex; opacity: 1; transform: translateX(0); }
+        .sub-action:hover { background: #f8f9fa; border-color: var(--primary); }
+        .sub-action i { color: var(--primary); }
+
+        /* Cards List - Clean White Design */
+        .items-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .item-card {
+            background: var(--bg-card); 
+            border: 1px solid var(--border-light); 
+            border-radius: 12px; 
+            padding: 15px; 
+            position: relative; 
+            transition: 0.2s; 
+            box-shadow: var(--shadow-soft);
+        }
+        .item-card:active { background: #fafafa; transform: scale(0.99); }
+        
+        .card-header-row { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; }
+        
+        .card-title { 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            color: var(--text-main); 
+            word-break: break-word; 
+            line-height: 1.3;
+        }
+        
+        .card-status {
+            font-size: 0.7rem; 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        /* Status Colors Adapted for Light Mode */
+        .status-uploaded { background: #d4edda; color: #155724; border-color: #c3e6cb; } 
+        .status-draft { background: #fff3cd; color: #856404; border-color: #ffeeba; }   
+        .status-sold { background: #cce5ff; color: #004085; border-color: #b8daff; }    
+
+        .card-meta { 
+            font-size: 0.9rem; 
+            color: var(--text-muted); 
+            line-height: 1.5; 
+            margin-bottom: 10px; 
+        }
+        .card-meta span { display: inline-block; margin-left: 10px; background: #f1f3f5; padding: 2px 6px; border-radius: 4px; color: #495057; }
+
+        .card-actions {
+            display: flex; gap: 10px; 
+            border-top: 1px solid var(--border-light); 
+            padding-top: 10px; 
+        }
+        .action-btn {
+            flex: 1; padding: 10px 0; 
+            border: 1px solid var(--border-light); 
+            background: #f8f9fa; 
+            color: var(--text-main);
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.85rem; 
+            font-weight: bold; 
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            transition: 0.2s;
+        }
+        .action-btn.edit:hover { background: var(--secondary); color: white; border-color: var(--secondary); }
+        .action-btn.delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Bottom Navigation Bar - Solid White */
+        nav.bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            height: var(--nav-height);
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-light);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-around; align-items: center; z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem; 
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            transition: 0.2s; width: 20%;
+        }
+        .nav-item i { font-size: 1.4rem; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item.active i { filter: drop-shadow(0 0 2px rgba(108, 60, 233, 0.3)); }
+
+        /* Modal Forms - Clear Inputs */
+        #modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 200; }
+        .modal-header { padding: 15px; background: var(--bg-card); border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { flex-grow: 1; overflow-y: auto; padding: 20px; background: var(--bg-body); }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--text-main); font-size: 0.95rem; font-weight: bold; }
+        
+        input, select, textarea {
+            width: 100%; padding: 12px; 
+            background: #ffffff; 
+            border: 1px solid #ced4da; 
+            color: var(--text-main); 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 60, 233, 0.1); }
+        
+        .btn-submit-modal {
+            width: 100%; padding: 15px; background: var(--primary); color: white;
+            border: none; border-radius: 8px; font-weight: bold; font-size: 1rem;
+            margin-top: 20px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-submit-modal:hover { background: #5a2bc2; transform: translateY(-2px); }
+
+        /* Stats Dashboard Simplified */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-box {
+            background: var(--bg-card); padding: 15px; border-radius: 10px; text-align: center;
+            border: 1px solid var(--border-light); box-shadow: var(--shadow-soft);
+        }
+        .stat-num { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+        .stat-label { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><h1><i class="fas fa-crown"></i> المملكة المركزية</h1></div>
+    <div class="header-actions">
+        <button onclick="exportData()" title="نسخة احتياطية"><i class="fas fa-download"></i></button>
+    </div>
+</header>
+
+<main id="mainContent">
+    <!-- Views Same as Before -->
+    <section id="dashboard" class="view-section active">
+        <div class="section-title">لوحة القيادة</div>
+        <div class="stats-grid">
+            <div class="stat-box"><div class="stat-num" id="totalApps">0</div><div class="stat-label">تطبيقات</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalCode">0</div><div class="stat-label">أكواد</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalAssets">0</div><div class="stat-label">أصول</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalSales">$0</div><div class="stat-label">مبيعات</div></div>
+        </div>
+        <div style="background:var(--bg-card); padding:15px; border-radius:10px; border:1px dashed var(--border-light); margin-top:10px;">
+            <p style="color:var(--text-muted); font-size:0.9rem; text-align:center;">نسخة النهار المريحة لشاشة OnePlus.<br>كل شيء واضح ومقروء.</p>
+        </div>
+    </section>
+
+    <section id="apps" class="view-section"><div class="section-title">التطبيقات المثبتة</div><div class="items-list" id="appsGrid"></div></section>
+    <section id="code" class="view-section">
+        <div class="section-title">إدارة الأكواد</div>
+        <select id="filterCodeStatus" onchange="renderItems('code')" style="margin-bottom:15px; width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;"><option value="all">عرض الكل</option><option value="uploaded">✅ مرفوع</option><option value="draft">⏳ مسودة</option></select>
+        <div class="items-list" id="codeGrid"></div>
+    </section>
+    <section id="assets" class="view-section"><div class="section-title">الأصول الرقمية</div><div class="items-list" id="assetsGrid"></div></section>
+    <section id="sales" class="view-section"><div class="section-title">التسعير والبيع</div><div class="items-list" id="salesGrid"></div></section>
+    <section id="clients" class="view-section"><div class="section-title">سجل العملاء</div><div class="items-list" id="clientsGrid"></div></section>
+</main>
+
+<!-- FAB Container with Sub-menu -->
+<div class="fab-container">
+    <button class="btn-add-floating" id="fabButton" onclick="toggleFabMenu()">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <!-- Sub Actions -->
+    <div class="sub-action" id="actAddNew" onclick="openModal(getActiveTab())">
+        <i class="fas fa-file-medical"></i> إضافة عنصر جديد
+    </div>
+    <div class="sub-action" id="actGithub" onclick="triggerGithubPublish()">
+        <i class="fab fa-github"></i> نشر على GitHub
+    </div>
+    <div class="sub-action" id="actSale" onclick="openSaleModal()">
+        <i class="fas fa-dollar-sign"></i> تسجيل بيع / اشتراك
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active" data-tab="dashboard" onclick="switchTab(event)"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+    <a href="#" class="nav-item" data-tab="apps" onclick="switchTab(event)"><i class="fas fa-mobile-alt"></i><span>تطبيقات</span></a>
+    <a href="#" class="nav-item" data-tab="code" onclick="switchTab(event)"><i class="fas fa-code"></i><span>أكواد</span></a>
+    <a href="#" class="nav-item" data-tab="assets" onclick="switchTab(event)"><i class="fas fa-images"></i><span>أصول</span></a>
+    <a href="#" class="nav-item" data-tab="sales" onclick="switchTab(event)"><i class="fas fa-dollar-sign"></i><span>مبيعات</span></a>
+</nav>
+
+<!-- Generic Modal for Adding Items -->
+<div id="modalOverlay">
+    <div class="modal-header">
+        <h2 id="modalTitle" style="font-size:1.1rem; color:var(--primary);">إضافة عنصر</h2>
+        <button onclick="closeModal()" style="background:none; border:none; color:var(--text-main); font-size:1.5rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+        <form id="dynamicForm" onsubmit="saveItem(event)">
+            <div id="formFields"></div>
+            <input type="hidden" id="itemId">
+            <input type="hidden" id="itemType">
+            <button type="submit" class="btn-submit-modal">حفظ التغييرات</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- Database Logic ---
+    let db = { apps: [], code: [], assets: [], sales: [], clients: [] };
+    const STORAGE_KEY = 'kingdom_mobile_db_v3_light';
+
+    function loadDB() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved) try { db = JSON.parse(saved); } catch(e){}
+        updateStats();
+        renderAllViews();
+    }
+
+    function saveDB() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        updateStats();
+        renderAllViews();
+        closeModal();
+        closeFabMenu();
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "kingdom_backup_" + Date.now() + ".json";
+        a.click();
+    }
+
+    // --- UI Navigation & FAB Logic ---
+    let currentTab = 'dashboard';
+    let isFabOpen = false;
+
+    function switchTab(e) {
+        e.preventDefault();
+        const tabId = e.currentTarget.dataset.tab;
+        currentTab = tabId;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.getElementById('mainContent').scrollTop = 0;
+        closeFabMenu();
+    }
+
+    function getActiveTab() { return currentTab; }
+
+    function toggleFabMenu() {
+        isFabOpen = !isFabOpen;
+        const btn = document.getElementById('fabButton');
+        const actions = ['actAddNew', 'actGithub', 'actSale'];
+        
+        if(isFabOpen) {
+            btn.classList.add('rotated');
+            actions.forEach((id, index) => {
+                setTimeout(() => document.getElementById(id).classList.add('show'), index * 50);
+            });
+        } else {
+            closeFabMenu();
+        }
+    }
+
+    function closeFabMenu() {
+        isFabOpen = false;
+        document.getElementById('fabButton').classList.remove('rotated');
+        ['actAddNew', 'actGithub', 'actSale'].forEach(id => document.getElementById(id).classList.remove('show'));
+    }
+
+    // --- Special Actions ---
+    function triggerGithubPublish() {
+        closeFabMenu();
+        alert("📤 جارٍ تجهيز أمر النشر...\n\nلأننا نعمل محلياَ، لا يمكن رفع الملفات تلقائياَ دون توكن آمن.\n\n✅ الحل الأسرع:\n1. انسخ رابط المستودع الخاص بك.\n2. استخدم أداة Git Desktop أو Terminal لرفع الملفات المحفوظة في مجلد المشروع.");
+        navigator.clipboard.writeText("https://github.com/ff1980ff/mamlaka");
+        alert("تم نسخ رابط مستودعك! الصقه في أدوات الـ Git لديك.");
+    }
+
+    function openSaleModal() {
+        closeFabMenu();
+        document.getElementById('modalOverlay').style.display = 'flex';
+        document.getElementById('itemType').value = 'sale';
+        document.getElementById('itemId').value = '';
+        document.getElementById('modalTitle').innerText = "تسجيل عملية بيع سريعة";
+        
+        const fieldsContainer = document.getElementById('formFields');
+        fieldsContainer.innerHTML = `
+            <div class="form-group"><label>اسم المنتج المباعة</label><input type="text" name="product" required placeholder="مثال: قالب الموقع العقاري"></div>
+            <div class="form-group"><label>السعر ($)</label><input type="number" step="0.01" name="price" required placeholder="19.00"></div>
+            <div class="form-group"><label>المنصة المستخدمة</label><select name="platform"><option value="gumroad">Gumroad</option><option value="sellix">Sellix</option><option value="etsy">Etsy</option><option value="direct">بيع مباشر (واتساب)</option></select></div>
+            <div class="form-group"><label>حالة الدفع</label><select name="clientStatus"><option value="paid">مدفوع ✅</option><option value="pending">بانتظار الدفع ⏳</option></select></div>
+            <div class="form-group"><label>ملاحظات للعميل (اختياري)</label><textarea name="notes" rows="2" placeholder="كلمة مرور الملف أو رابط التحميل..."></textarea></div>
+        `;
+    }
+
+    // --- Standard CRUD Logic ---
+    function openModal(type, id = null) {
+        closeFabMenu();
+        if(type === 'dashboard') { alert("اختر قسماَ أولاَ للإضافة."); return; }
+        
+        document.getElementById('modalOverlay').style.display = 'flex';
+        document.getElementById('itemType').value = type;
+        document.getElementById('itemId').value = id || '';
+        document.getElementById('modalTitle').innerText = id ? "تعديل العنصر" : "إضافة جديد لـ " + getSectionName(type);
+        
+        const fieldsContainer = document.getElementById('formFields');
+        fieldsContainer.innerHTML = '';
+
+        buildFormFields(fieldsContainer, type);
+
+        if(id) populateEditFields(fieldsContainer, type, id);
+    }
+
+    function getSectionName(key) {
+        const names = { app:"التطبيقات", code:"الأكواد", asset:"الأصول", sale:"المبيعات", client:"العملاء" };
+        return names[key] || key;
+    }
+
+    // 🚀 THE FIX IS HERE: Complete Build Function
+    function buildFormFields(container, type) {
+        let html = '';
+        
+        // Normalize type to avoid errors like 'apps' vs 'app'
+        let normalizedType = type.toLowerCase().replace(/s$/, ''); 
+        if(type === 'clients') normalizedType = 'client';
+        if(type === 'sales') normalizedType = 'sale';
+        if(type === 'assets') normalizedType = 'asset';
+        if(type === 'codes') normalizedType = 'code';
+        if(type === 'apps') normalizedType = 'app';
+
+        switch(normalizedType) {
+            case 'app':
+                html = `
+                    <div class="form-group"><label>اسم التطبيق / المشروع</label><input type="text" name="name" required placeholder="مثال: محول الصيغ الملكي"></div>
+                    <div class="form-group"><label>الرابط المباشر (URL)</label><input type="url" name="url" required placeholder="https://ff1980ff.github.io/..."></div>
+                    <div class="form-group"><label>الحالة الحالية</label><select name="status"><option value="live">✅ نشط ومرفوع</option><option value="dev">⏳ قيد التطوير المحلي</option><option value="paused">⏸️ متوقف مؤقتاَ</option></select></div>
+                    <div class="form-group"><label>وصف مختصر للذاكرة</label><textarea name="notes" rows="2" placeholder="ماذا يفعل هذا التطبيق باختصار؟"></textarea></div>
+                `;
+                break;
+
+            case 'code':
+                html = `
+                    <div class="form-group"><label>اسم الكود / السكربت</label><input type="text" name="name" required placeholder="مثال: نظام إدارة المخزون v2"></div>
+                    <div class="form-group"><label>اللغة البرمجية الأساسية</label><select name="lang"><option value="html">HTML/CSS/JS (Frontend)</option><option value="python">Python</option><option value="php">PHP/Laravel</option><option value="node">Node.js</option><option value="other">أخرى</option></select></div>
+                    <div class="form-group"><label>حالة النشر</label><select name="status"><option value="uploaded">☁️ مرفوع على GitHub/Servers</option><option value="draft">💾 مسودة محلية (لم يُرفع بعد)</option></select></div>
+                    <div class="form-group"><label>مكان الحفظ الدقيق (Path أو Link)</label><input type="text" name="location" placeholder="C:/Projects/... أو github.com/user/repo"></div>
+                    <div class="form-group"><label>شرح الوظيفة التقنية (للتوثيق المستقبلي)</label><textarea name="desc" rows="3" placeholder="اكتب هنا ماذا يفعل هذا الكود بالضبط حتى لا تنساه بعد سنة..."></textarea></div>
+                `;
+                break;
+
+            case 'asset':
+                html = `
+                    <div class="form-group"><label>اسم الأصل (صورة/فيديو/صوت)</label><input type="text" name="name" required placeholder="مثال: شعار المملكة الذهبي.png"></div>
+                    <div class="form-group"><label>نوع الملف</label><select name="type"><option value="image">🖼️ صورة ثابتة</option><option value="video">🎥 فيديو / ريلز</option><option value="audio">🎵 صوت / موسيقى</option><option value="doc">📄 مستند / PDF</option></select></div>
+                    <div class="form-group"><label>المجلد التصنيفي (Folder Name)</label><input type="text" name="folder" placeholder="مثال: أصول_التسويق، صور_المنتجات"></div>
+                    <div class="form-group"><label>المسار أو الرابط السحابي</label><input type="text" name="path" placeholder="Drive Link or Local Path"></div>
+                `;
+                break;
+
+            case 'sale':
+                html = `
+                    <div class="form-group"><label>اسم المنتج المباع</label><input type="text" name="product" required placeholder="مثال: قالب موقع عقاري"></div>
+                    <div class="form-group"><label>قيمة البيع ($)</label><input type="number" step="0.01" name="price" required placeholder="19.00"></div>
+                    <div class="form-group"><label>منصة البيع المستخدمة</label><select name="platform"><option value="gumroad">Gumroad</option><option value="sellix">Sellix</option><option value="etsy">Etsy</option><option value="direct">بيع مباشر (واتساب/بنك)</option><option value="crypto">عملات رقمية (USDT/BTC)</option></select></div>
+                    <div class="form-group"><label>تاريخ العملية</label><input type="date" name="date"></div>
+                    <div class="form-group"><label>حالة استلام المال</label><select name="clientStatus"><option value="paid">💰 مدفوع ومستلم</option><option value="pending">⏳ بانتظار التأكيد</option><option value="refunded">↩️ تم الاسترجاع</option></select></div>
+                     <div class="form-group"><label>ملاحظات إضافية (Order ID, Client Name)</label><textarea name="notes" rows="2"></textarea></div>
+                `;
+                break;
+
+            case 'client':
+                html = `
+                    <div class="form-group"><label>اسم العميل الكامل</label><input type="text" name="name" required placeholder="مثال: John Doe"></div>
+                    <div class="form-group"><label>وسيلة التواصل الأساسية</label><input type="text" name="contact" required placeholder="WhatsApp Number or Email"></div>
+                    <div class="form-group"><label>آخر منتج اشتراه</label><input type="text" name="lastProduct" placeholder="Optional"></div>
+                    <div class="form-group"><label>ملف تعريف العميل (CRM Notes)</label><textarea name="notes" rows="3" placeholder="اهتماماته، ردود أفعاله السابقة، عروض مستقبلية مقترحة..."></textarea></div>
+                `;
+                break;
+
+            default:
+                html = `<div style="padding:20px; background:#ffebee; border:1px solid #ef9a9a; color:#c62828; border-radius:8px;">❌ خطأ برمجي: النظام لم يتعرف على القسم "${type}".</div>`;
+        }
+        
+        container.innerHTML = html;
+    }
+
+    function populateEditFields(container, type, id) {
+        let item = null;
+        if(type==='app') item = db.apps.find(i=>i.id==id);
+        if(type==='code') item = db.code.find(i=>i.id==id);
+        if(type==='asset') item = db.assets.find(i=>i.id==id);
+        if(type==='sale') item = db.sales.find(i=>i.id==id);
+        if(type==='client') item = db.clients.find(i=>i.id==id);
+
+        if(item) {
+            Object.keys(item).forEach(key => {
+                const input = container.querySelector(`[name="${key}"]`);
+                if(input) input.value = item[key];
+            });
+        }
+    }
+
+    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+    function saveItem(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const type = document.getElementById('itemType').value;
+        const id = document.getElementById('itemId').value;
+
+        const newItem = Object.fromEntries(formData.entries());
+        newItem.id = id ? parseInt(id) : Date.now();
+
+        let targetArray;
+        switch(type) {
+            case 'app': targetArray = db.apps; break;
+            case 'code': targetArray = db.code; break;
+            case 'asset': targetArray = db.assets; break;
+            case 'sale': targetArray = db.sales; break;
+            case 'client': targetArray = db.clients; break;
+            default: return;
+        }
+
+        if(id) {
+            const index = targetArray.findIndex(i => i.id == id);
+            if(index !== -1) targetArray[index] = newItem;
+        } else {
+            targetArray.unshift(newItem);
+        }
+        saveDB();
+    }
+
+    function deleteItem(type, id) {
+        if(!confirm("حذف نهائي؟")) return;
+        let arrKey = type + 's'; 
+        if(type === 'app') arrKey = 'apps';
+        if(type === 'code') arrKey = 'code';
+        if(type === 'asset') arrKey = 'assets';
+        if(type === 'sale') arrKey = 'sales';
+        if(type === 'client') arrKey = 'clients';
+
+        db[arrKey] = db[arrKey].filter(i => i.id != id);
+        saveDB();
+    }
+
+    // --- Rendering Functions ---
+    function renderItems(category) {
+        const container = document.getElementById(category + 'Grid');
+        let items = [];
+        
+        if(category === 'app') items = db.apps;
+        else if(category === 'code') items = db.code;
+        else if(category === 'asset') items = db.assets;
+        else if(category === 'sale') items = db.sales;
+        else if(category === 'client') items = db.clients;
+
+        if(category === 'code') {
+            const filterVal = document.getElementById('filterCodeStatus').value;
+            if(filterVal !== 'all') items = items.filter(i => i.status === filterVal);
+        }
+
+        if(items.length === 0) {
+            container.innerHTML = `<p style="color:#888; text-align:center; padding:20px;">لا توجد عناصر.</p>`;
+            return;
+        }
+
+        container.innerHTML = items.map(item => {
+            let statusClass = '';
+            let statusText = '';
+            
+            if(item.status === 'uploaded' || item.status === 'live') { statusClass='status-uploaded'; statusText=item.status==='live'?'نشط':'مرفوع'; }
+            else if (item.status === 'draft') { statusClass='status-draft'; statusText='مسودة'; }
+            else if (item.clientStatus === 'paid') { statusClass='status-uploaded'; statusText='مدفوع'; }
+            else if (item.platform) { statusClass='status-sold'; statusText=item.platform; }
+
+            let metaHtml = '';
+            if(category === 'app') metaHtml = `<span>🔗 ${item.url}</span>`;
+            if(category === 'code') metaHtml = `<span>💻 ${item.lang}</span> <span>📂 ${item.location||'-'}</span>`;
+            if(category === 'asset') metaHtml = `<span>📁 ${item.folder||'عام'}</span>`;
+            if(category === 'sale') metaHtml = `<span>💰 $${item.price}</span> <span>📅 ${item.date||''}</span>`;
+            if(category === 'client') metaHtml = `<span>📞 ${item.contact}</span>`;
+
+            return `
+                <div class="item-card">
+                    <div class="card-header-row">
+                        <div class="card-title">${item.name || item.product || 'بدون اسم'}</div>
+                        ${statusText ? `<span class="card-status ${statusClass}">${statusText}</span>` : ''}
+                    </div>
+                    <div class="card-meta">${metaHtml}</div>
+                    <div class="card-actions">
+                        <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                        <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderAllViews() {
+        ['app','code','asset','sale','client'].forEach(cat => renderItems(cat));
+    }
+
+    function updateStats() {
+        document.getElementById('totalApps').innerText = db.apps.length;
+        document.getElementById('totalCode').innerText = db.code.length;
+        document.getElementById('totalAssets').innerText = db.assets.length;
+        const rev = db.sales.reduce((s,i)=>s+parseFloat(i.price||0),0);
+        document.getElementById('totalSales').innerText = '$'+rev.toFixed(2);
+    }
+
+    window.onload = loadDB;
+</script>
+</body>
+</html>
