@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>👑 المملكة الشاملة | Universal Digital Factory</title>
+    
+    <!-- خطوط وأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --surface: #16161e;
+            --primary: #bc13fe; /* Purple Neon */
+            --secondary: #00ffff; /* Cyan */
+            --accent: #ffd700; /* Gold */
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --success: #00ff88;
+            --danger: #ff4444;
+            
+            /* Dynamic Theme based on Language Direction */
+            --font-ar: 'Tajawal', sans-serif;
+            --font-en: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-ar);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header with Lang Switcher */
+        header {
+            padding: 15px 20px;
+            background: rgba(22, 22, 30, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .logo h1 { font-size: 1.2rem; color: var(--accent); display: flex; align-items: center; gap: 10px;}
+        .lang-toggle {
+            background: transparent; border: 1px solid var(--secondary); color: var(--secondary);
+            padding: 5px 10px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.8rem;
+        }
+
+        /* Main Content Area (Scrollable) */
+        main {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        /* Module Cards Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .module-card {
+            background: var(--surface);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(188, 19, 254, 0.2);
+        }
+        .module-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        .module-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ddd;
+        }
+
+        /* Active Workspace (Hidden by default) */
+        #workspace {
+            display: none;
+            background: var(--surface);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 400px;
+            border: 1px solid #444;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .back-btn {
+            background: transparent; border: none; color: var(--danger);
+            font-weight: bold; cursor: pointer; margin-bottom: 15px; display: block;
+        }
+
+        /* Footer Navigation (Like Mobile Apps) */
+        nav.bottom-nav {
+            background: var(--surface);
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.2rem; }
+
+        /* Utility Classes for Translation */
+        [data-i18n]::after { content: attr(data-i18n); }
+        
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .modules-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            main { max-width: 1000px; margin: 0 auto; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <h1><i class="fas fa-crown"></i> <span id="appTitle">المملكة الشاملة</span></h1>
+    </div>
+    <button class="lang-toggle" onclick="toggleLanguage()">EN / AR</button>
+</header>
+
+<main id="mainContent">
+    <!-- Dashboard View -->
+    <div id="dashboardView">
+        <h2 style="margin-bottom:20px; color:#fff;">اختر الوحدة (<span id="dashSubtitle">Select Module</span>)</h2>
+        
+        <div class="modules-grid">
+            <!-- 1. Media Tools -->
+            <div class="module-card" onclick="openModule('media')">
+                <i class="fas fa-photo-video module-icon"></i>
+                <div class="module-title" data-key="mod_media">وسائط (ضغط/تحويل)</div>
+            </div>
+
+            <!-- 2. Video Creator -->
+            <div class="module-card" onclick="openModule('video')">
+                <i class="fas fa-clapperboard module-icon"></i>
+                <div class="module-title" data-key="mod_video">استوديو الفيديو</div>
+            </div>
+
+            <!-- 3. Code Editor & Analyzer -->
+            <div class="module-card" onclick="openModule('code')">
+                <i class="fas fa-code module-icon"></i>
+                <div class="module-title" data-key="mod_code">محرر ومحلل كود</div>
+            </div>
+
+            <!-- 4. Screen Recorder -->
+            <div class="module-card" onclick="startScreenRecord()">
+                <i class="fas fa-desktop module-icon"></i>
+                <div class="module-title" data-key="mod_screen">تصوير شاشة</div>
+            </div>
+
+            <!-- 5. Translator -->
+            <div class="module-card" onclick="openModule('translate')">
+                <i class="fas fa-language module-icon"></i>
+                <div class="module-title" data-key="mod_trans">مترجم فوري</div>
+            </div>
+            
+             <!-- 6. Smart Notebook -->
+             <div class="module-card" onclick="openModule('notebook')">
+                <i class="fas fa-book-open module-icon"></i>
+                <div class="module-title" data-key="mod_note">الدفتر الذكي</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workspace View (Where tools load) -->
+    <div id="workspace">
+        <button class="back-btn" onclick="closeWorkspace()"><i class="fas fa-arrow-right"></i> رجوع للوحة التحكم</button>
+        <div id="toolContainer">
+            <!-- هنا سيتم حقن أدواتنا السابقة ديناميكياً -->
+            <p style="color:#888; text-align:center; padding:50px;">جارٍ تحميل الأداة...</p>
+        </div>
+    </div>
+</main>
+
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active" onclick="showDashboard()">
+        <i class="fas fa-home"></i>
+        <span data-key="nav_home">الرئيسية</span>
+    </a>
+    <a href="#" class="nav-item" onclick="alert('قريباً: قسم التسوق')">
+        <i class="fas fa-shopping-cart"></i>
+        <span data-key="nav_shop">المتجر</span>
+    </a>
+    <a href="#" class="nav-item" onclick="alert('قريباً: الإعدادات')">
+        <i class="fas fa-cog"></i>
+        <span data-key="nav_settings">الإعدادات</span>
+    </a>
+</nav>
+
+<script>
+    // --- State Management ---
+    let currentLang = 'ar'; // Default Arabic
+    
+    // Dictionary for translations
+    const dict = {
+        ar: {
+            appTitle: "المملكة الشاملة",
+            dashSubtitle: "اختر الوحدة",
+            mod_media: "وسائط (ضغط/تحويل)",
+            mod_video: "استوديو الفيديو",
+            mod_code: "محرر ومحلل كود",
+            mod_screen: "تصوير شاشة",
+            mod_trans: "مترجم فوري",
+            mod_note: "الدفتر الذكي",
+            nav_home: "الرئيسية",
+            nav_shop: "المتجر",
+            nav_settings: "الإعدادات"
+        },
+        en: {
+            appTitle: "Universal Factory",
+            dashSubtitle: "Select Module",
+            mod_media: "Media Tools",
+            mod_video: "Video Studio",
+            mod_code: "Code Editor",
+            mod_screen: "Screen Record",
+            mod_trans: "Translator",
+            mod_note: "Smart Notebook",
+            nav_home: "Home",
+            nav_shop: "Shop",
+            nav_settings: "Settings"
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = currentLang;
+        updateUI();
+    }
+
+    function updateUI() {
+        // Update static texts
+        document.getElementById('appTitle').innerText = dict[currentLang].appTitle;
+        document.getElementById('dashSubtitle').innerText = dict[currentLang].dashSubtitle;
+        
+        // Update dynamic elements using data-key attribute
+        document.querySelectorAll('[data-key]').forEach(el => {
+            el.innerText = dict[currentLang][el.dataset.key];
+        });
+    }
+
+    // --- Module Loader Logic ---
+    function openModule(type) {
+        document.getElementById('dashboardView').style.display = 'none';
+        document.getElementById('workspace').style.display = 'block';
+        const container = document.getElementById('toolContainer');
+        container.innerHTML = ''; // Clear previous
+
+        // INJECTION POINTS: Here we embed your existing codes
+        
+        if (type === 'media') {
+            // TODO: Paste code of FormatConverter here inside an iframe or div
+            container.innerHTML = `<iframe src="formatconverter.html" style="width:100%; height:600px; border:none;"></iframe>`;
+        } 
+        else if (type === 'video') {
+            // TODO: Paste code of FalconStudio here
+            container.innerHTML = `<iframe src="falconstudioconnected.html" style="width:100%; height:600px; border:none;"></iframe>`;
+        }
+        else if (type === 'code') {
+            // TODO: Paste code of RoyalNotebookFree here
+            container.innerHTML = `<iframe src="royalnotebookfree.html" style="width:100%; height:600px; border:none;"></iframe>`;
+        }
+        else if (type === 'translate') {
+            container.innerHTML = buildSimpleTranslator();
+        }
+        else if (type === 'notebook') {
+             container.innerHTML = `<iframe src="royalnotebookfree.html" style="width:100%; height:600px; border:none;"></iframe>`;
+        }
+    }
+
+    function closeWorkspace() {
+        document.getElementById('workspace').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'block';
+    }
+
+    function showDashboard() {
+        closeWorkspace();
+    }
+
+    // --- Simple Translator Builder (No External Libs needed initially) ---
+    function buildSimpleTranslator() {
+        return `
+        <div style="padding:20px; background:#222; border-radius:10px;">
+            <textarea id="transInput" placeholder="Enter text..." style="width:100%; height:100px; margin-bottom:10px; background:#111; color:white; border:1px solid #444; padding:10px;"></textarea>
+            <button onclick="doTranslate()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">ترجم / Translate</button>
+            <div id="transResult" style="margin-top:20px; padding:15px; background:#111; border-radius:5px; min-height:50px; color:var(--success);"></div>
+        </div>
+        `;
+    }
+
+    async function doTranslate() {
+        const text = document.getElementById('transInput').value;
+        if(!text) return;
+        
+        // Using MyMemory API (Free, No Key required for basic usage)
+        const targetLang = currentLang === 'ar' ? 'en' : 'ar';
+        try {
+            const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${currentLang}|${targetLang}`);
+            const data = await res.json();
+            document.getElementById('transResult').innerText = data.responseData.translatedText;
+        } catch(e) {
+            document.getElementById('transResult').innerText = "Error connecting to translation service.";
+        }
+    }
+
+    // --- Screen Recording Feature ---
+    async function startScreenRecord() {
+        try {
+            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            const mime = MediaRecorder.isTypeSupported("video/webm; codecs=vp9") ? "video/webm; codecs=vp9" : "video/webm";
+            const recorder = new MediaRecorder(stream, { mimeType: mime });
+            const chunks = [];
+
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: mime });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `screen_recording_${Date.now()}.webm`;
+                a.click();
+            };
+
+            recorder.start();
+            alert("التسجيل بدأ! اضغط إيقاف عندما تنتهي.");
+            
+            // Stop recording when user stops sharing screen via browser UI
+            stream.getTracks()[0].onended = () => recorder.stop();
+
+        } catch (err) {
+            console.error(err);
+            alert("فشل بدء التسجيل: " + err.message);
+        }
+    }
+
+    // Initialize UI
+    window.onload = updateUI;
+
+</script>
+</body>
+</html>
