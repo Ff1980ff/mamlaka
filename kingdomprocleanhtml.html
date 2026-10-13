@@ -532,7 +532,7 @@
         saveDB();
     }
 
-    // --- Rendering Functions ---
+  // --- Rendering Functions (Updated for Royal Arsenal) ---
     function renderItems(category) {
         const container = document.getElementById(category + 'Grid');
         let items = [];
@@ -543,7 +543,8 @@
         else if(category === 'sale') items = db.sales;
         else if(category === 'client') items = db.clients;
 
-        if(category === 'code') {
+        // فلتر خاص بالأكواد فقط
+        if(category === 'code' && document.getElementById('filterCodeStatus')) {
             const filterVal = document.getElementById('filterCodeStatus').value;
             if(filterVal !== 'all') items = items.filter(i => i.status === filterVal);
         }
@@ -557,17 +558,80 @@
             let statusClass = '';
             let statusText = '';
             
-            if(item.status === 'uploaded' || item.status === 'live') { statusClass='status-uploaded'; statusText=item.status==='live'?'نشط':'مرفوع'; }
-            else if (item.status === 'draft') { statusClass='status-draft'; statusText='مسودة'; }
-            else if (item.clientStatus === 'paid') { statusClass='status-uploaded'; statusText='مدفوع'; }
-            else if (item.platform) { statusClass='status-sold'; statusText=item.platform; }
+            // تحديد لون وحالة العنصر
+            if(item.status === 'uploaded' || item.status === 'live') { 
+                statusClass='status-uploaded'; 
+                statusText=item.status==='live'?'✅ نشط':'☁️ مرفوع'; 
+            }
+            else if (item.status === 'draft') { 
+                statusClass='status-draft'; 
+                statusText='⏳ مسودة'; 
+            }
+            else if (item.status === 'dev') { 
+                statusClass='status-sold'; // أزرق فاتح للتطوير
+                statusText='🛠️ قيد التطوير'; 
+            }
+            else if (item.clientStatus === 'paid') { 
+                statusClass='status-uploaded'; 
+                statusText='💰 مدفوع'; 
+            }
+            else if (item.platform) { 
+                statusClass='status-sold'; 
+                statusText=item.platform; 
+            }
 
+            // بناء المحتوى الداخلي للبطاقة حسب النوع
             let metaHtml = '';
-            if(category === 'app') metaHtml = `<span>🔗 ${item.url}</span>`;
-            if(category === 'code') metaHtml = `<span>💻 ${item.lang}</span> <span>📂 ${item.location||'-'}</span>`;
-            if(category === 'asset') metaHtml = `<span>📁 ${item.folder||'عام'}</span>`;
-            if(category === 'sale') metaHtml = `<span>💰 $${item.price}</span> <span>📅 ${item.date||''}</span>`;
-            if(category === 'client') metaHtml = `<span>📞 ${item.contact}</span>`;
+            let actionButtons = '';
+
+            if(category === 'app') {
+                // إذا كان التطبيق من الترسانة الملكية (يحتوي على desc)
+                if(item.desc) {
+                    metaHtml = `
+                        <div style="font-size:0.85rem; color:#666; margin-bottom:10px; line-height:1.4;">${item.desc}</div>
+                        <a href="${item.url}" target="_blank" class="action-btn edit" style="background:var(--primary); color:white; border:none; width:100%; margin-top:5px;">
+                            <i class="fas fa-external-link-alt"></i> فتح التطبيق الآن
+                        </a>
+                    `;
+                    // إخفاء أزرار التعديل والحذف للأدوات الأساسية لحماية النظام
+                    actionButtons = ''; 
+                } else {
+                    // التطبيقات العادية المضافة يدوياً
+                    metaHtml = `<span>🔗 ${item.url}</span>`;
+                    actionButtons = `
+                        <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                        <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                    `;
+                }
+            } 
+            else if(category === 'code') {
+                metaHtml = `<span>💻 ${item.lang||'HTML'}</span> <span>📂 ${item.location||'-'}</span>`;
+                actionButtons = `
+                    <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                    <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                `;
+            }
+            else if(category === 'asset') {
+                metaHtml = `<span>📁 ${item.folder||'عام'}</span>`;
+                actionButtons = `
+                    <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                    <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                `;
+            }
+            else if(category === 'sale') {
+                metaHtml = `<span>💰 $${item.price}</span> <span>📅 ${item.date||''}</span>`;
+                actionButtons = `
+                    <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                    <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                `;
+            }
+            else if(category === 'client') {
+                metaHtml = `<span>📞 ${item.contact}</span>`;
+                actionButtons = `
+                    <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                    <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                `;
+            }
 
             return `
                 <div class="item-card">
@@ -576,26 +640,11 @@
                         ${statusText ? `<span class="card-status ${statusClass}">${statusText}</span>` : ''}
                     </div>
                     <div class="card-meta">${metaHtml}</div>
-                    <div class="card-actions">
-                        <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
-                        <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
-                    </div>
+                    ${actionButtons ? `<div class="card-actions">${actionButtons}</div>` : ''}
                 </div>
             `;
         }).join('');
-    }
-
-    function renderAllViews() {
-        ['app','code','asset','sale','client'].forEach(cat => renderItems(cat));
-    }
-
-    function updateStats() {
-        document.getElementById('totalApps').innerText = db.apps.length;
-        document.getElementById('totalCode').innerText = db.code.length;
-        document.getElementById('totalAssets').innerText = db.assets.length;
-        const rev = db.sales.reduce((s,i)=>s+parseFloat(i.price||0),0);
-        document.getElementById('totalSales').innerText = '$'+rev.toFixed(2);
-    }
+    }  }
 
     // ==========================================
     // ⚔️ THE ROYAL ARSENAL (الترسانة الملكية النهائية)
