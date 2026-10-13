@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 المملكة المركزية | Simple & Stable</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; margin: 0; padding-bottom: 60px; }
+        header { background: #8e44ad; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 10; }
+        
+        /* Tabs Navigation */
+        .tabs { display: flex; justify-content: space-around; background: #fff; border-top: 1px solid #ddd; position: fixed; bottom: 0; width: 100%; height: 50px; align-items: center; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
+        .tab-btn { border: none; background: none; font-size: 0.9rem; cursor: pointer; color: #777; }
+        .tab-btn.active { color: #8e44ad; font-weight: bold; }
+
+        /* Content Sections */
+        section { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
+        section.active { display: block; }
+
+        /* Cards */
+        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-right: 4px solid #8e44ad; }
+        .card h3 { margin: 0 0 5px 0; color: #333; font-size: 1.1rem; }
+        .card p { margin: 0 0 10px 0; color: #666; font-size: 0.9rem; }
+        .btn-open { display: inline-block; background: #8e44ad; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 0.9rem; }
+
+        /* Form */
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button.submit { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<header><h2>👑 المملكة المركزية (Simple)</h2></header>
+
+<main>
+    <!-- Dashboard -->
+    <section id="home" class="active">
+        <div class="card">
+            <h3>مرحباً بك!</h3>
+            <p>هذه نسخة مستقرة ومبسطة لإدارة مشاريعك.</p>
+            <button onclick="showTab('projects')" class="btn-open">عرض المشاريع الآن ➡️</button>
+        </div>
+    </section>
+
+    <!-- Projects List -->
+    <section id="projects">
+        <h3>قائمة التطبيقات المثبتة</h3>
+        <div id="projectList"></div>
+        <hr style="margin:20px 0;">
+        <h4>➕ إضافة مشروع جديد</h4>
+        <input type="text" id="newName" placeholder="اسم المشروع">
+        <input type="url" id="newUrl" placeholder="الرابط (https://...)">
+        <textarea id="newDesc" placeholder="وصف مختصر"></textarea>
+        <button class="submit" onclick="addProject()">حفظ المشروع</button>
+    </section>
+
+    <!-- Payments -->
+    <section id="payments">
+        <h3>💸 مولد دفع واتساب</h3>
+        <div class="card">
+            <label>اسم العميل:</label>
+            <input type="text" id="payName">
+            <label>المبلغ:</label>
+            <input type="number" id="payAmt">
+            <button class="submit" style="background:#ff9f43;" onclick="makePayment()">توليد الرابط</button>
+            <div id="payRes" style="margin-top:10px; word-break:break-all;"></div>
+        </div>
+    </section>
+</main>
+
+<!-- Bottom Nav -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="showTab('home')">الرئيسية</button>
+    <button class="tab-btn" onclick="showTab('projects')">المشاريع</button>
+    <button class="tab-btn" onclick="showTab('payments')">الدفع</button>
+</div>
+
+<script>
+    // --- Data Storage (Simple Array) ---
+    let projects = [
+        { name: "Kingdom OS Clean", url: "https://ff1980ff.github.io/mamlaka/kingdomprocleanhtml.html", desc: "النظام المركزي." },
+        { name: "Code Sorter Pro", url: "https://ff1980ff.github.io/mamlaka/codesorterhtml.html", desc: "محلل الأكواد." },
+        { name: "Falcon Studio V2", url: "https://ff1980ff.github.io/mamlaka/falconstudioconnectedhtml.html", desc: "استوديو الفيديو." },
+        { name: "Mushaf Reader", url: "https://ff1980ff.github.io/mamlaka/mushaf.html", desc: "قارئ المصحف." },
+        { name: "Global Market", url: "https://ff1980ff.github.io/mamlaka/mamlakaglobalmarkethtml.html", desc: "سوق المنتجات." },
+        { name: "Realty Lite", url: "https://ff1980ff.github.io/mamlaka/realtylitehtml.html", desc: "إدارة العقارات." },
+        { name: "Rental Contract", url: "https://ff1980ff.github.io/mamlaka/rentalcontracthtml.html", desc: "مولد العقود." },
+        { name: "Sales Tracker", url: "https://ff1980ff.github.io/mamlaka/salestrackerhtml.html", desc: "متابعة المبيعات." },
+        { name: "Smart Publisher", url: "https://ff1980ff.github.io/mamlaka/SmartPublisherUltimateFixedhtml.html", desc: "ناشر السوشيال ميديا." },
+        { name: "Math Master", url: "https://ff1980ff.github.io/mamlaka/MathMasterFixedhtml.html", desc: "آلة حاسبة علمية." },
+        { name: "Wood Calculator", url: "https://ff1980ff.github.io/mamlaka/woodcalculatorhtml.html", desc: "حاسبات الأخشاب." },
+        { name: "Recipe Studio", url: "https://ff1980ff.github.io/mamlaka/recipestudiohtml.html", desc: "منظم الوصفات." },
+        { name: "Video Maker Pro", url: "https://ff1980ff.github.io/mamlaka/videomakerprohtml.html", desc: "تحرير الفيديو." },
+        { name: "Voice Studio Pro", url: "https://ff1980ff.github.io/mamlaka/voicestudioprohtml.html", desc: "مستوديو الصوت." },
+        { name: "Quick Cropper", url: "https://ff1980ff.github.io/mamlaka/quickcropper.html", desc: "قص الصور." },
+        { name: "Shrink Me", url: "https://ff1980ff.github.io/mamlaka/shrinkmeexe.html", desc: "ضغط الصور." },
+        { name: "Format Converter", url: "https://ff1980ff.github.io/mamlaka/universalfactoryhtml.html", desc: "محول الصيغ." },
+        { name: "Muallim AI", url: "https://ff1980ff.github.io/mamlaka/muallim.html", desc: "المعلم الذكي." },
+        { name: "Maktaba", url: "https://ff1980ff.github.io/mamlaka/maktaba.html", desc: "المكتبة الرقمية." },
+        { name: "Mojam Dict", url: "https://ff1980ff.github.io/mamlaka/mojam.html", desc: "القاموس العربي." },
+        { name: "Eternal Kingdom", url: "https://ff1980ff.github.io/mamlaka/eternalkingdomhtml.html", desc: "لوحة القيادة الشاملة." }
+    ];
+
+    // --- Core Functions ---
+    
+    function showTab(tabId) {
+        // Hide all sections
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        // Show target
+        document.getElementById(tabId).classList.add('active');
+        
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        if(tabId === 'projects') renderProjects();
+    }
+
+    function renderProjects() {
+        const list = document.getElementById('projectList');
+        list.innerHTML = ''; // Clear existing
+        
+        projects.forEach((p, index) => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+                <h3>${p.name}</h3>
+                <p>${p.desc || '-'}</p>
+                <a href="${p.url}" target="_blank" class="btn-open">فتح التطبيق 🔗</a>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function addProject() {
+        const name = document.getElementById('newName').value;
+        const url = document.getElementById('newUrl').value;
+        const desc = document.getElementById('newDesc').value;
+
+        if(!name || !url) return alert("أكمل الحقول!");
+
+        projects.unshift({ name, url, desc }); // Add to beginning
+        saveData();
+        renderProjects();
+        
+        // Clear inputs
+        document.getElementById('newName').value = '';
+        document.getElementById('newUrl').value = '';
+        document.getElementById('newDesc').value = '';
+        alert("تمت الإضافة بنجاح!");
+    }
+
+    function saveData() {
+        localStorage.setItem('simple_projects', JSON.stringify(projects));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('simple_projects');
+        if(saved) projects = JSON.parse(saved);
+    }
+
+    // --- Payment Logic ---
+    function makePayment() {
+        const name = document.getElementById('payName').value;
+        const amt = document.getElementById('payAmt').value;
+        const res = document.getElementById('payRes');
+        
+        if(!name || !amt) return alert("أدخل البيانات");
+
+        const num = "+9639XXXXXXXXX"; // ضع رقمك هنا
+        const msg = `مرحبا ${name}, يرجى تحويل ${amt} ل.س عبر شام كاش للحساب: ${num}`;
+        const link = `https://wa.me/${num.replace('+','')}?text=${encodeURIComponent(msg)}`;
+        
+        res.innerHTML = `<a href="${link}" target="_blank" class="btn-open" style="background:#25D366;">فتح واتساب وإرسال الطلب 📲</a>`;
+    }
+
+    // Init
+    window.onload = () => {
+        loadData();
+        renderProjects();
+    };
+
+</script>
+</body>
+</html>
