@@ -733,6 +733,53 @@
     }
 // --- البيانات الافتراضية الشاملة (The Master List) ---
     const masterProjects = [
+        { id: 101, name: "Kingdom Central OS (Free)", url: "https://ff1980ff.github.io/mamlaka/kingdomfinalhtml.html", type: "app", status: "live", desc: "النسخة المجانية." },
+        { id: 102, name: "Royal Code Sorter", url: "https://ff1980ff.github.io/mamlaka/codesorterhtml.html", type: "app", status: "live", desc: "محلل الأكواد الذكي." },
+        { id: 201, name: "Falcon Studio V2", url: "https://ff1980ff.github.io/mamlaka/falconstudioconnectedhtml.html", type: "asset", status: "draft", desc: "استوديو الفيديو الإعلاني." },
+        { id: 301, name: "Sham Cash Generator", url: "#", type: "sale", status: "paid", desc: "مولد روابط الدفع المحلي." }
+    ];
+
+    function loadMasterData() {
+        console.log("⚡ جارٍ فحص حالة التهيئة...");
+
+        // 1. إذا لم يتم التحميل مسبقاً، أو أردنا فرض التحديث
+        if (!localStorage.getItem('kingdom_master_loaded_v2')) {
+            console.log("🚀 تهيئة أولية: توزيع المشاريع الملكية...");
+            
+            // مسح أي بيانات قديمة لضمان النظافة
+            localStorage.removeItem(STORAGE_KEY); 
+            
+            // توزيع البيانات على أقسام db الصحيحة
+            db.apps = masterProjects.filter(p => p.type === 'app');
+            db.assets = masterProjects.filter(p => p.type === 'asset');
+            db.sales = masterProjects.filter(p => p.type === 'sale');
+            db.code = []; 
+            db.clients = [];
+
+            // حفظ الحالة الجديدة باستخدام الدالة الصحيحة saveDB()
+            saveDB(); 
+            
+            // وضع علامة أننا انتهينا من التهيئة
+            localStorage.setItem('kingdom_master_loaded_v2', 'true');
+        } else {
+            // القراءة العادية للبيانات المحفوظة
+            const savedDb = localStorage.getItem(STORAGE_KEY);
+            if(savedDb) try { db = JSON.parse(savedDb); } catch(e){}
+        }
+
+        // تحديث الواجهة النهائية
+        updateStats();
+        renderAllViews();
+        
+        // فتح تبويب التطبيقات تلقائياً لرؤية النتيجة فوراً
+        setTimeout(() => {
+            const appsTab = document.querySelector('[data-tab="apps"]');
+            if(appsTab) appsTab.click();
+        }, 500);
+    }
+
+    // استدعاء الدالة الرئيسية عند بدء التشغيل
+    window.onload = loadMasterData;
         // 1. أدوات الإنتاج والإدارة (Core Tools)
         {
             id: 101,
