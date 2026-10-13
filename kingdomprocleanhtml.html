@@ -597,8 +597,229 @@
         document.getElementById('totalSales').innerText = '$'+rev.toFixed(2);
     }
 
-    // Initialize App
-    window.onload = loadDB;
+    // ==========================================
+    // ⚔️ THE ROYAL ARSENAL (الترسانة الملكية النهائية)
+    // ==========================================
+    
+    const royalArsenal = [
+        // 👑 الفئة 1: الأنظمة المركزية والإدارة (Core Systems)
+        { 
+            id: 101, 
+            name: "Kingdom Central OS (Clean Pro)", 
+            url: "https://ff1980ff.github.io/mamlaka/kingdomprocleanhtml.html", 
+            type: "app", 
+            status: "live", 
+            desc: "النسخة المستقرة والنظيفة لإدارة الإمبراطورية الرقمية." 
+        },
+        { 
+            id: 102, 
+            name: "Eternal Kingdom Dashboard", 
+            url: "https://ff1980ff.github.io/mamlaka/eternalkingdomhtml.html", 
+            type: "app", 
+            status: "live", 
+            desc: "لوحة القيادة الشاملة للمشاريع طويلة الأمد." 
+        },
+        
+        // 🛠️ الفئة 2: أدوات الإنتاج والوسائط (Creative Suite)
+        { 
+            id: 201, 
+            name: "Falcon Studio V2 (Connected)", 
+            url: "https://ff1980ff.github.io/mamlaka/falconstudioconnectedhtml.html", 
+            type: "asset", 
+            status: "live", 
+            desc: "محرك توليد الفيديوهات الإعلانية من الصور والنصوص." 
+        },
+        { 
+            id: 202, 
+            name: "Video Maker Pro", 
+            url: "https://ff1980ff.github.io/mamlaka/videomakerprohtml.html", 
+            type: "asset", 
+            status: "dev", 
+            desc: "أداة تحرير فيديو بسيطة وسريعة للاستخدام الفوري." 
+        },
+        { 
+            id: 203, 
+            name: "Voice Studio Pro", 
+            url: "https://ff1980ff.github.io/mamlaka/voicestudioprohtml.html", 
+            type: "audio", 
+            status: "live", 
+            desc: "مستوديو الصوت الرقمي لتسجيل ومعالجة الملفات الصوتية." 
+        },
+        { 
+            id: 204, 
+            name: "Quick Cropper", 
+            url: "https://ff1980ff.github.io/mamlaka/quickcropper.html", 
+            type: "image_tool", 
+            status: "live", 
+            desc: "قص وتقليم الصور بدقة عالية بضغطة زر." 
+        },
+        { 
+            id: 205, 
+            name: "Shrink Me (Image Compressor)", 
+            url: "https://ff1980ff.github.io/mamlaka/shrinkmeexe.html", 
+            type: "image_tool", 
+            status: "live", 
+            desc: "ضاغط صور محلي يحافظ على الجودة ويقلل الحجم بنسبة 70%." 
+        },
+        { 
+            id: 206, 
+            name: "Format Converter Universal", 
+            url: "https://ff1980ff.github.io/mamlaka/universalfactoryhtml.html", 
+            type: "utility", 
+            status: "live", 
+            desc: "محول صيغ الملفات الشامل (صور، نصوص، بيانات)." 
+        },
+
+        // 📚 الفئة 3: المعرفة والتعليم (Knowledge Hub)
+        { 
+            id: 301, 
+            name: "Royal Code Sorter & Analyzer", 
+            url: "https://ff1980ff.github.io/mamlaka/codesorterhtml.html", 
+            type: "code", 
+            status: "uploaded", 
+            desc: "محلل أكواد HTML/CSS/JS يشرح وظائف الكود القديم بالعربية." 
+        },
+        { 
+            id: 302, 
+            name: "Muallim (AI Tutor Interface)", 
+            url: "https://ff1980ff.github.io/mamlaka/muallim.html", 
+            type: "education", 
+            status: "draft", 
+            desc: "واجهة تفاعلية للتعلم الذاتي وشرح المفاهيم البرمجية." 
+        },
+        { 
+            id: 303, 
+            name: "Maktaba (Digital Library)", 
+            url: "https://ff1980ff.github.io/mamlaka/maktaba.html", 
+            type: "content", 
+            status: "live", 
+            desc: "مكتبة رقمية لحفظ وتنظيم المقالات والكتب المرجعية." 
+        },
+        { 
+            id: 304, 
+            name: "Mojam (Arabic Dictionary)", 
+            url: "https://ff1980ff.github.io/mamlaka/mojam.html", 
+            type: "reference", 
+            status: "live", 
+            desc: "قاموس عربي-إنجليزي سريع وموثوق." 
+        },
+        { 
+            id: 305, 
+            name: "Quran Mushaf Reader", 
+            url: "https://ff1980ff.github.io/mamlaka/mushaf.html", 
+            type: "spiritual", 
+            status: "live", 
+            desc: "قارئ المصحف الشريف بتصميم بسيط وخفيف." 
+        },
+
+        // 💼 الفئة 4: الأعمال والعقارات (Business & Real Estate)
+        { 
+            id: 401, 
+            name: "Mamlaka Global Market", 
+            url: "https://ff1980ff.github.io/mamlaka/mamlakaglobalmarkethtml.html", 
+            type: "ecommerce", 
+            status: "live", 
+            desc: "منصة البيع العالمية للمنتجات الرقمية والخدمات." 
+        },
+        { 
+            id: 402, 
+            name: "Realty Lite (Real Estate Manager)", 
+            url: "https://ff1980ff.github.io/mamlaka/realtylitehtml.html", 
+            type: "business", 
+            status: "dev", 
+            desc: "إدارة العقارات وعرض الوحدات السكنية والتجارية." 
+        },
+        { 
+            id: 403, 
+            name: "Rental Contract Generator", 
+            url: "https://ff1980ff.github.io/mamlaka/rentalcontracthtml.html", 
+            type: "legal", 
+            status: "live", 
+            desc: "مولد عقود الإيجار القانونية الجاهزة للطباعة والتوقيع." 
+        },
+        { 
+            id: 404, 
+            name: "Sales Tracker Ultimate", 
+            url: "https://ff1980ff.github.io/mamlaka/salestrackerhtml.html", 
+            type: "finance", 
+            status: "live", 
+            desc: "متابعة المبيعات والأرباح والخسائر لحظة بلحظة." 
+        },
+        { 
+            id: 405, 
+            name: "Smart Publisher (Social Media Bot)", 
+            url: "https://ff1980ff.github.io/mamlaka/SmartPublisherUltimateFixedhtml.html", 
+            type: "marketing", 
+            status: "beta", 
+            desc: "أداة نشر تلقائي ذكي للمحتوى على منصات التواصل الاجتماعي." 
+        },
+
+        // 🧮 الفئة 5: الأدوات الحسابية والحرفية (Calculators & Utilities)
+        { 
+            id: 501, 
+            name: "Math Master Fixed", 
+            url: "https://ff1980ff.github.io/mamlaka/MathMasterFixedhtml.html", 
+            type: "calculator", 
+            status: "live", 
+            desc: "آلة حاسبة علمية متطورة لحل المعادلات الرياضية." 
+        },
+        { 
+            id: 502, 
+            name: "Wood Calculator (Carpentry Tool)", 
+            url: "https://ff1980ff.github.io/mamlaka/woodcalculatorhtml.html", 
+            type: "industry", 
+            status: "live", 
+            desc: "حاسبات كمية الأخشاب والتكاليف للنجارين والحرفيين." 
+        },
+        { 
+            id: 503, 
+            name: "Recipe Studio (Cooking Assistant)", 
+            url: "https://ff1980ff.github.io/mamlaka/recipestudiohtml.html", 
+            type: "lifestyle", 
+            status: "draft", 
+            desc: "منظم الوصفات وطرق الطبخ مع حساب الكميات." 
+        }
+    ];
+
+    function loadRoyalArsenal() {
+        console.log("⚔️ جارٍ تجهيز الترسانة الملكية...");
+
+        // فحص إذا كانت الترسانة محملة مسبقاَ بإصدار حديث
+        if (!localStorage.getItem('royal_arsenal_v6_active')) {
+            
+            // مسح أي بيانات قديمة قد تسبب تعارضاَ
+            localStorage.removeItem(STORAGE_KEY); 
+            
+            // توزيع الأسلحة على أقسام قاعدة البيانات db
+            // هنا نضع كل شيء في 'apps' لسهولة العرض، أو يمكنك تقسيمها حسب النوع
+            db.apps = royalArsenal; 
+            
+            // حفظ الحالة باستخدام الدالة الأصلية الآمنة saveDB()
+            saveDB(); 
+            
+            // وضع علامة أننا انتهينا من التجهيز (الإصدار السادس لضمان النظافة)
+            localStorage.setItem('royal_arsenal_v6_active', 'true');
+            
+            alert("✅ تم تحميل الترسانة الملكية (20 أداة أساسية)! ستجدها جميعاً في قسم التطبيقات.");
+        } else {
+            // القراءة العادية للبيانات المحفوظة
+            const savedDb = localStorage.getItem(STORAGE_KEY);
+            if(savedDb) try { db = JSON.parse(savedDb); } catch(e){}
+        }
+
+        // تحديث الواجهة النهائية
+        updateStats();
+        renderAllViews();
+        
+        // فتح تبويب التطبيقات تلقائياً لرؤية النتيجة فوراَ
+        setTimeout(() => {
+            const appsTab = document.querySelector('[data-tab="apps"]');
+            if(appsTab) appsTab.click();
+        }, 500);
+    }
+
+    // استدعاء الدالة الرئيسية عند بدء التشغيل
+    window.onload = loadRoyalArsenal;
 
 </script>
 </body>
