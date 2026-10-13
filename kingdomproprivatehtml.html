@@ -729,14 +729,83 @@
         document.getElementById('totalCode').innerText = db.code.length;
         document.getElementById('totalAssets').innerText = db.assets.length;
         const rev = db.sales.reduce((s,i)=>s+parseFloat(i.price||0),0);
-        document.getElementById('totalSales').innerText = '$'+rev.toFixed(2);
+ // ==========================================
+    // 👑 THE ROYAL SEEDER (النسخة النهائية المصححة)
+    // ==========================================
+    
+    const royalSeeds = [
+        { 
+            id: 101, 
+            name: "Kingdom Central OS (Free)", 
+            url: "https://ff1980ff.github.io/mamlaka/kingdomfinalhtml.html", 
+            type: "app", 
+            status: "live", 
+            desc: "النسخة المجانية لإدارة المشاريع." 
+        },
+        { 
+            id: 102, 
+            name: "Royal Code Sorter", 
+            url: "https://ff1980ff.github.io/mamlaka/codesorterhtml.html", 
+            type: "app", 
+            status: "live", 
+            desc: "محلل الأكواد الذكي بالعربية." 
+        },
+        { 
+            id: 201, 
+            name: "Falcon Studio V2", 
+            url: "https://ff1980ff.github.io/mamlaka/falconstudioconnectedhtml.html", 
+            type: "asset", 
+            status: "draft", 
+            desc: "استوديو توليد الفيديوهات الإعلانية." 
+        }
+    ];
+
+    function initKingdomSystem() {
+        console.log("⚡ جارٍ تشغيل النظام الملكي...");
+
+        // 1. فحص إذا كانت البذور مزروعة مسبقاَ بإصدار حديث
+        if (!localStorage.getItem('royal_seeds_v4_active')) {
+            
+            // مسح أي بيانات قديمة قد تسبب تعارضاَ
+            localStorage.removeItem(STORAGE_KEY); 
+            
+            // توزيع البذور على أقسام قاعدة البيانات db
+            db.apps = royalSeeds.filter(p => p.type === 'app');
+            db.assets = royalSeeds.filter(p => p.type === 'asset');
+            db.code = [];
+            db.sales = [];
+            db.clients = [];
+
+            // حفظ الحالة باستخدام الدالة الأصلية الآمنة saveDB()
+            saveDB(); 
+            
+            // وضع علامة أننا انتهينا من الزرع (الإصدار الرابع لضمان النظافة)
+            localStorage.setItem('royal_seeds_v4_active', 'true');
+            
+            alert("✅ تم تجهيز المملكة بنجاح! ستجد أدواتك جاهزة في قسم التطبيقات.");
+        } else {
+            // القراءة العادية للبيانات المحفوظة
+            const savedDb = localStorage.getItem(STORAGE_KEY);
+            if(savedDb) try { db = JSON.parse(savedDb); } catch(e){}
+        }
+
+        // تحديث الواجهة النهائية
+        updateStats();
+        renderAllViews();
+        
+        // فتح تبويب التطبيقات تلقائياً لرؤية النتيجة فوراً
+        setTimeout(() => {
+            const appsTab = document.querySelector('[data-tab="apps"]');
+            if(appsTab) appsTab.click();
+        }, 500);
     }
-// --- البيانات الافتراضية الشاملة (The Master List) ---
-    const masterProjects = [
-        { id: 101, name: "Kingdom Central OS (Free)", url: "https://ff1980ff.github.io/mamlaka/kingdomfinalhtml.html", type: "app", status: "live", desc: "النسخة المجانية." },
-        { id: 102, name: "Royal Code Sorter", url: "https://ff1980ff.github.io/mamlaka/codesorterhtml.html", type: "app", status: "live", desc: "محلل الأكواد الذكي." },
-        { id: 201, name: "Falcon Studio V2", url: "https://ff1980ff.github.io/mamlaka/falconstudioconnectedhtml.html", type: "asset", status: "draft", desc: "استوديو الفيديو الإعلاني." },
-        { id: 301, name: "Sham Cash Generator", url: "#", type: "sale", status: "paid", desc: "مولد روابط الدفع المحلي." }
+
+    // استدعاء الدالة الرئيسية عند بدء التشغيل
+    window.onload = initKingdomSystem;
+
+</script>
+</body>
+</html>  }
     ];
 
     function loadMasterData() {
