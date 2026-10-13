@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>👑 المملكة المركزية | الإصدار الملكي الخاص (PRO)</title>
+    
+    <!-- خطوط وأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* هوية بصرية فاخرة ومميزة للنسخة البرو */
+            --bg-body: #f8f9fa;       /* خلفية أنظف قليلاَ */
+            --bg-card: #ffffff;       
+            --text-main: #2c3e50;     /* أزرق داكن راقٍ بدل الأسود الحاد */
+            --text-muted: #7f8c8d;    
+            
+            --primary: #8e44ad;       /* بنفسجي ملكي أعمق (Royal Purple) */
+            --secondary: #2980b9;     /* أزرق ملكي هادئ */
+            --accent: #d35400;        /* برتقالي محروق للتحذيرات والإجراءات المهمة */
+            --gold: #f1c40f;          /* ذهبي خالص للمميزات البريميوم */
+            --success: #27ae60;       
+            --danger: #c0392b;        
+            
+            --border-light: #ecf0f1;  
+            --shadow-premium: 0 4px 15px rgba(0,0,0,0.08); 
+            
+            --nav-height: 70px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+        }
+
+        /* Header Premium Look */
+        header {
+            padding: 15px 20px; 
+            background: linear-gradient(to right, #fff, #fdfdfd);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: var(--shadow-premium);
+            display: flex; justify-content: space-between; align-items: center; z-index: 100; min-height: 60px;
+        }
+        .logo h1 { 
+            font-size: 1.2rem; 
+            color: var(--primary); 
+            font-weight: bold;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .pro-badge {
+            background: var(--gold); color: black;
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;
+            font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .header-actions button { background: transparent; border: none; color: var(--secondary); font-size: 1.3rem; cursor: pointer; transition: 0.2s;}
+        .header-actions button:hover { transform: scale(1.1); color: var(--primary); }
+
+        /* Main Content Area */
+        main { flex-grow: 1; overflow-y: auto; padding: 20px; padding-bottom: calc(var(--nav-height) + 20px); scroll-behavior: smooth; }
+        
+        /* View Sections */
+        .view-section { display: none; animation: fadeIn 0.3s ease-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-size: 1.3rem; font-weight: bold; color: var(--text-main); margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--border-light); padding-bottom: 10px;
+        }
+        
+        /* FAB Container - More Elegant */
+        .fab-container { position: fixed; bottom: calc(var(--nav-height) + 20px); right: 20px; z-index: 90; display: flex; flex-direction: column-reverse; align-items: center; gap: 12px; }
+        
+        .btn-add-floating {
+            width: 60px; height: 60px; border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary), #9b59b6);
+            color: white; border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.4); 
+            font-size: 1.8rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-add-floating:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 8px 20px rgba(142, 68, 173, 0.6); }
+        .btn-add-floating.rotated i { transform: rotate(-90deg); } /* Reverse rotation for close feel */
+
+        .sub-action {
+            background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-light); border-radius: 30px;
+            padding: 10px 20px; font-size: 0.95rem; font-weight: bold; cursor: pointer;
+            display: none; align-items: center; gap: 10px; box-shadow: var(--shadow-premium);
+            transition: 0.2s; opacity: 0; transform: translateX(20px);
+            min-width: 180px; justify-content: flex-start;
+        }
+        .sub-action.show { display: flex; opacity: 1; transform: translateX(0); }
+        .sub-action:hover { background: #f9f9f9; border-color: var(--primary); color: var(--primary); }
+        .sub-action i { color: var(--primary); width: 20px; text-align: center; }
+
+        /* Cards List - Clean & Spacious */
+        .items-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .item-card {
+            background: var(--bg-card); 
+            border: 1px solid var(--border-light); 
+            border-radius: 15px; 
+            padding: 20px; 
+            position: relative; 
+            transition: 0.3s; 
+            box-shadow: var(--shadow-premium);
+        }
+        .item-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: #ddd; }
+        
+        .card-header-row { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        
+        .card-title { 
+            font-size: 1.15rem; 
+            font-weight: bold; 
+            color: var(--text-main); 
+            word-break: break-word; 
+            line-height: 1.4;
+        }
+        
+        .card-status {
+            font-size: 0.75rem; 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        .status-uploaded { background: #eafaf1; color: #27ae60; border-color: #a9dfbf; } 
+        .status-draft { background: #fef9e7; color: #f39c12; border-color: #fcf3cf; }   
+        .status-sold { background: #ebf5fb; color: #2980b9; border-color: #aed6f1; }    
+
+        .card-meta { 
+            font-size: 0.95rem; 
+            color: var(--text-muted); 
+            line-height: 1.6; 
+            margin-bottom: 15px; 
+        }
+        .card-meta span { display: inline-block; margin-left: 10px; background: #f4f6f7; padding: 3px 8px; border-radius: 5px; color: #555; font-size: 0.85rem;}
+
+        .card-actions {
+            display: flex; gap: 10px; 
+            border-top: 1px solid var(--border-light); 
+            padding-top: 15px; 
+        }
+        .action-btn {
+            flex: 1; padding: 10px 0; 
+            border: 1px solid var(--border-light); 
+            background: #fff; 
+            color: var(--text-main);
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 0.9rem; 
+            font-weight: bold; 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .action-btn.edit:hover { background: var(--secondary); color: white; border-color: var(--secondary); }
+        .action-btn.delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Bottom Navigation Bar - Solid & Modern */
+        nav.bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            height: var(--nav-height);
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-light);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-around; align-items: center; z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem; 
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            transition: 0.3s; width: 20%;
+            padding: 10px 0;
+        }
+        .nav-item i { font-size: 1.5rem; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item.active i { transform: translateY(-3px); filter: drop-shadow(0 0 5px rgba(142, 68, 173, 0.3)); }
+
+        /* Modal Forms - Clear Inputs with Focus States */
+        #modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.85); backdrop-filter: blur(5px); display: none; flex-direction: column; z-index: 200; }
+        .modal-header { padding: 20px; background: var(--bg-card); border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+        .modal-body { flex-grow: 1; overflow-y: auto; padding: 25px; background: var(--bg-body); }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: var(--text-main); font-size: 1rem; font-weight: bold; }
+        
+        input, select, textarea {
+            width: 100%; padding: 14px; 
+            background: #ffffff; 
+            border: 1px solid #dcdde1; 
+            color: var(--text-main); 
+            border-radius: 10px; 
+            font-size: 1rem; 
+            outline: none;
+            transition: 0.3s;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+        input:focus, textarea:focus, select:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.1); 
+        }
+        
+        .btn-submit-modal {
+            width: 100%; padding: 16px; background: linear-gradient(to right, var(--primary), #9b59b6); color: white;
+            border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem;
+            margin-top: 20px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+        }
+        .btn-submit-modal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(142, 68, 173, 0.5); }
+
+        /* Stats Dashboard Simplified but Rich */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-box {
+            background: var(--bg-card); padding: 20px; border-radius: 15px; text-align: center;
+            border: 1px solid var(--border-light); box-shadow: var(--shadow-premium);
+            transition: 0.3s;
+        }
+        .stat-box:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .stat-num { font-size: 2rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; font-weight: bold; }
+
+        /* Payment Specific Styles */
+        .payment-method-card {
+            background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .pay-icon { font-size: 2rem; color: var(--accent); }
+        .pay-details h4 { margin: 0 0 5px 0; color: var(--text-main); }
+        .pay-details p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+        .copy-address-btn {
+            margin-right: auto; background: #f1f2f6; border: none; padding: 5px 10px; border-radius: 5px;
+            font-size: 0.8rem; cursor: pointer; color: #555;
+        }
+        .copy-address-btn:hover { background: var(--primary); color: white; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><h1><i class="fas fa-crown"></i> المملكة المركزية <span class="pro-badge">PRO PRIVATE</span></h1></div>
+    <div class="header-actions">
+        <button onclick="exportData()" title="نسخة احتياطية آمنة"><i class="fas fa-shield-alt"></i></button>
+    </div>
+</header>
+
+<main id="mainContent">
+    <!-- 1. Dashboard View -->
+    <section id="dashboard" class="view-section active">
+        <div class="section-title">لوحة القيادة الملكية</div>
+        <div class="stats-grid">
+            <div class="stat-box"><div class="stat-num" id="totalApps">0</div><div class="stat-label">تطبيقات نشطة</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalCode">0</div><div class="stat-label">أكواد مؤرشفة</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalAssets">0</div><div class="stat-label">أصول رقمية</div></div>
+            <div class="stat-box"><div class="stat-num" id="totalSales">$0</div><div class="stat-label">إجمالي الإيرادات</div></div>
+        </div>
+        <div style="background:#fff; padding:20px; border-radius:15px; border:1px dashed #ccc; margin-top:10px; text-align:center;">
+            <p style="color:var(--text-muted); font-size:1rem; line-height:1.6;">
+                مرحباً بك في مركز قيادتك الخاص.<br>
+                جميع البيانات محفوظة محلياً وبأمان تام.<br>
+                استخدم زر (+) لإضافة عناصر جديدة أو توليد روابط دفع.
+            </p>
+        </div>
+    </section>
+
+    <!-- Other Views (Same structure as before but cleaner UI) -->
+    <section id="apps" class="view-section"><div class="section-title">التطبيقات المثبتة</div><div class="items-list" id="appsGrid"></div></section>
+    <section id="code" class="view-section">
+        <div class="section-title">إدارة الأكواد</div>
+        <select id="filterCodeStatus" onchange="renderItems('code')" style="margin-bottom:15px; width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;"><option value="all">عرض الكل</option><option value="uploaded">✅ مرفوع</option><option value="draft">⏳ مسودة</option></select>
+        <div class="items-list" id="codeGrid"></div>
+    </section>
+    <section id="assets" class="view-section"><div class="section-title">الأصول الرقمية</div><div class="items-list" id="assetsGrid"></div></section>
+    <section id="sales" class="view-section"><div class="section-title">التسعير والبيع</div><div class="items-list" id="salesGrid"></div></section>
+    <section id="clients" class="view-section"><div class="section-title">سجل العملاء (CRM)</div><div class="items-list" id="clientsGrid"></div></section>
+
+    <!-- NEW SECTION: PAYMENTS GATEWAY -->
+    <section id="payments" class="view-section">
+        <div class="section-title">بوابة المدفوعات الملكية</div>
+        
+        <!-- Sham Cash Generator -->
+        <div class="item-card" style="margin-bottom:20px; border-right: 4px solid #ff9f43;">
+            <h3 style="color:#ff9f43; margin-top:0; margin-bottom:15px;"><i class="fas fa-money-bill-wave"></i> مولد طلبات شام كاش</h3>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">ولّد رسالة واتساب جاهزة للعميل تحتوي على تفاصيل الدفع.</p>
+            
+            <div class="form-group">
+                <label>اسم العميل:</label>
+                <input type="text" id="shamName" placeholder="مثال: أحمد محمد">
+            </div>
+            <div class="form-group">
+                <label>المبلغ (ليرة سورية):</label>
+                <input type="number" id="shamAmount" placeholder="50000">
+            </div>
+            <button class="btn-submit-modal" style="background:#ff9f43;" onclick="generateShamCashLink()">توليد رابط الطلب 📲</button>
+            
+            <div id="shamResult" style="display:none; margin-top:15px; padding:15px; background:#fff3cd; border-radius:10px; border:1px solid #ffeeba;"></div>
+        </div>
+
+        <!-- Crypto Wallets Storage -->
+        <div class="item-card" style="border-right: 4px solid #f7931a;">
+            <h3 style="color:#f7931a; margin-top:0; margin-bottom:15px;"><i class="fab fa-bitcoin"></i> محافظ العملات الرقمية</h3>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">احفظ عناوينك هنا لنسخها بضغطة زر عند البيع.</p>
+            
+            <div class="payment-method-card">
+                <i class="fab fa-usdt pay-icon" style="color:#26a17b;"></i>
+                <div class="pay-details">
+                    <h4>USDT (TRC20)</h4>
+                    <p id="usdtAddrDisplay">غير محدد بعد</p>
+                </div>
+                <button class="copy-address-btn" onclick="editWallet('usdt')">تعديل</button>
+                <button class="copy-address-btn" style="background:#26a17b; color:white;" onclick="copyWallet('usdt')">نسخ</button>
+            </div>
+
+            <div class="payment-method-card">
+                <i class="fab fa-bitcoin pay-icon" style="color:#f7931a;"></i>
+                <div class="pay-details">
+                    <h4>BTC (Bitcoin)</h4>
+                    <p id="btcAddrDisplay">غير محدد بعد</p>
+                </div>
+                <button class="copy-address-btn" onclick="editWallet('btc')">تعديل</button>
+                <button class="copy-address-btn" style="background:#f7931a; color:white;" onclick="copyWallet('btc')">نسخ</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- FAB Container with Sub-menu -->
+<div class="fab-container">
+    <button class="btn-add-floating" id="fabButton" onclick="toggleFabMenu()">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <!-- Sub Actions -->
+    <div class="sub-action" id="actAddNew" onclick="openModal(getActiveTab())">
+        <i class="fas fa-file-medical"></i> إضافة عنصر جديد
+    </div>
+    <div class="sub-action" id="actGithub" onclick="triggerGithubPublish()">
+        <i class="fab fa-github"></i> نشر على GitHub
+    </div>
+    <div class="sub-action" id="actSale" onclick="openSaleModal()">
+        <i class="fas fa-dollar-sign"></i> تسجيل بيع سريع
+    </div>
+    <div class="sub-action" id="actPay" onclick="switchTabById('payments')">
+        <i class="fas fa-wallet"></i> بوابة المدفوعات
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active" data-tab="dashboard" onclick="switchTab(event)"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+    <a href="#" class="nav-item" data-tab="apps" onclick="switchTab(event)"><i class="fas fa-mobile-alt"></i><span>تطبيقات</span></a>
+    <a href="#" class="nav-item" data-tab="code" onclick="switchTab(event)"><i class="fas fa-code"></i><span>أكواد</span></a>
+    <a href="#" class="nav-item" data-tab="assets" onclick="switchTab(event)"><i class="fas fa-images"></i><span>أصول</span></a>
+    <a href="#" class="nav-item" data-tab="payments" onclick="switchTab(event)"><i class="fas fa-wallet"></i><span>مدفوعات</span></a>
+</nav>
+
+<!-- Generic Modal for Adding Items -->
+<div id="modalOverlay">
+    <div class="modal-header">
+        <h2 id="modalTitle" style="font-size:1.2rem; color:var(--primary);">إضافة عنصر</h2>
+        <button onclick="closeModal()" style="background:none; border:none; color:var(--text-main); font-size:1.5rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+        <form id="dynamicForm" onsubmit="saveItem(event)">
+            <div id="formFields"></div>
+            <input type="hidden" id="itemId">
+            <input type="hidden" id="itemType">
+            <button type="submit" class="btn-submit-modal">حفظ التغييرات الملكية</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- Database Logic ---
+    let db = { apps: [], code: [], assets: [], sales: [], clients: [] };
+    let wallets = { usdt: '', btc: '' };
+    const STORAGE_KEY = 'kingdom_pro_db_v1';
+    const WALLET_KEY = 'kingdom_pro_wallets_v1';
+
+    function loadDB() {
+        const savedDb = localStorage.getItem(STORAGE_KEY);
+        if(savedDb) try { db = JSON.parse(savedDb); } catch(e){}
+        
+        const savedWallets = localStorage.getItem(WALLET_KEY);
+        if(savedWallets) try { wallets = JSON.parse(savedWallets); } catch(e){}
+        
+        updateWalletUI();
+        updateStats();
+        renderAllViews();
+    }
+
+    function saveDB() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        localStorage.setItem(WALLET_KEY, JSON.stringify(wallets));
+        updateStats();
+        renderAllViews();
+        closeModal();
+        closeFabMenu();
+    }
+
+    function exportData() {
+        const fullBackup = { database: db, wallets: wallets };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = "kingdom_pro_backup_" + Date.now() + ".json";
+        a.click();
+        alert("تم تصدير نسخة احتياطية كاملة تشمل البيانات والمحافظ!");
+    }
+
+    // --- UI Navigation & FAB Logic ---
+    let currentTab = 'dashboard';
+    let isFabOpen = false;
+
+    function switchTab(e) {
+        e.preventDefault();
+        const tabId = e.currentTarget.dataset.tab;
+        currentTab = tabId;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.getElementById('mainContent').scrollTop = 0;
+        closeFabMenu();
+    }
+
+    function switchTabById(tabId) {
+        currentTab = tabId;
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.classList.remove('active');
+            if(el.dataset.tab === tabId) el.classList.add('active');
+        });
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        closeFabMenu();
+    }
+
+    function getActiveTab() { return currentTab; }
+
+    function toggleFabMenu() {
+        isFabOpen = !isFabOpen;
+        const btn = document.getElementById('fabButton');
+        const actions = ['actAddNew', 'actGithub', 'actSale', 'actPay'];
+        
+        if(isFabOpen) {
+            btn.classList.add('rotated');
+            actions.forEach((id, index) => {
+                setTimeout(() => document.getElementById(id).classList.add('show'), index * 60);
+            });
+        } else {
+            closeFabMenu();
+        }
+    }
+
+    function closeFabMenu() {
+        isFabOpen = false;
+        document.getElementById('fabButton').classList.remove('rotated');
+        ['actAddNew', 'actGithub', 'actSale', 'actPay'].forEach(id => document.getElementById(id).classList.remove('show'));
+    }
+
+    // --- Special Actions ---
+    function triggerGithubPublish() {
+        closeFabMenu();
+        alert("📤 تم نسخ رابط المستودع!\n\nاستخدم أدوات Git لرفع الملفات.");
+        navigator.clipboard.writeText("https://github.com/ff1980ff/mamlaka");
+    }
+
+    function openSaleModal() {
+        closeFabMenu();
+        document.getElementById('modalOverlay').style.display = 'flex';
+        document.getElementById('itemType').value = 'sale';
+        document.getElementById('itemId').value = '';
+        document.getElementById('modalTitle').innerText = "تسجيل عملية بيع سريعة";
+        
+        const fieldsContainer = document.getElementById('formFields');
+        fieldsContainer.innerHTML = `
+            <div class="form-group"><label>اسم المنتج المباع</label><input type="text" name="product" required placeholder="مثال: قالب الموقع العقاري"></div>
+            <div class="form-group"><label>السعر ($)</label><input type="number" step="0.01" name="price" required placeholder="19.00"></div>
+            <div class="form-group"><label>المنصة المستخدمة</label><select name="platform"><option value="gumroad">Gumroad</option><option value="sellix">Sellix</option><option value="etsy">Etsy</option><option value="direct">بيع مباشر (واتساب)</option><option value="crypto">عملات رقمية</option></select></div>
+            <div class="form-group"><label>حالة الدفع</label><select name="clientStatus"><option value="paid">مدفوع ✅</option><option value="pending">بانتظار الدفع ⏳</option></select></div>
+            <div class="form-group"><label>ملاحظات للعميل</label><textarea name="notes" rows="2" placeholder="كلمة مرور الملف أو رابط التحميل..."></textarea></div>
+        `;
+    }
+
+    // --- Payment Gateway Logic ---
+    function generateShamCashLink() {
+        const name = document.getElementById('shamName').value.trim();
+        const amount = document.getElementById('shamAmount').value.trim();
+        const resultBox = document.getElementById('shamResult');
+
+        if(!name || !amount) {
+            alert("الرجاء إدخال الاسم والمبلغ!");
+            return;
+        }
+
+        // Replace with your actual Sham Cash phone number
+        const myShamNumber = "+9639XXXXXXXXX"; 
+        
+        const message = `مرحبا ${name},\n\nيرجى تحويل مبلغ ${amount} ل.س عبر تطبيق شام كاش إلى الحساب:\n${myShamNumber}\n\nشكراً لتعاونك.\nTeam Nexus Digital`;
+        const encodedMsg = encodeURIComponent(message);
+        
+        const waLink = `https://wa.me/${myShamNumber.replace('+','')}?text=${encodedMsg}`;
+
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+            <strong>✅ تم التجهيز!</strong><br>
+            اضغط الزر أدناه لإرسال طلب الدفع مباشرة:<br><br>
+            <a href="${waLink}" target="_blank" style="background:#25D366; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; display:inline-block; font-weight:bold;">
+                📱 إرسال عبر واتساب
+            </a>
+            <br><br>
+            <small style="color:#888;">أو انسخ النص يدوياَ:</small><br>
+            <textarea rows="4" style="width:100%; font-size:0.85rem; margin-top:5px; border:1px solid #ddd; padding:5px;">${message}</textarea>
+        `;
+    }
+
+    function editWallet(type) {
+        const addr = prompt(`أدخل عنوان المحفظة الجديد (${type}):`, wallets[type]);
+        if(addr !== null) {
+            wallets[type] = addr;
+            saveDB(); // Saves wallets too
+            updateWalletUI();
+            alert("تم تحديث العنوان بنجاح!");
+        }
+    }
+
+    function copyWallet(type) {
+        if(!wallets[type]) {
+            alert("لم يتم تحديد العنوان بعد! اضغط تعديل أولاَ.");
+            return;
+        }
+        navigator.clipboard.writeText(wallets[type]).then(() => {
+            alert("تم نسخ العنوان! الصقه في محادثة العميل.");
+        });
+    }
+
+    function updateWalletUI() {
+        document.getElementById('usdtAddrDisplay').innerText = wallets.usdt ? wallets.usdt.substring(0, 15) + "..." : "غير محدد بعد";
+        document.getElementById('btcAddrDisplay').innerText = wallets.btc ? wallets.btc.substring(0, 15) + "..." : "غير محدد بعد";
+    }
+
+    // --- Standard CRUD Logic ---
+    function openModal(type, id = null) {
+        closeFabMenu();
+        if(type === 'dashboard' || type === 'payments') { 
+            alert("اختر قسماً من القائمة الجانبية للإضافة."); 
+            return; 
+        }
+        
+        document.getElementById('modalOverlay').style.display = 'flex';
+        document.getElementById('itemType').value = type;
+        document.getElementById('itemId').value = id || '';
+        document.getElementById('modalTitle').innerText = id ? "تعديل العنصر" : "إضافة جديد لـ " + getSectionName(type);
+        
+        const fieldsContainer = document.getElementById('formFields');
+        fieldsContainer.innerHTML = '';
+
+        buildFormFields(fieldsContainer, type);
+
+        if(id) populateEditFields(fieldsContainer, type, id);
+    }
+
+    function getSectionName(key) {
+        const names = { app:"التطبيقات", code:"الأكواد", asset:"الأصول", sale:"المبيعات", client:"العملاء" };
+        return names[key] || key;
+    }
+
+    function buildFormFields(container, type) {
+        let html = '';
+        let normalizedType = type.toLowerCase().replace(/s$/, ''); 
+        if(type === 'clients') normalizedType = 'client';
+        if(type === 'sales') normalizedType = 'sale';
+        if(type === 'assets') normalizedType = 'asset';
+        if(type === 'codes') normalizedType = 'code';
+        if(type === 'apps') normalizedType = 'app';
+
+        switch(normalizedType) {
+            case 'app':
+                html = `<div class="form-group"><label>اسم التطبيق / المشروع</label><input type="text" name="name" required placeholder="مثال: محول الصيغ الملكي"></div><div class="form-group"><label>الرابط المباشر (URL)</label><input type="url" name="url" required placeholder="https://..."></div><div class="form-group"><label>الحالة الحالية</label><select name="status"><option value="live">✅ نشط ومرفوع</option><option value="dev">⏳ قيد التطوير المحلي</option><option value="paused">⏸️ متوقف مؤقتاَ</option></select></div><div class="form-group"><label>وصف مختصر للذاكرة</label><textarea name="notes" rows="2" placeholder="ماذا يفعل باختصار؟"></textarea></div>`;
+                break;
+            case 'code':
+                html = `<div class="form-group"><label>اسم الكود / السكربت</label><input type="text" name="name" required placeholder="مثال: نظام إدارة المخزون v2"></div><div class="form-group"><label>اللغة البرمجية الأساسية</label><select name="lang"><option value="html">HTML/CSS/JS</option><option value="python">Python</option><option value="php">PHP/Laravel</option><option value="node">Node.js</option><option value="other">أخرى</option></select></div><div class="form-group"><label>حالة النشر</label><select name="status"><option value="uploaded">☁️ مرفوع على GitHub</option><option value="draft">💾 مسودة محلية</option></select></div><div class="form-group"><label>مكان الحفظ الدقيق (Path أو Link)</label><input type="text" name="location" placeholder="C:/Projects/... أو github.com/user/repo"></div><div class="form-group"><label>شرح الوظيفة التقنية</label><textarea name="desc" rows="3" placeholder="اكتب هنا ماذا يفعل هذا الكود بالضبط..."></textarea></div>`;
+                break;
+            case 'asset':
+                html = `<div class="form-group"><label>اسم الأصل (صورة/فيديو/صوت)</label><input type="text" name="name" required placeholder="مثال: شعار المملكة الذهبي.png"></div><div class="form-group"><label>نوع الملف</label><select name="type"><option value="image">🖼️ صورة ثابتة</option><option value="video">🎥 فيديو / ريلز</option><option value="audio">🎵 صوت / موسيقى</option><option value="doc">📄 مستند / PDF</option></select></div><div class="form-group"><label>المجلد التصنيفي (Folder Name)</label><input type="text" name="folder" placeholder="مثال: أصول_التسويق"></div><div class="form-group"><label>المسار أو الرابط السحابي</label><input type="text" name="path" placeholder="Drive Link or Local Path"></div>`;
+                break;
+            case 'sale':
+                html = `<div class="form-group"><label>اسم المنتج المباع</label><input type="text" name="product" required placeholder="مثال: قالب موقع عقاري"></div><div class="form-group"><label>قيمة البيع ($)</label><input type="number" step="0.01" name="price" required placeholder="19.00"></div><div class="form-group"><label>منصة البيع المستخدمة</label><select name="platform"><option value="gumroad">Gumroad</option><option value="sellix">Sellix</option><option value="etsy">Etsy</option><option value="direct">بيع مباشر (واتساب/بنك)</option><option value="crypto">عملات رقمية (USDT/BTC)</option></select></div><div class="form-group"><label>تاريخ العملية</label><input type="date" name="date"></div><div class="form-group"><label>حالة استلام المال</label><select name="clientStatus"><option value="paid">💰 مدفوع ومستلم</option><option value="pending">⏳ بانتظار التأكيد</option><option value="refunded">↩️ تم الاسترجاع</option></select></div><div class="form-group"><label>ملاحظات إضافية</label><textarea name="notes" rows="2"></textarea></div>`;
+                break;
+            case 'client':
+                html = `<div class="form-group"><label>اسم العميل الكامل</label><input type="text" name="name" required placeholder="مثال: John Doe"></div><div class="form-group"><label>وسيلة التواصل الأساسية</label><input type="text" name="contact" required placeholder="WhatsApp Number or Email"></div><div class="form-group"><label>آخر منتج اشتراه</label><input type="text" name="lastProduct" placeholder="Optional"></div><div class="form-group"><label>ملف تعريف العميل (CRM Notes)</label><textarea name="notes" rows="3" placeholder="اهتماماته، ردود أفعاله السابقة..."></textarea></div>`;
+                break;
+            default:
+                html = `<div style="padding:20px; background:#ffebee; border:1px solid #ef9a9a; color:#c62828; border-radius:8px;">❌ خطأ برمجي: النظام لم يتعرف على القسم "${type}".</div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function populateEditFields(container, type, id) {
+        let item = null;
+        if(type==='app') item = db.apps.find(i=>i.id==id);
+        if(type==='code') item = db.code.find(i=>i.id==id);
+        if(type==='asset') item = db.assets.find(i=>i.id==id);
+        if(type==='sale') item = db.sales.find(i=>i.id==id);
+        if(type==='client') item = db.clients.find(i=>i.id==id);
+
+        if(item) {
+            Object.keys(item).forEach(key => {
+                const input = container.querySelector(`[name="${key}"]`);
+                if(input) input.value = item[key];
+            });
+        }
+    }
+
+    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+
+    function saveItem(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const type = document.getElementById('itemType').value;
+        const id = document.getElementById('itemId').value;
+
+        const newItem = Object.fromEntries(formData.entries());
+        newItem.id = id ? parseInt(id) : Date.now();
+
+        let targetArray;
+        switch(type) {
+            case 'app': targetArray = db.apps; break;
+            case 'code': targetArray = db.code; break;
+            case 'asset': targetArray = db.assets; break;
+            case 'sale': targetArray = db.sales; break;
+            case 'client': targetArray = db.clients; break;
+            default: return;
+        }
+
+        if(id) {
+            const index = targetArray.findIndex(i => i.id == id);
+            if(index !== -1) targetArray[index] = newItem;
+        } else {
+            targetArray.unshift(newItem);
+        }
+        saveDB();
+    }
+
+    function deleteItem(type, id) {
+        if(!confirm("حذف نهائي؟")) return;
+        let arrKey = type + 's'; 
+        if(type === 'app') arrKey = 'apps';
+        if(type === 'code') arrKey = 'code';
+        if(type === 'asset') arrKey = 'assets';
+        if(type === 'sale') arrKey = 'sales';
+        if(type === 'client') arrKey = 'clients';
+
+        db[arrKey] = db[arrKey].filter(i => i.id != id);
+        saveDB();
+    }
+
+    // --- Rendering Functions ---
+    function renderItems(category) {
+        const container = document.getElementById(category + 'Grid');
+        let items = [];
+        
+        if(category === 'app') items = db.apps;
+        else if(category === 'code') items = db.code;
+        else if(category === 'asset') items = db.assets;
+        else if(category === 'sale') items = db.sales;
+        else if(category === 'client') items = db.clients;
+
+        if(category === 'code') {
+            const filterVal = document.getElementById('filterCodeStatus').value;
+            if(filterVal !== 'all') items = items.filter(i => i.status === filterVal);
+        }
+
+        if(items.length === 0) {
+            container.innerHTML = `<p style="color:#aaa; text-align:center; padding:30px; font-style:italic;">لا توجد عناصر في هذا القسم بعد.</p>`;
+            return;
+        }
+
+        container.innerHTML = items.map(item => {
+            let statusClass = '';
+            let statusText = '';
+            
+            if(item.status === 'uploaded' || item.status === 'live') { statusClass='status-uploaded'; statusText=item.status==='live'?'نشط':'مرفوع'; }
+            else if (item.status === 'draft') { statusClass='status-draft'; statusText='مسودة'; }
+            else if (item.clientStatus === 'paid') { statusClass='status-uploaded'; statusText='مدفوع'; }
+            else if (item.platform) { statusClass='status-sold'; statusText=item.platform; }
+
+            let metaHtml = '';
+            if(category === 'app') metaHtml = `<span>🔗 ${item.url}</span>`;
+            if(category === 'code') metaHtml = `<span>💻 ${item.lang}</span> <span>📂 ${item.location||'-'}</span>`;
+            if(category === 'asset') metaHtml = `<span>📁 ${item.folder||'عام'}</span>`;
+            if(category === 'sale') metaHtml = `<span>💰 $${item.price}</span> <span>📅 ${item.date||''}</span>`;
+            if(category === 'client') metaHtml = `<span>📞 ${item.contact}</span>`;
+
+            return `
+                <div class="item-card">
+                    <div class="card-header-row">
+                        <div class="card-title">${item.name || item.product || 'بدون اسم'}</div>
+                        ${statusText ? `<span class="card-status ${statusClass}">${statusText}</span>` : ''}
+                    </div>
+                    <div class="card-meta">${metaHtml}</div>
+                    <div class="card-actions">
+                        <button class="action-btn edit" onclick="openModal('${category}', ${item.id})"><i class="fas fa-edit"></i> تعديل</button>
+                        <button class="action-btn delete" onclick="deleteItem('${category}', ${item.id})"><i class="fas fa-trash"></i> حذف</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderAllViews() {
+        ['app','code','asset','sale','client'].forEach(cat => renderItems(cat));
+    }
+
+    function updateStats() {
+        document.getElementById('totalApps').innerText = db.apps.length;
+        document.getElementById('totalCode').innerText = db.code.length;
+        document.getElementById('totalAssets').innerText = db.assets.length;
+        const rev = db.sales.reduce((s,i)=>s+parseFloat(i.price||0),0);
+        document.getElementById('totalSales').innerText = '$'+rev.toFixed(2);
+    }
+// --- البيانات الافتراضية الشاملة (The Master List) ---
+    const masterProjects = [
+        // 1. أدوات الإنتاج والإدارة (Core Tools)
+        {
+            id: 101,
+            name: "Kingdom Central OS (Free Lite)",
+            url: "https://ff1980ff.github.io/mamlaka/kingdomfinalhtml.html",
+            type: "app",
+            status: "live",
+            desc: "النسخة المجانية لإدارة المشاريع والروابط.",
+            icon: "fa-crown"
+        },
+        {
+            id: 102,
+            name: "Royal Code Sorter & Analyzer",
+            url: "https://ff1980ff.github.io/mamlaka/codesorterhtml.html",
+            type: "tool",
+            status: "live",
+            desc: "أداة تحليل الأكواد وشرح وظائفها بالعربية.",
+            icon: "fa-brain"
+        },
+        
+        // 2. استوديو الفيديو والإبداع (Creative Suite)
+        {
+            id: 201,
+            name: "Falcon Studio V2 (Connected)",
+            url: "https://ff1980ff.github.io/mamlaka/falconstudioconnectedhtml.html",
+            type: "video_editor",
+            status: "beta",
+            desc: "محرك توليد الفيديوهات الإعلانية من الصور والنصوص.",
+            icon: "fa-video"
+        },
+        {
+            id: 202,
+            name: "Media Minimizer Pro (Local Privacy)",
+            url: "#", // ضع الرابط هنا إذا نشرته
+            type: "image_tool",
+            status: "draft",
+            desc: "ضاغط صور محلي يحافظ على الخصوصية.",
+            icon: "fa-compress-arrows-alt"
+        },
+
+        // 3. أدوات البيع والتسويق (Sales & Marketing)
+        {
+            id: 301,
+            name: "Sham Cash Payment Generator",
+            url: "#", // مدمج داخل البرو حالياً
+            type: "finance",
+            status: "pro_only",
+            desc: "مولد روابط دفع واتساب جاهزة للعملاء السوريين.",
+            icon: "fa-money-bill-wave"
+        },
+        {
+            id: 302,
+            name: "Crypto Wallet Quick-Copy",
+            url: "#", // مدمج داخل البرو
+            type: "finance",
+            status: "pro_only",
+            desc: "حفظ ونسخ عناوين USDT/BTC بضغطة زر.",
+            icon: "fab fa-bitcoin"
+        }
+    ];
+
+    function loadMasterData() {
+        // نتحقق هل تم تحميل البيانات مسبقاً؟
+        if(!localStorage.getItem('kingdom_master_loaded')) {
+            console.log("🚀 جارٍ تحميل القائمة الملكية الرئيسية لأول مرة...");
+            
+            // نملأ قاعدة البيانات بالمشاريع الجديدة
+            db.apps = masterProjects.filter(p => p.type === 'app' || p.type === 'tool');
+            
+            // نضع علامة أننا حملنا البيانات حتى لا تتكرر عند كل تحديث صفحة
+            localStorage.setItem('kingdom_master_loaded', 'true');
+            
+            // نحفظ التغييرات في المتصفح
+            saveToStorage(); 
+        } else {
+            // إذا كانت البيانات موجودة مسبقاً، نقرأها فقط
+            const savedDb = localStorage.getItem(STORAGE_KEY);
+            if(savedDb) try { db = JSON.parse(savedDb); } catch(e){}
+        }
+        
+        // تحديث الواجهة بعد التحميل
+        updateStats();
+        renderAllViews();
+    }
+
+    // استدعاء الدالة الجديدة عند بدء التشغيل
+    window.onload = loadMasterData;
+</script>
+</body>
+</html>
