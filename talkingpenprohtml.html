@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>️ القلم الناطق برو | التعليم الذكي</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Tajawal',Tahoma,sans-serif}
+body{background:#f0fdf4;color:#1e293b;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px;overflow-x:hidden}
+
+/* License Screen Overlay */
+#licenseScreen {
+    position: fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:9999;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center;
+}
+.lock-icon { font-size: 4rem; margin-bottom: 20px; color: #ef4444; }
+.input-key { border: 2px solid #cbd5e1; border-radius: 12px; padding: 15px; font-size: 1.2rem; width: 100%; max-width: 300px; text-align: center; letter-spacing: 2px; margin-bottom: 15px; outline: none; }
+.input-key:focus { border-color: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2); }
+.buy-btn { background: #22c55e; color: white; border: none; padding: 15px 30px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
+.buy-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6); }
+.error-msg { color: #ef4444; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
+
+/* Main App Frame */
+.frame{width:100%;max-width:500px;background:#fff;border:4px solid #22c55e;border-radius:24px;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,.1);position:relative;margin-top:10px;}
+header{text-align:center;margin-bottom:15px;border-bottom:2px dashed #e2e8f0;padding-bottom:10px}
+h2{font-size:22px;color:#15803d;display:flex;align-items:center;justify-content:center;gap:8px}
+.pro-badge{background:#fbbf24;color:#92400e;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:bold;text-transform:uppercase}
+
+.tabs{display:flex;gap:5px;margin-bottom:15px;overflow-x:auto;padding-bottom:5px;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{height:4px}
+.tabs::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}
+.tab-btn{border:none;border-radius:12px;padding:10px 15px;font-size:13px;font-weight:bold;cursor:pointer;background:#f1f5f9;color:#64748b;white-space:nowrap;transition:all 0.2s}
+.tab-btn.active{background:#22c55e;color:#fff;box-shadow:0 2px 8px rgba(34,197,94,0.3)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px;padding:5px}
+.key{
+    aspect-ratio:1/1; /* Square shape */
+    border:none;border-radius:16px;
+    background:#fff;border:2px solid #e2e8f0;
+    color:#1e293b;font-weight:bold;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;transition:all 0.1s;
+    box-shadow:0 2px 0 #cbd5e1;
+    position:relative; overflow:hidden;
+}
+.key:active{transform:translateY(2px);box-shadow:none;background:#f8fafc}
+.key span.icon{font-size:24px;margin-bottom:2px}
+.key span.text{font-size:12px;line-height:1.1;text-align:center;padding:0 2px}
+.key.playing::after {
+    content:''; position:absolute; bottom:0; left:0; width:100%; height:3px; background:#22c55e; animation: playBar 1s infinite linear;
+}
+@keyframes playBar { 0%{width:0} 100%{width:100%} }
+
+/* Settings & Info Footer */
+.footer-info { margin-top: 15px; text-align: center; font-size: 0.8rem; color: #94a3b8; }
+.settings-trigger { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.5; }
+.settings-trigger:hover { opacity: 1; }
+
+/* Modal for Settings */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+.modal.open { display: flex; }
+.modal-content { background: white; padding: 20px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+.setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
+.setting-label { font-weight: bold; color: #334155; font-size: 0.9rem; }
+input[type=range] { accent-color: #22c55e; }
+.close-modal { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
+
+</style>
+</head>
+<body>
+
+<!-- LICENSE SCREEN -->
+<div id="licenseScreen">
+    <div class="lock-icon">🔒</div>
+    <h2 style="color:#1e293b; margin-bottom:10px;">القلم الناطق PRO</h2>
+    <p style="color:#64748b; margin-bottom:20px; font-size:0.9rem;">أدخل رمز التفعيل لبدء رحلة التعلم الممتعة</p>
+    
+    <input type="text" id="licenseInput" class="input-key" placeholder="XXXX-XXXX-XXXX" maxlength="14">
+    <button class="buy-btn" onclick="checkLicense()">فتح التطبيق ▶️</button>
+    <div id="licenseError" class="error-msg"></div>
+    
+    <p style="margin-top:30px; font-size:0.8rem; color:#94a3b8;">
+        ليس لديك رمز؟ <br><a href="#" style="color:#22c55e; text-decoration:none; font-weight:bold;" onclick="alert('يرجى شراء المنتج من صفحة البيع الخاصة بنا للحصول على الرمز.')">اشترِ الآن</a>
+    </p>
+</div>
+
+<!-- MAIN APP -->
+<div class="frame" id="mainApp" style="display:none;">
+    <button class="settings-trigger" onclick="toggleSettings()">⚙️</button>
+    <header>
+        <h2>🖊️ القلم الناطق <span class="pro-badge">PRO</span></h2>
+        <small style="color:#64748b">تعلم، استمع، وانطلق!</small>
+    </header>
+
+    <div class="tabs" id="tabContainer">
+        <!-- Tabs injected by JS -->
+    </div>
+
+    <div id="contentArea">
+        <!-- Content injected by JS -->
+    </div>
+
+    <div class="footer-info">
+        © 2024 Kingdom Digital Tools | v2.0 Pro
+    </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:15px; color:#15803d;">⚙️ إعدادات الصوت</h3>
+        
+        <div class="setting-row">
+            <span class="setting-label">سرعة النطق</span>
+            <input type="range" id="rateSlider" min="0.5" max="1.5" step="0.1" value="0.9">
+        </div>
+        
+        <div class="setting-row">
+            <span class="setting-label">طبقة الصوت</span>
+            <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+        </div>
+
+        <button class="close-modal" onclick="toggleSettings()">إغلاق وحفظ</button>
+    </div>
+</div>
+
+<script>
+// --- CONFIGURATION & DATA ---
+const VALID_LICENSES = ["KINGDOM-2024", "FADEEL-PRO", "TEST-USER-01"]; // ضع رموزك الحقيقية هنا
+let settings = JSON.parse(localStorage.getItem("penSettings")) || { rate: 0.9, pitch: 1 };
+
+// Data Structure: Each category has an ID, Label, Icon, and Array of Items [Text, Translation/Desc, Emoji]
+const CATEGORIES = [
+    {
+        id: 'ar_letters', label: '🔤 عربي', icon: '🇸',
+        items: [["ا","Alif","🐰"],["ب","Ba","🦆"],["ت","Ta","🍎"],["ث","Tha","🦊"],["ج","Jim","🐪"],["ح","Ha","🐴"],["خ","Kha","🐑"],["د","Dal","🐻"],["ذ","Dhal","🌽"],["ر","Ra","🤖"],["ز","Zay","🦒"],["س","Sin","🐟"],["ش","Shin","☀️"],["ص","Sad","🦅"],["ض","Dad","🐸"],["ط","Ta","✈️"],["ظ","Zha","✉️"],["ع","Ayn","🍇"],["غ","Ghayn","🦌"],["ف","Fa","🐘"],["ق","Qaf","🌙"],["ك","Kaf","📖"],["ل","Lam","🍋"],["م","Mim","🍌"],["ن","Nun","⭐"],["ه","Ha","🎁"],["و","Waw","🌹"],["ي","Ya","✋"]]
+    },
+    {
+        id: 'en_letters', label: '🅰️ English', icon: '🇬🇧',
+        items: [["A","Apple","🍎"],["B","Ball","⚽"],["C","Cat","🐱"],["D","Dog","🐶"],["E","Elephant","🐘"],["F","Fish","🐟"],["G","Goat","🐐"],["H","Hat","🎩"],["I","Ice Cream","🍦"],["J","Juice","🧃"],["K","Kite","🪁"],["L","Lion","🦁"],["M","Monkey","🐒"],["N","Nose","👃"],["O","Orange","🍊"],["P","Pizza","🍕"],["Q","Queen","👸"],["R","Rabbit","🐰"],["S","Sun","☀️"],["T","Tiger","🐯"],["U","Umbrella","☂️"],["V","Violin","🎻"],["W","Watermelon","🍉"],["X","Box","📦"],["Y","Yo-yo","🪀"],["Z","Zebra","🦓"]]
+    },
+    {
+        id: 'animals', label: '🐾 حيوانات', icon: '🦁',
+        items: [["أسد","Lion","🦁"],["نمر","Tiger","🐯"],["فيل","Elephant","🐘"],["زرافة","Giraffe","🦒"],["قرد","Monkey","🐒"],["خنزير","Pig","🐷"],["بقرة","Cow","🐄"],["حصان","Horse","🐎"],["خروف","Sheep","🐑"],["ماعز","Goat","🐐"],["جمل","Camel","🐪"],["أرنب","Rabbit","🐇"],["قط","Cat","🐈"],["كلب","Dog","🐕"],["سمكة","Fish","🐟"],["طائر","Bird","🐦"]]
+    },
+    {
+        id: 'colors', label: '🎨 ألوان', icon: '🌈',
+        items: [["أحمر","Red","🔴"],["أزرق","Blue","🔵"],["أخضر","Green","🟢"],["أصفر","Yellow","🟡"],["برتقالي","Orange","🟠"],["بنفسجي","Purple","🟣"],["أسود","Black","⚫"],["أبيض","White","⚪"],["بني","Brown","🟤"],["وردي","Pink","💗"]]
+    },
+    {
+        id: 'numbers', label: '🔢 أرقام', icon: '1️⃣',
+        items: [["١","One","1"],["٢","Two","2"],["٣","Three","3"],["٤","Four","4"],["٥","Five","5"],["٦","Six","6"],["٧","Seven","7"],["٨","Eight","8"],["٩","Nine","9"],["١٠","Ten","10"]]
+    },
+    {
+        id: 'family', label: '👪 عائلة', icon: '❤️',
+        items: [["أب","Father","👨"],["أم","Mother","👩"],["ابن","Son","👦"],["ابنة","Daughter","👧"],["جد","Grandpa","👴"],["جدة","Grandma","👵"],["أخ","Brother","👬"],["أخت","Sister","👭"]]
+    },
+    {
+        id: 'food', label: '🍎 طعام', icon: '🍕',
+        items: [["خبز","Bread","🍞"],["ماء","Water","💧"],["حليب","Milk","🥛"],["تفاحة","Apple","🍎"],["موز","Banana","🍌"],["عنب","Grapes","🍇"],["بطيخ","Watermelon","🍉"],["جزر","Carrot","🥕"],["سمك","Fish Food","🐟"],["دجاج","Chicken","🍗"]]
+    }
+];
+
+let currentCategoryIndex = 0;
+let voices = [];
+
+// --- INITIALIZATION ---
+window.onload = () => {
+    loadVoices();
+    renderTabs();
+    switchTab(0); // Load first tab
+    
+    // Check if already licensed
+    const savedLicense = localStorage.getItem("kingdom_license");
+    if(savedLicense && VALID_LICENSES.includes(savedLicense)) {
+        unlockApp();
+    }
+};
+
+function loadVoices() {
+    if ('speechSynthesis' in window) {
+        voices = speechSynthesis.getVoices();
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+        };
+    }
+}
+
+// --- LICENSE LOGIC ---
+function checkLicense() {
+    const input = document.getElementById('licenseInput').value.trim().toUpperCase();
+    const errorDiv = document.getElementById('licenseError');
+    
+    if (!input) {
+        errorDiv.innerText = "الرجاء إدخال الرمز";
+        return;
+    }
+
+    if (VALID_LICENSES.includes(input)) {
+        localStorage.setItem("kingdom_license", input);
+        unlockApp();
+    } else {
+        errorDiv.innerText = "❌ رمز غير صحيح! تأكد من الشراء.";
+        shakeElement(document.querySelector('.input-key'));
+    }
+}
+
+function unlockApp() {
+    document.getElementById('licenseScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+}
+
+function shakeElement(el) {
+    el.style.transform = "translateX(-5px)";
+    setTimeout(() => el.style.transform = "translateX(5px)", 50);
+    setTimeout(() => el.style.transform = "translateX(-5px)", 100);
+    setTimeout(() => el.style.transform = "translateX(0)", 150);
+}
+
+// --- UI RENDERING ---
+function renderTabs() {
+    const container = document.getElementById('tabContainer');
+    container.innerHTML = CATEGORIES.map((cat, index) => 
+        `<button class="tab-btn ${index === 0 ? 'active' : ''}" onclick="switchTab(${index})">${cat.label}</button>`
+    ).join('');
+}
+
+function switchTab(index) {
+    currentCategoryIndex = index;
+    
+    // Update Tab Styles
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+    });
+
+    // Render Grid
+    const cat = CATEGORIES[index];
+    const gridHtml = cat.items.map(item => {
+        // item structure: [Arabic/Primary, English/Secondary, Emoji]
+        const primaryText = item[0];
+        const secondaryText = item[1];
+        const emoji = item[2];
+        
+        return `
+            <button class="key" onclick="playSound('${primaryText}', '${secondaryText}', this)">
+                <span class="icon">${emoji}</span>
+                <span class="text">${primaryText}<br><small style="opacity:0.7;font-size:9px">${secondaryText}</small></span>
+            </button>
+        `;
+    }).join('');
+
+    document.getElementById('contentArea').innerHTML = `<div class="grid">${gridHtml}</div>`;
+}
+
+// --- AUDIO LOGIC ---
+function playSound(primary, secondary, btnElement) {
+    // Visual Feedback
+    btnElement.classList.add('playing');
+    setTimeout(() => btnElement.classList.remove('playing'), 1000);
+
+    // Audio Logic
+    if ('speechSynthesis' in window) {
+        speechSynthesis.cancel(); // Stop previous
+        
+        // Determine language based on content complexity or default to Arabic then English
+        // For simplicity in this mixed app, we speak Primary (usually AR) then Secondary (EN)
+        
+        const utteranceAR = new SpeechSynthesisUtterance(primary);
+        utteranceAR.lang = 'ar-SA';
+        utteranceAR.rate = settings.rate;
+        utteranceAR.pitch = settings.pitch;
+        
+        const utteranceEN = new SpeechSynthesisUtterance(secondary);
+        utteranceEN.lang = 'en-US';
+        utteranceEN.rate = settings.rate;
+        utteranceEN.pitch = settings.pitch;
+
+        // Chain them
+        utteranceAR.onend = () => {
+            speechSynthesis.speak(utteranceEN);
+        };
+
+        speechSynthesis.speak(utteranceAR);
+    } else {
+        alert("متصفحك لا يدعم خاصية النطق.");
+    }
+}
+
+// --- SETTINGS LOGIC ---
+function toggleSettings() {
+    const modal = document.getElementById('settingsModal');
+    if(modal.classList.contains('open')) {
+        // Save before closing
+        settings.rate = parseFloat(document.getElementById('rateSlider').value);
+        settings.pitch = parseFloat(document.getElementById('pitchSlider').value);
+        localStorage.setItem("penSettings", JSON.stringify(settings));
+        modal.classList.remove('open');
+    } else {
+        // Load values
+        document.getElementById('rateSlider').value = settings.rate;
+        document.getElementById('pitchSlider').value = settings.pitch;
+        modal.classList.add('open');
+    }
+}
+
+</script>
+</body>
+</html>
