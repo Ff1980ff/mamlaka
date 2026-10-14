@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>👑 المملكة التعليمية | Offline Pro</title>
+<style>
+    :root {
+        --bg-dark: #0f172a;
+        --card-bg: #1e293b;
+        --primary: #8e44ad; 
+        --accent: #f59e0b; 
+        --success: #10b981;
+        --danger: #ef4444;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    body { background: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Header */
+    header {
+        padding: 15px 20px;
+        background: linear-gradient(to bottom, #1e293b, #0f172a);
+        border-bottom: 1px solid #334155;
+        display: flex; justify-content: space-between; align-items: center; z-index: 10;
+    }
+    .logo h1 { font-size: 1.2rem; font-weight: 900; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    .stats-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+
+    /* Main Content Area */
+    main { flex-grow: 1; overflow-y: auto; padding: 20px; position: relative; }
+
+    /* Screens */
+    .screen { display: none; animation: fadeIn 0.3s ease-out; max-width: 600px; margin: 0 auto; width: 100%; }
+    .screen.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Deck Grid (Home) */
+    .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 10px; }
+    .deck-card {
+        background: var(--card-bg); border: 1px solid #334155; border-radius: 16px; padding: 20px; text-align: center;
+        cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .deck-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .deck-card.new-deck { border-style: dashed; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .deck-icon { font-size: 2rem; margin-bottom: 10px; }
+    .deck-name { font-weight: 700; font-size: 1rem; margin-bottom: 5px; }
+    .deck-count { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Study Interface */
+    .study-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-back { background: transparent; border: 1px solid #334155; color: var(--text-muted); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    
+    .flashcard-container { perspective: 1000px; height: 350px; margin-bottom: 20px; position: relative; cursor: pointer; }
+    .flashcard-inner {
+        position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s;
+        transform-style: preserve-3d;
+    }
+    .flashcard-inner.flipped { transform: rotateY(180deg); }
+    
+    .card-face {
+        position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+        background: var(--card-bg); border: 2px solid var(--primary); border-radius: 20px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .card-front { z-index: 2; transform: rotateY(0deg); }
+    .card-back { transform: rotateY(180deg); border-color: var(--accent); background: #1a2440; }
+    
+    .word-text { font-size: 2.5rem; font-weight: 900; line-height: 1.2; word-break: break-word; }
+    .translation-text { font-size: 1.8rem; font-weight: 700; color: var(--accent); direction: ltr; }
+    .hint-text { font-size: 0.9rem; color: var(--text-muted); margin-top: 15px; }
+    
+    .audio-btn {
+        background: rgba(255,255,255,0.1); border: none; color: white; width: 50px; height: 50px;
+        border-radius: 50%; font-size: 1.5rem; cursor: pointer; margin-top: 15px; transition: 0.2s;
+    }
+    .audio-btn:active { transform: scale(0.9); background: var(--primary); }
+
+    /* Action Buttons */
+    .action-row { display: flex; gap: 10px; justify-content: center; }
+    .action-btn {
+        flex: 1; padding: 15px; border: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem;
+        cursor: pointer; color: white; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .btn-hard { background: var(--danger); }
+    .btn-good { background: var(--primary); }
+    .btn-easy { background: var(--success); }
+    .action-sub { font-size: 0.7rem; opacity: 0.8; font-weight: normal; }
+
+    /* Modal Forms */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-content {
+        background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px;
+        border: 1px solid #334155; max-height: 90vh; overflow-y: auto;
+    }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; font-weight: bold; }
+    input, select {
+        width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; color: white;
+        border-radius: 10px; font-family: inherit; font-size: 1rem; outline: none;
+    }
+    input:focus { border-color: var(--primary); }
+    .submit-btn {
+        width: 100%; padding: 15px; background: var(--primary); color: white; border: none;
+        border-radius: 10px; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-top: 10px;
+    }
+
+    /* Toast Notification */
+    #toast {
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: var(--success); color: white; padding: 12px 24px; border-radius: 50px;
+        font-weight: bold; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    #toast.show { opacity: 1; bottom: 50px; }
+
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><h1>👑 المملكة التعليمية</h1></div>
+    <div class="stats-badge" id="dailyStat">🔥 0 مراجعة</div>
+</header>
+
+<main>
+    <!-- Home Screen -->
+    <section id="homeScreen" class="screen active">
+        <div style="margin-bottom: 20px;">
+            <h2 style="color:white; font-size:1.5rem; margin-bottom:5px;">رزمك الدراسية</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">اختر رزمة لبدء المراجعة الذكية</p>
+        </div>
+        
+        <div class="deck-grid" id="decksContainer">
+            <!-- Decks injected here -->
+        </div>
+        
+        <button class="deck-card new-deck" onclick="openCreateDeckModal()" style="grid-column: span 1; min-height: 140px;">
+            <div class="deck-icon">➕</div>
+            <div class="deck-name">رزمة جديدة</div>
+        </button>
+    </section>
+
+    <!-- Study Screen -->
+    <section id="studyScreen" class="screen">
+        <div class="study-controls">
+            <button class="btn-back" onclick="goHome()">⬅ رجوع</button>
+            <span id="studyProgress" style="font-weight:bold; color:var(--accent);">1/10</span>
+            <button class="btn-back" onclick="toggleAudioMode()" id="audioToggleBtn">🔊 استماع</button>
+        </div>
+
+        <div class="flashcard-container" onclick="flipCard()">
+            <div class="flashcard-inner" id="theFlashcard">
+                <div class="card-face card-front">
+                    <div class="word-text" id="frontWord">...</div>
+                    <button class="audio-btn" onclick="event.stopPropagation(); speakCurrent('front')">🔈</button>
+                    <div class="hint-text">اضغط للقلب</div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="translation-text" id="backWord">...</div>
+                    <button class="audio-btn" onclick="event.stopPropagation(); speakCurrent('back')" style="background:rgba(245,158,11,0.2)">🔈</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-row" id="ratingButtons" style="display:none;">
+            <button class="action-btn btn-hard" onclick="rateCard(0)">
+                صعب ❌
+                <span class="action-sub">سأراه قريباً</span>
+            </button>
+            <button class="action-btn btn-good" onclick="rateCard(1)">
+                جيد ✅
+                <span class="action-sub">موعد عادي</span>
+            </button>
+            <button class="action-btn btn-easy" onclick="rateCard(2)">
+                سهل 😎
+                <span class="action-sub">بعيداً عن الأنظار</span>
+            </button>
+        </div>
+        
+        <!-- Audio Mode Controls -->
+        <div id="audioControls" style="display:none; text-align:center; margin-top:20px;">
+            <p style="color:var(--text-muted); margin-bottom:10px;">استمع للإجابة ثم اختر:</p>
+            <div class="action-row">
+                 <button class="action-btn btn-hard" onclick="handleAudioAnswer(false)">❌ خطأ</button>
+                 <button class="action-btn btn-easy" onclick="handleAudioAnswer(true)">✅ صحيح</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Create/Edit Deck Modal -->
+<div class="modal-overlay" id="createDeckModal">
+    <div class="modal-content">
+        <h2 style="color:white; margin-bottom:20px;">إنشاء رزمة جديدة</h2>
+        <div class="form-group">
+            <label>اسم الرزمة</label>
+            <input type="text" id="newDeckName" placeholder="مثال: مفردات الطب">
+        </div>
+        <div class="form-group">
+            <label>اللغة المصدر (الأمام)</label>
+            <select id="sourceLang">
+                <option value="ar">العربية</option>
+                <option value="en">الإنجليزية</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>اللغة الهدف (الخلف)</label>
+            <select id="targetLang">
+                <option value="en">الإنجليزية</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
+        <button class="submit-btn" onclick="saveNewDeck()">حفظ وبدء الإضافة</button>
+        <button class="btn-back" style="width:100%; margin-top:10px;" onclick="closeModal('createDeckModal')">إلغاء</button>
+    </div>
+</div>
+
+<!-- Add Card Modal -->
+<div class="modal-overlay" id="addCardModal">
+    <div class="modal-content">
+        <h2 style="color:white; margin-bottom:20px;">إضافة بطاقات (<span id="currentDeckLabel"></span>)</h2>
+        <div class="form-group">
+            <label id="lblSource">الكلمة (عربي)</label>
+            <input type="text" id="inpSource" placeholder="أسد">
+        </div>
+        <div class="form-group">
+            <label id="lblTarget">الترجمة (إنجليزي)</label>
+            <input type="text" id="inpTarget" placeholder="Lion">
+        </div>
+        <button class="submit-btn" onclick="addSingleCard()">➕ إضافة البطاقة</button>
+        <hr style="border-color:#334155; margin:20px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:var(--text-muted); font-size:0.9rem;">عدد البطاقات: <span id="cardCountDisplay">0</span></span>
+            <button class="btn-back" onclick="finishAddingCards()">✔️ إنهاء وإغلاق</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast">تم الحفظ بنجاح!</div>
+
+<script>
+    // --- Data Structure & Algorithms ---
+    const DEFAULT_DECKS = {
+        'حيوانات 🐾': { langSrc: 'ar', langTgt: 'en', cards: [['أسد','lion'],['قطة','cat'],['كلب','dog'],['حصان','horse'],['جمل','camel']] },
+        'أرقام 🔢': { langSrc: 'ar', langTgt: 'en', cards: [['واحد','one'],['اثنان','two'],['ثلاثة','three'],['أربعة','four'],['خمسة','five']] },
+        'ألوان 🎨': { langSrc: 'ar', langTgt: 'en', cards: [['أحمر','red'],['أزرق','blue'],['أخضر','green'],['أصفر','yellow']] }
+    };
+
+    let state = {
+        decks: {}, 
+        stats: { reviewsToday: 0, lastDate: new Date().toDateString() },
+        currentSession: null 
+    };
+
+    function initState() {
+        try {
+            const savedDecks = JSON.parse(localStorage.getItem('kf_decks') || '{}');
+            const savedStats = JSON.parse(localStorage.getItem('kf_stats') || '{"reviewsToday":0,"lastDate":""}');
+            
+            Object.keys(DEFAULT_DECKS).forEach(key => {
+                if (!savedDecks[key]) {
+                    savedDecks[key] = JSON.parse(JSON.stringify(DEFAULT_DECKS[key])); 
+                }
+            });
+
+            state.decks = savedDecks;
+            state.stats = savedStats;
+            
+            if (state.stats.lastDate !== new Date().toDateString()) {
+                state.stats.reviewsToday = 0;
+                state.stats.lastDate = new Date().toDateString();
+                saveState();
+            }
+            
+            updateHeaderStats();
+            renderHome();
+        } catch(e) {
+            console.error("Error initializing:", e);
+            alert("حدث خطأ بسيط، سنعيد تحميل البيانات الافتراضية.");
+            location.reload();
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem('kf_decks', JSON.stringify(state.decks));
+        localStorage.setItem('kf_stats', JSON.stringify(state.stats));
+        updateHeaderStats();
+    }
+
+    function updateHeaderStats() {
+        document.getElementById('dailyStat').innerText = `🔥 ${state.stats.reviewsToday} مراجعة`;
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function goHome() {
+        state.currentSession = null;
+        speechSynthesis.cancel();
+        showScreen('homeScreen');
+        renderHome();
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    function renderHome() {
+        const container = document.getElementById('decksContainer');
+        container.innerHTML = '';
+        
+        const deckNames = Object.keys(state.decks);
+        
+        deckNames.forEach(name => {
+            const deck = state.decks[name];
+            const totalCards = deck.cards.length;
+            
+            const div = document.createElement('div');
+            div.className = 'deck-card';
+            div.onclick = () => startStudySession(name);
+            
+            div.innerHTML = `
+                <div class="deck-icon">${getIconForDeck(name)}</div>
+                <div class="deck-name">${name}</div>
+                <div class="deck-count">${totalCards} بطاقة</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function getIconForDeck(name) {
+        if(name.includes('حيوان')) return '🐾';
+        if(name.includes('رقم')) return '🔢';
+        if(name.includes('لون')) return '🎨';
+        return '📚';
+    }
+
+    function startStudySession(deckName) {
+        const deck = state.decks[deckName];
+        if (!deck || deck.cards.length === 0) {
+            showToast("الرزمة فارغة! أضف بطاقات أولا.");
+            return;
+        }
+
+        let queue = [...deck.cards].sort(() => Math.random() - 0.5);
+        
+        state.currentSession = {
+            deckName: deckName,
+            queue: queue,
+            currentIndex: 0,
+            isFlipped: false,
+            audioMode: false
+        };
+
+        showScreen('studyScreen');
+        loadNextCard();
+    }
+
+    function loadNextCard() {
+        const session = state.currentSession;
+        if (!session) return;
+
+        if (session.currentIndex >= session.queue.length) {
+            finishSession();
+            return;
+        }
+
+        const cardPair = session.queue[session.currentIndex];
+        const [front, back] = cardPair;
+        const deck = state.decks[session.deckName];
+
+        document.getElementById('frontWord').innerText = front;
+        document.getElementById('backWord').innerText = back;
+        document.getElementById('studyProgress').innerText = `${session.currentIndex + 1}/${session.queue.length}`;
+        
+        session.isFlipped = false;
+        document.getElementById('theFlashcard').classList.remove('flipped');
+        document.getElementById('ratingButtons').style.display = 'none';
+        document.getElementById('audioControls').style.display = 'none';
+        
+        if (session.audioMode) {
+             document.getElementById('audioControls').style.display = 'block';
+             setTimeout(() => speakText(front, deck.langSrc), 300);
+        } else {
+             document.getElementById('ratingButtons').style.display = 'flex';
+        }
+    }
+
+    function flipCard() {
+        const session = state.currentSession;
+        if (!session || session.audioMode) return; 
+        
+        if (!session.isFlipped) {
+            session.isFlipped = true;
+            document.getElementById('theFlashcard').classList.add('flipped');
+            document.getElementById('ratingButtons').style.display = 'flex';
+        }
+    }
+
+    function rateCard(ratingValue) {
+        const session = state.currentSession;
+        if (!session) return;
+
+        state.stats.reviewsToday++;
+        saveState();
+
+        session.currentIndex++;
+        loadNextCard();
+    }
+
+    function toggleAudioMode() {
+        const session = state.currentSession;
+        if(!session) return;
+        
+        session.audioMode = !session.audioMode;
+        const btn = document.getElementById('audioToggleBtn');
+        
+        if(session.audioMode) {
+            btn.style.background = 'var(--primary)';
+            btn.style.color = 'white';
+            btn.innerText = "🔇 إيقاف";
+            loadNextCard(); 
+        } else {
+            btn.style.background = 'transparent';
+            btn.style.color = 'var(--text-muted)';
+            btn.style.border = '1px solid #334155';
+            btn.innerText = "🔊 استماع";
+            loadNextCard();
+        }
+    }
+
+    function handleAudioAnswer(isCorrect) {
+         const session = state.currentSession;
+         if (!session) return;
+         
+         state.stats.reviewsToday++;
+         saveState();
+         
+         session.currentIndex++;
+         loadNextCard();
+    }
+
+    function finishSession() {
+        speechSynthesis.cancel();
+        alert(`🎉 أحسنت! أكملت رزمة "${state.currentSession.deckName}".\nراجعت ${state.currentSession.queue.length} بطاقة.`);
+        goHome();
+    }
+
+    function speakText(text, langCode) {
+        if ('speechSynthesis' in window) {
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            if(langCode === 'ar') utterance.lang = 'ar-SA';
+            else if(langCode === 'en') utterance.lang = 'en-US';
+            else utterance.lang = 'en-US';
+            
+            utterance.rate = 0.9; 
+            speechSynthesis.speak(utterance);
+        } else {
+            alert("متصفحك لا يدعم النطق الصوتي.");
+        }
+    }
+
+    function speakCurrent(side) {
+        const session = state.currentSession;
+        if(!session) return;
+        const deck = state.decks[session.deckName];
+        const card = session.queue[session.currentIndex];
+        
+        if(side === 'front') speakText(card[0], deck.langSrc);
+        else speakText(card[1], deck.langTgt);
+    }
+
+    let tempNewDeckName = "";
+
+    function openCreateDeckModal() {
+        document.getElementById('createDeckModal').style.display = 'flex';
+        document.getElementById('newDeckName').value = '';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    function saveNewDeck() {
+        const name = document.getElementById('newDeckName').value.trim();
+        const src = document.getElementById('sourceLang').value;
+        const tgt = document.getElementById('targetLang').value;
+
+        if(!name) { alert("أدخل اسما للرزمة"); return; }
+        if(state.decks[name]) { alert("هذا الاسم موجود مسبقا!"); return; }
+
+        state.decks[name] = {
+            langSrc: src,
+            langTgt: tgt,
+            cards: []
+        };
+        saveState();
+        closeModal('createDeckModal');
+        openAddCardModal(name);
+    }
+
+    function openAddCardModal(deckName) {
+        tempNewDeckName = deckName;
+        const deck = state.decks[deckName];
+        
+        document.getElementById('currentDeckLabel').innerText = deckName;
+        document.getElementById('lblSource').innerText = `الكلمة (${getLangName(deck.langSrc)})`;
+        document.getElementById('lblTarget').innerText = `الترجمة (${getLangName(deck.langTgt)})`;
+        document.getElementById('cardCountDisplay').innerText = deck.cards.length;
+        
+        document.getElementById('addCardModal').style.display = 'flex';
+        document.getElementById('inpSource').focus();
+    }
+
+    function getLangName(code) {
+        if(code==='ar') return 'عربي';
+        if(code==='en') return 'إنجليزي';
+        return code;
+    }
+
+    function addSingleCard() {
+        const srcVal = document.getElementById('inpSource').value.trim();
+        const tgtVal = document.getElementById('inpTarget').value.trim();
+
+        if(!srcVal || !tgtVal) { alert("املأ الخانتين"); return; }
+
+        state.decks[tempNewDeckName].cards.push([srcVal, tgtVal]);
+        saveState();
+        
+        document.getElementById('inpSource').value = '';
+        document.getElementById('inpTarget').value = '';
+        document.getElementById('cardCountDisplay').innerText = state.decks[tempNewDeckName].cards.length;
+        document.getElementById('inpSource').focus();
+        showToast("تمت الإضافة ✓");
+    }
+
+    function finishAddingCards() {
+        closeModal('addCardModal');
+        renderHome();
+    }
+
+    window.onload = initState;
+
+</script>
+</body>
+</html>
