@@ -605,5 +605,345 @@
     renderUI();
 
 </script>
-</body>
+</body><script>
+    // === CONFIGURATION & STATE MANAGEMENT ===
+    const ADMIN_PASS = "KingMamlaka2026"; // كلمة مرور الدخول للوحة التحكم
+    const STORAGE_KEY = 'mamlaka_global_v5_final'; // مفتاح التخزين الجديد لضمان النظافة
+    
+    let currentLang = localStorage.getItem('mamlaka_lang') || 'ar';
+    
+    // Translations Dictionary
+    const translations = {
+        ar: {
+            siteTitle: "سوق المملكة", home: "الرئيسية", search: "بحث", fav: "المفضلة", profile: "حسابي",
+            addAdTitle: "➕ أضف إعلانك", lblTitle: "العنوان *", lblCat: "الفئة *", lblCondition: "الحالة *",
+            optNew: "جديد", optUsed: "مستعمل", lblPrice: "السعر ($)", lblDesc: "وصف مختصر", lblPhone: "رقم الواتساب *",
+            termsText: "أوافق على شروط النشر وأتعهد بعدم مخالفة القوانين.", btnSubmit: "إرسال للمراجعة ⏳",
+            adminLoginTitle: "🔒 دخول المدير", btnEnter: "دخول", dashTitle: "⚙️ مركز التحكم الملكي",
+            tabMod: "🛡️ مراجعة الإعلانات", tabCats: "📂 إدارة الأقسام", tabRules: "📜 قوانين النشر",
+            lblPending: "الإعلانات قيد المراجعة", btnAddCat: "إضافة ➕", btnBlock: "حظر ❌",
+            noAds: "لا توجد إعلانات منشورة حالياً.", contactWa: "تواصل عبر واتساب:",
+            successMsg: "✅ تم إرسال إعلانك بنجاح!\n\nسيقوم المشرف بمراجعته قريباً.",
+            approveBtn: "موافقة ✅", rejectBtn: "رفض ❌", deleteBtn: "حذف 🗑️", editBtn: "تعديل ✏️"
+        },
+        en: {
+            siteTitle: "Mamlaka Market", home: "Home", search: "Search", fav: "Favorites", profile: "Profile",
+            addAdTitle: "➕ Add Your Ad", lblTitle: "Title *", lblCat: "Category *", lblCondition: "Condition *",
+            optNew: "New", optUsed: "Used", lblPrice: "Price ($)", lblDesc: "Short Description", lblPhone: "WhatsApp Number *",
+            termsText: "I agree to the posting terms and pledge not to violate laws.", btnSubmit: "Send for Review ⏳",
+            adminLoginTitle: "🔒 Admin Login", btnEnter: "Enter", dashTitle: "⚙️ Royal Control Center",
+            tabMod: "🛡️ Moderate Ads", tabCats: "📂 Manage Categories", tabRules: "📜 Posting Rules",
+            lblPending: "Pending Ads", btnAddCat: "Add ➕", btnBlock: "Block ❌",
+            noAds: "No published ads currently.", contactWa: "Contact via WhatsApp:",
+            successMsg: "✅ Your ad has been submitted successfully!\n\nThe moderator will review it soon.",
+            approveBtn: "Approve ✅", rejectBtn: "Reject ❌", deleteBtn: "Delete 🗑️", editBtn: "Edit ✏️"
+        }
+    };
+
+    // Default Data Structure
+    let appState = {
+        categories: [
+            { id: 'cars', ar: "سيارات ودراجات", en: "Cars & Motorcycles" },
+            { id: 'realestate', ar: "عقارات وإيجارات", en: "Real Estate & Rentals" },
+            { id: 'electronics', ar: "إلكترونيات وجوالات", en: "Electronics & Mobiles" },
+            { id: 'fashion', ar: "ملابس وأحذية", en: "Fashion & Shoes" },
+            { id: 'services', ar: "خدمات عامة", en: "General Services" },
+            { id: 'other', ar: "متفرقات", en: "Miscellaneous" }
+        ],
+        rules: ["يمنع المحتوى المخالف.", "No offensive content."],
+        ads: [] 
+    };
+
+    // Load State from LocalStorage
+    function loadState() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                appState = JSON.parse(saved);
+            } else {
+                saveState(); // Save defaults initially
+            }
+        } catch(e) {
+            console.error("Load Error", e);
+        }
+    }
+
+    function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        renderUI(); // Re-render everything after saving
+    }
+
+    // === LANGUAGE LOGIC ===
+    function t(key) {
+        return translations[currentLang][key] || key;
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        localStorage.setItem('mamlaka_lang', currentLang);
+        
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = currentLang;
+        
+        updateUIText();
+        renderCategories();
+        renderAds();
+        renderAdminPending(); // Refresh admin view too
+    }
+
+    function updateUIText() {
+        // Update static elements
+        const titleEl = document.getElementById('siteTitle');
+        if(titleEl) titleEl.innerText = t('siteTitle');
+        
+        const langLabel = document.getElementById('currentLangLabel');
+        if(langLabel) langLabel.innerText = currentLang === 'ar' ? 'EN' : 'ع';
+
+        // Update dynamic elements with data-i18n attribute
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            el.innerText = t(el.getAttribute('data-i18n'));
+        });
+    }
+
+    // === RENDERING LOGIC ===
+    function renderUI() {
+        updateUIText();
+        renderCategories();
+        renderAds();
+        renderAdminPending();
+        renderAdminCats();
+        renderAdminRules();
+    }
+
+    function renderCategories() {
+        const container = document.getElementById('catContainer');
+        const select = document.getElementById('userCat');
+        
+        if(!container || !select) return;
+
+        // Render Pills
+        container.innerHTML = '<button class="cat-pill active" onclick="filterAds(\'all\')">الكل / All</button>' + 
+            appState.categories.map(cat => 
+                `<button class="cat-pill" onclick="filterAds('${cat.id}')">${currentLang === 'ar' ? cat.ar : cat.en}</button>`
+            ).join('');
+
+        // Render Select Options
+        select.innerHTML = appState.categories.map(cat => 
+            `<option value="${cat.id}">${currentLang === 'ar' ? cat.ar : cat.en}</option>`
+        ).join('');
+    }
+
+    let activeFilter = 'all';
+    function filterAds(catId) {
+        activeFilter = catId;
+        // Highlight active pill
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+        renderAds();
+    }
+
+    function renderAds() {
+        const grid = document.getElementById('adsContainer');
+        if(!grid) return;
+
+        // Filter logic
+        let filteredAds = appState.ads.filter(ad => ad.status === 'approved');
+        if(activeFilter !== 'all') {
+            filteredAds = filteredAds.filter(ad => ad.catId === activeFilter);
+        }
+
+        if(filteredAds.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#999;">${t('noAds')}</div>`;
+            return;
+        }
+
+        grid.innerHTML = filteredAds.map(ad => {
+            const catObj = appState.categories.find(c => c.id === ad.catId);
+            const catName = catObj ? (currentLang === 'ar' ? catObj.ar : catObj.en) : 'Unknown';
+            
+            return `
+                <div class="ad-card" onclick="openAdDetails(${ad.id})">
+                    ${ad.cond === 'new' ? `<span class="badge-new">${t('optNew')}</span>` : `<span class="badge-used">${t('optUsed')}</span>`}
+                    <!-- Placeholder Image -->
+                    <img src="https://via.placeholder.com/300x200/f1f5f9/cbd5e1?text=${encodeURIComponent(catName)}" alt="${ad.title}" class="ad-img">
+                    
+                    <div class="ad-info">
+                        <h3 class="ad-title">${ad.title}</h3>
+                        <p class="ad-price">${ad.price ? '$'+ad.price : 'TBD'}</p>
+                        <small class="ad-location">#${catName}</small>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // === USER ACTIONS ===
+    function openPostModal() {
+        document.getElementById('postModal').style.display = 'flex';
+        // Populate Category Select again just in case
+        renderCategories(); 
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    function handleUserSubmission(e) {
+        e.preventDefault();
+        
+        const newAd = {
+            id: Date.now(),
+            title: document.getElementById('userTitle').value,
+            catId: document.getElementById('userCat').value,
+            cond: document.getElementById('userCond').value,
+            price: document.getElementById('userPrice').value,
+            desc: document.getElementById('userDesc').value,
+            phone: document.getElementById('userPhone').value,
+            status: 'pending', // Needs approval
+            timestamp: new Date().toLocaleString()
+        };
+
+        appState.ads.unshift(newAd); // Add to top
+        saveState();
+        
+        alert(t('successMsg'));
+        closeModal('postModal');
+        e.target.reset();
+    }
+
+    function openAdDetails(id) {
+        const ad = appState.ads.find(a => a.id === id);
+        if(!ad) return;
+        
+        // Simple Alert for Demo purposes. In production, this would be a nice Modal.
+        const msg = `Title: ${ad.title}\nPrice: $${ad.price}\nPhone: ${ad.phone}\n\nClick OK to Contact via WhatsApp`;
+        if(confirm(msg)) {
+            window.open(`https://wa.me/${ad.phone.replace('+','')}?text=Hello,%20I%20am%20interested%20in%20your%20ad:%20${encodeURIComponent(ad.title)}`, '_blank');
+        }
+    }
+
+    // === ADMIN LOGIC ===
+    function openAdminLogin() {
+        document.getElementById('adminLoginModal').style.display = 'flex';
+    }
+
+    function verifyAdmin() {
+        const pass = document.getElementById('adminPassInput').value;
+        if(pass === ADMIN_PASS) {
+            closeModal('adminLoginModal');
+            document.getElementById('adminDashModal').style.display = 'flex';
+            renderAdminPending(); // Load pending items
+        } else {
+            alert("Wrong Password!");
+        }
+    }
+
+    function switchAdminTab(tabName) {
+        // Hide all sections
+        document.querySelectorAll('.admin-panel-section').forEach(s => s.style.display = 'none');
+        // Show target
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        // Update tabs visual
+        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    function renderAdminPending() {
+        const list = document.getElementById('pendingAdsList');
+        const countSpan = document.getElementById('pendingCount');
+        if(!list) return;
+
+        const pending = appState.ads.filter(a => a.status === 'pending');
+        countSpan.innerText = pending.length;
+
+        if(pending.length === 0) {
+            list.innerHTML = "<p>No pending ads.</p>";
+            return;
+        }
+
+        list.innerHTML = pending.map(ad => `
+            <div class="pending-ad-item">
+                <strong>${ad.title}</strong> ($${ad.price})<br>
+                <small>Phone: ${ad.phone}</small><br>
+                <div class="action-row">
+                    <button class="action-btn-small" style="background:green;color:white;" onclick="moderateAd(${ad.id}, 'approved')">${t('approveBtn')}</button>
+                    <button class="action-btn-small" style="background:red;color:white;" onclick="moderateAd(${ad.id}, 'rejected')">${t('rejectBtn')}</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function moderateAd(id, action) {
+        const index = appState.ads.findIndex(a => a.id === id);
+        if(index !== -1) {
+            if(action === 'rejected') {
+                appState.ads.splice(index, 1); // Delete completely
+            } else {
+                appState.ads[index].status = action;
+            }
+            saveState();
+        }
+    }
+
+    function renderAdminCats() {
+        const ul = document.getElementById('catsList');
+        if(!ul) return;
+        ul.innerHTML = appState.categories.map((c, i) => `
+            <li class="rule-item" style="border-color:var(--primary); background:#eff6ff;">
+                <span>[AR] ${c.ar} | [EN] ${c.en}</span>
+                <span class="del-rule" onclick="deleteCategory(${i})">×</span>
+            </li>
+        `).join('');
+    }
+
+    function addCategory() {
+        const ar = document.getElementById('newCatNameAR').value;
+        const en = document.getElementById('newCatNameEN').value;
+        if(ar && en) {
+            appState.categories.push({ id: 'cat_'+Date.now(), ar, en });
+            saveState();
+            document.getElementById('newCatNameAR').value = '';
+            document.getElementById('newCatNameEN').value = '';
+        }
+    }
+
+    function deleteCategory(index) {
+        if(confirm("Delete this category?")) {
+            appState.categories.splice(index, 1);
+            saveState();
+        }
+    }
+
+    function renderAdminRules() {
+        const ul = document.getElementById('rulesList');
+        if(!ul) return;
+        ul.innerHTML = appState.rules.map((r, i) => `
+            <li class="rule-item">
+                <span>${r}</span>
+                <span class="del-rule" onclick="deleteRule(${i})">×</span>
+            </li>
+        `).join('');
+    }
+
+    function addRule() {
+        const txt = document.getElementById('newRuleText').value;
+        if(txt) {
+            appState.rules.push(txt);
+            saveState();
+            document.getElementById('newRuleText').value = '';
+        }
+    }
+
+    function deleteRule(index) {
+        appState.rules.splice(index, 1);
+        saveState();
+    }
+
+    // Initialize App
+    window.onload = () => {
+        loadState();
+        renderUI();
+    };
+
+</script>
 </html>
