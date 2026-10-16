@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👑 مدير المملكة | Kingdom Manager</title>
+<style>
+    :root { --primary: #0f172a; --accent: #d97706; --bg: #f8fafc; --card: #ffffff; --text: #334155; --success: #10b981; --danger: #ef4444; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+    
+    .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 15px; }
+    .header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .subtitle { color: #64748b; font-size: 0.9rem; margin-top: 5px; }
+
+    .controls { max-width: 900px; margin: 0 auto 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;}
+    .search-box { flex: 1; min-width: 200px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; }
+    .refresh-btn { padding: 10px 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .refresh-btn:hover { background: #1e293b; transform: scale(1.05); }
+
+    .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; }
+    
+    .file-card { 
+        background: var(--card); border-radius: 12px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
+        display: flex; flex-direction: column; height: 100%;
+    }
+    .file-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    
+    .category-tag { 
+        position: absolute; top: 10px; left: 10px; font-size: 0.7rem; padding: 2px 8px; 
+        border-radius: 4px; font-weight: bold; text-transform: uppercase; z-index: 2;
+    }
+    .tag-edu { background: #dbeafe; color: #1e40af; } 
+    .tag-tool { background: #dcfce7; color: #166534; } 
+    .tag-biz { background: #fef3c7; color: #92400e; } 
+    .tag-game { background: #fee2e2; color: #991b1b; } 
+    .tag-other { background: #f1f5f9; color: #475569; }
+
+    .file-name { font-weight: bold; font-size: 1rem; color: var(--primary); margin-bottom: 5px; word-break: break-all; line-height: 1.3; flex-grow: 1; }
+    .file-meta { font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px; }
+    
+    .actions-row { display: flex; gap: 5px; margin-top: auto; }
+    .btn-action { 
+        flex: 1; padding: 8px 5px; border: none; border-radius: 6px; cursor: pointer; 
+        font-weight: bold; font-size: 0.8rem; text-decoration: none; text-align: center; transition: 0.2s;
+        display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .btn-open { background: var(--accent); color: white; }
+    .btn-open:hover { background: #b45309; }
+    
+    .btn-manage { background: #e2e8f0; color: var(--primary); }
+    .btn-manage:hover { background: #cbd5e1; }
+
+    /* Modal for Management Actions */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+        display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+    }
+    .modal-content {
+        background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    .close-modal { float: left; cursor: pointer; font-size: 1.5rem; color: #aaa; }
+    .manage-title { color: var(--primary); margin-bottom: 15px; font-size: 1.2rem; }
+    .manage-option { 
+        display: block; width: 100%; padding: 12px; margin-bottom: 10px; 
+        background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; 
+        text-decoration: none; color: var(--primary); font-weight: bold; text-align: center; transition: 0.2s;
+    }
+    .manage-option:hover { background: #e2e8f0; border-color: #cbd5e1; }
+    .manage-option.delete { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
+    .manage-option.delete:hover { background: #fee2e2; }
+
+    .toast { 
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+        background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px; 
+        opacity: 0; transition: 0.3s; pointer-events: none; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>👑 مدير المملكة (Kingdom Manager)</h1>
+    <div class="subtitle">تحكم كامل بمشاريعك: عرض، نشر، وإدارة سريعة.</div>
+</div>
+
+<div class="controls">
+    <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن اسم التطبيق...">
+    <button class="refresh-btn" onclick="fetchFiles()">🔄 تحديث القائمة</button>
+</div>
+
+<div id="gridContainer" class="grid-container">
+    <!-- سيتم حقن الملفات هنا -->
+</div>
+
+<!-- Management Modal -->
+<div id="manageModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h3 class="manage-title" id="modalFileName">اسم الملف</h3>
+        
+        <a href="#" id="linkGithubEdit" target="_blank" class="manage-option">✏️ تعديل الكود على GitHub</a>
+        <a href="#" id="linkGithubDelete" target="_blank" class="manage-option delete">🗑️ حذف الملف نهائياً</a>
+        <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+        <button onclick="copyPublicLink()" class="manage-option" style="background:#eff6ff; color:#1e40af;">🔗 نسخ رابط النشر العام</button>
+        <button onclick="copyRawName()" class="manage-option" style="background:#f0fdf4; color:#166534;">📝 نسخ اسم الملف فقط</button>
+    </div>
+</div>
+
+<div id="toast" class="toast">تم النسخ!</div>
+
+<script>
+const REPO_OWNER = 'Ff1980ff';
+const REPO_NAME = 'mamlaka';
+const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents`;
+const BASE_GITHUB_PAGES = `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
+const BASE_GITHUB_WEB = `https://github.com/${REPO_OWNER}/${REPO_NAME}/blob/main/`;
+
+let allFiles = [];
+let currentSelectedFile = null;
+
+// Fetch Files from GitHub API
+async function fetchFiles() {
+    const container = document.getElementById('gridContainer');
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">⏳ جاري التحميل من GitHub...</div>';
+
+    try {
+        const response = await fetch(GITHUB_API_URL);
+        if (!response.ok) throw new Error("Failed");
+        
+        const data = await response.json();
+        // Filter only HTML files
+        allFiles = data.filter(item => item.type === 'file' && item.name.endsWith('.html'));
+        
+        renderGrid(allFiles);
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:red;">❌ خطأ في الاتصال. تحقق من الإنترنت.</div>';
+    }
+}
+
+// Categorize automatically
+function getCategory(name) {
+    const lower = name.toLowerCase();
+    if (lower.includes('pen') || lower.includes('flash') || lower.includes('math') || lower.includes('swedish') || lower.includes('huruf') || lower.includes('kids') || lower.includes('learn') || lower.includes('muallim') || lower.includes('qari')) return 'edu';
+    if (lower.includes('calc') || lower.includes('convert') || lower.includes('crop') || lower.includes('sorter') || lower.includes('maker') || lower.includes('studio') || lower.includes('extractor') || lower.includes('tracker') || lower.includes('shrink') || lower.includes('format')) return 'tool';
+    if (lower.includes('market') || lower.includes('sale') || lower.includes('contract') || lower.includes('business') || lower.includes('ouda') || lower.includes('estate') || lower.includes('rental') || lower.includes('admin') || lower.includes('dashboard')) return 'biz';
+    if (lower.includes('game') || lower.includes('football') || lower.includes('brain') || lower.includes('story') || lower.includes('tale') || lower.includes('saboura') || lower.includes('sakhra')) return 'game';
+    return 'other';
+}
+
+// Render Grid
+function renderGrid(files) {
+    const container = document.getElementById('gridContainer');
+    container.innerHTML = '';
+    
+    if(files.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">لا توجد ملفات HTML.</div>';
+        return;
+    }
+
+    files.forEach(file => {
+        const cat = getCategory(file.name);
+        const publicLink = BASE_GITHUB_PAGES + encodeURIComponent(file.name);
+        
+        let tagClass = 'tag-other';
+        let tagName = 'أخرى';
+        if(cat === 'edu') { tagClass = 'tag-edu'; tagName = 'تعليمي'; }
+        if(cat === 'tool') { tagClass = 'tag-tool'; tagName = 'أداة'; }
+        if(cat === 'biz') { tagClass = 'tag-biz'; tagName = 'أعمال'; }
+        if(cat === 'game') { tagClass = 'tag-game'; tagName = 'ترفيه'; }
+
+        const sizeKB = Math.round(file.size / 1024);
+
+        const card = document.createElement('div');
+        card.className = 'file-card';
+        card.innerHTML = `
+            <span class="category-tag ${tagClass}">${tagName}</span>
+            <div class="file-name">${file.name}</div>
+            <div class="file-meta">الحجم: ${sizeKB} KB</div>
+            <div class="actions-row">
+                <a href="${publicLink}" target="_blank" class="btn-action btn-open">فتح 🚀</a>
+                <button onclick="openManageModal('${file.name}', '${publicLink}')" class="btn-action btn-manage">إدارة ⚙️</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Open Management Modal
+function openManageModal(fileName, publicLink) {
+    currentSelectedFile = fileName;
+    document.getElementById('modalFileName').innerText = fileName;
+    
+    // Construct GitHub URLs for Edit/Delete
+    const encodedName = encodeURIComponent(fileName);
+    const editUrl = `${BASE_GITHUB_WEB}${encodedName}?plain=1`; // Opens file in editor view
+    const deleteUrl = `${BASE_GITHUB_WEB}${encodedName}`; // Opens file page where you can click delete
+    
+    document.getElementById('linkGithubEdit').href = editUrl;
+    document.getElementById('linkGithubDelete').href = deleteUrl;
+    
+    // Store public link for copying
+    window.tempPublicLink = publicLink;
+
+    document.getElementById('manageModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('manageModal').style.display = 'none';
+}
+
+// Copy Functions
+function copyPublicLink() {
+    navigator.clipboard.writeText(window.tempPublicLink);
+    showToast("تم نسخ رابط النشر!");
+}
+
+function copyRawName() {
+    navigator.clipboard.writeText(currentSelectedFile);
+    showToast("تم نسخ اسم الملف!");
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// Search Logic
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = allFiles.filter(f => f.name.toLowerCase().includes(term));
+    renderGrid(filtered);
+});
+
+// Initialize
+window.onload = fetchFiles;
+
+</script>
+</body>
+</html>
