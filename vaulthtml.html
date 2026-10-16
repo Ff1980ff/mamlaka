@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔒 الخزنة الملكية | Kingdom Vault Pro</title>
+<style>
+    :root {
+        --primary: #0f172a; /* Dark Navy */
+        --accent: #d97706;  /* Gold */
+        --bg: #f1f5f9;      /* Light Gray BG */
+        --card: #ffffff;
+        --text: #334155;
+        --danger: #ef4444;
+        --success: #10b981;
+        --info: #3b82f6;
+        --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+        font-family: var(--font-main); 
+        background: var(--bg); 
+        color: var(--text); 
+        min-height: 100vh; 
+        display: flex; 
+        flex-direction: column;
+    }
+
+    /* Lock Screen */
+    #lockScreen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        z-index: 9999; display: flex; justify-content: center; align-items: center;
+        transition: opacity 0.5s ease;
+    }
+    .lock-card {
+        background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+        padding: 40px; border-radius: 20px; text-align: center;
+        border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        max-width: 400px; width: 90%;
+    }
+    .lock-icon { font-size: 4rem; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--accent)); }
+    .lock-input {
+        width: 100%; padding: 15px; border-radius: 10px; border: none; outline: none;
+        font-size: 1.2rem; text-align: center; letter-spacing: 2px; margin-bottom: 20px;
+        background: rgba(255,255,255,0.9); color: var(--primary);
+    }
+    .unlock-btn {
+        width: 100%; padding: 15px; background: var(--accent); color: white;
+        border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
+        font-size: 1.1rem; transition: transform 0.2s;
+    }
+    .unlock-btn:hover { transform: scale(1.05); }
+    .error-msg { color: #fca5a5; margin-top: 10px; font-size: 0.9rem; min-height: 20px; }
+
+    /* Main App */
+    #appContainer { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    
+    header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #cbd5e1;
+    }
+    h1 { color: var(--primary); font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+    .logout-btn {
+        background: var(--danger); color: white; border: none; padding: 8px 15px;
+        border-radius: 6px; cursor: pointer; font-weight: bold;
+    }
+
+    /* Controls / Form */
+    .controls {
+        background: white; padding: 20px; border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px;
+        display: grid; grid-template-columns: 1fr; gap: 15px;
+    }
+    @media(min-width: 768px) { .controls { grid-template-columns: repeat(2, 1fr); } }
+
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; color: #64748b; }
+    .form-control {
+        width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;
+        font-family: inherit; font-size: 1rem;
+    }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    
+    /* Multi-Image Upload Area */
+    .image-upload-area {
+        border: 2px dashed #cbd5e1; border-radius: 8px; padding: 15px;
+        text-align: center; cursor: pointer; transition: 0.3s; background: #f8fafc;
+    }
+    .image-upload-area:hover { border-color: var(--accent); background: #fffbeb; }
+    .image-preview-grid {
+        display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .preview-thumb {
+        width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;
+    }
+
+    .add-btn {
+        grid-column: 1 / -1; background: var(--success); color: white;
+        border: none; padding: 12px; border-radius: 8px; font-weight: bold;
+        cursor: pointer; font-size: 1rem; margin-top: 10px;
+    }
+    .add-btn:hover { background: #059669; }
+
+    /* Items Grid */
+    .items-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+    .item-card {
+        background: white; border-radius: 12px; overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s;
+        border: 1px solid #e2e8f0; position: relative;
+    }
+    .item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    
+    .item-header {
+        background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #e2e8f0;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .item-title { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+    
+    .item-body { padding: 15px; }
+    
+    /* Content Sections inside Card */
+    .section-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+    
+    .content-text { 
+        word-break: break-all; background: #f1f5f9; padding: 10px; border-radius: 6px;
+        font-family: monospace; font-size: 0.9rem; margin-bottom: 10px; border: 1px dashed #cbd5e1;
+        max-height: 100px; overflow-y: auto;
+    }
+    
+    .content-link {
+        display: block; background: #eff6ff; color: var(--info); padding: 10px;
+        border-radius: 6px; text-decoration: none; font-weight: bold; margin-bottom: 10px;
+        border: 1px solid #bfdbfe; text-align: center; transition: 0.2s;
+    }
+    .content-link:hover { background: #dbeafe; }
+
+    .images-gallery {
+        display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 10px;
+    }
+    .gallery-img {
+        height: 80px; width: auto; border-radius: 4px; cursor: zoom-in; border: 1px solid #eee;
+    }
+
+    .item-actions {
+        display: flex; gap: 5px; padding: 10px 15px; background: #fff; border-top: 1px solid #f1f5f9;
+    }
+    .action-small {
+        flex: 1; padding: 6px; border: none; border-radius: 4px; cursor: pointer;
+        font-size: 0.8rem; font-weight: bold; transition: 0.2s;
+    }
+    .btn-copy-text { background: #e2e8f0; color: var(--primary); }
+    .btn-copy-text:hover { background: #cbd5e1; }
+    .btn-del { background: #fee2e2; color: var(--danger); }
+    .btn-del:hover { background: #fecaca; }
+
+    /* Toast & Modal */
+    #toast {
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: var(--primary); color: white; padding: 10px 20px; border-radius: 50px;
+        opacity: 0; transition: 0.3s; pointer-events: none; z-index: 1000;
+    }
+    #toast.show { opacity: 1; }
+
+    #imgModal {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center;
+        z-index: 2000; cursor: zoom-out;
+    }
+    #imgModal img { max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+    <div class="lock-card">
+        <div class="lock-icon">🔐</div>
+        <h2 style="color:white; margin-bottom:10px;">الخزنة الملكية Pro</h2>
+        <p style="color:#94a3b8; margin-bottom:20px; font-size:0.9rem;">أدخل كلمة المرور للوصول للبيانات الحساسة</p>
+        <input type="password" id="passInput" class="lock-input" placeholder="••••••••" autocomplete="off">
+        <button class="unlock-btn" onclick="checkPassword()">فتح الخزنة ▶️</button>
+        <div id="errorMsg" class="error-msg"></div>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appContainer">
+    <header>
+        <h1>👑 خزنة المملكة</h1>
+        <button class="logout-btn" onclick="lockApp()">🔒 إغلاق وقفل</button>
+    </header>
+
+    <!-- ADD NEW ITEM FORM -->
+    <div class="controls">
+        <div class="form-group">
+            <label>العنوان / اسم التطبيق</label>
+            <input type="text" id="inpTitle" class="form-control" placeholder="مثلاَ: محفظة Binance الرئيسية">
+        </div>
+        
+        <div class="form-group">
+            <label>رابط الاستلام / الدفع (اختياري)</label>
+            <input type="url" id="inpLink" class="form-control" placeholder="https://...">
+        </div>
+
+        <div class="form-group" style="grid-column: 1 / -1;">
+            <label>المحتوى النصي (كلمات مرور، عناوين wallets...)</label>
+            <textarea id="inpContent" class="form-control" placeholder="الصق المحتوى هنا..."></textarea>
+        </div>
+
+        <div class="form-group" style="grid-column: 1 / -1;">
+            <label>رفع صور (حتى 3 صور)</label>
+            <div class="image-upload-area" onclick="document.getElementById('inpFiles').click()">
+                <span style="color:#64748b;">اضغط لاختيار الصور...</span>
+                <input type="file" id="inpFiles" accept="image/*" multiple style="display:none;" onchange="handleImages(this)">
+            </div>
+            <div id="previewArea" class="image-preview-grid"></div>
+        </div>
+        
+        <button class="add-btn" onclick="addItem()">➕ إضافة للخزنة</button>
+    </div>
+
+    <!-- ITEMS LIST -->
+    <div id="itemsGrid" class="items-grid">
+        <!-- Items injected by JS -->
+    </div>
+</div>
+
+<!-- IMAGE VIEWER MODAL -->
+<div id="imgModal" onclick="this.style.display='none'">
+    <img id="modalImgSrc" src="" alt="View Full Size">
+</div>
+
+<div id="toast">تم النسخ!</div>
+
+<script>
+    // CONFIGURATION
+    const MASTER_PASSWORD = "@$Ff1980ff"; 
+    const STORAGE_KEY = "kingdom_vault_pro_v2";
+    
+    let vaultData = [];
+    let tempImagesBase64 = []; // To store processed images before saving
+
+    // INITIALIZATION
+    window.onload = () => {
+        loadData();
+        renderItems();
+    };
+
+    // AUTHENTICATION LOGIC
+    function checkPassword() {
+        const input = document.getElementById('passInput').value;
+        const errorEl = document.getElementById('errorMsg');
+        
+        if (input === MASTER_PASSWORD) {
+            sessionStorage.setItem('vault_unlocked', 'true');
+            unlockUI();
+        } else {
+            errorEl.innerText = "❌ كلمة المرور غير صحيحة!";
+            shakeElement(document.querySelector('.lock-card'));
+        }
+    }
+
+    function unlockUI() {
+        document.getElementById('lockScreen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+        }, 500);
+    }
+
+    function lockApp() {
+        sessionStorage.removeItem('vault_unlocked');
+        location.reload();
+    }
+
+    function shakeElement(el) {
+        el.style.transform = "translateX(-10px)";
+        setTimeout(() => el.style.transform = "translateX(10px)", 50);
+        setTimeout(() => el.style.transform = "translateX(-10px)", 100);
+        setTimeout(() => el.style.transform = "translateX(0)", 150);
+    }
+
+    // DATA MANAGEMENT
+    function loadData() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) vaultData = JSON.parse(saved);
+        } catch(e) { console.error(e); }
+    }
+
+    function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(vaultData));
+        renderItems();
+    }
+
+    // IMAGE HANDLING (Compression & Preview)
+    async function handleImages(input) {
+        const files = Array.from(input.files);
+        tempImagesBase64 = []; // Reset
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = '';
+
+        if(files.length > 3) {
+            alert("الحد الأقصى 3 صور فقط.");
+            return;
+        }
+
+        for (let file of files) {
+            if (!file.type.startsWith('image/')) continue;
+            
+            const base64 = await compressImage(file);
+            tempImagesBase64.push(base64);
+            
+            // Create Thumbnail
+            const img = document.createElement('img');
+            img.src = base64;
+            img.className = 'preview-thumb';
+            previewArea.appendChild(img);
+        }
+    }
+
+    function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    // Resize logic: Max width 800px to keep storage small but readable
+                    const maxWidth = 800;
+                    const scale = Math.min(1, maxWidth / img.width);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // Quality 60%
+                };
+            };
+        });
+    }
+
+    // CORE FUNCTIONS
+    function addItem() {
+        const title = document.getElementById('inpTitle').value.trim();
+        const link = document.getElementById('inpLink').value.trim();
+        const contentVal = document.getElementById('inpContent').value.trim();
+        
+        if (!title) return alert("الرجاء إدخال عنوان");
+
+        let newItem = {
+            id: Date.now(),
+            title: title,
+            link: link || null,
+            content: contentVal || null,
+            images: [...tempImagesBase64], // Copy array
+            createdAt: new Date().toLocaleDateString()
+        };
+
+        // Validation: Must have at least one piece of info besides title
+        if(!newItem.link && !newItem.content && newItem.images.length === 0) {
+            return alert("يرجى إضافة رابط، نص، أو صورة واحدة على الأقل.");
+        }
+
+        vaultData.unshift(newItem);
+        saveData();
+        
+        // Reset Form
+        document.getElementById('inpTitle').value = '';
+        document.getElementById('inpLink').value = '';
+        document.getElementById('inpContent').value = '';
+        document.getElementById('inpFiles').value = '';
+        document.getElementById('previewArea').innerHTML = '';
+        tempImagesBase64 = [];
+        
+        showToast("✅ تمت الإضافة بنجاح!");
+    }
+
+    function deleteItem(id) {
+        if(confirm("هل أنت متأكد من حذف هذا العنصر نهائياً؟")) {
+            vaultData = vaultData.filter(item => item.id !== id);
+            saveData();
+            showToast("🗑️ تم الحذف.");
+        }
+    }
+
+    function copySpecific(text, type) {
+        if(type === 'link') {
+            navigator.clipboard.writeText(text).then(() => showToast("🔗 تم نسخ الرابط!"));
+        } else {
+            navigator.clipboard.writeText(text).then(() => showToast("📋 تم نسخ النص!"));
+        }
+    }
+
+    function viewFullImage(src) {
+        document.getElementById('modalImgSrc').src = src;
+        document.getElementById('imgModal').style.display = 'flex';
+    }
+
+    // RENDERING
+    function renderItems() {
+        const grid = document.getElementById('itemsGrid');
+        grid.innerHTML = '';
+
+        if (vaultData.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#94a3b8;">الخزنة فارغة.</div>';
+            return;
+        }
+
+        vaultData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            
+            let bodyHtml = '';
+
+            // 1. Text Section
+            if (item.content) {
+                bodyHtml += `
+                    <div class="section-label">محتوى نصي</div>
+                    <div class="content-text">${escapeHtml(item.content)}</div>
+                    <button class="action-small btn-copy-text" style="margin-bottom:10px; width:100%;" onclick="copySpecific('${escapeJs(item.content)}', 'text')">نسخ النص 📋</button>
+                `;
+            }
+
+            // 2. Link Section
+            if (item.link) {
+                bodyHtml += `
+                    <div class="section-label">رابط استلام</div>
+                    <a href="${item.link}" target="_blank" class="content-link">فتح الرابط 🔗</a>
+                    <button class="action-small btn-copy-text" style="margin-bottom:10px; width:100%;" onclick="copySpecific('${escapeJs(item.link)}', 'link')">نسخ الرابط 📋</button>
+                `;
+            }
+
+            // 3. Images Section
+            if (item.images && item.images.length > 0) {
+                bodyHtml += `<div class="section-label">الصور المرفقة (${item.images.length})</div>`;
+                bodyHtml += `<div class="images-gallery">`;
+                item.images.forEach(imgSrc => {
+                    bodyHtml += `<img src="${imgSrc}" class="gallery-img" onclick="viewFullImage('${imgSrc}')">`;
+                });
+                bodyHtml += `</div>`;
+            }
+
+            card.innerHTML = `
+                <div class="item-header">
+                    <span class="item-title">${escapeHtml(item.title)}</span>
+                    <small style="color:#94a3b8; font-size:0.7rem;">${item.createdAt}</small>
+                </div>
+                <div class="item-body">
+                    ${bodyHtml}
+                </div>
+                <div class="item-actions">
+                    <button class="action-small btn-del" onclick="deleteItem(${item.id})">حذف العنصر 🗑️</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // UTILS
+    function escapeHtml(str) {
+        if(!str) return "";
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+    function escapeJs(str) {
+        if(!str) return "";
+        return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+</script>
+
+</body>
+</html>
