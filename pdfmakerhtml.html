@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📄 مولد ملفات التعريف الملكية | Kingdom PDF Maker</title>
+<!-- مكتبة jsPDF لتوليد الملفات -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    :root { --primary: #0f172a; --accent: #d97706; --bg: #f8fafc; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #334155; padding: 20px; margin: 0; }
+    
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-top: 0; }
+    
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+    input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+    textarea { height: 100px; resize: vertical; }
+    
+    /* Image Upload Area */
+    .upload-area {
+        border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center;
+        cursor: pointer; transition: 0.3s; background: #f1f5f9; position: relative;
+    }
+    .upload-area:hover { border-color: var(--accent); background: #fffbeb; }
+    .preview-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; justify-content: center; }
+    .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+
+    .btn-generate {
+        width: 100%; padding: 15px; background: var(--accent); color: white; border: none;
+        border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
+        transition: 0.3s; margin-top: 20px;
+    }
+    .btn-generate:hover { background: #b45309; transform: scale(1.02); }
+    .btn-generate:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    .status-msg { text-align: center; margin-top: 10px; font-size: 0.9rem; min-height: 20px; }
+    .success { color: green; } .error { color: red; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>👑 مولد ملف التعريف (PDF)</h1>
+    <p style="text-align:center; color:#64748b; font-size:0.9rem;">جهز منشورًا احترافيًا لأي تطبيق بضغطة زر.</p>
+
+    <div class="form-group">
+        <label>اسم التطبيق *</label>
+        <input type="text" id="appName" placeholder="مثلاَ: القلم الناطق PRO">
+    </div>
+
+    <div class="form-group">
+        <label>الوصف والمميزات *</label>
+        <textarea id="appDesc" placeholder="اكتب هنا المميزات الرئيسية...&#10;- يعمل بدون إنترنت&#10;- نطق مزدوج عربي/إنجليزي"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>رابط التحميل (اختصار الروابط) *</label>
+        <input type="text" id="appLink" placeholder="https://shrinkme.io/xyz123">
+    </div>
+
+    <div class="form-group">
+        <label>صور التطبيق (حتى 3 صور) *</label>
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <span style="color:#64748b;">اضغط لرفع الصور...</span>
+            <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" onchange="handleFiles(this)">
+        </div>
+        <div id="previewArea" class="preview-grid"></div>
+    </div>
+
+    <button class="btn-generate" id="genBtn" onclick="generatePDF()">📥 توليد وملء الـ PDF</button>
+    <div id="statusMsg" class="status-msg"></div>
+</div>
+
+<script>
+    let selectedImages = []; // To store base64 strings of images
+
+    function handleFiles(input) {
+        const files = Array.from(input.files);
+        if(files.length > 3) alert("الحد الأقصى 3 صور.");
+        
+        selectedImages = [];
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = '';
+
+        files.slice(0, 3).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Compress image for PDF size optimization
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    // Max width 600px for good print quality without huge file size
+                    const maxWidth = 600; 
+                    const scale = Math.min(1, maxWidth / img.width);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedData = canvas.toDataURL('image/jpeg', 0.8);
+                    selectedImages.push(compressedData);
+
+                    // Add Preview
+                    const thumb = document.createElement('img');
+                    thumb.src = compressedData;
+                    thumb.className = 'preview-img';
+                    previewArea.appendChild(thumb);
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function generatePDF() {
+        const appName = document.getElementById('appName').value.trim();
+        const appDesc = document.getElementById('appDesc').value.trim();
+        const appLink = document.getElementById('appLink').value.trim();
+        const statusEl = document.getElementById('statusMsg');
+        const btn = document.getElementById('genBtn');
+
+        // Validation
+        if(!appName || !appDesc || !appLink || selectedImages.length === 0) {
+            statusEl.innerText = "❌ يرجى تعبئة جميع الحقانات ورفع صورة واحدة على الأقل.";
+            statusEl.className = "status-msg error";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "⏳ جاري التوليد...";
+        statusEl.innerText = "";
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // A4 Size
+            
+            // --- Layout Constants ---
+            const pageWidth = 210; // mm
+            const margin = 15;     // mm
+            const contentWidth = pageWidth - (margin * 2);
+            
+            // --- Header Section ---
+            doc.setFillColor(15, 23, 42); // Primary Dark Blue
+            doc.rect(0, 0, pageWidth, 30, 'F'); // Top Bar
+            
+            doc.setTextColor(217, 119, 6); // Gold Accent
+            doc.setFontSize(24);
+            doc.text("👑 مملكة التطبيقات", margin, 18);
+            
+            doc.setTextColor(255, 255, 255); // White Text
+            doc.setFontSize(14);
+            doc.text(appName, margin, 26);
+
+            // --- Body Section ---
+            let currentY = 40;
+
+            // Description Box
+            doc.setDrawColor(203, 213, 225); // Border Color
+            doc.setLineWidth(0.5);
+            doc.roundedRect(margin, currentY, contentWidth, 40, 3, 3, 'S');
+            
+            doc.setTextColor(51, 65, 85); // Text Color
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            
+            // Split text to fit inside box
+            const splitDesc = doc.splitTextToSize(appDesc, contentWidth - 10);
+            doc.text(splitDesc, margin + 5, currentY + 8);
+            
+            currentY += 50; // Move down after description box
+
+            // Images Section
+            doc.setFontSize(12);
+            doc.setTextColor(15, 23, 42);
+            doc.text("📸 لقطات من التطبيق:", margin, currentY);
+            currentY += 10;
+
+            const imgHeight = 60; // Height per image row
+            const imgGap = 5;
+            
+            // Calculate how many images fit in a row based on aspect ratio roughly
+            // For simplicity, we stack them vertically or side-by-side depending on count
+            if(selectedImages.length === 1) {
+                // Single large image centered
+                const imgProps = doc.getImageProperties(selectedImages[0]);
+                const wRatio = contentWidth / imgProps.width;
+                const hRatio = (pageWidth - 40) / imgProps.height; // Max height constraint
+                const finalW = imgProps.width * Math.min(wRatio, hRatio);
+                const finalH = imgProps.height * Math.min(wRatio, hRatio);
+                
+                const xPos = (pageWidth - finalW) / 2;
+                doc.addImage(selectedImages[0], 'JPEG', xPos, currentY, finalW, finalH);
+                currentY += finalH + 10;
+            } else {
+                // Multiple images side by side (up to 3)
+                const cols = selectedImages.length;
+                const colWidth = (contentWidth - ((cols-1)*imgGap)) / cols;
+                
+                selectedImages.forEach((img, index) => {
+                    const props = doc.getImageProperties(img);
+                    // Maintain aspect ratio within column width
+                    const calcH = (props.height / props.width) * colWidth;
+                    const xStart = margin + (index * (colWidth + imgGap));
+                    
+                    doc.addImage(img, 'JPEG', xStart, currentY, colWidth, calcH);
+                });
+                // Estimate max height taken by the tallest image in this row
+                // Simplified: assume standard phone screenshot ratio approx 1.7
+                currentY += (colWidth * 1.7) + 10; 
+            }
+
+            // --- Footer / CTA Section ---
+            // Ensure we don't go off page
+            if(currentY > 250) {
+                doc.addPage();
+                currentY = 20;
+            }
+
+            // Call to Action Button Style
+            doc.setFillColor(16, 185, 129); // Success Green
+            doc.roundedRect(margin, currentY, contentWidth, 20, 5, 5, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(" اضغط هنا لتحميل وتجربة التطبيق الآن", pageWidth/2, currentY + 13, { align: 'center' });
+
+            // Make the whole green rectangle clickable link
+            // Note: jsPDF links work best when defined clearly
+            doc.link(margin, currentY, contentWidth, 20, { url: appLink });
+
+            // Disclaimer Text below button
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.text("* ملاحظة: قد يظهر إعلان قصير (5-7 ثوانٍ) قبل فتح الرابط لدعم التطوير.", margin, currentY + 28);
+
+            // Save File
+            const fileName = `${appName.replace(/\s+/g, '_')}_Kingdom.pdf`;
+            doc.save(fileName);
+
+            statusEl.innerText = "✅ تم إنشاء الملف بنجاح!";
+            statusEl.className = "status-msg success";
+
+        } catch (err) {
+            console.error(err);
+            statusEl.innerText = "❌ حدث خطأ: " + err.message;
+            statusEl.className = "status-msg error";
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "📥 توليد وملء الـ PDF";
+        }
+    }
+</script>
+
+</body>
+</html>
