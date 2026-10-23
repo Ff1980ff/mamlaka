@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل احتياجات حي عشيرة - حمص</title>
+    <!-- استدعاء Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء الخطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- استدعاء مكتبة الأيقونات -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f1f5f9; }
+        .gold-border { border-color: #d4af37; }
+        .gold-text { color: #d4af37; }
+        /* تأثير التحميل */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* تنسيق الطباعة */
+        @media print {
+            body * { visibility: hidden; }
+            #printable-card, #printable-card * { visibility: visible; }
+            #printable-card { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; border: 2px solid #0f172a; background: white; }
+            .no-print { display: none !important; }
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Cairo', 'sans-serif'] },
+                    colors: {
+                        primary: '#0f172a', // أزرق داكن
+                        accent: '#d4af37',  // ذهبي
+                        light: '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- شريط التنقل العلوي -->
+    <nav class="bg-primary text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="App.init()">
+                    <i data-lucide="shield-check" class="text-accent w-8 h-8"></i>
+                    <span class="font-bold text-xl tracking-wide">سجل احتياجات حي عشيرة</span>
+                </div>
+                <div id="nav-user-info" class="hidden flex items-center gap-4">
+                    <span id="user-name-display" class="text-sm text-gray-300 hidden md:block"></span>
+                    <button onclick="App.logout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> خروج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main id="app-container" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full fade-in">
+        <!-- سيتم حقن الصفحات هنا ديناميكياً -->
+        <div class="text-center text-gray-500 mt-10">جاري التحميل...</div>
+    </main>
+
+    <!-- نافذة منبثقة للتنبيهات -->
+    <div id="toast" class="fixed bottom-5 left-5 bg-primary text-white px-6 py-3 rounded shadow-xl transform translate-y-20 transition-transform duration-300 z-50 flex items-center gap-2 no-print">
+        <i data-lucide="info" class="text-accent"></i>
+        <span id="toast-msg">رسالة</span>
+    </div>
+
+<script>
+// ==========================================
+// 1. محاكاة قاعدة البيانات والبيانات الأولية
+// ==========================================
+const DB = {
+    admins: [
+        { id: 1, name: "المدير الرئيسي", email: "zma.homs@gmail.com", password_hash: btoa("Asd123aa@"), role: "super", active: true, created_by: null, created_at: "2026-10-20" },
+        { id: 2, name: "أدمن تجريبي", email: "admin@ashireh.com", password_hash: btoa("Admin123!"), role: "admin", active: true, created_by: 1, created_at: "2026-10-21" }
+    ],
+    families: [
+        { id: 101, family_code: "FAM-1001", head_name: "أحمد المحمد", phone: "0912345678", alt_phone: "", neighborhood: "H1", street: "شارع المضابع", nearest_landmark: "قرب المسجد القديم", housing_type: "إيجار", members_count: 5, access_code: "482910", code_active: true, verification_status: "موثّق", created_by: 1, created_at: "2026-10-22" },
+        { id: 102, family_code: "FAM-1002", head_name: "سارة العبدالله", phone: "0998765432", alt_phone: "", neighborhood: "H3", street: "شارع الجبولي", nearest_landmark: "مقابل المدرسة", housing_type: "ملك", members_count: 3, access_code: "773129", code_active: true, verification_status: "جديد", created_by: 2, created_at: "2026-10-23" },
+        { id: 103, family_code: "FAM-1003", head_name: "خالد الزعبي", phone: "0955112233", alt_phone: "0944009988", neighborhood: "H5", street: "الوادي", nearest_landmark: "آخر الشارع", housing_type: "استضافة", members_count: 7, access_code: "105843", code_active: true, verification_status: "يحتاج اتصال", created_by: 1, created_at: "2026-10-23" }
+    ],
+    outside_requests: [],
+    audit_log: [
+        { id: 1, actor_id: 1, action: "إنشاء نظام", entity: "system", entity_id: 0, timestamp: "2026-10-20 10:00:00" }
+    ]
+};
+
+let currentUser = null; 
+
+// ==========================================
+// 2. محرك سياسات الوصول (RLS)
+// ==========================================
+const RLS = {
+    canAccessTable: (table, user) => {
+        if (!user) return false;
+        if (table === 'admins') return user.role === 'super'; 
+        if (user.role === 'super' || user.role === 'admin') return true;
+        if (user.role === 'family') return true;
+        return false;
+    },
+    getFamilies: (user) => {
+        if (user.role === 'super' || user.role === 'admin') return DB.families;
+        if (user.role === 'family') return DB.families.filter(f => f.id === user.family_id);
+        return [];
+    },
+    log: (action, entity, entity_id) => {
+        if (!currentUser) return;
+        DB.audit_log.push({
+            id: DB.audit_log.length + 1,
+            actor_id: currentUser.id,
+            action, entity, entity_id,
+            timestamp: new Date().toLocaleString('ar-SY')
+        });
+    }
+};
+
+// ==========================================
+// 3. وظائف المساعدة
+// ==========================================
+const Utils = {
+    generateCode: () => Math.floor(100000 + Math.random() * 900000).toString(),
+    generateFamilyCode: () => "FAM-" + Math.floor(1000 + Math.random() * 9000),
+    showToast: (msg) => {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        t.classList.remove('translate-y-20');
+        setTimeout(() => t.classList.add('translate-y-20'), 3000);
+    },
+    hash: (str) => btoa(str),
+    getNeighborhoodName: (code) => {
+        const names = { 'H1': 'H1 الشمالي/المضابع', 'H2': 'H2 الجنوبي الأوسط', 'H3': 'H3 الجنوبي', 'H4': 'H4 الشرقي', 'H5': 'H5 الوادي' };
+        return names[code] || code;
+    },
+    refreshIcons: () => {
+        if (window.lucide) lucide.createIcons();
+    }
+};
+
+// ==========================================
+// 4. نظام العرض (Views)
+// ==========================================
+const App = {
+    init: () => {
+        if (!currentUser) App.renderHome();
+        else App.renderDashboard();
+        Utils.refreshIcons();
+    },
+
+    logout: () => {
+        currentUser = null;
+        App.renderHome();
+        Utils.showToast("تم تسجيل الخروج بنجاح");
+    },
+
+    renderHome: () => {
+        document.getElementById('nav-user-info').classList.add('hidden');
+        document.getElementById('app-container').innerHTML = `
+            <div class="text-center py-10 max-w-3xl mx-auto fade-in">
+                <div class="bg-primary text-white p-8 rounded-2xl shadow-2xl border-b-4 border-accent mb-8">
+                    <i data-lucide="users" class="w-16 h-16 text-accent mx-auto mb-4"></i>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">سجل احتياجات حي عشيرة</h1>
+                    <p class="text-lg text-gray-300 mb-6">منصة موحدة لتنظيم وتوثيق بيانات الأسر والخدمات في حي عشيرة - حمص</p>
+                    <div class="bg-amber-500/20 border border-amber-500 text-amber-200 p-4 rounded-lg flex items-start gap-3 text-right">
+                        <i data-lucide="alert-triangle" class="w-6 h-6 flex-shrink-0 mt-1"></i>
+                        <p class="text-sm font-semibold">تنويه هام: هذا السجل هو أداة تخطيط وتنظيم بيانات فقط، وهو <u>ليس مرتبطاً</u> بأي جهة توزيع مساعدات حالياً.</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <button onclick="App.renderAdminLogin()" class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition border border-gray-200 group">
+                        <i data-lucide="shield" class="w-12 h-12 text-primary mx-auto mb-3 group-hover:text-accent transition"></i>
+                        <h3 class="text-xl font-bold text-primary">دخول الإدارة</h3>
+                        <p class="text-gray-500 text-sm mt-2">للأدمن الرئيسي والأدمن العادي</p>
+                    </button>
+                    <button onclick="App.renderFamilyLogin()" class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition border border-gray-200 group">
+                        <i data-lucide="home" class="w-12 h-12 text-primary mx-auto mb-3 group-hover:text-accent transition"></i>
+                        <h3 class="text-xl font-bold text-primary">دخول الأسرة</h3>
+                        <p class="text-gray-500 text-sm mt-2">تحديث البيانات عبر الهاتف والرمز السري</p>
+                    </button>
+                </div>
+            </div>
+        `;
+        Utils.refreshIcons();
+    },
+
+    renderAdminLogin: () => {
+        document.getElementById('app-container').innerHTML = `
+            <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-primary fade-in">
+                <h2 class="text-2xl font-bold text-center text-primary mb-6">تسجيل دخول الإدارة</h2>
+                <form onsubmit="App.handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+                        <input type="email" id="admin-email" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
+                        <input type="password" id="admin-pass" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition">دخول</button>
+                    <button type="button" onclick="App.renderHome()" class="w-full text-gray-500 py-2 text-sm hover:text-primary">العودة للرئيسية</button>
+                </form>
+            </div>
+        `;
+    },
+
+    handleAdminLogin: (e) => {
+        e.preventDefault();
+        const email = document.getElementById('admin-email').value;
+        const pass = document.getElementById('admin-pass').value;
+        const admin = DB.admins.find(a => a.email === email && a.password_hash === Utils.hash(pass) && a.active);
+        
+        if (admin) {
+            currentUser = { id: admin.id, role: admin.role, name: admin.name };
+            Utils.showToast(`مرحباً ${admin.name}`);
+            App.renderDashboard();
+        } else {
+            Utils.showToast("بيانات الدخول غير صحيحة أو الحساب معطل");
+        }
+    },
+
+    renderFamilyLogin: () => {
+        document.getElementById('app-container').innerHTML = `
+            <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-accent fade-in">
+                <h2 class="text-2xl font-bold text-center text-primary mb-2">دخول الأسرة</h2>
+                <p class="text-center text-gray-500 text-sm mb-6">أدخل رقم الهاتف والرمز السري المكون من 6 أرقام</p>
+                <form onsubmit="App.handleFamilyLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+                        <input type="tel" id="family-phone" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent outline-none" placeholder="09xxxxxxxx">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">الرمز السري</label>
+                        <input type="text" id="family-code" required maxlength="6" pattern="\\d{6}" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent outline-none text-center text-2xl tracking-widest" placeholder="------">
+                    </div>
+                    <button type="submit" class="w-full bg-accent text-primary py-3 rounded-lg font-bold hover:bg-amber-400 transition">دخول آمن</button>
+                    <button type="button" onclick="App.renderHome()" class="w-full text-gray-500 py-2 text-sm hover:text-primary">العودة للرئيسية</button>
+                </form>
+            </div>
+        `;
+    },
+
+    handleFamilyLogin: (e) => {
+        e.preventDefault();
+        const phone = document.getElementById('family-phone').value;
+        const code = document.getElementById('family-code').value;
+        const family = DB.families.find(f => f.phone === phone && f.access_code === code && f.code_active);
+        
+        if (family) {
+            currentUser = { id: family.id, role: 'family', name: family.head_name, family_id: family.id };
+            Utils.showToast("تم الدخول بنجاح");
+            App.renderFamilyDashboard();
+        } else {
+            Utils.showToast("رقم الهاتف أو الرمز السري غير صحيح");
+        }
+    },
+
+    renderDashboard: () => {
+        if (!RLS.canAccessTable('families', currentUser)) return App.renderHome();
+        
+        document.getElementById('nav-user-info').classList.remove('hidden');
+        document.getElementById('user-name-display').innerText = `${currentUser.name} (${currentUser.role === 'super' ? 'مدير رئيسي' : 'مدير'})`;
+
+        const families = RLS.getFamilies(currentUser);
+        const h1Count = families.filter(f => f.neighborhood === 'H1').length;
+
+        let adminManagementLink = '';
+        if (currentUser.role === 'super') {
+            adminManagementLink = `<button onclick="App.renderAdminManagement()" class="w-full text-right px-4 py-3 rounded-lg hover:bg-slate-800 flex items-center gap-3 text-amber-400 font-bold">
+                <i data-lucide="users-cog" class="w-5 h-5"></i> إدارة الأدمنز (حصري)
+            </button>`;
+        }
+
+        document.getElementById('app-container').innerHTML = `
+            <div class="flex flex-col md:flex-row gap-6 fade-in">
+                <!-- القائمة الجانبية -->
+                <aside class="w-full md:w-64 bg-primary text-white rounded-xl shadow-lg p-4 flex-shrink-0 h-fit">
+                    <nav class="space-y-2">
+                        <button onclick="App.renderDashboard()" class="w-full text-right px-4 py-3 rounded-lg bg-slate-800 flex items-center gap-3">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 text-accent"></i> لوحة التحكم
+                        </button>
+                        <button onclick="App.renderFamiliesList()" class="w-full text-right px-4 py-3 rounded-lg hover:bg-slate-800 flex items-center gap-3">
+                            <i data-lucide="users" class="w-5 h-5"></i> إدارة الأسر
+                        </button>
+                        <button onclick="App.renderAuditLog()" class="w-full text-right px-4 py-3 rounded-lg hover:bg-slate-800 flex items-center gap-3">
+                            <i data-lucide="file-text" class="w-5 h-5"></i> سجل التدقيق
+                        </button>
+                        ${adminManagementLink}
+                        <div class="border-t border-slate-700 my-2"></div>
+                        <button onclick="App.logout()" class="w-full text-right px-4 py-3 rounded-lg hover:bg-red-900/50 text-red-400 flex items-center gap-3">
+                            <i data-lucide="log-out" class="w-5 h-5"></i> خروج
+                        </button>
+                    </nav>
+                </aside>
+
+                <!-- المحتوى -->
+                <div class="flex-1 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-6 rounded-xl shadow border-r-4 border-primary">
+                            <p class="text-gray-500 text-sm">إجمالي الأسر المسجلة</p>
+                            <p class="text-3xl font-bold text-primary mt-2">${families.length}</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border-r-4 border-accent">
+                            <p class="text-gray-500 text-sm">حارة H1 (الشمال)</p>
+                            <p class="text-3xl font-bold text-primary mt-2">${h1Count}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow">
+                        <h3 class="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="text-accent"></i> إجراءات سريعة
+                        </h3>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="App.renderAddFamily()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-slate-800 flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i> إضافة أسرة جديدة
+                            </button>
+                            <button onclick="App.exportData()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+                                <i data-lucide="download" class="w-4 h-4"></i> تصدير Excel/CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        Utils.refreshIcons();
+    },
+
+    renderAdminManagement: () => {
+        if (currentUser.role !== 'super') {
+            RLS.log("محاولة وصول غير مصرح بها", "admins", 0);
+            return Utils.showToast("خطأ أمني: غير مصرح لك بدخول هذه الصفحة");
+        }
+
+        const adminsList = DB.admins.map(a => `
+            <tr class="border-b hover:bg-gray-50">
+                <td class="p-3">${a.id}</td>
+                <td class="p-3 font-semibold">${a.name}</td>
+                <td class="p-3">${a.email}</td>
+                <td class="p-3"><span class="px-2 py-1 rounded text-xs ${a.role === 'super' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">${a.role === 'super' ? 'رئيسي' : 'عادي'}</span></td>
+                <td class="p-3">${a.active ? 'نشط' : 'معطل'}</td>
+            </tr>
+        `).join('');
+
+        document.getElementById('app-container').innerHTML = `
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
+                <div class="bg-primary text-white p-4 flex justify-between items-center">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="users-cog" class="text-accent"></i> إدارة الأدمنز</h2>
+                    <button onclick="App.renderDashboard()" class="text-sm bg-slate-700 px-3 py-1 rounded hover:bg-slate-600">عودة</button>
+                </div>
+                <div class="p-6">
+                    <div class="mb-6 bg-amber-50 border border-amber-200 p-4 rounded-lg text-amber-800 text-sm flex items-start gap-2">
+                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
+                        <p>هذه الصفحة متاحة فقط للأدمن الرئيسي. الأدمن العادي لا يمكنه رؤية هذه الصفحة.</p>
+                    </div>
+                    
+                    <button onclick="App.showAddAdminModal()" class="mb-4 bg-accent text-primary font-bold px-4 py-2 rounded-lg hover:bg-amber-400 flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> إضافة أدمن جديد
+                    </button>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-gray-100 text-gray-700">
+                                <tr><th class="p-3">م</th><th class="p-3">الاسم</th><th class="p-3">البريد</th><th class="p-3">الدور</th><th class="p-3">الحالة</th></tr>
+                            </thead>
+                            <tbody>${adminsList}</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+        Utils.refreshIcons();
+    },
+
+    showAddAdminModal: () => {
+        const name = prompt("أدخل اسم الأدمن الجديد:");
+        if (!name) return;
+        const email = prompt("أدخل البريد الإلكتروني:");
+        if (!email) return;
+        const pass = prompt("أدخل كلمة المرور المبدئية:");
+        if (!pass) return;
+
+        const newId = DB.admins.length + 1;
+        DB.admins.push({
+            id: newId, name, email, password_hash: Utils.hash(pass), role: "admin", active: true, created_by: currentUser.id, created_at: new Date().toISOString().split('T')[0]
+        });
+        RLS.log("إضافة أدمن جديد", "admins", newId);
+        Utils.showToast("تم إضافة الأدمن بنجاح");
+        App.renderAdminManagement();
+    },
+
+    renderFamiliesList: () => {
+        const families = RLS.getFamilies(currentUser);
+        const rows = families.map(f => `
+            <tr class="border-b hover:bg-gray-50 transition">
+                <td class="p-3 font-mono text-sm text-primary">${f.family_code}</td>
+                <td class="p-3 font-semibold">${f.head_name}</td>
+                <td class="p-3 text-sm">${f.phone}</td>
+                <td class="p-3"><span class="bg-slate-100 px-2 py-1 rounded text-xs">${Utils.getNeighborhoodName(f.neighborhood)}</span></td>
+                <td class="p-3 font-mono text-accent font-bold tracking-wider">${f.access_code}</td>
+                <td class="p-3">
+                    <button onclick="App.printFamilyCard(${f.id})" class="text-blue-600 hover:text-blue-800 mx-1" title="طباعة"><i data-lucide="printer" class="w-4 h-4"></i></button>
+                    <button onclick="App.toggleFamilyCode(${f.id})" class="text-amber-600 hover:text-amber-800 mx-1" title="إعادة توليد الرمز"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                </td>
+            </tr>
+        `).join('');
+
+        document.getElementById('app-container').innerHTML = `
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
+                <div class="p-4 border-b flex justify-between items-center flex-wrap gap-2">
+                    <h2 class="text-xl font-bold text-primary flex items-center gap-2"><i data-lucide="users" class="text-accent"></i> إدارة الأسر</h2>
+                    <button onclick="App.renderDashboard()" class="text-sm text-gray-500 hover:text-primary">عودة</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th class="p-3">كود الأسرة</th>
+                                <th class="p-3">رب الأسرة</th>
+                                <th class="p-3">الهاتف</th>
+                                <th class="p-3">الحارة</th>
+                                <th class="p-3">الرمز السري</th>
+                                <th class="p-3">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        Utils.refreshIcons();
+    },
+
+    renderAddFamily: () => {
+        document.getElementById('app-container').innerHTML = `
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg fade-in">
+                <h2 class="text-2xl font-bold text-primary mb-6">تسجيل أسرة جديدة</h2>
+                
+                <div class="bg-amber-50 border border-amber-200 p-6 rounded-lg mb-6 text-center">
+                    <h3 class="text-lg font-bold text-amber-800 mb-4">هل السكن ضمن حدود حي عشيرة؟</h3>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="document.getElementById('in-neighborhood-form').classList.remove('hidden'); this.parentElement.parentElement.classList.add('hidden');" class="bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800">نعم، ضمن الحي</button>
+                        <button onclick="App.renderOutsideRequest()" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-300">لا، خارج النطاق</button>
+                    </div>
+                </div>
+
+                <form id="in-neighborhood-form" onsubmit="App.handleAddFamily(event)" class="hidden space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium mb-1">اسم رب الأسرة</label><input type="text" name="head_name" required class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div><label class="block text-sm font-medium mb-1">رقم الهاتف الأساسي</label><input type="tel" name="phone" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">الحارة</label>
+                            <select name="neighborhood" required class="w-full px-3 py-2 border rounded-lg">
+                                <option value="H1">H1 الشمالي/المضابع</option>
+                                <option value="H2">H2 الجنوبي الأوسط</option>
+                                <option value="H3">H3 الجنوبي</option>
+                                <option value="H4">H4 الشرقي</option>
+                                <option value="H5">H5 الوادي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">نوع السكن</label>
+                            <select name="housing_type" required class="w-full px-3 py-2 border rounded-lg">
+                                <option value="ملك">ملك</option>
+                                <option value="إيجار">إيجار</option>
+                                <option value="استضافة">استضافة</option>
+                                <option value="آخر">آخر</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div><label class="block text-sm font-medium mb-1">الشارع / أقرب معلم</label><input type="text" name="landmark" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    
+                    <div class="pt-4 flex gap-3">
+                        <button type="submit" class="flex-1 bg-primary text-white py-3 rounded-lg font-bold hover:bg-slate-800">حفظ وتوليد الرمز</button>
+                        <button type="button" onclick="App.renderDashboard()" class="px-6 py-3 border rounded-lg hover:bg-gray-50">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        `;
+    },
+
+    handleAddFamily: (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const newId = DB.families.length + 101;
+        const newFamily = {
+            id: newId,
+            family_code: Utils.generateFamilyCode(),
+            head_name: formData.get('head_name'),
+            phone: formData.get('phone'),
+            neighborhood: formData.get('neighborhood'),
+            housing_type: formData.get('housing_type'),
+            nearest_landmark: formData.get('landmark'),
+            members_count: 0,
+            access_code: Utils.generateCode(),
+            code_active: true,
+            verification_status: "جديد",
+            created_by: currentUser.id,
+            created_at: new Date().toISOString().split('T')[0]
+        };
+        
+        if (DB.families.some(f => f.phone === newFamily.phone && f.head_name === newFamily.head_name)) {
+            return Utils.showToast("تحذير: توجد أسرة مسجلة بنفس الاسم ورقم الهاتف!");
+        }
+
+        DB.families.push(newFamily);
+        RLS.log("إضافة أسرة جديدة", "families", newId);
+        Utils.showToast("تمت الإضافة بنجاح");
+        App.printFamilyCard(newId); 
+    },
+
+    renderOutsideRequest: () => {
+        document.getElementById('app-container').innerHTML = `
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-gray-400 fade-in">
+                <h2 class="text-2xl font-bold text-gray-700 mb-2">طلب خارج نطاق حي عشيرة</h2>
+                <form onsubmit="App.handleOutsideRequest(event)" class="space-y-4">
+                    <input type="text" name="name" placeholder="الاسم الثلاثي" required class="w-full px-4 py-2 border rounded-lg">
+                    <input type="tel" name="phone" placeholder="رقم الهاتف" required class="w-full px-4 py-2 border rounded-lg">
+                    <input type="text" name="area" placeholder="منطقة السكن الفعلية" required class="w-full px-4 py-2 border rounded-lg">
+                    <textarea name="need" placeholder="وصف مختصر للاحتياج" required class="w-full px-4 py-2 border rounded-lg h-24"></textarea>
+                    <button type="submit" class="w-full bg-gray-600 text-white py-3 rounded-lg font-bold hover:bg-gray-700">إرسال الطلب</button>
+                    <button type="button" onclick="App.renderDashboard()" class="w-full text-gray-500 py-2">إلغاء</button>
+                </form>
+            </div>
+        `;
+    },
+
+    handleOutsideRequest: (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        DB.outside_requests.push({
+            id: DB.outside_requests.length + 1,
+            name: formData.get('name'), phone: formData.get('phone'), area: formData.get('area'), need: formData.get('need'),
+            referred_to: "قيد المراجعة", created_at: new Date().toISOString().split('T')[0]
+        });
+        RLS.log("تسجيل طلب خارج النطاق", "outside_requests", DB.outside_requests.length);
+        Utils.showToast("تم حفظ الطلب وتحويله للمراجعة.");
+        setTimeout(App.renderDashboard, 1500);
+    },
+
+    printFamilyCard: (familyId) => {
+        const f = DB.families.find(x => x.id === familyId);
+        if (!f) return;
+        
+        const cardHtml = `
+            <div id="printable-card" class="max-w-md mx-auto border-2 border-primary p-6 rounded-xl text-center bg-white">
+                <div class="flex justify-center mb-4"><i data-lucide="shield-check" class="w-12 h-12 text-primary"></i></div>
+                <h2 class="text-2xl font-bold text-primary mb-1">سجل احتياجات حي عشيرة</h2>
+                <p class="text-sm text-gray-500 mb-6">بطاقة دخول الأسرة للمنصة</p>
+                <div class="text-right space-y-3 mb-6 bg-gray-50 p-4 rounded-lg">
+                    <p><span class="font-bold text-gray-700">رب الأسرة:</span> ${f.head_name}</p>
+                    <p><span class="font-bold text-gray-700">رقم الهاتف:</span> ${f.phone}</p>
+                    <p><span class="font-bold text-gray-700">الحارة:</span> ${Utils.getNeighborhoodName(f.neighborhood)}</p>
+                </div>
+                <div class="border-t-2 border-dashed border-gray-300 pt-4">
+                    <p class="text-sm text-gray-600 mb-2">الرمز السري للدخول (6 أرقام):</p>
+                    <p class="text-4xl font-bold text-accent tracking-widest font-mono">${f.access_code}</p>
+                </div>
+                <p class="text-xs text-gray-400 mt-6">هذه البطاقة سرية. لا تشارك الرمز السري.</p>
+            </div>
+        `;
+        const printWindow = window.open('', '', 'width=600,height=800');
+        printWindow.document.write(`<html dir="rtl"><head><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo'; padding:20px;}</style></head><body>${cardHtml}<script src="https://unpkg.com/lucide@latest"><\/script><script>lucide.createIcons(); window.print(); window.close();<\/script></body></html>`);
+        printWindow.document.close();
+    },
+
+    toggleFamilyCode: (familyId) => {
+        const f = DB.families.find(x => x.id === familyId);
+        if (confirm(`هل أنت متأكد من إعادة توليد الرمز السري للأسرة: ${f.head_name}؟`)) {
+            f.access_code = Utils.generateCode();
+            RLS.log("إعادة توليد رمز سري", "families", familyId);
+            Utils.showToast("تم تحديث الرمز السري بنجاح");
+            App.renderFamiliesList();
+        }
+    },
+
+    renderFamilyDashboard: () => {
+        const f = DB.families.find(x => x.id === currentUser.family_id);
+        document.getElementById('nav-user-info').classList.remove('hidden');
+        document.getElementById('user-name-display').innerText = `أسرة: ${f.head_name}`;
+
+        document.getElementById('app-container').innerHTML = `
+            <div class="max-w-4xl mx-auto fade-in">
+                <div class="bg-primary text-white p-6 rounded-t-xl flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold">ملف الأسرة</h2>
+                        <p class="text-gray-300 text-sm">كود الأسرة: ${f.family_code}</p>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-3xl font-bold text-accent">20%</div>
+                        <div class="text-xs text-gray-300">نسبة الاكتمال</div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-b-xl shadow-lg">
+                    <form onsubmit="event.preventDefault(); Utils.showToast('تم حفظ المسودة بنجاح');">
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-bold text-primary border-b pb-2">البيانات الأساسية</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">اسم رب الأسرة</label><input type="text" value="${f.head_name}" class="w-full px-3 py-2 border rounded-lg bg-gray-50" readonly></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">رقم الهاتف</label><input type="text" value="${f.phone}" class="w-full px-3 py-2 border rounded-lg bg-gray-50" readonly></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">الحارة</label><input type="text" value="${Utils.getNeighborhoodName(f.neighborhood)}" class="w-full px-3 py-2 border rounded-lg bg-gray-50" readonly></div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">نوع السكن</label>
+                                    <select class="w-full px-3 py-2 border rounded-lg">
+                                        <option ${f.housing_type === 'ملك' ? 'selected' : ''}>ملك</option>
+                                        <option ${f.housing_type === 'إيجار' ? 'selected' : ''}>إيجار</option>
+                                        <option ${f.housing_type === 'استضافة' ? 'selected' : ''}>استضافة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="pt-4 flex gap-3">
+                                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-800">حفظ التعديلات</button>
+                                <button type="button" class="text-gray-500 px-4 py-2 hover:text-primary">الخطوة التالية: إضافة الأفراد</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        Utils.refreshIcons();
+    },
+
+    renderAuditLog: () => {
+        const logs = DB.audit_log.slice().reverse().map(l => {
+            const actor = DB.admins.find(a => a.id === l.actor_id)?.name || 'نظام';
+            return `<tr class="border-b text-sm">
+                <td class="p-3 text-gray-500">${l.timestamp}</td>
+                <td class="p-3 font-semibold">${actor}</td>
+                <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs">${l.action}</span></td>
+                <td class="p-3 text-gray-600">${l.entity} (ID: ${l.entity_id})</td>
+            </tr>`;
+        }).join('');
+
+        document.getElementById('app-container').innerHTML = `
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-primary flex items-center gap-2"><i data-lucide="file-text" class="text-accent"></i> سجل التدقيق الكامل</h2>
+                    <button onclick="App.renderDashboard()" class="text-sm text-gray-500">عودة</button>
+                </div>
+                <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                    <table class="w-full text-right">
+                        <thead class="bg-gray-100 sticky top-0">
+                            <tr><th class="p-3">التاريخ والوقت</th><th class="p-3">المنفّذ</th><th class="p-3">الإجراء</th><th class="p-3">الكيان</th></tr>
+                        </thead>
+                        <tbody>${logs}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        Utils.refreshIcons();
+    },
+    
+    exportData: () => {
+        Utils.showToast("جاري تجهيز ملف CSV للتصدير...");
+        setTimeout(() => {
+            const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + 
+                "كود الأسرة,رب الأسرة,الهاتف,الحارة,الرمز السري\n" +
+                DB.families.map(f => `${f.family_code},${f.head_name},${f.phone},${f.neighborhood},${f.access_code}`).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "ashireh_families_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }, 1000);
+    }
+};
+
+// بدء التطبيق عند تحميل الصفحة
+window.onload = function() {
+    App.init();
+};
+</script>
+</body>
+</html>
