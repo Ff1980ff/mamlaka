@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mamlaka Academy | السبورة التفاعلية</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #d97706;
+            --bg: #f8fafc;
+            --canvas-bg: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 { color: var(--primary); margin-bottom: 10px; font-size: 1.5rem; }
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-start { background: var(--primary); color: white; }
+        .btn-clear { background: #ef4444; color: white; }
+        .btn-save { background: var(--accent); color: black; }
+        .color-picker { width: 40px; height: 40px; border: none; cursor: pointer; border-radius: 50%; }
+        
+        /* Container for Video and Canvas */
+        .workspace {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Mirror effect for selfie view */
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            touch-action: none; /* Prevent scrolling while drawing on mobile */
+        }
+
+        .overlay-text {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎓 Mamlaka Academy - أداة الشرح البصري</h1>
+
+    <div class="controls">
+        <button id="startBtn" class="btn-start">▶️ تشغيل الكاميرا</button>
+        <input type="color" id="colorPicker" class="color-picker" value="#ff0000" title="لون القلم">
+        <label style="display:flex; align-items:center; gap:5px;">
+            السماكة: <input type="range" id="brushSize" min="2" max="20" value="5">
+        </label>
+        <button id="clearBtn" class="btn-clear">🗑️ مسح الرسم</button>
+        <button id="saveBtn" class="btn-save">💾 حفظ الصورة</button>
+    </div>
+
+    <div class="workspace">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="drawingCanvas"></canvas>
+        <div class="overlay-text">ارسم فوق الفيديو لشرح الدرس</div>
+    </div>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const colorPicker = document.getElementById('colorPicker');
+        const brushSize = document.getElementById('brushSize');
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // 1. Initialize Camera
+        startBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' }, 
+                    audio: false 
+                });
+                video.srcObject = stream;
+                
+                // Wait for video to load metadata to get dimensions
+                video.onloadedmetadata = () => {
+                    resizeCanvas();
+                    startBtn.textContent = "✅ الكاميرا نشطة";
+                    startBtn.disabled = true;
+                };
+            } catch (err) {
+                alert("خطأ في الوصول للكاميرا: " + err.message);
+            }
+        });
+
+        // 2. Handle Resizing
+        function resizeCanvas() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            // Redraw context settings after resize
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // 3. Drawing Logic
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function startPosition(e) {
+            isDrawing = true;
+            const coords = getCoordinates(e);
+            lastX = coords.x;
+            lastY = coords.y;
+        }
+
+        function endPosition() {
+            isDrawing = false;
+            ctx.beginPath(); // Reset path to prevent connecting lines
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); // Stop scroll
+            
+            const coords = getCoordinates(e);
+            
+            ctx.strokeStyle = colorPicker.value;
+            ctx.lineWidth = brushSize.value;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(coords.x, coords.y);
+            ctx.stroke();
+            
+            lastX = coords.x;
+            lastY = coords.y;
+        }
+
+        // Event Listeners for Mouse & Touch
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        
+        canvas.addEventListener('touchstart', startPosition, { passive: false });
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw, { passive: false });
+
+        // 4. Clear Canvas
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // 5. Save Image (Composite Video Frame + Canvas Drawing)
+        saveBtn.addEventListener('click', () => {
+            if (!video.srcObject) {
+                alert("قم بتشغيل الكاميرا أولاً!");
+                return;
+            }
+
+            // Create a temporary canvas to merge video frame and drawings
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            // Draw current video frame
+            tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Draw the user's annotations on top
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // Convert to Data URL and download
+            const dataURL = tempCanvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `mamlaka-lesson-${Date.now()}.png`;
+            link.href = dataURL;
+            link.click();
+        });
+
+    </script>
+</body>
+</html>
