@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mamlaka Academy | عارض الشرائح التفاعلي</title>
+    <style>
+        :root { --primary: #0f172a; --accent: #d97706; }
+        body { font-family: sans-serif; background: #000; color: white; margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* Main Stage Area */
+        #stage-container { position: relative; flex-grow: 1; width: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        
+        /* The Image/Slide Background */
+        #slide-image { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; z-index: 1; opacity: 0.9; }
+        
+        /* Drawing Canvas Overlay */
+        #draw-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; cursor: crosshair; touch-action: none; }
+        
+        /* Teacher Webcam (Picture in Picture) */
+        #webcam-preview { 
+            position: absolute; bottom: 20px; right: 20px; 
+            width: 150px; height: 110px; 
+            border-radius: 10px; border: 2px solid var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 10; background: #000; object-fit: cover; transform: scaleX(-1);
+        }
+
+        /* Controls Bar */
+        .controls-bar { background: var(--primary); padding: 10px; display: flex; gap: 10px; justify-content: center; align-items: center; z-index: 20; }
+        button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        input[type="file"] { display: none; }
+        label.file-btn { background: #3b82f6; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
+        .color-dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid white; cursor: pointer; }
+        
+        /* Instructions Modal */
+        #instructions { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: black; padding: 20px; border-radius: 10px; text-align: center; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 80%; }
+        #hide-inst { background: var(--accent); color: black; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- Instructions Popup -->
+    <div id="instructions">
+        <h3>🎓 مرحبا بك في Mamlaka Presenter</h3>
+        <p>1. اضغط زر "تحميل صورة الدرس" لاختيار الكتاب أو الملزمة.<br>
+           2. اضغط "تشغيل الكاميرا" لإظهار وجهك في الزاوية.<br>
+           3. ارسم على الصورة باستخدام إصبعك أو الفأرة!</p>
+        <button id="hide-inst">فهمت، لنبدأ!</button>
+    </div>
+
+    <!-- Main Workspace -->
+    <div id="stage-container">
+        <img id="slide-image" src="" alt="">
+        <canvas id="draw-canvas"></canvas>
+        <video id="webcam-preview" autoplay playsinline muted></video>
+    </div>
+
+    <!-- Bottom Toolbar -->
+    <div class="controls-bar">
+        <label class="file-btn" for="image-upload">📁 تحميل صورة الدرس</label>
+        <input type="file" id="image-upload" accept="image/*">
+        
+        <button id="toggle-camera" style="background:#10b981;">▶️ تشغيل الكاميرا</button>
+        
+        <div style="display:flex; gap:5px; align-items:center;">
+            <span style="font-size:0.8rem;">الألوان:</span>
+            <div class="color-dot" style="background:red;" onclick="setColor('red')"></div>
+            <div class="color-dot" style="background:yellow;" onclick="setColor('yellow')"></div>
+            <div class="color-dot" style="background:cyan;" onclick="setColor('cyan')"></div>
+            <div class="color-dot" style="background:white;" onclick="setColor('white')"></div>
+        </div>
+
+        <button id="clear-draw" style="background:#ef4444;">🗑️ مسح</button>
+        <button id="save-final" style="background:#d97706; color:black;">💾 حفظ اللقطة</button>
+    </div>
+
+<script>
+    const img = document.getElementById('slide-image');
+    const canvas = document.getElementById('draw-canvas');
+    const ctx = canvas.getContext('2d');
+    const video = document.getElementById('webcam-preview');
+    
+    let currentColor = 'red';
+    let isDrawing = false;
+    let lastX = 0, lastY = 0;
+
+    // Hide Instructions
+    document.getElementById('hide-inst').onclick = () => {
+        document.getElementById('instructions').style.display = 'none';
+    };
+
+    // Resize Canvas to match Container
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    setTimeout(resizeCanvas, 100); // Initial call
+
+    // Upload Image Logic
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                img.src = evt.target.result;
+                img.onload = resizeCanvas; // Ensure canvas fits after image loads
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Camera Toggle Logic
+    document.getElementById('toggle-camera').addEventListener('click', async function() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            this.textContent = "⏸️ إيقاف الكاميرا";
+            this.style.background = "#ef4444";
+        } catch (err) {
+            alert("تعذر الوصول للكاميرا: " + err.message);
+        }
+    });
+
+    // Color Selection
+    function setColor(color) { currentColor = color; }
+
+    // Drawing Functions
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDraw(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        lastX = pos.x; lastY = pos.y;
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        
+        lastX = pos.x; lastY = pos.y;
+    }
+
+    function stopDraw() { isDrawing = false; }
+
+    // Events
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseleave', stopDraw);
+    
+    canvas.addEventListener('touchstart', startDraw, {passive:false});
+    canvas.addEventListener('touchmove', draw, {passive:false});
+    canvas.addEventListener('touchend', stopDraw);
+
+    // Clear & Save
+    document.getElementById('clear-draw').onclick = () => ctx.clearRect(0,0,canvas.width,canvas.height);
+    
+    document.getElementById('save-final').onclick = () => {
+        const tempCanvas = document.createElement('canvas');
+        const tCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        
+        // Draw Background Image
+        if(img.src && img.complete) tCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+        // Draw Annotations
+        tCtx.drawImage(canvas, 0, 0);
+        
+        const link = document.createElement('a');
+        link.download = `lesson-${Date.now()}.png`;
+        link.href = tempCanvas.toDataURL();
+        link.click();
+    };
+</script>
+</body>
+</html>
