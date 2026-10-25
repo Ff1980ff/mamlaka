@@ -3,16 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mamlaka Academy | عارض الشرائح التفاعلي</title>
+    <title>Mamlaka Academy | Pro Presenter</title>
     <style>
-        :root { --primary: #0f172a; --accent: #d97706; }
+        :root { --primary: #0f172a; --accent: #d97706; --panel-bg: #1e293b; }
         body { font-family: sans-serif; background: #000; color: white; margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
+        /* Top Bar for Gallery/Thumbnails */
+        .gallery-bar { 
+            background: var(--panel-bg); 
+            padding: 5px; 
+            display: flex; 
+            gap: 10px; 
+            overflow-x: auto; 
+            border-bottom: 1px solid #334155;
+            min-height: 60px;
+            align-items: center;
+        }
+        .thumb-item { 
+            width: 50px; height: 50px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            border: 2px solid transparent;
+            object-fit: cover;
+            transition: 0.2s;
+        }
+        .thumb-item.active { border-color: var(--accent); transform: scale(1.1); }
+        .add-page-btn { 
+            background: #334155; color: white; 
+            border: none; border-radius: 5px; 
+            width: 50px; height: 50px; 
+            font-size: 1.5rem; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+        }
+
         /* Main Stage Area */
-        #stage-container { position: relative; flex-grow: 1; width: 100%; background: #1e293b; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        #stage-container { position: relative; flex-grow: 1; width: 100%; background: #111; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         
         /* The Image/Slide Background */
-        #slide-image { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; z-index: 1; opacity: 0.9; }
+        #slide-image { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; z-index: 1; opacity: 0.95; }
         
         /* Drawing Canvas Overlay */
         #draw-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; cursor: crosshair; touch-action: none; }
@@ -20,18 +48,19 @@
         /* Teacher Webcam (Picture in Picture) */
         #webcam-preview { 
             position: absolute; bottom: 20px; right: 20px; 
-            width: 150px; height: 110px; 
-            border-radius: 10px; border: 2px solid var(--accent);
+            width: 120px; height: 90px; 
+            border-radius: 8px; border: 2px solid var(--accent);
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             z-index: 10; background: #000; object-fit: cover; transform: scaleX(-1);
+            display: none; /* Hidden by default until enabled */
         }
 
-        /* Controls Bar */
-        .controls-bar { background: var(--primary); padding: 10px; display: flex; gap: 10px; justify-content: center; align-items: center; z-index: 20; }
-        button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        /* Bottom Controls Bar */
+        .controls-bar { background: var(--primary); padding: 10px; display: flex; gap: 8px; justify-content: center; align-items: center; z-index: 20; flex-wrap: wrap; }
+        button { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; font-size: 0.9rem; }
         input[type="file"] { display: none; }
-        label.file-btn { background: #3b82f6; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
-        .color-dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid white; cursor: pointer; }
+        label.file-btn { background: #3b82f6; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; display: inline-block;}
+        .color-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; cursor: pointer; }
         
         /* Instructions Modal */
         #instructions { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; color: black; padding: 20px; border-radius: 10px; text-align: center; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 80%; }
@@ -42,11 +71,19 @@
 
     <!-- Instructions Popup -->
     <div id="instructions">
-        <h3>🎓 مرحبا بك في Mamlaka Presenter</h3>
-        <p>1. اضغط زر "تحميل صورة الدرس" لاختيار الكتاب أو الملزمة.<br>
-           2. اضغط "تشغيل الكاميرا" لإظهار وجهك في الزاوية.<br>
-           3. ارسم على الصورة باستخدام إصبعك أو الفأرة!</p>
-        <button id="hide-inst">فهمت، لنبدأ!</button>
+        <h3>🎓 Mamlaka Pro Presenter v2</h3>
+        <p>1. اضغط "تحميل صور" لاختيار عدة صفحات.<br>
+           2. استخدم الشريط العلوي للتنقل بين الصفحات.<br>
+           3. ارسم مباشرة على الشاشة!<br>
+           4. زر ➕ يضيف صفحة بيضاء جديدة للكتابة عليها.</p>
+        <button id="hide-inst">ابدأ الآن!</button>
+    </div>
+
+    <!-- Top Gallery Bar -->
+    <div class="gallery-bar" id="galleryBar">
+        <label class="file-btn" for="multi-upload" style="margin-right:auto;">📂 تحميل صور متعددة</label>
+        <input type="file" id="multi-upload" accept="image/*" multiple>
+        <!-- Thumbnails will be injected here via JS -->
     </div>
 
     <!-- Main Workspace -->
@@ -58,21 +95,18 @@
 
     <!-- Bottom Toolbar -->
     <div class="controls-bar">
-        <label class="file-btn" for="image-upload">📁 تحميل صورة الدرس</label>
-        <input type="file" id="image-upload" accept="image/*">
+        <button id="toggle-camera" style="background:#10b981;">▶️ كاميرا</button>
         
-        <button id="toggle-camera" style="background:#10b981;">▶️ تشغيل الكاميرا</button>
-        
-        <div style="display:flex; gap:5px; align-items:center;">
-            <span style="font-size:0.8rem;">الألوان:</span>
+        <div style="display:flex; gap:5px; align-items:center; background:#334155; padding:5px; border-radius:5px;">
+            <span style="font-size:0.8rem;">لون:</span>
             <div class="color-dot" style="background:red;" onclick="setColor('red')"></div>
             <div class="color-dot" style="background:yellow;" onclick="setColor('yellow')"></div>
             <div class="color-dot" style="background:cyan;" onclick="setColor('cyan')"></div>
             <div class="color-dot" style="background:white;" onclick="setColor('white')"></div>
         </div>
 
-        <button id="clear-draw" style="background:#ef4444;">🗑️ مسح</button>
-        <button id="save-final" style="background:#d97706; color:black;">💾 حفظ اللقطة</button>
+        <button id="clear-draw" style="background:#ef4444;">🗑️ مسح رسم</button>
+        <button id="save-final" style="background:#d97706; color:black;">💾 حفظ الصورة</button>
     </div>
 
 <script>
@@ -80,10 +114,15 @@
     const canvas = document.getElementById('draw-canvas');
     const ctx = canvas.getContext('2d');
     const video = document.getElementById('webcam-preview');
+    const galleryBar = document.getElementById('galleryBar');
     
+    // State Management
+    let pages = []; // Array to hold page data: { imageDataUrl, drawingDataUrl }
+    let currentPageIndex = 0;
     let currentColor = 'red';
     let isDrawing = false;
     let lastX = 0, lastY = 0;
+    let cameraStream = null;
 
     // Hide Instructions
     document.getElementById('hide-inst').onclick = () => {
@@ -94,39 +133,142 @@
     function resizeCanvas() {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
+        redrawCurrentPage(); // Restore drawings after resize
     }
     window.addEventListener('resize', resizeCanvas);
-    setTimeout(resizeCanvas, 100); // Initial call
+    setTimeout(resizeCanvas, 100);
 
-    // Upload Image Logic
-    document.getElementById('image-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
+    // --- PAGE MANAGEMENT LOGIC ---
+
+    // Add a blank page programmatically
+    function addBlankPage() {
+        saveCurrentPageState(); // Save what's on screen now
+        
+        const newPage = {
+            bgImage: null, // No background image
+            drawings: []   // Empty array of strokes or we can store canvas dataURL
+        };
+        
+        pages.push(newPage);
+        currentPageIndex = pages.length - 1;
+        renderGallery();
+        loadPage(currentPageIndex);
+    }
+
+    // Save the current state of the visible page into the 'pages' array
+    function saveCurrentPageState() {
+        if(pages[currentPageIndex]) {
+            // Store the canvas content as a Data URL string
+            pages[currentPageIndex].drawingSnapshot = canvas.toDataURL();
+        }
+    }
+
+    // Load a specific page index onto the stage
+    function loadPage(index) {
+        if(index < 0 || index >= pages.length) return;
+        
+        saveCurrentPageState(); // Ensure previous page is saved before switching
+        
+        currentPageIndex = index;
+        const page = pages[index];
+
+        // Set Background
+        if(page.bgImage) {
+            img.src = page.bgImage;
+            img.style.display = 'block';
+        } else {
+            img.src = '';
+            img.style.display = 'none'; // Show black background for blank pages
+        }
+
+        // Clear and restore drawings
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(page.drawingSnapshot) {
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+            };
+            tempImg.src = page.drawingSnapshot;
+        }
+
+        updateGalleryActiveState();
+    }
+
+    // Handle Multiple File Upload
+    document.getElementById('multi-upload').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        if(files.length === 0) return;
+
+        // Reset pages if starting fresh with uploads? Or append? Let's append.
+        // For simplicity, let's replace current session if no pages exist, otherwise append.
+        if(pages.length === 0) {
+             // Initialize first page from first file immediately for quick view
+        }
+
+        files.forEach(file => {
             const reader = new FileReader();
             reader.onload = function(evt) {
-                img.src = evt.target.result;
-                img.onload = resizeCanvas; // Ensure canvas fits after image loads
+                pages.push({
+                    bgImage: evt.target.result,
+                    drawingSnapshot: null
+                });
+                renderGallery();
+                
+                // If this is the very first upload ever, show it
+                if(pages.length === files.length && currentPageIndex === 0 && !document.querySelector('.thumb-item')) {
+                     loadPage(0);
+                }
             };
             reader.readAsDataURL(file);
-        }
+        });
     });
 
-    // Camera Toggle Logic
-    document.getElementById('toggle-camera').addEventListener('click', async function() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            this.textContent = "⏸️ إيقاف الكاميرا";
-            this.style.background = "#ef4444";
-        } catch (err) {
-            alert("تعذر الوصول للكاميرا: " + err.message);
-        }
-    });
+    // Render Thumbnail Gallery
+    function renderGallery() {
+        // Keep the upload button, remove old thumbs
+        const existingBtn = galleryBar.querySelector('label.file-btn');
+        galleryBar.innerHTML = '';
+        galleryBar.appendChild(existingBtn);
 
-    // Color Selection
+        pages.forEach((page, idx) => {
+            const thumb = document.createElement('img');
+            thumb.className = 'thumb-item';
+            if(idx === currentPageIndex) thumb.classList.add('active');
+            
+            // Use thumbnail logic: if has bg use bg, else use snapshot or black placeholder
+            if(page.bgImage) {
+                thumb.src = page.bgImage;
+            } else if (page.drawingSnapshot) {
+                thumb.src = page.drawingSnapshot;
+            } else {
+                thumb.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMTAiIGZpbGw9IiNmZmYiLz48L3N2Zz4='; // White dot on dark
+                thumb.style.backgroundColor = '#333';
+            }
+            
+            thumb.onclick = () => loadPage(idx);
+            galleryBar.insertBefore(thumb, existingBtn.nextSibling); // Insert after button
+        });
+
+        // Add "+" Button at the end
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-page-btn';
+        addBtn.innerText = '+';
+        addBtn.onclick = addBlankPage;
+        galleryBar.appendChild(addBtn);
+    }
+
+    function updateGalleryActiveState() {
+        const thumbs = galleryBar.querySelectorAll('.thumb-item');
+        thumbs.forEach((t, i) => {
+            if(i === currentPageIndex) t.classList.add('active');
+            else t.classList.remove('active');
+        });
+    }
+
+    // --- DRAWING LOGIC (Same as before but integrated with Page System) ---
+
     function setColor(color) { currentColor = color; }
 
-    // Drawing Functions
     function getPos(e) {
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -156,7 +298,11 @@
         lastX = pos.x; lastY = pos.y;
     }
 
-    function stopDraw() { isDrawing = false; }
+    function stopDraw() { 
+        isDrawing = false; 
+        // Auto-save snapshot frequently? Maybe only on page switch or manual save.
+        // For performance, we rely on saveCurrentPageState() during navigation.
+    }
 
     // Events
     canvas.addEventListener('mousedown', startDraw);
@@ -168,25 +314,85 @@
     canvas.addEventListener('touchmove', draw, {passive:false});
     canvas.addEventListener('touchend', stopDraw);
 
-    // Clear & Save
-    document.getElementById('clear-draw').onclick = () => ctx.clearRect(0,0,canvas.width,canvas.height);
+    // --- CONTROLS ---
+
+    document.getElementById('toggle-camera').addEventListener('click', async function() {
+        if(cameraStream) {
+            // Stop Camera
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+            video.style.display = 'none';
+            this.textContent = "▶️ كاميرا";
+            this.style.background = "#10b981";
+        } else {
+            // Start Camera
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraStream = stream;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                this.textContent = "⏸️ إيقاف الكاميرا";
+                this.style.background = "#ef4444";
+            } catch (err) {
+                alert("تعذر الوصول للكاميرا: " + err.message);
+            }
+        }
+    });
+
+    document.getElementById('clear-draw').onclick = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Update snapshot immediately so if they switch back it's cleared
+        if(pages[currentPageIndex]) pages[currentPageIndex].drawingSnapshot = null;
+    };
     
     document.getElementById('save-final').onclick = () => {
+        saveCurrentPageState(); // Make sure latest strokes are captured
+        const page = pages[currentPageIndex];
+        
         const tempCanvas = document.createElement('canvas');
         const tCtx = tempCanvas.getContext('2d');
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         
-        // Draw Background Image
-        if(img.src && img.complete) tCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-        // Draw Annotations
-        tCtx.drawImage(canvas, 0, 0);
-        
-        const link = document.createElement('a');
-        link.download = `lesson-${Date.now()}.png`;
-        link.href = tempCanvas.toDataURL();
-        link.click();
+        // Draw Background
+        if(page.bgImage) {
+             const bgImg = new Image();
+             bgImg.onload = () => {
+                 tCtx.drawImage(bgImg, 0, 0, tempCanvas.width, tempCanvas.height);
+                 finishSave(tCtx, tempCanvas);
+             };
+             bgImg.src = page.bgImage;
+        } else {
+             tCtx.fillStyle = '#000';
+             tCtx.fillRect(0,0,tempCanvas.width, tempCanvas.height);
+             finishSave(tCtx, tempCanvas);
+        }
     };
+
+    function finishSave(context, canvasEl) {
+         // Draw Annotations
+        if(pages[currentPageIndex].drawingSnapshot) {
+            const annotImg = new Image();
+            annotImg.onload = () => {
+                context.drawImage(annotImg, 0, 0);
+                downloadImage(canvasEl);
+            };
+            annotImg.src = pages[currentPageIndex].drawingSnapshot;
+        } else {
+            downloadImage(canvasEl);
+        }
+    }
+
+    function downloadImage(canvasEl) {
+        const link = document.createElement('a');
+        link.download = `lesson-page-${currentPageIndex + 1}-${Date.now()}.png`;
+        link.href = canvasEl.toDataURL();
+        link.click();
+    }
+
+    // Initial Setup
+    renderGallery(); // Renders empty state with just buttons initially
+
 </script>
 </body>
 </html>
