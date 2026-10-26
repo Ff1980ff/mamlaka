@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mamlaka Academy | المشغل الذكي</title>
+    
+    <!-- Video.js CSS -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    
+    <style>
+        <style>
+        :root { --primary: #0f172a; --accent: #d97706; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar: Chapters & Notes */
+        .sidebar { width: 350px; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; box-shadow: -2px 0 10px rgba(0,0,0,0.05); z-index: 10; }
+        .sidebar-header { padding: 20px; background: var(--primary); color: white; text-align: center; }
+        .chapter-list { flex-grow: 1; overflow-y: auto; padding: 10px; }
+        
+        .chapter-item { 
+            padding: 15px; margin-bottom: 8px; background: #fff; border-radius: 8px; cursor: pointer; 
+            transition: all 0.3s ease; border-right: 4px solid transparent;
+        }
+        .chapter-item:hover { background: #f1f5f9; transform: translateX(-5px); }
+        .chapter-item.active { 
+            background: #eff6ff; border-right-color: var(--accent); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .ch-time { font-size: 0.8rem; color: #64748b; font-weight: bold; margin-bottom: 5px; display: block; }
+        .ch-title { font-size: 1rem; color: var(--primary); font-weight: 600; }
+        .ch-desc { font-size: 0.9rem; color: #64748b; margin-top: 5px; line-height: 1.4; }
+
+        /* Main Content: Video + Visual Aid */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background: #000; position: relative; }
+        
+        /* Video Container */
+        .video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; }
+        video.video-js { width: 100%; height: 100%; outline: none; }
+
+        /* The "Visual Aid" Overlay (Picture-in-Picture for Slides/Images) */
+        .visual-aid-panel {
+            position: absolute; bottom: 20px; left: 20px;
+            width: 200px; height: 150px;
+            background: white; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 5; overflow: hidden;
+            border: 2px solid var(--accent);
+            transition: opacity 0.3s;
+        }
+        .visual-aid-img { width: 100%; height: 100%; object-fit: cover; }
+        .visual-aid-label { 
+            position: absolute; top: 0; right: 0; background: var(--accent); color: black; 
+            font-size: 0.7rem; padding: 2px 6px; border-bottom-left-radius: 5px;
+        }
+
+        /* Details Panel Below Video */
+        .details-panel { 
+            background: white; padding: 20px; overflow-y: auto; flex-grow: 1; color: var(--primary);
+            border-top: 1px solid #eee;
+        }
+        .current-topic-title { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
+        .current-topic-notes { line-height: 1.8; color: #334155; font-size: 1.05rem; }
+        .note-highlight { background: #fef3c7; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+
+        /* ========================================= */
+        /* 📱 MEDIA QUERY FOR MOBILE DEVICES (THE FIX) */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            body { 
+                flex-direction: column-reverse; /* Flip layout: Video on Top, Menu below */
+                height: auto; 
+                min-height: 100vh;
+                overflow-y: auto; /* Allow scrolling whole page */
+            }
+            
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                max-height: 40vh; /* Limit menu height so video stays visible */
+                border-left: none; 
+                border-top: 1px solid #e2e8f0; 
+                order: 2; /* Push to bottom visually */
+            }
+            
+            .main-content { 
+                order: 1; /* Pull video to top */
+                height: auto;
+            }
+            
+            .video-wrapper {
+                aspect-ratio: 16/9; /* Keep standard ratio even on mobile */
+                background: #000;
+            }
+
+            /* Hide the floating image panel on small screens to avoid clutter */
+            .visual-aid-panel { 
+                display: none !important; 
+            }
+            
+            /* Move the image info into the details panel instead */
+            .details-panel {
+                padding: 15px;
+            }
+            
+            /* Adjust chapter items for touch */
+            .chapter-item {
+                padding: 12px;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar: Timeline of Chapters -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3 style="margin:0;">🎓 Mamlaka Smart Course</h3>
+            <small>الدورة: أساسيات التسويق بالذكاء الاصطناعي</small>
+        </div>
+        <div class="chapter-list" id="chapterList">
+            <!-- Generated by JS -->
+        </div>
+    </div>
+
+    <!-- Main Area -->
+    <div class="main-content">
+        <div class="video-wrapper">
+            <!-- Video Element using Video.js -->
+            <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" poster="">
+                <!-- Source will be set via JS to allow easy changing -->
+            </video>
+
+            <!-- Floating Visual Aid (The "Clarification Tech") -->
+            <div class="visual-aid-panel" id="visualAidPanel">
+                <span class="visual-aid-label">توضيح بصري</span>
+                <img src="" alt="Slide" class="visual-aid-img" id="aidImage">
+            </div>
+        </div>
+
+        <div class="details-panel">
+            <h1 class="current-topic-title" id="topicTitle">اختر فصلاً للبدء</h1>
+            <div class="current-topic-notes" id="topicNotes">
+                اضغط على أي عنوان في القائمة الجانبية لتشغيل الجزء المحدد ومشاهدة الملاحظات والصور التوضيحية المرتبطة به.
+            </div>
+        </div>
+    </div>
+
+    <!-- Video.js Script -->
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+<script>
+    // === COURSE DATA STRUCTURE ===
+    // هنا تضع روابط الفيديوهات (MP4 أو YouTube Embed عبر iframe إذا أردت، لكن MP4 أفضل للأداء)
+    // والملاحظات والصور المتزامنة
+    const courseData = [
+        {
+            id: 1,
+            startTime: 0, // الثانية التي يبدأ فيها الفصل داخل الفيديو الرئيسي
+            endTime: 60,  // الثانية التي ينتهي فيها
+            title: "مقدمة: لماذا الذكاء الاصطناعي؟",
+            notes: "الذكاء الاصطناعي ليس بديلاً عنك، بل هو <span class='note-highlight'>مضاعف لقدراتك</span>. في هذا الدرس نفهم الفرق بين الأتمتة التقليدية والتعلم الآلي.",
+            imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=500&q=80", // صورة توضيحية
+            videoSrc: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" // فيديو تجريبي طويل
+        },
+        {
+            id: 2,
+            startTime: 60,
+            endTime: 120,
+            title: "الأداة الأولى: كتابة البرومبت (Prompt)",
+            notes: "سر النجاح يكمن في <span class='note-highlight'>السياق</span>. لا تسأل AI سؤالاً عاماً. حدد الدور، المهمة، والصيغة المطلوبة.",
+            imageUrl: "https://images.unsplash.com/photo-1531482613713-ba2f3fa46c5f?w=500&q=80",
+            videoSrc: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+        {
+            id: 3,
+            startTime: 120,
+            endTime: 180,
+            title: "تطبيق عملي: توليد أفكار محتوى",
+            notes: "استخدم التقنية التالية: اطلب 10 أفكار، ثم اختر الأفضل، ثم اطلب تفصيلها. هذه هي دورة <span class='note-highlight'>التكرار السريع</span>.",
+            imageUrl: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=500&q=80",
+            videoSrc: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        }
+    ];
+
+    let player;
+    let activeChapterId = null;
+
+    // Initialize Video.js
+    window.onload = () => {
+        player = videojs('my-video');
+        renderChapters();
+        
+        // Listen to time updates to sync visuals automatically if playing continuously
+        player.on('timeupdate', () => {
+            const currentTime = player.currentTime();
+            checkSync(currentTime);
+        });
+    };
+
+    function renderChapters() {
+        const listContainer = document.getElementById('chapterList');
+        listContainer.innerHTML = '';
+
+        courseData.forEach(chapter => {
+            const item = document.createElement('div');
+            item.className = 'chapter-item';
+            item.id = `chap-${chapter.id}`;
+            
+            // Format time MM:SS
+            const mins = Math.floor(chapter.startTime / 60);
+            const secs = chapter.startTime % 60;
+            const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            item.innerHTML = `
+                <span class="ch-time">${timeStr}</span>
+                <div class="ch-title">${chapter.title}</div>
+                <div class="ch-desc">${chapter.notes.substring(0, 50)}...</div>
+            `;
+            
+            item.onclick = () => playChapter(chapter.id);
+            listContainer.appendChild(item);
+        });
+    }
+
+    function playChapter(id) {
+        const chapter = courseData.find(c => c.id === id);
+        if(!chapter) return;
+
+        // Set Active State in Sidebar
+        document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(`chap-${id}`).classList.add('active');
+        activeChapterId = id;
+
+        // Load Video Source (If different per chapter, though usually same file with timestamps)
+        // Here we assume one big video file for simplicity, but you can change src if needed
+        player.src({ type: 'video/mp4', src: chapter.videoSrc });
+        player.currentTime(chapter.startTime);
+        player.play();
+
+        // Update Text & Image Immediately
+        updateUI(chapter);
+    }
+
+    function updateUI(chapter) {
+        document.getElementById('topicTitle').innerText = chapter.title;
+        document.getElementById('topicNotes').innerHTML = chapter.notes;
+        
+        const imgEl = document.getElementById('aidImage');
+        imgEl.src = chapter.imageUrl;
+        
+        // Show panel
+        document.getElementById('visualAidPanel').style.opacity = '1';
+    }
+
+    // Auto-sync logic when scrubbing or playing through
+    function checkSync(time) {
+        // Find which chapter covers this timestamp
+        const currentChapter = courseData.find(c => time >= c.startTime && time <= c.endTime);
+        
+        if (currentChapter && currentChapter.id !== activeChapterId) {
+            // Chapter changed automatically while playing
+            activeChapterId = currentChapter.id;
+            updateUI(currentChapter);
+            
+            // Highlight sidebar item
+            document.querySelectorAll('.chapter-item').forEach(el => el.classList.remove('active'));
+            const el = document.getElementById(`chap-${currentChapter.id}`);
+            if(el) {
+                el.classList.add('active');
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
