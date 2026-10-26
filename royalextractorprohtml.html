@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 المُستخلص الملكي | The Royal Extractor Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 30, 0.85);
+            --neon-purple: #bc13fe;
+            --neon-cyan: #00f0ff;
+            --gold: #ffd700;
+            --text-white: #fff;
+            --danger: #ff4444;
+            --success: #00ff88;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* خلفية متحركة خفيفة */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08) 0%, transparent 50%);
+        }
+
+        header {
+            width: 100%; text-align: center; padding: 25px 20px;
+            border-bottom: var(--glass-border);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        
+        h1 {
+            font-size: 2rem; margin: 0; font-weight: 900;
+            background: linear-gradient(to right, var(--neon-purple), var(--neon-cyan), var(--gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .subtitle { color: #aaa; font-size: 0.95rem; margin-top: 8px; font-weight: 400; }
+
+        .container {
+            width: 95%; max-width: 700px;
+            margin: 30px auto;
+            perspective: 1000px;
+        }
+
+        /* بطاقة الإدخال */
+        .card {
+            background: var(--panel-bg);
+            border: var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 240, 255, 0.15);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .input-group { margin-bottom: 20px; }
+        label { 
+            display: block; margin-bottom: 10px; 
+            color: var(--neon-cyan); font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        
+        textarea, select, input[type="number"] {
+            width: 100%; padding: 15px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff; font-family: inherit; font-size: 1rem;
+            transition: all 0.3s;
+        }
+        textarea:focus, select:focus, input:focus { 
+            outline: none; border-color: var(--neon-purple); 
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
+        }
+        textarea { resize: vertical; min-height: 100px; }
+
+        .actions-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;
+        }
+
+        .btn {
+            padding: 14px 20px; border: none; border-radius: 12px;
+            font-weight: bold; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 1rem; font-family: 'Tajawal', sans-serif;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-cyan)); 
+            color: white; box-shadow: 0 4px 15px rgba(188, 19, 254, 0.4);
+        }
+        .btn-secondary { 
+            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-gold { 
+            background: linear-gradient(45deg, #b8860b, var(--gold)); 
+            color: black; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .btn:active { transform: scale(0.98); }
+
+        /* منطقة النتيجة */
+        #resultSection {
+            display: none; /* مخفي افتراضياً */
+            animation: slideUpFade 0.5s ease forwards;
+            margin-top: 20px;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .preview-badge {
+            background: var(--success); color: black;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin: 20px 0;
+        }
+        .stat-box {
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 900; color: var(--gold); display: block; }
+        .stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+
+        .code-block {
+            background: #000; color: #0f0;
+            font-family: 'Courier New', monospace; font-size: 0.85rem;
+            padding: 15px; border-radius: 10px;
+            margin-top: 15px; max-height: 200px; overflow-y: auto;
+            border: 1px solid #333; direction: ltr; text-align: left;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--panel-bg); border: 1px solid var(--neon-cyan);
+            color: white; padding: 15px 30px; border-radius: 50px;
+            font-weight: bold; opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 10px;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .actions-row { grid-template-columns: 1fr; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><i class="fas fa-magic-wand-sparkles"></i> المُستخلص الملكي</h1>
+    <div class="subtitle">حوّل أي مصدر إلى منتج رقمي جاهز للبيع في ثوانٍ</div>
+</header>
+
+<div class="container">
+    <!-- Input Card -->
+    <div class="card">
+        <div class="input-group">
+            <label><i class="fas fa-link"></i> المصدر (رابط أو نص خام)</label>
+            <textarea id="sourceInput" placeholder="الصق هنا رابط فيديو يوتيوب، مقال، تغريدة، أو حتى فكرة عشوائية..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <label><i class="fas fa-tags"></i> الفئة المستهدفة (اختياري لتحسين الدقة)</label>
+            <select id="categorySelect">
+                <option value="auto">🤖 اكتشاف تلقائي (AI Mode)</option>
+                <option value="tech">💻 تقنية وبرمجة</option>
+                <option value="marketing">📈 تسويق ومبيعات</option>
+                <option value="education">🎓 تعليم ودورات</option>
+                <option value="lifestyle">🌿 نمط حياة وصحة</option>
+            </select>
+        </div>
+
+        <div class="actions-row">
+            <button class="btn btn-primary" onclick="generateProduct()">
+                <i class="fas fa-bolt"></i> استخلاص وتوليد
+            </button>
+            <button class="btn btn-secondary" onclick="resetForm()">
+                <i class="fas fa-undo"></i> إعادة تعيين
+            </button>
+        </div>
+    </div>
+
+    <!-- Result Section -->
+    <div id="resultSection" class="card" style="margin-top: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="color:var(--gold); margin:0;"><i class="fas fa-box-open"></i> المنتج المقترح</h3>
+            <span class="preview-badge"><i class="fas fa-check-circle"></i> جاهز للنشر</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-value" id="resPrice">$0.00</span>
+                <span class="stat-label">السعر المقترح</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value" id="resType">-</span>
+                <span class="stat-label">نوع المنتج</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value" id="resScore">95%</span>
+                <span class="stat-label">جودة التحويل</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>عنوان جذاب (قابل للتعديل)</label>
+            <input type="text" id="finalTitle" readonly style="cursor:text;">
+        </div>
+
+        <div class="input-group">
+            <label>وصف تسويقي مقنع</label>
+            <textarea id="finalDesc" rows="4" readonly></textarea>
+        </div>
+
+        <div class="code-block" id="jsonOutput"></div>
+
+        <div class="actions-row" style="margin-top: 20px;">
+            <button class="btn btn-gold" onclick="downloadCSV()">
+                <i class="fas fa-file-csv"></i> تصدير CSV (Excel)
+            </button>
+            <button class="btn btn-primary" onclick="copyJSON()">
+                <i class="fas fa-code"></i> نسخ JSON
+            </button>
+        </div>
+        
+        <button class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="simulatePublish()">
+            <i class="fas fa-cloud-upload-alt"></i> محاكاة النشر على Sellix
+        </button>
+    </div>
+</div>
+
+<div id="toast"><i class="fas fa-info-circle"></i> <span id="toastMsg">رسالة...</span></div>
+
+<script>
+    // === الذكاء الاصطناعي المحلي (Logic Engine) ===
+    function analyzeSource(text, categoryHint) {
+        const lowerText = text.toLowerCase();
+        let detectedCategory = categoryHint;
+        let suggestedPrice = 9.99;
+        let productType = "دليل إلكتروني";
+        let hookWords = ["أسرار", "خطة عمل", "دليل شامل", "قوالب جاهزة"];
+
+        // تحليل بسيط للكلمات المفتاحية إذا كان الاكتشاف تلقائياً
+        if (detectedCategory === 'auto') {
+            if (lowerText.includes('code') || lowerText.includes('html') || lowerText.includes('js')) {
+                detectedCategory = 'tech';
+                suggestedPrice = 19.99;
+                productType = "قالب برمجي / كود";
+            } else if (lowerText.includes('sell') || lowerText.includes('market') || lowerText.includes('funnel')) {
+                detectedCategory = 'marketing';
+                suggestedPrice = 14.99;
+                productType = "استراتيجية تسويقية";
+            } else if (lowerText.includes('learn') || lowerText.includes('course') || lowerText.includes('tutorial')) {
+                detectedCategory = 'education';
+                suggestedPrice = 29.99;
+                productType = "دورة تدريبية مصغرة";
+            } else {
+                detectedCategory = 'general';
+                suggestedPrice = 4.99;
+                productType = "ملخص سريع";
+            }
+        } else {
+            // ضبط السعر حسب الفئة المختارة يدوياً
+            switch(detectedCategory) {
+                case 'tech': suggestedPrice = 19.99; productType = "قالب تقني"; break;
+                case 'marketing': suggestedPrice = 14.99; productType = "خطة تسويق"; break;
+                case 'education': suggestedPrice = 29.99; productType = "كورس مصغر"; break;
+                case 'lifestyle': suggestedPrice = 7.99; productType = "روتين يومي"; break;
+            }
+        }
+
+        // توليد عنوان ذكي بناءً على طول النص والكلمات
+        let titleBase = text.substring(0, 30).trim();
+        if (titleBase.length < 5) titleBase = "محتوى حصري";
+        
+        const randomHook = hookWords[Math.floor(Math.random() * hookWords.length)];
+        const finalTitle = `${randomHook}: ${titleBase}...`;
+
+        // توليد وصف تسويقي
+        const descriptions = {
+            tech: `✅ كود نظيف ومنظم.\n⚡ جاهز للتخصيص فوراً.\n📚 يشمل تعليقات توضيحية بالعربية.`,
+            marketing: `🚀 استراتيجيات مجربة لزيادة المبيعات.\n📊 قوالب تتبع الأداء.\n💡 أفكار إبداعية للحملات الإعلانية.`,
+            education: `🎓 شرح مبسط للمفاهيم المعقدة.\n📝 تمارين تطبيقية بعد كل درس.\n🏆 شهادة إتمام رقمية.`,
+            general: `✨ خلاصة مركزة توفر عليك ساعات البحث.\n📂 ملف PDF عالي الجودة.\n🔄 تحديثات مجانية مدى الحياة.`
+        };
+
+        return {
+            title: finalTitle,
+            price: suggestedPrice,
+            type: productType,
+            desc: descriptions[detectedCategory] || descriptions.general,
+            category: detectedCategory
+        };
+    }
+
+    // === الوظائف الرئيسية ===
+    function generateProduct() {
+        const source = document.getElementById('sourceInput').value.trim();
+        const catHint = document.getElementById('categorySelect').value;
+
+        if (!source) {
+            showToast("الرجاء إدخال نص أو رابط أولاً!", "error");
+            return;
+        }
+
+        // عرض حالة التحميل الوهمية
+        const btn = event.target;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ التحليل...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const result = analyzeSource(source, catHint);
+            
+            // تعبئة الحقول
+            document.getElementById('finalTitle').value = result.title;
+            document.getElementById('finalDesc').value = result.desc;
+            document.getElementById('resPrice').innerText = `$${result.price}`;
+            document.getElementById('resType').innerText = result.type;
+            
+            // توليد JSON
+            const jsonData = {
+                product_name: result.title,
+                price_usd: result.price,
+                description_html: `<p>${result.desc.replace(/\n/g, '<br>')}</p>`,
+                category_slug: result.category,
+                tags: [result.category, "digital", "instant-download"],
+                status: "draft",
+                source_reference: source.substring(0, 50) + "..."
+            };
+            
+            document.getElementById('jsonOutput').innerText = JSON.stringify(jsonData, null, 2);
+            
+            // إظهار النتيجة
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            
+            // إعادة الزر لحالته
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            
+            showToast("تم استخراج المنتج بنجاح! ✨", "success");
+        }, 800); // تأخير بسيط لمحاكاة التفكير
+    }
+
+    function resetForm() {
+        document.getElementById('sourceInput').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        showToast("تم مسح البيانات.", "info");
+    }
+
+    function copyJSON() {
+        const jsonText = document.getElementById('jsonOutput').innerText;
+        navigator.clipboard.writeText(jsonText).then(() => {
+            showToast("تم نسخ كود JSON للحافظة!", "success");
+        }).catch(err => {
+            showToast("فشل النسخ، حاول مجدداً.", "error");
+        });
+    }
+
+    function downloadCSV() {
+        const title = document.getElementById('finalTitle').value;
+        const price = document.getElementById('resPrice').innerText.replace('$','');
+        const desc = document.getElementById('finalDesc').value.replace(/"/g, '""'); // Escape quotes for CSV
+        
+        const csvContent = `data:text/csv;charset=utf-8,"Product Name","Price","Description"\n"${title}",${price},"${desc}"`;
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "mamlaka_product.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast("تم تحميل ملف CSV!", "success");
+    }
+
+    function simulatePublish() {
+        showToast("جارٍ الاتصال بخوادم Sellix الآمنة...", "info");
+        setTimeout(() => {
+            alert("✅ تم إنشاء المسودة بنجاح في لوحة تحكم Sellix!\n\nيمكنك الآن الدخول للوحة التحكم، مراجعة الملف، وإضافة الصور النهائية قبل النشر العام.");
+        }, 1500);
+    }
+
+    function showToast(msg, type) {
+        const toast = document.getElementById('toast');
+        const icon = toast.querySelector('i');
+        document.getElementById('toastMsg').innerText = msg;
+        
+        // تغيير اللون حسب النوع
+        if(type === 'success') { toast.style.borderColor = 'var(--success)'; icon.className = 'fas fa-check-circle'; icon.style.color = 'var(--success)'; }
+        else if(type === 'error') { toast.style.borderColor = 'var(--danger)'; icon.className = 'fas fa-exclamation-triangle'; icon.style.color = 'var(--danger)'; }
+        else { toast.style.borderColor = 'var(--neon-cyan)'; icon.className = 'fas fa-info-circle'; icon.style.color = 'var(--neon-cyan)'; }
+
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+</script>
+
+</body>
+</html>
