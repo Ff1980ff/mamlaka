@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ استوديو المعجزات | The AI Miracle Studio Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #151520;
+            --primary: #8b5cf6; /* Purple */
+            --secondary: #ec4899; /* Pink */
+            --accent: #06b6d4; /* Cyan */
+            --gold: #ffd700;
+            --text: #ffffff;
+            --gray: #9ca3af;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Cairo', sans-serif;
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        header { width: 100%; padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        h1 { font-size: 2rem; margin: 0; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
+        
+        .container { max-width: 800px; width: 95%; margin: 30px auto; display: grid; gap: 20px; }
+
+        .miracle-card {
+            background: var(--card); border-radius: 16px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
+            position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .miracle-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+
+        .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .icon-box { width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; background: rgba(255,255,255,0.05); }
+        .voice-icon { color: var(--accent); }
+        .image-icon { color: var(--secondary); }
+        .script-icon { color: var(--primary); }
+        .video-icon { color: var(--gold); }
+
+        textarea, input[type="text"], select {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 12px; color: white; font-family: inherit; margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer;
+            font-weight: bold; font-family: inherit; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        
+        button:hover { filter: brightness(1.1); }
+
+        .output-area { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; display: none; border: 1px dashed rgba(255,255,255,0.1); }
+        canvas { max-width: 100%; height: auto; display: block; border-radius: 8px; }
+        
+        /* Video Overlay Preview Box */
+        .video-preview-box {
+            position: relative; width: 100%; aspect-ratio: 9/16; /* Vertical for Reels */
+            background: #222; border-radius: 10px; overflow: hidden; display: flex; justify-content: center; align-items: center;
+            margin-bottom: 10px;
+        }
+        .overlay-text-element {
+            position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
+            color: white; font-weight: bold; font-size: 1.5rem; text-shadow: 2px 2px 4px black;
+            background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px;
+            pointer-events: none; white-space: nowrap;
+        }
+
+        #toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: white; padding: 12px 24px; border-radius: 50px;
+            font-weight: bold; opacity: 0; transition: 0.3s; z-index: 1000;
+        }
+        #toast.show { opacity: 1; bottom: 30px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>✨ استوديو المعجزات Pro</h1>
+    <div class="subtitle">صوت، صورة، فيديو.. كل شيء بيدك الآن</div>
+</header>
+
+<div class="container">
+
+    <!-- NEW MIRACLE 1: Speech to Text (Transcription) -->
+    <div class="miracle-card">
+        <div class="card-header">
+            <div class="icon-box voice-icon">🎤</div>
+            <div>
+                <h3 class="card-title">معجزة التفريغ الصوتي (STT)</h3>
+                <p class="card-desc">تكلم وسنكتب ما تقوله فوراً (يعمل على Chrome/Edge).</p>
+            </div>
+        </div>
+        <button class="btn-primary" onclick="startListening()">🔴 ابدأ التسجيل</button>
+        <button class="btn-secondary" onclick="stopListening()">⏹️ إيقاف</button>
+        <textarea id="sttOutput" rows="3" placeholder="سيظهر النص هنا..." readonly></textarea>
+        <button class="btn-success" style="margin-top:5px;" onclick="copySTT()">📋 نسخ النص</button>
+    </div>
+
+    <!-- EXISTING MIRACLE: Voice Over (TTS) -->
+    <div class="miracle-card">
+        <div class="card-header">
+            <div class="icon-box script-icon">🗣️</div>
+            <div>
+                <h3 class="card-title">معجزة التعليق الصوتي (TTS)</h3>
+                <p class="card-desc">حوّل النص المكتوب إلى صوت بشري.</p>
+            </div>
+        </div>
+        <textarea id="ttsInput" rows="2" placeholder="اكتب النص..."></textarea>
+        <select id="ttsLang"><option value="ar-SA">عربي سعودي</option><option value="en-US">English US</option></select>
+        <button class="btn-primary" onclick="playTTS()">▶️ تشغيل الصوت</button>
+    </div>
+
+    <!-- NEW MIRACLE 2: Write on Image -->
+    <div class="miracle-card">
+        <div class="card-header">
+            <div class="icon-box image-icon">✍️</div>
+            <div>
+                <h3 class="card-title">معجزة الكتابة على الصور</h3>
+                <p class="card-desc">ارفع صورة واكتب عليها عنواناً جذاباً للغلاف.</p>
+            </div>
+        </div>
+        <input type="file" id="imgUpload" accept="image/*" onchange="loadImageForEdit(this)">
+        <input type="text" id="imgText" placeholder="النص المراد كتابته على الصورة">
+        <input type="color" id="imgTextColor" value="#ffffff" title="لون النص">
+        <button class="btn-primary" onclick="renderEditedImage()">🖼️ توليد النسخة المعدلة</button>
+        
+        <div class="output-area" id="imgEditArea">
+            <canvas id="editCanvas"></canvas>
+            <button class="btn-success" style="width:100%; margin-top:10px;" onclick="downloadEditedImg()">💾 تحميل الصورة</button>
+        </div>
+    </div>
+
+    <!-- NEW MIRACLE 3: Video Text Overlay Simulator -->
+    <div class="miracle-card">
+        <div class="card-header">
+            <div class="icon-box video-icon">🎥</div>
+            <div>
+                <h3 class="card-title">محاكي كتابة الفيديو (Reels/TikTok)</h3>
+                <p class="card-desc">شاهد كيف سيبدو النص فوق الفيديو الخاص بك قبل النشر.</p>
+            </div>
+        </div>
+        <div class="video-preview-box" id="vidPreview">
+            <span style="color:#555;">ضع رابط فيديو يوتيوب أو ملف محلي (تجريبي)</span>
+            <div class="overlay-text-element" id="vidOverlayText">عنوان الفيديو هنا</div>
+        </div>
+        <input type="text" id="vidTextInput" placeholder="اكتب نص التسمية (Caption)" onkeyup="updateVideoOverlay()">
+        <button class="btn-secondary" onclick="toggleVidBg()">🌑 تبديل خلفية المعاينة</button>
+    </div>
+
+</div>
+
+<div id="toast">تم الإنجاز!</div>
+
+<script>
+    // --- Utils ---
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // --- 1. STT Logic (Web Speech API) ---
+    let recognition;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRec();
+        recognition.lang = 'ar-SA'; // Default Arabic
+        recognition.continuous = true;
+        recognition.interimResults = false;
+
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join(' ');
+            document.getElementById('sttOutput').value += transcript + " ";
+        };
+    } else {
+        alert("متصفحك لا يدعم التفريغ الصوتي. استخدم Chrome.");
+    }
+
+    function startListening() {
+        if(recognition) {
+            recognition.start();
+            showToast("جارٍ الاستماع... تحدث الآن");
+        }
+    }
+    function stopListening() {
+        if(recognition) recognition.stop();
+    }
+    function copySTT() {
+        navigator.clipboard.writeText(document.getElementById('sttOutput').value);
+        showToast("تم النسخ!");
+    }
+
+    // --- 2. TTS Logic ---
+    function playTTS() {
+        const text = document.getElementById('ttsInput').value;
+        const lang = document.getElementById('ttsLang').value;
+        if(!text) return;
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        speechSynthesis.speak(u);
+    }
+
+    // --- 3. Image Editing Logic ---
+    let loadedImg = null;
+    function loadImageForEdit(input) {
+        const file = input.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                loadedImg = new Image();
+                loadedImg.src = e.target.result;
+                loadedImg.onload = () => renderEditedImage(); // Auto render preview
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function renderEditedImage() {
+        if(!loadedImg) return alert("ارفع صورة أولاً!");
+        const canvas = document.getElementById('editCanvas');
+        const ctx = canvas.getContext('2d');
+        const text = document.getElementById('imgText').value || "نص تجريبي";
+        const color = document.getElementById('imgTextColor').value;
+
+        // Set canvas size to image size
+        canvas.width = loadedImg.width;
+        canvas.height = loadedImg.height;
+
+        // Draw Image
+        ctx.drawImage(loadedImg, 0, 0);
+
+        // Draw Text with Shadow
+        ctx.font = `bold ${Math.floor(canvas.width / 10)}px Cairo`;
+        ctx.textAlign = "center";
+        ctx.fillStyle = color;
+        ctx.shadowColor = "black";
+        ctx.shadowBlur = 10;
+        ctx.fillText(text, canvas.width / 2, canvas.height * 0.8); // Bottom area
+
+        document.getElementById('imgEditArea').style.display = 'block';
+    }
+
+    function downloadEditedImg() {
+        const canvas = document.getElementById('editCanvas');
+        const link = document.createElement('a');
+        link.download = 'mamlaka-edited-image.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    // --- 4. Video Overlay Simulator Logic ---
+    function updateVideoOverlay() {
+        const text = document.getElementById('vidTextInput').value;
+        const overlayEl = document.getElementById('vidOverlayText');
+        overlayEl.innerText = text || "عنوان الفيديو هنا";
+    }
+
+    function toggleVidBg() {
+        const box = document.getElementById('vidPreview');
+        if(box.style.background === 'rgb(34, 34, 34)') {
+            box.style.background = '#fff'; // Light mode sim
+            document.querySelector('#vidPreview span').style.color = '#ccc';
+        } else {
+            box.style.background = '#222';
+            document.querySelector('#vidPreview span').style.color = '#555';
+        }
+    }
+</script>
+
+</body>
+</html>
