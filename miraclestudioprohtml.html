@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Mamlaka Miracle Studio PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #05050a;
+            --glass-bg: rgba(20, 20, 35, 0.6);
+            --border-glass: 1px solid rgba(255, 255, 255, 0.1);
+            --neon-purple: #a855f7;
+            --neon-pink: #ec4899;
+            --neon-cyan: #06b6d4;
+            --gold: #fbbf24;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --radius-lg: 20px;
+            --shadow-neon: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Cairo', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* Background Mesh Gradient */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%);
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .logo-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+        }
+
+        .pro-tag {
+            background: var(--gold);
+            color: #000;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 10px;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Main Grid Layout */
+        .studio-grid {
+            max-width: 1200px;
+            width: 95%;
+            margin: 0 auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        /* Glass Card Design */
+        .tool-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 20px rgba(168, 85, 247, 0.1);
+        }
+
+        /* Icon & Title Section */
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+        }
+
+        .icon-circle {
+            width: 50px; height: 50px;
+            border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .c-purple { color: var(--neon-purple); }
+        .c-pink { color: var(--neon-pink); }
+        .c-cyan { color: var(--neon-cyan); }
+        .c-gold { color: var(--gold); }
+
+        .card-title h3 { font-size: 1.2rem; font-weight: 700; margin: 0; }
+        .card-title p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+
+        /* Inputs & Controls */
+        input[type="text"], textarea, select {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.3s;
+            margin-bottom: 12px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--neon-purple);
+            background: rgba(0,0,0,0.5);
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: inherit;
+            transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        button:hover { filter: brightness(1.1); transform: scale(1.02); }
+        button:active { transform: scale(0.98); }
+
+        /* Output Areas */
+        .output-zone {
+            margin-top: 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            display: none; /* Hidden initially */
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Video Preview Specifics */
+        .video-stage {
+            width: 100%;
+            aspect-ratio: 9/16;
+            background: #000;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .video-placeholder { color: #444; font-size: 0.9rem; }
+        .caption-overlay {
+            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.6); color: white; padding: 8px 16px;
+            border-radius: 8px; font-weight: bold; font-size: 1.2rem;
+            text-shadow: 0 2px 4px black; backdrop-filter: blur(4px);
+            max-width: 90%; text-align: center; word-break: break-word;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed; bottom: 30px; right: 50%; transform: translateX(50%);
+            background: var(--neon-purple); color: white;
+            padding: 12px 24px; border-radius: 50px;
+            font-weight: bold; opacity: 0; transition: 0.3s; z-index: 999;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        #toast.show { opacity: 1; bottom: 50px; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .logo-badge { font-size: 1.8rem; }
+            .studio-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-badge">MAMLAKA MIRACLE STUDIO <span class="pro-tag">PRO</span></div>
+    <p class="subtitle">حوّل أفكارك إلى واقع رقمي بضغطة زر. لا خوادم، لا اشتراكات، فقط إبداع.</p>
+</header>
+
+<div class="studio-grid">
+
+    <!-- Tool 1: STT (Speech to Text) -->
+    <div class="tool-card">
+        <div class="card-head">
+            <div class="icon-circle c-cyan">🎤</div>
+            <div class="card-title">
+                <h3>التفريغ الصوتي الذكي</h3>
+                <p>تكلم وسنكتب لك النص فوراً (STT)</p>
+            </div>
+        </div>
+        <button class="btn-primary" onclick="startListening()">🔴 ابدأ التسجيل</button>
+        <button class="btn-secondary" onclick="stopListening()">⏹️ إيقاف</button>
+        <textarea id="sttOutput" placeholder="سيظهر النص هنا..." readonly></textarea>
+        <button class="btn-success" style="width:100%" onclick="copyText('sttOutput')">📋 نسخ النص</button>
+    </div>
+
+    <!-- Tool 2: TTS (Text to Speech) -->
+    <div class="tool-card">
+        <div class="card-head">
+            <div class="icon-circle c-purple">🗣️</div>
+            <div class="card-title">
+                <h3>التعليق الصوتي الآلي</h3>
+                <p>حول النص إلى صوت بشري طبيعي (TTS)</p>
+            </div>
+        </div>
+        <textarea id="ttsInput" placeholder="اكتب النص المراد تحويله لصوت..."></textarea>
+        <select id="ttsLang">
+            <option value="ar-SA">العربية (السعودية)</option>
+            <option value="ar-EG">العربية (مصر)</option>
+            <option value="en-US">English (USA)</option>
+        </select>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="playTTS()">▶️ تشغيل</button>
+            <button class="btn-secondary" onclick="speechSynthesis.cancel()">⏹️ إيقاف</button>
+        </div>
+    </div>
+
+    <!-- Tool 3: Image Editor -->
+    <div class="tool-card">
+        <div class="card-head">
+            <div class="icon-circle c-pink">🖼️</div>
+            <div class="card-title">
+                <h3>مصمم الأغلفة السريع</h3>
+                <p>ارفع صورة واكتب عليها عنواناً جذاباً</p>
+            </div>
+        </div>
+        <input type="file" id="imgUpload" accept="image/*" onchange="handleImageUpload(this)">
+        <input type="text" id="imgText" placeholder="النص المراد إضافته للصورة">
+        <div style="display:flex; gap:10px; align-items:center;">
+            <label style="font-size:0.8rem; color:#aaa;">لون النص:</label>
+            <input type="color" id="imgTextColor" value="#ffffff" style="width:40px; height:40px; padding:0; border:none; cursor:pointer;">
+        </div>
+        <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="processImage()">✨ توليد التصميم</button>
+        
+        <div class="output-zone" id="imgResultZone">
+            <canvas id="editCanvas"></canvas>
+            <button class="btn-success" style="width:100%; margin-top:10px;" onclick="downloadCanvas()">💾 تحميل الصورة النهائية</button>
+        </div>
+    </div>
+
+    <!-- Tool 4: Video Caption Simulator -->
+    <div class="tool-card">
+        <div class="card-head">
+            <div class="icon-circle c-gold">🎥</div>
+            <div class="card-title">
+                <h3>محاكي ترجمات الريلز</h3>
+                <p>شاهد كيف سيبدو النص فوق الفيديو قبل النشر</p>
+            </div>
+        </div>
+        <div class="video-stage">
+            <span class="video-placeholder">مساحة المعاينة (Background)</span>
+            <div class="caption-overlay" id="liveCaption">عنوان الفيديو يظهر هنا...</div>
+        </div>
+        <input type="text" id="vidTextInput" placeholder="اكتب نص الترجمة (Caption)" onkeyup="updateLiveCaption()" style="margin-top:15px;">
+        <div class="btn-group" style="margin-top:10px;">
+            <button class="btn-secondary" onclick="toggleStageBg()">🌑 تبديل الخلفية</button>
+        </div>
+    </div>
+
+</div>
+
+<div id="toast">تم التنفيذ بنجاح!</div>
+
+<script>
+    // --- Utils ---
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function copyText(id) {
+        const el = document.getElementById(id);
+        navigator.clipboard.writeText(el.value).then(() => showToast("تم النسخ للحافظة!"));
+    }
+
+    // --- 1. STT Logic ---
+    let rec;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        rec = new SR();
+        rec.lang = 'ar-SA';
+        rec.continuous = true;
+        rec.interimResults = false;
+        rec.onresult = (e) => {
+            const txt = Array.from(e.results).map(r => r[0].transcript).join(' ');
+            document.getElementById('sttOutput').value += txt + " ";
+        };
+    } else { alert("متصفحك لا يدعم هذه الميزة."); }
+
+    function startListening() { if(rec) { rec.start(); showToast("جارٍ الاستماع..."); } }
+    function stopListening() { if(rec) rec.stop(); }
+
+    // --- 2. TTS Logic ---
+    function playTTS() {
+        const text = document.getElementById('ttsInput').value;
+        const lang = document.getElementById('ttsLang').value;
+        if(!text) return;
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        speechSynthesis.speak(u);
+    }
+
+    // --- 3. Image Logic ---
+    let loadedImgObj = null;
+    
+    function handleImageUpload(input) {
+        const file = input.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                loadedImgObj = new Image();
+                loadedImgObj.src = e.target.result;
+                loadedImgObj.onload = () => processImage(); // Auto preview
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function processImage() {
+        if(!loadedImgObj) return alert("يرجى رفع صورة أولاً!");
+        const canvas = document.getElementById('editCanvas');
+        const ctx = canvas.getContext('2d');
+        const text = document.getElementById('imgText').value || "نص تجريبي";
+        const color = document.getElementById('imgTextColor').value;
+
+        canvas.width = loadedImgObj.width;
+        canvas.height = loadedImgObj.height;
+        
+        ctx.drawImage(loadedImgObj, 0, 0);
+        
+        // Dynamic Font Size based on width
+        const fontSize = Math.floor(canvas.width / 12);
+        ctx.font = `bold ${fontSize}px Cairo`;
+        ctx.textAlign = "center";
+        ctx.fillStyle = color;
+        ctx.shadowColor = "black";
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 5;
+        
+        // Position near bottom
+        ctx.fillText(text, canvas.width / 2, canvas.height - (fontSize * 1.5));
+
+        document.getElementById('imgResultZone').style.display = 'block';
+    }
+
+    function downloadCanvas() {
+        const canvas = document.getElementById('editCanvas');
+        const link = document.createElement('a');
+        link.download = 'mamlaka-design.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    // --- 4. Video Sim Logic ---
+    function updateLiveCaption() {
+        const val = document.getElementById('vidTextInput').value;
+        document.getElementById('liveCaption').innerText = val || "عنوان الفيديو يظهر هنا...";
+    }
+
+    function toggleStageBg() {
+        const stage = document.querySelector('.video-stage');
+        if(stage.style.background === 'rgb(255, 255, 255)') {
+            stage.style.background = '#000';
+            document.querySelector('.video-placeholder').style.color = '#444';
+        } else {
+            stage.style.background = '#fff';
+            document.querySelector('.video-placeholder').style.color = '#ccc';
+        }
+    }
+</script>
+
+</body>
+</html>
