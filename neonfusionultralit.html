@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>✨ Neon Fusion ULTRA-LITE | الخلفية الحية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f8fafc; 
+            --surface-glass: rgba(255, 255, 255, 0.85);
+            --text-dark: #0f172a;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --shadow-soft: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header { text-align: center; padding: 20px; width: 100%; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 0; letter-spacing: 1px; }
+        .subtitle { color: #64748b; font-size: 0.9rem; margin-top: 5px; }
+
+        /* Main Stage - The Canvas Area */
+        .stage-wrapper {
+            position: relative;
+            width: 95%;
+            max-width: 500px;
+            aspect-ratio: 9/16; 
+            background: #ffffff; 
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        canvas#cvs {
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: crosshair;
+        }
+
+        /* Floating Glass Control Panel */
+        .controls-glass {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--surface-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            z-index: 10;
+            display: grid;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-bottom: 2px solid #cbd5e1;
+            background: transparent;
+            font-family: inherit;
+            font-weight: bold;
+            color: var(--text-dark);
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-bottom-color: var(--accent-cyan); }
+
+        .btn-row { display: flex; gap: 8px; justify-content: space-between; }
+        
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-upload-img { background: #e2e8f0; color: #475569; }
+        .btn-mic { background: var(--accent-cyan); color: white; }
+        .btn-rec { background: var(--accent-pink); color: white; }
+        .btn-stop { background: #ef4444; color: white; display: none; }
+        
+        button:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* Status Badge */
+        #status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            z-index: 5;
+        }
+
+        @media (max-width: 400px) {
+            .btn-row { flex-wrap: wrap; }
+            button { min-width: 45%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>NEON FUSION ULTRA-LITE</h1>
+    <div class="subtitle">ارفع صورتك.. أضف سحرك.. صدّر الفيديو</div>
+</header>
+
+<div class="stage-wrapper">
+    <canvas id="cvs"></canvas>
+    <div id="status-badge">جاهز للاندماج ✨</div>
+    
+    <!-- Controls Overlay -->
+    <div class="controls-glass">
+        <input type="text" id="txtInput" placeholder="اكتب جملة تحفيزية..." value="SYRIA RISING">
+        
+        <div class="btn-row">
+            <button class="btn-upload-img" onclick="document.getElementById('imgInput').click()">📁 خلفية</button>
+            <button class="btn-mic" onclick="toggleMic()">🎤 صوت</button>
+        </div>
+        <div class="btn-row">
+            <button class="btn-rec" id="recBtn" onclick="startRecording()">⏺️ تسجيل فيديو</button>
+            <button class="btn-stop" id="stopBtn" onclick="stopRecording()">⏹️ إيقاف</button>
+        </div>
+    </div>
+    
+    <!-- Hidden Inputs -->
+    <input type="file" id="imgInput" accept="image/*,video/*" onchange="loadMedia(this)" style="display:none;">
+</div>
+
+<script>
+    const cvs = document.getElementById('cvs');
+    const ctx = cvs.getContext('2d');
+    let w, h, time = 0;
+    let isAnimating = true;
+    
+    // Media Variables
+    let bgImage = null;
+    let bgVideo = null;
+    let mediaType = 'none'; // 'image' or 'video'
+    
+    // Audio Variables
+    let audioCtx, analyser, dataArray, source;
+    let micActive = false;
+    
+    // Recording Variables
+    let mediaRecorder, chunks = [];
+
+    // Resize Handler
+    function resize() {
+        w = cvs.width = cvs.parentElement.clientWidth;
+        h = cvs.height = cvs.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // --- 1. LOAD MEDIA LOGIC (Images & Videos) ---
+    function loadMedia(input) {
+        const file = input.files[0];
+        if(!file) return;
+
+        const url = URL.createObjectURL(file);
+        
+        if (file.type.startsWith('image/')) {
+            mediaType = 'image';
+            bgImage = new Image();
+            bgImage.src = url;
+            bgImage.onload = () => {
+                document.getElementById('status-badge').innerText = "تم تحميل الصورة ✅";
+            };
+        } else if (file.type.startsWith('video/')) {
+            mediaType = 'video';
+            bgVideo = document.createElement('video');
+            bgVideo.src = url;
+            bgVideo.muted = true; // Mute original video sound to avoid conflict with mic
+            bgVideo.loop = true;
+            bgVideo.autoplay = true;
+            bgVideo.playsInline = true;
+            
+            bgVideo.onloadeddata = () => {
+                document.getElementById('status-badge').innerText = "تم تحميل الفيديو ▶️";
+                // Ensure it plays smoothly in the loop
+                bgVideo.play().catch(e => console.log("Autoplay blocked:", e));
+            };
+        }
+    }
+
+    // --- 2. MOOD COLOR LOGIC ---
+    function getMoodColor(text) {
+        const t = text.toLowerCase();
+        if (t.includes('love') || t.includes('peace') || t.includes('حب')) return '#8b5cf6'; 
+        if (t.includes('fire') || t.includes('power') || t.includes('نار')) return '#ef4444'; 
+        if (t.includes('money') || t.includes('gold') || t.includes('مال')) return '#f59e0b'; 
+        if (t.includes('nature') || t.includes('green') || t.includes('طبيعة')) return '#10b981'; 
+        return '#06b6d4'; 
+    }
+
+    // --- 3. AUDIO REACTIVE LOGIC ---
+    async function toggleMic() {
+        if (!micActive) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                source = audioCtx.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
+                micActive = true;
+                document.getElementById('status-badge').innerText = "الميكروفون نشط 🔴";
+                document.querySelector('.btn-mic').style.background = "#ef4444";
+                document.querySelector('.btn-mic').innerText = "🔇 إسكات";
+            } catch (err) {
+                alert("يرجى منح إذن الميكروفون!");
+            }
+        } else {
+            if(source) source.disconnect();
+            micActive = false;
+            document.getElementById('status-badge').innerText = "جاهز للاندماج ✨";
+            document.querySelector('.btn-mic').style.background = "#06b6d4";
+            document.querySelector('.btn-mic').innerText = "🎤 صوت";
+        }
+    }
+
+    // --- 4. MAIN RENDER LOOP (The Visual Magic) ---
+    function draw() {
+        if (!isAnimating) return;
+        requestAnimationFrame(draw);
+        time += 0.05;
+
+        // Clear Canvas
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw Background Media (Image or Video)
+        if (mediaType === 'image' && bgImage) {
+            // Cover Mode for Images
+            const scale = Math.max(w / bgImage.width, h / bgImage.height);
+            const x = (w - bgImage.width * scale) / 2;
+            const y = (h - bgImage.height * scale) / 2;
+            ctx.drawImage(bgImage, x, y, bgImage.width * scale, bgImage.height * scale);
+            
+            // Add dark overlay for contrast if needed (optional based on preference)
+            ctx.fillStyle = 'rgba(0,0,0,0.2)'; 
+            ctx.fillRect(0, 0, w, h);
+        } 
+        else if (mediaType === 'video' && bgVideo) {
+            // Directly draw current frame of video
+            // Note: Drawing video frames to canvas requires CORS handling if hosted externally, 
+            // but since we use local blob URLs here, it works perfectly.
+            ctx.drawImage(bgVideo, 0, 0, w, h);
+            
+            // Slight dimming to make neon pop
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(0, 0, w, h);
+        }
+
+        // Get Data
+        const text = document.getElementById('txtInput').value || "NEON";
+        const baseColor = getMoodColor(text);
+        
+        // Draw Waves (Audio Reactive or Synthetic)
+        const barCount = 30; 
+        const barW = w / barCount;
+        
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen'; // Makes colors glow against dark/video bg
+        
+        for(let i=0; i<barCount; i++) {
+            let amp = 0;
+            
+            if (micActive && analyser) {
+                analyser.getByteFrequencyData(dataArray);
+                amp = dataArray[i] * 1.5; 
+            } else {
+                amp = Math.sin(time + i * 0.3) * 40 + 60;
+            }
+
+            const x = i * barW;
+            const y = h - amp;
+            
+            const grad = ctx.createLinearGradient(x, y, x, h);
+            grad.addColorStop(0, baseColor);
+            grad.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = grad;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = baseColor;
+            
+            ctx.beginPath();
+            ctx.roundRect(x + 2, y, barW - 4, amp, [5, 5, 0, 0]);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // Draw Glowing Text
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        
+        const fontSize = Math.min(w / 8, 50); 
+        ctx.font = `bold ${fontSize}px Orbitron, Cairo`;
+        
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = baseColor;
+        
+        ctx.fillStyle = "#ffffff"; // White text for maximum visibility on video/image
+        ctx.fillText(text.toUpperCase(), w/2, h/2);
+        
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = baseColor;
+        ctx.strokeText(text.toUpperCase(), w/2, h/2);
+        
+        ctx.restore();
+    }
+    draw();
+
+    // --- 5. VIDEO EXPORT LOGIC ---
+    function startRecording() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert("متصفحك لا يدعم التسجيل.");
+            return;
+        }
+
+        // Capture Stream from Canvas
+        const stream = cvs.captureStream(30); 
+        
+        // If Mic is active, add audio track to the stream
+        if (micActive && audioCtx) {
+             // We need to mix the microphone audio into the recording stream
+             // This part is complex in pure JS without libraries like RecordRTC,
+             // so for simplicity in this demo, we record visual only OR rely on browser native capture
+             // For a robust solution, usually one uses WebRTC streams merging.
+             // Here we stick to visual export which is the main "Miracle".
+        }
+
+        let mimeType = 'video/webm;codecs=vp9';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/webm';
+        }
+        
+        mediaRecorder = new MediaRecorder(stream, { mimeType });
+        chunks = [];
+        
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) chunks.push(e.data);
+        };
+        
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(chunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mamlaka-neon-fusion.webm';
+            a.click();
+            document.getElementById('status-badge').innerText = "تم حفظ الفيديو ✅";
+            
+            document.getElementById('recBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+        };
+
+        mediaRecorder.start();
+        
+        document.getElementById('recBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'inline-block';
+        document.getElementById('status-badge').innerText = "جارٍ التسجيل... ⏺️";
+    }
+
+    function stopRecording() {
+        if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+    }
+
+</script>
+
+</body>
+</html>
